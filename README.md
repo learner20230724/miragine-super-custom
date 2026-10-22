@@ -6,6 +6,12 @@
 
 **开发中（WIP）**：战斗逻辑手工移植到原生 JavaScript，使用 Canvas / WebGL 渲染；运行游戏不需要 Flash 插件或 SWF 播放器。完整对局逐帧一致性、Windows 成品包安装及发布验收仍需分别验证，不宣称已完成一比一复刻。
 
+## Windows 启动包
+
+在 **[Releases](https://github.com/learner20230724/miragine-super-rebuild/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash。
+
+包外的 `config/custom.json` 可直接编辑，重启生效；升级前请备份此文件。`ui-helper/` 提供可替换的绘图源码及说明。`build-info.json` 标明对应源码提交。预览版的验证结果和尚存差异见 [验证记录](docs/verification.json) 与 [已知问题](docs/known-issues.md)。
+
 ## 本地运行
 
 需要 Git、**Node.js 22.12 或更新版本**及 npm；重新生成数据与素材还需要 Python 3。首次安装依赖和 Electron 需要联网。

@@ -162,7 +162,26 @@ test('generated output rejects custom paths, extensions, traversal, outside path
   }
   await fs.mkdir(path.join(root, 'generated', 'directory.json'), { recursive: true });
   await assert.rejects(assertGeneratedTarget(root, 'generated/directory.json'), /not a file/);
-  assert.equal(await assertGeneratedTarget(root, 'config/defaults.generated.json'), path.join(root, 'config/defaults.generated.json'));
+  // Windows CI may return an 8.3 alias from os.tmpdir(); the helper deliberately
+  // canonicalizes its project root before returning an allowed output path.
+  assert.equal(await assertGeneratedTarget(root, 'config/defaults.generated.json'),
+    path.join(await fs.realpath(root), 'config/defaults.generated.json'));
+});
+
+test('generated output canonicalizes a project-root alias without weakening child symlink restrictions', async (t) => {
+  const root = await sandbox(t);
+  const aliasParent = await sandbox(t);
+  const alias = path.join(aliasParent, 'project-alias');
+  try {
+    await fs.symlink(root, alias, process.platform === 'win32' ? 'junction' : 'dir');
+  } catch (error) {
+    if (['EPERM', 'ENOTSUP', 'EACCES'].includes(error.code)) { t.skip('Host does not permit root alias creation'); return; }
+    throw error;
+  }
+  const expected = path.join(await fs.realpath(root), 'config/defaults.generated.json');
+  assert.equal(await assertGeneratedTarget(alias, 'config/defaults.generated.json'), expected);
+  assert.equal(await writeGeneratedJsonAtomic(alias, 'config/defaults.generated.json', { synthetic: true }), expected);
+  assert.deepEqual(JSON.parse(await fs.readFile(expected, 'utf8')), { synthetic: true });
 });
 
 test('generated output rejects a symlink or Windows junction pointing outside the project', async (t) => {

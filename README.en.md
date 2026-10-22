@@ -6,6 +6,12 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Work in progress:** combat logic is manually ported to native JavaScript and rendered with Canvas / WebGL. The game does not require a Flash plugin or SWF player. Full-match frame-by-frame parity, Windows package installation, and release acceptance remain separate validation tasks; this is not a claim of a finished one-to-one replica.
 
+## Windows portable build
+
+Download the Windows x64 preview from **[Releases](https://github.com/learner20230724/miragine-super-rebuild/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required.
+
+Edit the external `config/custom.json` and restart to apply changes; back it up before upgrading. `ui-helper/` contains replaceable drawing source and instructions. `build-info.json` identifies the source commit. See the [verification record](docs/verification.json) and [known issues](docs/known-issues.md) for preview limitations.
+
 ## Run locally
 
 Install Git, **Node.js 22.12 or newer**, and npm. Python 3 is also needed to regenerate data and assets. Initial dependency and Electron downloads require internet access.
