@@ -3,7 +3,7 @@
   "reportDate": "2026-10-23",
   "stage": "native-preview",
   "overallAcceptance": "incomplete",
-  "reportScope": "Completed local native integration and scoped original-AS3 oracle. Final portable release acceptance is recorded separately after artifact testing; no universal Adobe or pixel parity is claimed.",
+  "reportScope": "Source integration, scoped original-AS3 oracle and completed pre-release portable checks. Final artifact version and published-byte verification are in Release receipts; no universal Adobe or pixel parity is claimed.",
   "baseline": {
     "name": "Super Miragine War / 超级米拉奇战记",
     "swfSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
@@ -15,7 +15,7 @@
     "automatedTests": {
       "status": "passed-local",
       "command": "npm test",
-      "passed": 209,
+      "passed": 210,
       "failed": 0,
       "scope": "Native source, recovered data, assets, configuration, viewport, UI structure and privacy guard. Not original-runtime parity."
     },
@@ -71,8 +71,8 @@
     "publicPrivacyScan": {
       "status": "passed-local",
       "command": "npm run check:public -- --root .",
-      "scannedFiles": 2959,
-      "scannedBytes": 64786137,
+      "scannedFiles": 2961,
+      "scannedBytes": 64804034,
       "findings": 0,
       "warnings": 0,
       "scope": "Latest source publication candidates before final release build; the release archive is checked separately."
@@ -129,6 +129,15 @@
       },
       "replayButtonVerified": true,
       "scope": "Initial browser integration using Math.random and real-time native UI; no forced victory."
+    },
+    "portableWindows": {
+      "status": "passed-local",
+      "sourceCommit": "3fd5a06e144953209b1605804dcd76cd02b9f796",
+      "defaultChecks": 25,
+      "customChecks": 26,
+      "crossProcessPreferenceChecks": 25,
+      "testedZipSha256": "1764caf293011a7516370958dfdf68c983fc95cb908af57c4c7387445fb5107f",
+      "scope": "Actual ZIP extracted twice without source/development dependencies. Real EXE launches, maximize, fullscreen, input, natural configured recruitment and two separate preference launches. A final documentation-only packaging correction will be revalidated before publication."
     }
   },
   "continuousIntegration": {
@@ -201,15 +210,15 @@
     "runsBrowserSmoke": false,
     "buildsPortableRelease": false,
     "verifiedRun": {
-      "id": 39821887792,
-      "sourceCommit": "3348b6fab015cb2991d4858d2cc8cf69e71c9ac3",
-      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39821887792",
+      "id": 39825641870,
+      "sourceCommit": "3fd5a06e144953209b1605804dcd76cd02b9f796",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39825641870",
       "os": [
         "ubuntu-latest",
         "windows-latest"
       ],
       "conclusion": "success",
-      "scope": "193 tests plus recovered data, retained assets and public privacy check; new preference/audit additions await their own run."
+      "automatedTestsPerOs": 209
     }
   },
   "separateAcceptanceGates": {

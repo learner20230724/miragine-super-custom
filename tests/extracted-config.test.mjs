@@ -137,6 +137,17 @@ test('both parameter documents list every original unit without numeric transcri
   }
 });
 
+test('parameter references explicitly mark absent training, unlock and active-skill systems N/A', () => {
+  for (const file of ['docs/parameters.zh-CN.md', 'docs/parameters.en.md']) {
+    const document = read(file);
+    assert.ok((document.match(/N\/A/g) ?? []).length >= 3, file);
+    assert.match(document, /训练|training/i);
+    assert.match(document, /前置|prerequisite/i);
+    assert.match(document, /主动技能|active skill/i);
+    assert.ok(document.includes('recruitEveryFrames'));
+  }
+});
+
 test('regeneration is deterministic and does not overwrite custom configuration', () => {
   const customBefore = read('config/custom.json');
   const defaultsBefore = read('config/defaults.generated.json');

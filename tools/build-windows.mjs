@@ -22,7 +22,8 @@ export function isProductionPath(input, { directory = false } = {}) {
   }
   if (parts[0] === 'docs') {
     if (directory) return relative === 'docs' || parts[1] === 'licenses';
-    return parts[1] === 'licenses' || /^docs\/parameters\.(?:en|zh-CN)\.md$/.test(relative);
+    return parts[1] === 'licenses' || /^docs\/parameters\.(?:en|zh-CN)\.md$/.test(relative)
+      || ['docs/known-issues.md', 'docs/verification.json'].includes(relative);
   }
   if (!runtimeDirectories.has(parts[0])) return false;
   if (directory) return true;
@@ -121,6 +122,7 @@ export function writePortableExtras(projectRoot, output, buildInfo) {
   for (const name of ['parameters.en.md', 'parameters.zh-CN.md']) {
     if (fs.existsSync(path.join(project, 'docs', name))) copy(`docs/${name}`);
   }
+  for (const name of ['known-issues.md', 'verification.json']) copy(`docs/${name}`);
   copy('config/custom.json');
   copy('generated/ui/original-graphics.js', 'ui-helper/original-graphics.js');
   copy('generated/ui/NOTICE.md', 'ui-helper/NOTICE.md');

@@ -216,7 +216,7 @@ test('packaging whitelist excludes originals, references, private files and runt
     'src/app/main.mjs', 'assets/generated/scenery/terrain.png', 'generated/ui/original-graphics.js',
     'generated/ui/NOTICE.md', 'config/custom.json', 'config/defaults.generated.json',
     'desktop/entry.cjs', 'desktop/main.cjs', 'desktop/static-server.cjs', 'desktop/preload.cjs', 'desktop/preferences.cjs',
-    'docs/licenses/GPL-3.0.txt', 'docs/parameters.zh-CN.md',
+    'docs/licenses/GPL-3.0.txt', 'docs/parameters.zh-CN.md', 'docs/known-issues.md', 'docs/verification.json',
   ]) assert.equal(isProductionPath(file), true, file);
   for (const file of [
     '.local/token.json', 'recovered/unit-sprites/frame.png', 'reference/super.swf', 'assets/game.swf',
@@ -265,6 +265,7 @@ test('portable extras include licenses, replacement source/instructions and matc
   const output = path.join(directory, 'portable');
   const required = [
     'LICENSE', 'NOTICE.txt', 'README.md', 'README.en.md', 'docs/licenses/LGPL.txt', 'docs/licenses/GPL.txt',
+    'docs/known-issues.md', 'docs/verification.json',
     'config/custom.json', 'generated/ui/original-graphics.js', 'generated/ui/NOTICE.md',
     'generated/ui/LGPL-3.0.txt', 'generated/ui/GPL-3.0.txt', 'tools/build_ui.py', 'recovered/game-canvas/canvas.js',
   ];
@@ -272,7 +273,8 @@ test('portable extras include licenses, replacement source/instructions and matc
   const info = { version: '0.1.0-preview.1', sourceCommit: 'a'.repeat(40), platform: 'win32', arch: 'x64', electronVersion: '44.4.3' };
   writePortableExtras(project, output, info);
   for (const file of ['LICENSE', 'LICENSE.project.txt', 'NOTICE.txt', 'README.md', 'README.en.md', 'docs/licenses/LGPL.txt', 'docs/licenses/GPL.txt',
-    'config/custom.json', 'ui-helper/original-graphics.js', 'ui-helper/source/canvas.js', 'ui-helper/source/build_ui.py', 'Start-Game.cmd']) {
+    'config/custom.json', 'docs/known-issues.md', 'docs/verification.json',
+    'ui-helper/original-graphics.js', 'ui-helper/source/canvas.js', 'ui-helper/source/build_ui.py', 'Start-Game.cmd']) {
     assert.ok(fs.statSync(path.join(output, file)).isFile(), file);
   }
   assert.match(fs.readFileSync(path.join(output, 'ui-helper/README.md'), 'utf8'), /actually loads/);

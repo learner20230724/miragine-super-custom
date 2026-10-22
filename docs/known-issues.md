@@ -37,6 +37,15 @@ This is a runnable **preview**, not a claim of exact Flash parity.
 
 ## Development / 开发
 
+- The Windows preview is not code-signed (`NotSigned` in local Authenticode
+  inspection). Windows may identify it as an unknown publisher.
+  Windows 预览包未做代码签名，本机检查为 `NotSigned`；系统可能提示未知发布者。
+- Extract to a short directory path. Deep Windows paths can prevent Chromium
+  runtime-data initialization. The portable package bundles its runtime and
+  does not require a Node.js, Python or Flash installation.
+  请解压到较短目录；过深的 Windows 路径可能影响 Chromium 本机数据初始化。
+  启动包自带运行环境，不需要另装 Node.js、Python 或 Flash。
+
 - Original FLA/editor files were not recovered. The editable production project
   is native JavaScript, not a promise that the decompiled AS3 can be recompiled
   unchanged. No network multiplayer is added to the original local modes.

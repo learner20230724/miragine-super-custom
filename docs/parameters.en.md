@@ -168,4 +168,16 @@ Override `counterSelectionProbability`, `rightStartingIncome`, `rightStartingPop
 | manualCameraHoldFrames | 60 | Hold-off counter after manual camera movement |
 | minimapScale | 0.06 | World-to-minimap coordinate multiplier |
 
+## Inapplicable mechanics (N/A)
+
+These distinctions follow `initUI`, `P1Control` / `P2Control`, `createUnit`, and `step` in [DragonForce.as](../recovered/as3/scripts/DragonForce.as). Do not infer additional original parameters from conventions in other strategy games:
+
+| Item | Original status | Actual constraint / relevant parameters |
+|---|---|---|
+| Separate training queue or per-unit training duration | N/A; no such system | Recruitment must be enabled and the round countdown must satisfy `round % recruitEveryFrames === 0` before a purchase is attempted. The default is 3: one attempt per 3 frames during the normal countdown, not a per-unit training duration or independent cooldown. Sufficient gold and current-round manpower create the unit immediately; either insufficient budget prevents creation. |
+| Technology, building, or upgrade unlock prerequisites | N/A; all 16 units are selectable from the start | Selection does not guarantee a purchase. Every recruit still requires the unit's `cost` and `population` budgets. |
+| Separate player-cast active skills, skill-resource costs, or skill cooldowns | N/A; no such system | Automatic unit attacks and their effects are not player-cast skills. `weaponSpeed`, `delayAttack`, and attack-object parameters belong to ordinary attacks, not player skill cooldowns or skill costs. |
+
+The initial tutorial's `stopTimer` freezes only the round countdown, not the engine, so the modulo condition is not an unconditional fixed recruitment cooldown. Initial gold is zero by default, preventing unfunded recruits; every later attempt still checks gold and current-round manpower.
+
 The original does not have a configurable construction/building-upgrade system, player skill tree, or level waves. Fixed crystal combat units do not constitute a building-production system. New mechanics must be separate, explicitly enabled extensions rather than claimed original features.

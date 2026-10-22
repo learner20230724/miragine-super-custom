@@ -20,7 +20,7 @@
     "generate hashed original animation/image/audio/font assets",
     "implement native Matrix3D projection and UVT WebGL ground",
     "implement original menu, HUD, help, audio and local controls",
-    "pass 209 automated tests",
+    "pass 210 automated tests",
     "pass 36 real-browser UI checks including resized pointer accuracy",
     "privacy scan: 2959 files, zero findings/warnings",
     "create public remote repository",
