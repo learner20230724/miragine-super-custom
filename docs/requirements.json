@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "confirmedAt": "2026-10-23",
+  "authority": "User's explicit 14-point acceptance criteria in the current task",
+  "referenceThreadId": "01a15c08-c78b-7e13-bd36-27a9f4911256",
+  "referenceReadMethod": "Codex app-server thread/read, without resuming the referenced task",
+  "publicationAuthorization": {
+    "status": "user_confirmed",
+    "scope": "Original Super Miragine War assets and recovered code",
+    "statement": "有授权，可以包含原素材和恢复代码",
+    "date": "2026-10-23"
+  },
+  "requirements": [
+    {
+      "id": "R01",
+      "requirement": "完整可运行，不只界面或演示；恢复主要功能、交互、游戏逻辑。",
+      "acceptance": "完整单人和本地双人流程、难度、胜负、重开、声音及控制均可运行；不依赖 SWF 播放器执行游戏逻辑。",
+      "status": "in-progress"
+    },
+    {
+      "id": "R02",
+      "requirement": "尽量恢复原始逻辑和数值；不凭表现猜参，不为演示改规则。",
+      "acceptance": "逻辑与数值可追溯至超级版 SWF；差异和未知项明确记录；有原版对照和回归测试。",
+      "status": "in-progress"
+    },
+    {
+      "id": "R03",
+      "requirement": "清晰划分核心逻辑、适配、素材、配置、测试和文档，方便二次开发。",
+      "acceptance": "稳定目录与模块边界，README 给出修改入口。",
+      "status": "verified-local"
+    },
+    {
+      "id": "R04",
+      "requirement": "可调参数独立配置，覆盖原作实际存在的单位、敌人、建筑、技能、关卡/波次、难度、条件增援等。",
+      "acceptance": "参数按原作真实机制分类；不存在的机制标 N/A，不虚构。",
+      "status": "verified-local"
+    },
+    {
+      "id": "R05",
+      "requirement": "重新生成不能覆盖人工修改；自定义配置、扩展与生成代码分离。",
+      "acceptance": "自动测试先修改自定义项，再重新生成，验证修改仍保留且运行生效。",
+      "status": "verified-local"
+    },
+    {
+      "id": "R06",
+      "requirement": "中英文 README 以功能、运行、配置、开发入口为主；许可与过程另存。",
+      "acceptance": "README.md 和 README.en.md 完整对等，不把大段过程说明放入运行界面。",
+      "status": "verified-local"
+    },
+    {
+      "id": "R07",
+      "requirement": "默认参数表含种类、生命、伤害、移速、费用、训练、技能消耗、冷却、前置等实际参数。",
+      "acceptance": "文档表格由已验证数据生成或核对；不适用列明确标注；单位清楚。",
+      "status": "verified-local"
+    },
+    {
+      "id": "R08",
+      "requirement": "准确说明关卡/难度变化、资源、敌军/波次、间隔、增援条件、时间单位、取整及基础值与生效值。",
+      "acceptance": "全部解释与原逻辑一致；不存在固定攻速时不编造。",
+      "status": "verified-local"
+    },
+    {
+      "id": "R09",
+      "requirement": "运行页面只保留游戏，移除上下常驻项目解释。",
+      "acceptance": "运行截图仅有游戏与原版内置 UI。",
+      "status": "verified-local"
+    },
+    {
+      "id": "R10",
+      "requirement": "放大、最大化、全屏时游戏等比例放大，不裁切，缩放后鼠标准确。",
+      "acceptance": "多尺寸及高 DPI UI 测试验证比例、布局、坐标映射和实际点击。",
+      "status": "verified-local"
+    },
+    {
+      "id": "R11",
+      "requirement": "建立公开仓库，上传可开发代码及授权素材，实际提交推送。",
+      "acceptance": "公开远端可访问，最新交付提交与本地一致，权限与归属说明独立保存。",
+      "status": "in-progress"
+    },
+    {
+      "id": "R12",
+      "requirement": "Release 包与代码版本一致，优先解压启动，写清运行方式。",
+      "acceptance": "Windows 发布包在不带开发目录/依赖的隔离目录独立运行，Release 附件实际上传可取。",
+      "status": "in-progress"
+    },
+    {
+      "id": "R13",
+      "requirement": "发布前清理绝对路径、用户名、私人目录、令牌与密钥，增加复查。",
+      "acceptance": "已跟踪源文件、文档、日志及发布包通过隐私/密钥检查，无 .local 或缓存泄漏。",
+      "status": "in-progress"
+    },
+    {
+      "id": "R14",
+      "requirement": "验证默认行为、配置生效、独立包运行；交代程度、问题及源码/素材/包体存储。",
+      "acceptance": "有测试报告、已知问题清单、真实完成状态、各类大小统计与交付链接。",
+      "status": "in-progress"
+    }
+  ]
+}

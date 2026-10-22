@@ -1,0 +1,331 @@
+package dragonforce.core
+{
+   public class Camera
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 3
+            maxscopedepth 4
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      private var _x:Number;
+      
+      private var _y:Number;
+      
+      public var width:Number;
+      
+      public var height:Number;
+      
+      private var minX:Number;
+      
+      private var minY:Number;
+      
+      private var maxX:Number;
+      
+      private var maxY:Number;
+      
+      public function Camera(param1:Number = 0, param2:Number = 0, param3:Number = 640, param4:Number = 400)
+      {
+         method
+            name null
+            flag HAS_OPTIONAL
+            param QName(PackageNamespace(""),"Number")
+            param QName(PackageNamespace(""),"Number")
+            param QName(PackageNamespace(""),"Number")
+            param QName(PackageNamespace(""),"Number")
+            optional Integer(0)
+            optional Integer(0)
+            optional Integer(640)
+            optional Integer(400)
+            returns null
+            
+            body
+               maxstack 2
+               localcount 5
+               initscopedepth 4
+               maxscopedepth 5
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  getlocal0
+                  getlocal1
+                  initproperty QName(PrivateNamespace(null,"3"),"_x")
+                  getlocal0
+                  getlocal2
+                  initproperty QName(PrivateNamespace(null,"3"),"_y")
+                  getlocal0
+                  getlocal3
+                  initproperty QName(PackageNamespace(""),"width")
+                  getlocal0
+                  getlocal 4
+                  initproperty QName(PackageNamespace(""),"height")
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function limitInMap(param1:int, param2:int) : void
+      {
+         trait method QName(PackageNamespace(""),"limitInMap")
+            dispid 0
+            method
+               name null
+               param QName(PackageNamespace(""),"int")
+               param QName(PackageNamespace(""),"int")
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 3
+                  localcount 3
+                  initscopedepth 4
+                  maxscopedepth 5
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     getlocal0
+                     pushbyte 0
+                     initproperty QName(PrivateNamespace(null,"3"),"minX")
+                     getlocal0
+                     pushbyte 0
+                     initproperty QName(PrivateNamespace(null,"3"),"minY")
+                     getlocal0
+                     getlocal1
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"width")
+                     subtract
+                     initproperty QName(PrivateNamespace(null,"3"),"maxX")
+                     getlocal0
+                     getlocal2
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"height")
+                     subtract
+                     initproperty QName(PrivateNamespace(null,"3"),"maxY")
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         public function set x(param1:Number) : void
+         {
+            trait setter QName(PackageNamespace(""),"x")
+               dispid 0
+               method
+                  name null
+                  param QName(PackageNamespace(""),"Number")
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 2
+                     localcount 2
+                     initscopedepth 4
+                     maxscopedepth 5
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal0
+                        getlocal1
+                        initproperty QName(PrivateNamespace(null,"3"),"_x")
+                        getlocal0
+                        getproperty QName(PrivateNamespace(null,"3"),"_x")
+                        getlocal0
+                        getproperty QName(PrivateNamespace(null,"3"),"minX")
+                        ifnlt ofs0016
+                        getlocal0
+                        getlocal0
+                        getproperty QName(PrivateNamespace(null,"3"),"minX")
+                        initproperty QName(PrivateNamespace(null,"3"),"_x")
+               ofs0016:
+                        getlocal0
+                        getproperty QName(PrivateNamespace(null,"3"),"_x")
+                        getlocal0
+                        getproperty QName(PrivateNamespace(null,"3"),"maxX")
+                        ifngt ofs0026
+                        getlocal0
+                        getlocal0
+                        getproperty QName(PrivateNamespace(null,"3"),"maxX")
+                        initproperty QName(PrivateNamespace(null,"3"),"_x")
+               ofs0026:
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            public function get x() : Number
+            {
+               trait getter QName(PackageNamespace(""),"x")
+                  dispid 0
+                  method
+                     name null
+                     returns QName(PackageNamespace(""),"Number")
+                     
+                     body
+                        maxstack 1
+                        localcount 1
+                        initscopedepth 4
+                        maxscopedepth 5
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           getlocal0
+                           getproperty QName(PrivateNamespace(null,"3"),"_x")
+                           returnvalue
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+               
+               public function set y(param1:Number) : void
+               {
+                  trait setter QName(PackageNamespace(""),"y")
+                     dispid 0
+                     method
+                        name null
+                        param QName(PackageNamespace(""),"Number")
+                        returns QName(PackageNamespace(""),"void")
+                        
+                        body
+                           maxstack 2
+                           localcount 2
+                           initscopedepth 4
+                           maxscopedepth 5
+                           
+                           code
+                              getlocal0
+                              pushscope
+                              getlocal0
+                              getlocal1
+                              initproperty QName(PrivateNamespace(null,"3"),"_y")
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"3"),"_y")
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"3"),"minY")
+                              ifnlt ofs0016
+                              getlocal0
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"3"),"minY")
+                              initproperty QName(PrivateNamespace(null,"3"),"_y")
+                     ofs0016:
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"3"),"_y")
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"3"),"maxY")
+                              ifngt ofs0026
+                              getlocal0
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"3"),"maxY")
+                              initproperty QName(PrivateNamespace(null,"3"),"_y")
+                     ofs0026:
+                              returnvoid
+                           end ; code
+                        end ; body
+                     end ; method
+                  }
+                  
+                  public function get y() : Number
+                  {
+                     trait getter QName(PackageNamespace(""),"y")
+                        dispid 0
+                        method
+                           name null
+                           returns QName(PackageNamespace(""),"Number")
+                           
+                           body
+                              maxstack 1
+                              localcount 1
+                              initscopedepth 4
+                              maxscopedepth 5
+                              
+                              code
+                                 getlocal0
+                                 pushscope
+                                 getlocal0
+                                 getproperty QName(PrivateNamespace(null,"3"),"_y")
+                                 returnvalue
+                              end ; code
+                           end ; body
+                        end ; method
+                     }
+                     
+                     public function toString() : String
+                     {
+                        trait method QName(PackageNamespace(""),"toString")
+                           dispid 0
+                           method
+                              name null
+                              returns QName(PackageNamespace(""),"String")
+                              
+                              body
+                                 maxstack 2
+                                 localcount 1
+                                 initscopedepth 4
+                                 maxscopedepth 5
+                                 
+                                 code
+                                    getlocal0
+                                    pushscope
+                                    pushstring "camera(x="
+                                    getlocal0
+                                    getproperty QName(PrivateNamespace(null,"3"),"_x")
+                                    add
+                                    pushstring ", y="
+                                    add
+                                    getlocal0
+                                    getproperty QName(PrivateNamespace(null,"3"),"_y")
+                                    add
+                                    pushstring ")"
+                                    add
+                                    returnvalue
+                                 end ; code
+                              end ; body
+                           end ; method
+                        }
+                     }
+                  }
+                  
+                  method
+                     name null
+                     returns null
+                     
+                     body
+                        maxstack 2
+                        localcount 1
+                        initscopedepth 1
+                        maxscopedepth 3
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           findpropstrict Multiname("Camera",[PackageNamespace("dragonforce.core")])
+                           getlex QName(PackageNamespace(""),"Object")
+                           pushscope
+                           getlex QName(PackageNamespace(""),"Object")
+                           newclass 6
+                           popscope
+                           initproperty QName(PackageNamespace("dragonforce.core"),"Camera")
+                           returnvoid
+                        end ; code
+                     end ; body
+                  end ; method
+                  

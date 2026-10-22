@@ -1,0 +1,935 @@
+package dragonforce.math
+{
+   public class Vec2
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 3
+            maxscopedepth 4
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public var x:Number;
+      
+      public var y:Number;
+      
+      public function Vec2(param1:Number = 0, param2:Number = 0)
+      {
+         method
+            name null
+            flag HAS_OPTIONAL
+            param QName(PackageNamespace(""),"Number")
+            param QName(PackageNamespace(""),"Number")
+            optional Integer(0)
+            optional Integer(0)
+            returns null
+            
+            body
+               maxstack 2
+               localcount 3
+               initscopedepth 4
+               maxscopedepth 5
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  getlocal0
+                  getlocal1
+                  initproperty QName(PackageNamespace(""),"x")
+                  getlocal0
+                  getlocal2
+                  initproperty QName(PackageNamespace(""),"y")
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public static function project(param1:Number, param2:Number) : Vec2
+      {
+         trait method QName(PackageNamespace(""),"project")
+            flag FINAL
+            dispid 3
+            method
+               name null
+               param QName(PackageNamespace(""),"Number")
+               param QName(PackageNamespace(""),"Number")
+               returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+               
+               body
+                  maxstack 4
+                  localcount 3
+                  initscopedepth 3
+                  maxscopedepth 4
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     getlocal0
+                     getlex QName(PackageNamespace(""),"Math")
+                     getlocal1
+                     callproperty QName(PackageNamespace(""),"cos"), 1
+                     getlocal2
+                     multiply
+                     getlex QName(PackageNamespace(""),"Math")
+                     getlocal1
+                     callproperty QName(PackageNamespace(""),"sin"), 1
+                     getlocal2
+                     multiply
+                     construct 2
+                     returnvalue
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         public function plus(param1:Vec2) : void
+         {
+            trait method QName(PackageNamespace(""),"plus")
+               dispid 0
+               method
+                  name null
+                  param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 3
+                     localcount 2
+                     initscopedepth 4
+                     maxscopedepth 5
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal0
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"x")
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"x")
+                        add
+                        initproperty QName(PackageNamespace(""),"x")
+                        getlocal0
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"y")
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"y")
+                        add
+                        initproperty QName(PackageNamespace(""),"y")
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            public function minus(param1:Vec2) : void
+            {
+               trait method QName(PackageNamespace(""),"minus")
+                  dispid 0
+                  method
+                     name null
+                     param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                     returns QName(PackageNamespace(""),"void")
+                     
+                     body
+                        maxstack 3
+                        localcount 2
+                        initscopedepth 4
+                        maxscopedepth 5
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           getlocal0
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"x")
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"x")
+                           subtract
+                           initproperty QName(PackageNamespace(""),"x")
+                           getlocal0
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"y")
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"y")
+                           subtract
+                           initproperty QName(PackageNamespace(""),"y")
+                           returnvoid
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+               
+               public function times(param1:Number) : void
+               {
+                  trait method QName(PackageNamespace(""),"times")
+                     dispid 0
+                     method
+                        name null
+                        param QName(PackageNamespace(""),"Number")
+                        returns QName(PackageNamespace(""),"void")
+                        
+                        body
+                           maxstack 3
+                           localcount 2
+                           initscopedepth 4
+                           maxscopedepth 5
+                           
+                           code
+                              getlocal0
+                              pushscope
+                              getlocal0
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"x")
+                              getlocal1
+                              multiply
+                              initproperty QName(PackageNamespace(""),"x")
+                              getlocal0
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"y")
+                              getlocal1
+                              multiply
+                              initproperty QName(PackageNamespace(""),"y")
+                              returnvoid
+                           end ; code
+                        end ; body
+                     end ; method
+                  }
+                  
+                  public function divided(param1:Number) : void
+                  {
+                     trait method QName(PackageNamespace(""),"divided")
+                        dispid 0
+                        method
+                           name null
+                           param QName(PackageNamespace(""),"Number")
+                           returns QName(PackageNamespace(""),"void")
+                           
+                           body
+                              maxstack 3
+                              localcount 2
+                              initscopedepth 4
+                              maxscopedepth 5
+                              
+                              code
+                                 getlocal0
+                                 pushscope
+                                 getlocal0
+                                 getlocal0
+                                 getproperty QName(PackageNamespace(""),"x")
+                                 getlocal1
+                                 divide
+                                 initproperty QName(PackageNamespace(""),"x")
+                                 getlocal0
+                                 getlocal0
+                                 getproperty QName(PackageNamespace(""),"y")
+                                 getlocal1
+                                 divide
+                                 initproperty QName(PackageNamespace(""),"y")
+                                 returnvoid
+                              end ; code
+                           end ; body
+                        end ; method
+                     }
+                     
+                     public function normalize() : void
+                     {
+                        trait method QName(PackageNamespace(""),"normalize")
+                           dispid 0
+                           method
+                              name null
+                              returns QName(PackageNamespace(""),"void")
+                              
+                              body
+                                 maxstack 2
+                                 localcount 1
+                                 initscopedepth 4
+                                 maxscopedepth 5
+                                 
+                                 code
+                                    getlocal0
+                                    pushscope
+                                    getlocal0
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"length")
+                                    callpropvoid QName(PackageNamespace(""),"divided"), 1
+                                    returnvoid
+                                 end ; code
+                              end ; body
+                           end ; method
+                        }
+                        
+                        public function reverse() : void
+                        {
+                           trait method QName(PackageNamespace(""),"reverse")
+                              dispid 0
+                              method
+                                 name null
+                                 returns QName(PackageNamespace(""),"void")
+                                 
+                                 body
+                                    maxstack 2
+                                    localcount 1
+                                    initscopedepth 4
+                                    maxscopedepth 5
+                                    
+                                    code
+                                       getlocal0
+                                       pushscope
+                                       getlocal0
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"x")
+                                       negate
+                                       initproperty QName(PackageNamespace(""),"x")
+                                       getlocal0
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"y")
+                                       negate
+                                       initproperty QName(PackageNamespace(""),"y")
+                                       returnvoid
+                                    end ; code
+                                 end ; body
+                              end ; method
+                           }
+                           
+                           public function zero() : void
+                           {
+                              trait method QName(PackageNamespace(""),"zero")
+                                 dispid 0
+                                 method
+                                    name null
+                                    returns QName(PackageNamespace(""),"void")
+                                    
+                                    body
+                                       maxstack 2
+                                       localcount 1
+                                       initscopedepth 4
+                                       maxscopedepth 5
+                                       
+                                       code
+                                          getlocal0
+                                          pushscope
+                                          getlocal0
+                                          pushbyte 0
+                                          initproperty QName(PackageNamespace(""),"x")
+                                          getlocal0
+                                          pushbyte 0
+                                          initproperty QName(PackageNamespace(""),"y")
+                                          returnvoid
+                                       end ; code
+                                    end ; body
+                                 end ; method
+                              }
+                              
+                              public function rotation(param1:Number) : void
+                              {
+                                 trait method QName(PackageNamespace(""),"rotation")
+                                    dispid 0
+                                    method
+                                       name null
+                                       param QName(PackageNamespace(""),"Number")
+                                       returns QName(PackageNamespace(""),"void")
+                                       
+                                       body
+                                          maxstack 4
+                                          localcount 4
+                                          initscopedepth 4
+                                          maxscopedepth 5
+                                          
+                                          code
+                                             getlocal0
+                                             pushscope
+                                             getlex QName(PackageNamespace(""),"Math")
+                                             getlocal1
+                                             callproperty QName(PackageNamespace(""),"cos"), 1
+                                             convert_d
+                                             setlocal2
+                                             getlex QName(PackageNamespace(""),"Math")
+                                             getlocal1
+                                             callproperty QName(PackageNamespace(""),"sin"), 1
+                                             convert_d
+                                             setlocal3
+                                             getlocal0
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"x")
+                                             getlocal2
+                                             multiply
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"y")
+                                             getlocal3
+                                             multiply
+                                             subtract
+                                             initproperty QName(PackageNamespace(""),"x")
+                                             getlocal0
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"x")
+                                             getlocal3
+                                             multiply
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"y")
+                                             getlocal2
+                                             multiply
+                                             add
+                                             initproperty QName(PackageNamespace(""),"y")
+                                             returnvoid
+                                          end ; code
+                                       end ; body
+                                    end ; method
+                                 }
+                                 
+                                 public function getPlus(param1:Vec2) : Vec2
+                                 {
+                                    trait method QName(PackageNamespace(""),"getPlus")
+                                       dispid 0
+                                       method
+                                          name null
+                                          param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                          returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                          
+                                          body
+                                             maxstack 4
+                                             localcount 2
+                                             initscopedepth 4
+                                             maxscopedepth 5
+                                             
+                                             code
+                                                getlocal0
+                                                pushscope
+                                                findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                getlocal0
+                                                getproperty QName(PackageNamespace(""),"x")
+                                                getlocal1
+                                                getproperty QName(PackageNamespace(""),"x")
+                                                add
+                                                getlocal0
+                                                getproperty QName(PackageNamespace(""),"y")
+                                                getlocal1
+                                                getproperty QName(PackageNamespace(""),"y")
+                                                add
+                                                constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                                returnvalue
+                                             end ; code
+                                          end ; body
+                                       end ; method
+                                    }
+                                    
+                                    public function getMinus(param1:Vec2) : Vec2
+                                    {
+                                       trait method QName(PackageNamespace(""),"getMinus")
+                                          dispid 0
+                                          method
+                                             name null
+                                             param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                             returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                             
+                                             body
+                                                maxstack 4
+                                                localcount 2
+                                                initscopedepth 4
+                                                maxscopedepth 5
+                                                
+                                                code
+                                                   getlocal0
+                                                   pushscope
+                                                   findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"x")
+                                                   getlocal1
+                                                   getproperty QName(PackageNamespace(""),"x")
+                                                   subtract
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"y")
+                                                   getlocal1
+                                                   getproperty QName(PackageNamespace(""),"y")
+                                                   subtract
+                                                   constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                                   returnvalue
+                                                end ; code
+                                             end ; body
+                                          end ; method
+                                       }
+                                       
+                                       public function getTimes(param1:Number) : Vec2
+                                       {
+                                          trait method QName(PackageNamespace(""),"getTimes")
+                                             dispid 0
+                                             method
+                                                name null
+                                                param QName(PackageNamespace(""),"Number")
+                                                returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                
+                                                body
+                                                   maxstack 4
+                                                   localcount 2
+                                                   initscopedepth 4
+                                                   maxscopedepth 5
+                                                   
+                                                   code
+                                                      getlocal0
+                                                      pushscope
+                                                      findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                      getlocal0
+                                                      getproperty QName(PackageNamespace(""),"x")
+                                                      getlocal1
+                                                      multiply
+                                                      getlocal0
+                                                      getproperty QName(PackageNamespace(""),"y")
+                                                      getlocal1
+                                                      multiply
+                                                      constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                                      returnvalue
+                                                   end ; code
+                                                end ; body
+                                             end ; method
+                                          }
+                                          
+                                          public function getDivided(param1:Number) : Vec2
+                                          {
+                                             trait method QName(PackageNamespace(""),"getDivided")
+                                                dispid 0
+                                                method
+                                                   name null
+                                                   param QName(PackageNamespace(""),"Number")
+                                                   returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                   
+                                                   body
+                                                      maxstack 4
+                                                      localcount 2
+                                                      initscopedepth 4
+                                                      maxscopedepth 5
+                                                      
+                                                      code
+                                                         getlocal0
+                                                         pushscope
+                                                         getlocal1
+                                                         pushbyte 0
+                                                         equals
+                                                         iffalse ofs0015
+                                                         findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                         constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 0
+                                                         coerce QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                         jump ofs0026
+                                                ofs0015:
+                                                         findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                         getlocal0
+                                                         getproperty QName(PackageNamespace(""),"x")
+                                                         getlocal1
+                                                         divide
+                                                         getlocal0
+                                                         getproperty QName(PackageNamespace(""),"y")
+                                                         getlocal1
+                                                         divide
+                                                         constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                                         coerce QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                ofs0026:
+                                                         returnvalue
+                                                      end ; code
+                                                   end ; body
+                                                end ; method
+                                             }
+                                             
+                                             public function dot(param1:Vec2) : Number
+                                             {
+                                                trait method QName(PackageNamespace(""),"dot")
+                                                   dispid 0
+                                                   method
+                                                      name null
+                                                      param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                      returns QName(PackageNamespace(""),"Number")
+                                                      
+                                                      body
+                                                         maxstack 3
+                                                         localcount 2
+                                                         initscopedepth 4
+                                                         maxscopedepth 5
+                                                         
+                                                         code
+                                                            getlocal0
+                                                            pushscope
+                                                            getlocal0
+                                                            getproperty QName(PackageNamespace(""),"x")
+                                                            getlocal1
+                                                            getproperty QName(PackageNamespace(""),"x")
+                                                            multiply
+                                                            getlocal0
+                                                            getproperty QName(PackageNamespace(""),"y")
+                                                            getlocal1
+                                                            getproperty QName(PackageNamespace(""),"y")
+                                                            multiply
+                                                            add
+                                                            returnvalue
+                                                         end ; code
+                                                      end ; body
+                                                   end ; method
+                                                }
+                                                
+                                                public function cross(param1:Vec2) : Number
+                                                {
+                                                   trait method QName(PackageNamespace(""),"cross")
+                                                      dispid 0
+                                                      method
+                                                         name null
+                                                         param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                         returns QName(PackageNamespace(""),"Number")
+                                                         
+                                                         body
+                                                            maxstack 3
+                                                            localcount 2
+                                                            initscopedepth 4
+                                                            maxscopedepth 5
+                                                            
+                                                            code
+                                                               getlocal0
+                                                               pushscope
+                                                               getlocal0
+                                                               getproperty QName(PackageNamespace(""),"x")
+                                                               getlocal1
+                                                               getproperty QName(PackageNamespace(""),"y")
+                                                               multiply
+                                                               getlocal0
+                                                               getproperty QName(PackageNamespace(""),"y")
+                                                               getlocal1
+                                                               getproperty QName(PackageNamespace(""),"x")
+                                                               multiply
+                                                               subtract
+                                                               returnvalue
+                                                            end ; code
+                                                         end ; body
+                                                      end ; method
+                                                   }
+                                                   
+                                                   public function getUnit() : Vec2
+                                                   {
+                                                      trait method QName(PackageNamespace(""),"getUnit")
+                                                         dispid 0
+                                                         method
+                                                            name null
+                                                            returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                            
+                                                            body
+                                                               maxstack 2
+                                                               localcount 1
+                                                               initscopedepth 4
+                                                               maxscopedepth 5
+                                                               
+                                                               code
+                                                                  getlocal0
+                                                                  pushscope
+                                                                  getlocal0
+                                                                  getlocal0
+                                                                  getproperty QName(PackageNamespace(""),"length")
+                                                                  callproperty QName(PackageNamespace(""),"getDivided"), 1
+                                                                  returnvalue
+                                                               end ; code
+                                                            end ; body
+                                                         end ; method
+                                                      }
+                                                      
+                                                      public function getPerp() : Vec2
+                                                      {
+                                                         trait method QName(PackageNamespace(""),"getPerp")
+                                                            dispid 0
+                                                            method
+                                                               name null
+                                                               returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                               
+                                                               body
+                                                                  maxstack 3
+                                                                  localcount 1
+                                                                  initscopedepth 4
+                                                                  maxscopedepth 5
+                                                                  
+                                                                  code
+                                                                     getlocal0
+                                                                     pushscope
+                                                                     findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                                     getlocal0
+                                                                     getproperty QName(PackageNamespace(""),"y")
+                                                                     negate
+                                                                     getlocal0
+                                                                     getproperty QName(PackageNamespace(""),"x")
+                                                                     constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                                                     returnvalue
+                                                                  end ; code
+                                                               end ; body
+                                                            end ; method
+                                                         }
+                                                         
+                                                         public function getRotation(param1:Number) : Vec2
+                                                         {
+                                                            trait method QName(PackageNamespace(""),"getRotation")
+                                                               dispid 0
+                                                               method
+                                                                  name null
+                                                                  param QName(PackageNamespace(""),"Number")
+                                                                  returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                                  
+                                                                  body
+                                                                     maxstack 5
+                                                                     localcount 4
+                                                                     initscopedepth 4
+                                                                     maxscopedepth 5
+                                                                     
+                                                                     code
+                                                                        getlocal0
+                                                                        pushscope
+                                                                        getlex QName(PackageNamespace(""),"Math")
+                                                                        getlocal1
+                                                                        callproperty QName(PackageNamespace(""),"cos"), 1
+                                                                        convert_d
+                                                                        setlocal2
+                                                                        getlex QName(PackageNamespace(""),"Math")
+                                                                        getlocal1
+                                                                        callproperty QName(PackageNamespace(""),"sin"), 1
+                                                                        convert_d
+                                                                        setlocal3
+                                                                        findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                                        getlocal0
+                                                                        getproperty QName(PackageNamespace(""),"x")
+                                                                        getlocal2
+                                                                        multiply
+                                                                        getlocal0
+                                                                        getproperty QName(PackageNamespace(""),"y")
+                                                                        getlocal3
+                                                                        multiply
+                                                                        subtract
+                                                                        getlocal0
+                                                                        getproperty QName(PackageNamespace(""),"x")
+                                                                        getlocal3
+                                                                        multiply
+                                                                        getlocal0
+                                                                        getproperty QName(PackageNamespace(""),"y")
+                                                                        getlocal2
+                                                                        multiply
+                                                                        add
+                                                                        constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                                                        returnvalue
+                                                                     end ; code
+                                                                  end ; body
+                                                               end ; method
+                                                            }
+                                                            
+                                                            public function getAngle(param1:Vec2) : Number
+                                                            {
+                                                               trait method QName(PackageNamespace(""),"getAngle")
+                                                                  dispid 0
+                                                                  method
+                                                                     name null
+                                                                     param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                                     returns QName(PackageNamespace(""),"Number")
+                                                                     
+                                                                     body
+                                                                        maxstack 4
+                                                                        localcount 2
+                                                                        initscopedepth 4
+                                                                        maxscopedepth 5
+                                                                        
+                                                                        code
+                                                                           getlocal0
+                                                                           pushscope
+                                                                           getlex QName(PackageNamespace(""),"Math")
+                                                                           getlocal1
+                                                                           getproperty QName(PackageNamespace(""),"y")
+                                                                           getlocal0
+                                                                           getproperty QName(PackageNamespace(""),"y")
+                                                                           subtract
+                                                                           getlocal1
+                                                                           getproperty QName(PackageNamespace(""),"x")
+                                                                           getlocal0
+                                                                           getproperty QName(PackageNamespace(""),"x")
+                                                                           subtract
+                                                                           callproperty QName(PackageNamespace(""),"atan2"), 2
+                                                                           returnvalue
+                                                                        end ; code
+                                                                     end ; body
+                                                                  end ; method
+                                                               }
+                                                               
+                                                               public function getDistance(param1:Vec2) : Number
+                                                               {
+                                                                  trait method QName(PackageNamespace(""),"getDistance")
+                                                                     dispid 0
+                                                                     method
+                                                                        name null
+                                                                        param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                                        returns QName(PackageNamespace(""),"Number")
+                                                                        
+                                                                        body
+                                                                           maxstack 5
+                                                                           localcount 2
+                                                                           initscopedepth 4
+                                                                           maxscopedepth 5
+                                                                           
+                                                                           code
+                                                                              getlocal0
+                                                                              pushscope
+                                                                              getlex QName(PackageNamespace(""),"Math")
+                                                                              getlocal1
+                                                                              getproperty QName(PackageNamespace(""),"x")
+                                                                              getlocal0
+                                                                              getproperty QName(PackageNamespace(""),"x")
+                                                                              subtract
+                                                                              getlocal1
+                                                                              getproperty QName(PackageNamespace(""),"x")
+                                                                              getlocal0
+                                                                              getproperty QName(PackageNamespace(""),"x")
+                                                                              subtract
+                                                                              multiply
+                                                                              getlocal1
+                                                                              getproperty QName(PackageNamespace(""),"y")
+                                                                              getlocal0
+                                                                              getproperty QName(PackageNamespace(""),"y")
+                                                                              subtract
+                                                                              getlocal1
+                                                                              getproperty QName(PackageNamespace(""),"y")
+                                                                              getlocal0
+                                                                              getproperty QName(PackageNamespace(""),"y")
+                                                                              subtract
+                                                                              multiply
+                                                                              add
+                                                                              callproperty QName(PackageNamespace(""),"sqrt"), 1
+                                                                              returnvalue
+                                                                           end ; code
+                                                                        end ; body
+                                                                     end ; method
+                                                                  }
+                                                                  
+                                                                  public function clone() : Vec2
+                                                                  {
+                                                                     trait method QName(PackageNamespace(""),"clone")
+                                                                        dispid 0
+                                                                        method
+                                                                           name null
+                                                                           returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                                           
+                                                                           body
+                                                                              maxstack 3
+                                                                              localcount 1
+                                                                              initscopedepth 4
+                                                                              maxscopedepth 5
+                                                                              
+                                                                              code
+                                                                                 getlocal0
+                                                                                 pushscope
+                                                                                 findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                                                 getlocal0
+                                                                                 getproperty QName(PackageNamespace(""),"x")
+                                                                                 getlocal0
+                                                                                 getproperty QName(PackageNamespace(""),"y")
+                                                                                 constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                                                                 returnvalue
+                                                                              end ; code
+                                                                           end ; body
+                                                                        end ; method
+                                                                     }
+                                                                     
+                                                                     public function get length() : Number
+                                                                     {
+                                                                        trait getter QName(PackageNamespace(""),"length")
+                                                                           dispid 0
+                                                                           method
+                                                                              name null
+                                                                              returns QName(PackageNamespace(""),"Number")
+                                                                              
+                                                                              body
+                                                                                 maxstack 4
+                                                                                 localcount 1
+                                                                                 initscopedepth 4
+                                                                                 maxscopedepth 5
+                                                                                 
+                                                                                 code
+                                                                                    getlocal0
+                                                                                    pushscope
+                                                                                    getlex QName(PackageNamespace(""),"Math")
+                                                                                    getlocal0
+                                                                                    getproperty QName(PackageNamespace(""),"x")
+                                                                                    getlocal0
+                                                                                    getproperty QName(PackageNamespace(""),"x")
+                                                                                    multiply
+                                                                                    getlocal0
+                                                                                    getproperty QName(PackageNamespace(""),"y")
+                                                                                    getlocal0
+                                                                                    getproperty QName(PackageNamespace(""),"y")
+                                                                                    multiply
+                                                                                    add
+                                                                                    callproperty QName(PackageNamespace(""),"sqrt"), 1
+                                                                                    returnvalue
+                                                                                 end ; code
+                                                                              end ; body
+                                                                           end ; method
+                                                                        }
+                                                                        
+                                                                        public function toString() : String
+                                                                        {
+                                                                           trait method QName(PackageNamespace(""),"toString")
+                                                                              dispid 0
+                                                                              method
+                                                                                 name null
+                                                                                 returns QName(PackageNamespace(""),"String")
+                                                                                 
+                                                                                 body
+                                                                                    maxstack 2
+                                                                                    localcount 1
+                                                                                    initscopedepth 4
+                                                                                    maxscopedepth 5
+                                                                                    
+                                                                                    code
+                                                                                       getlocal0
+                                                                                       pushscope
+                                                                                       pushstring "(x="
+                                                                                       getlocal0
+                                                                                       getproperty QName(PackageNamespace(""),"x")
+                                                                                       add
+                                                                                       pushstring ", y="
+                                                                                       add
+                                                                                       getlocal0
+                                                                                       getproperty QName(PackageNamespace(""),"y")
+                                                                                       add
+                                                                                       pushstring ")"
+                                                                                       add
+                                                                                       returnvalue
+                                                                                    end ; code
+                                                                                 end ; body
+                                                                              end ; method
+                                                                           }
+                                                                        }
+                                                                     }
+                                                                     
+                                                                     method
+                                                                        name null
+                                                                        returns null
+                                                                        
+                                                                        body
+                                                                           maxstack 2
+                                                                           localcount 1
+                                                                           initscopedepth 1
+                                                                           maxscopedepth 3
+                                                                           
+                                                                           code
+                                                                              getlocal0
+                                                                              pushscope
+                                                                              findpropstrict Multiname("Vec2",[PackageNamespace("dragonforce.math")])
+                                                                              getlex QName(PackageNamespace(""),"Object")
+                                                                              pushscope
+                                                                              getlex QName(PackageNamespace(""),"Object")
+                                                                              newclass 9
+                                                                              popscope
+                                                                              initproperty QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                                              returnvoid
+                                                                           end ; code
+                                                                        end ; body
+                                                                     end ; method
+                                                                     

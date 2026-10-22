@@ -1,0 +1,29 @@
+[
+  {
+    "job": "unit-sprite-bounds",
+    "exitCode": 0,
+    "seconds": 5.36,
+    "source": "reference/super-assets-original.swf",
+    "arguments": [
+      "-format",
+      "sprite:svg",
+      "-export",
+      "sprite",
+      ".local/unit-sprite-bounds",
+      "reference/super-assets-original.swf"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  },
+  {
+    "job": "assets-xml",
+    "exitCode": 0,
+    "seconds": 3.2,
+    "source": "reference/super-assets-original.swf",
+    "arguments": [
+      "-swf2xml",
+      "reference/super-assets-original.swf",
+      "recovered/assets.xml"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  }
+]

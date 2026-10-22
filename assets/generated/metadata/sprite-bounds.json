@@ -1,0 +1,5353 @@
+{
+  "coordinateUnit": "Flash pixels",
+  "frames": {
+    "recovered/unit-sprites/DefineSprite_1009_A8_attack/1.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "cd64e2e368a504440a48b1a6fb7a91c2eec1f55b951d3f190a4d38eb655654fe"
+    },
+    "recovered/unit-sprites/DefineSprite_1009_A8_attack/2.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "e2e661a991f590e091a64259628ef107088fca8d51c699b63d903fa43b6a5eb8"
+    },
+    "recovered/unit-sprites/DefineSprite_1009_A8_attack/3.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "c115fdbc223891de2a04c6232a7f7b3d604d81926e5505b351b68372a095b7de"
+    },
+    "recovered/unit-sprites/DefineSprite_1009_A8_attack/4.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "8c1865b13bb2e8d85f2563e3400910d148cb3db4bbaa84465e86857bea8814c1"
+    },
+    "recovered/unit-sprites/DefineSprite_1009_A8_attack/5.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "0d0fd6b4f1a07789cb2054f300901a130f5747e345282151defea2a1e84b6646"
+    },
+    "recovered/unit-sprites/DefineSprite_1009_A8_attack/6.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "1de5099287f5c5e7a6cf4da985a156481316c184a2a33cfb2cd2516e828cade0"
+    },
+    "recovered/unit-sprites/DefineSprite_1022_A7_run/1.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "e0cc48c3e2af430f7ce18a1f1c1519ef5c9e00052c3976030f8af1deecead163"
+    },
+    "recovered/unit-sprites/DefineSprite_1022_A7_run/2.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "9c93bc48725e619c906c07358063ef75938c3a9028e6f6a00cb659a9ffedd027"
+    },
+    "recovered/unit-sprites/DefineSprite_1022_A7_run/3.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "8a7449739322c39823774ec1f0be6d57a6602820021afe641653d6133f9e16a6"
+    },
+    "recovered/unit-sprites/DefineSprite_1022_A7_run/4.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "321aa7950db0cb2fa15feefa32a1f947f92292744592277076c3bcb9b666de01"
+    },
+    "recovered/unit-sprites/DefineSprite_1022_A7_run/5.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "ed506eddca704d2a8087e4ffeda98553ea5106c8e896df0a101ad34a4395bd05"
+    },
+    "recovered/unit-sprites/DefineSprite_1022_A7_run/6.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "fa9f7881c0c2a57cc2219b5d22ab86780f02df7df5368be6a815bcefd141045e"
+    },
+    "recovered/unit-sprites/DefineSprite_1029_A7_idle/1.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 37.8,
+        "xMin": -18.9,
+        "yMin": -55.0
+      },
+      "svgSha256": "be168041bbcff19d5284a3d955f95b8e7e8011de85070b4a934fcd996b16ee85"
+    },
+    "recovered/unit-sprites/DefineSprite_1029_A7_idle/2.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 37.8,
+        "xMin": -18.9,
+        "yMin": -55.0
+      },
+      "svgSha256": "720d4337a1d0994c91b508ee4174545e6f970a8c3197e428a30d5403b09db3d3"
+    },
+    "recovered/unit-sprites/DefineSprite_1029_A7_idle/3.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 37.8,
+        "xMin": -18.9,
+        "yMin": -55.0
+      },
+      "svgSha256": "7b2582f0ba332dc36f8bafbd482988069668f91bd94a4a3b337110b66c2dffc3"
+    },
+    "recovered/unit-sprites/DefineSprite_1036_A7_dead/1.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 71.0,
+        "xMin": -25.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "593657c5e96782f078c68db7be170c26da8c31dbb8776ad0797590d0d4ec0079"
+    },
+    "recovered/unit-sprites/DefineSprite_1036_A7_dead/2.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 71.0,
+        "xMin": -25.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "6b7927d94213870a900812deceb248777e43341aa74590235d338b919e8cf4d1"
+    },
+    "recovered/unit-sprites/DefineSprite_1036_A7_dead/3.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 71.0,
+        "xMin": -25.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "dce641cf8139541f606629dbc50b0df4236f76a95654c166a2df2f4ee456da65"
+    },
+    "recovered/unit-sprites/DefineSprite_1049_A7_attack/1.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "3d174e9d3556ee7ffcc04b72a9381137e54c5b67ffcdc13da2a2bc0b07de104e"
+    },
+    "recovered/unit-sprites/DefineSprite_1049_A7_attack/2.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "a0853fb84f107720d4370ca036a725bf2c90d10e1049a10b2613a8d4b0ca8846"
+    },
+    "recovered/unit-sprites/DefineSprite_1049_A7_attack/3.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "2bb56d0da94349a041f6fcfd6ba575cf9551b10fbd90f9da2197b27aec91742a"
+    },
+    "recovered/unit-sprites/DefineSprite_1049_A7_attack/4.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "54a584a80ed2b1167c8546db7ba20a6d9d23eb6eb1889aea2754a6af1489a2d6"
+    },
+    "recovered/unit-sprites/DefineSprite_1049_A7_attack/5.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "6e74ad74678bb3c77c8122507f40567a9329e45fff9f7b0ada7daf1d594e79b2"
+    },
+    "recovered/unit-sprites/DefineSprite_1049_A7_attack/6.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "6b99f5fd5ba6b235f39ad1a7532e467f83ea67883b0c5edfc03b71ccfbc7fd34"
+    },
+    "recovered/unit-sprites/DefineSprite_104_B15_dead/1.png": {
+      "bounds": {
+        "height": 51.0,
+        "width": 95.0,
+        "xMin": -42.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "a9de09a58aaab125039a919d8451080101f6d03896e605b1010507fa2f6aca3b"
+    },
+    "recovered/unit-sprites/DefineSprite_104_B15_dead/2.png": {
+      "bounds": {
+        "height": 51.0,
+        "width": 95.0,
+        "xMin": -42.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "92a31c2f16a97e9a24949262a9513a3abe96ac8381299877332722b29bde38ed"
+    },
+    "recovered/unit-sprites/DefineSprite_104_B15_dead/3.png": {
+      "bounds": {
+        "height": 51.0,
+        "width": 95.0,
+        "xMin": -42.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "14d69683ebfbed4db4d02d3ec10981234a128046324469d019b453d8181f217f"
+    },
+    "recovered/unit-sprites/DefineSprite_1062_A6_run/1.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "f13c073d36a36e01446277a72ec2ba4cf73676f53648b7d2b9035071a4c5fa0c"
+    },
+    "recovered/unit-sprites/DefineSprite_1062_A6_run/2.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "1d60c75a16cfa1f4fc2f0ebf86c6d8350cad2c7737d0d3155c4e9c26b16ab239"
+    },
+    "recovered/unit-sprites/DefineSprite_1062_A6_run/3.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "12002f09e0f6fe4c568ff590a47c8c6ed5a40f3e163bec671a1abf46135a8640"
+    },
+    "recovered/unit-sprites/DefineSprite_1062_A6_run/4.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "eacc5de384e1aabbb32b090f3eeb20f411230ee6b7475492cceddfc1e9a7c5a1"
+    },
+    "recovered/unit-sprites/DefineSprite_1062_A6_run/5.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "ace506d59e4d450022860e07e134225e30bfe9ddde25daecfc74a21b7f5ed755"
+    },
+    "recovered/unit-sprites/DefineSprite_1062_A6_run/6.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "25666b078d1244bd848b589ea124c54c2ba11330fd15d48359d6ebee6f6b6f61"
+    },
+    "recovered/unit-sprites/DefineSprite_1069_A6_idle/1.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "23d308a518dd11e785a4caa9ac6de3e00a4b217a98eeff89b0afd668449a3626"
+    },
+    "recovered/unit-sprites/DefineSprite_1069_A6_idle/2.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "5e29358381be2ab33991d09d4016a4544810d51dc9ef68901d61f4735fb83008"
+    },
+    "recovered/unit-sprites/DefineSprite_1069_A6_idle/3.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "48fccad2e50a9a7d5bd5019834ca349c7844d8ed67c7ed116138adce44d2a3c3"
+    },
+    "recovered/unit-sprites/DefineSprite_1076_A6_dead/1.png": {
+      "bounds": {
+        "height": 43.0,
+        "width": 58.0,
+        "xMin": -30.0,
+        "yMin": -41.0
+      },
+      "svgSha256": "2bc5ac557cbed708b602cf327768767776d9a072b949b875e793ae96dc6f6ceb"
+    },
+    "recovered/unit-sprites/DefineSprite_1076_A6_dead/2.png": {
+      "bounds": {
+        "height": 43.0,
+        "width": 58.0,
+        "xMin": -30.0,
+        "yMin": -41.0
+      },
+      "svgSha256": "557363cb423d90a6e4d1eedc54a00de5f9365a2b0b89daed1371f1e310195bc0"
+    },
+    "recovered/unit-sprites/DefineSprite_1076_A6_dead/3.png": {
+      "bounds": {
+        "height": 43.0,
+        "width": 58.0,
+        "xMin": -30.0,
+        "yMin": -41.0
+      },
+      "svgSha256": "7a0c8f4fde2a1271cff2378ab5ce05e6123b1c5c485662e5c17f1d2b52b80e5a"
+    },
+    "recovered/unit-sprites/DefineSprite_1089_A6_attack/1.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "a2091d7bdb505baffeac70673a528219447ec1e8a2652c855e8c3357923b4553"
+    },
+    "recovered/unit-sprites/DefineSprite_1089_A6_attack/2.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "1856022c7a643dba363edfb51319f3a4fe692b7bf1881d0cbc9df4b36a3eba7f"
+    },
+    "recovered/unit-sprites/DefineSprite_1089_A6_attack/3.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "5ed173c242d0cf642a87046610250065b4c1663b3ce2a8c830c7691d76f29143"
+    },
+    "recovered/unit-sprites/DefineSprite_1089_A6_attack/4.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "4eb84b2c675d47aea3a9d0ba38ea13613e4f9697bbeddad40168778f541d5b75"
+    },
+    "recovered/unit-sprites/DefineSprite_1089_A6_attack/5.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "807a58b3a2c2645ebc5fb5520237a27d8a44b5ac292fb56ab31a4975ef4bad87"
+    },
+    "recovered/unit-sprites/DefineSprite_1089_A6_attack/6.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "533524f146f1741c445acd6f0105d657e60bf9b2b39711d360be7f8a2bddc76a"
+    },
+    "recovered/unit-sprites/DefineSprite_1102_A5_run/1.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "8c4d9a9eb503cd1cfc5c97ea0aa9b543290b69cf0a61a90c17267a3e7e3533e3"
+    },
+    "recovered/unit-sprites/DefineSprite_1102_A5_run/2.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "0b7a355e791cd8f73d49f074d987de2b7748d0b8d86549d2aa7757794cb92185"
+    },
+    "recovered/unit-sprites/DefineSprite_1102_A5_run/3.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "3aa3559bea7a333b10eb2b9c8471393d3af085b3395aaacbf51b9068acee3caf"
+    },
+    "recovered/unit-sprites/DefineSprite_1102_A5_run/4.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "8e6c059a450b0222247322774cc57b2b9f422427dea31036c9a0e6914c474aac"
+    },
+    "recovered/unit-sprites/DefineSprite_1102_A5_run/5.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "c9b3ee460a74de6e9b34e0935a7b8413befc8dac81e7d982bedca60c35056179"
+    },
+    "recovered/unit-sprites/DefineSprite_1102_A5_run/6.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "668ebe188270f68cef572341bd3ce9c61ae5d4eb528e974eee6fcb7a6456ba5d"
+    },
+    "recovered/unit-sprites/DefineSprite_1109_A5_idle/1.png": {
+      "bounds": {
+        "height": 53.65,
+        "width": 58.9,
+        "xMin": -40.0,
+        "yMin": -48.0
+      },
+      "svgSha256": "f1819e5764c3c1f88b87b909d6cf0becb5ba3db2c7f656af83a02522fc7e5e18"
+    },
+    "recovered/unit-sprites/DefineSprite_1109_A5_idle/2.png": {
+      "bounds": {
+        "height": 53.65,
+        "width": 58.9,
+        "xMin": -40.0,
+        "yMin": -48.0
+      },
+      "svgSha256": "f4d1195bcef56e56eb96ab2433f166abe14018f409d39d696b0baa10029fa52d"
+    },
+    "recovered/unit-sprites/DefineSprite_1109_A5_idle/3.png": {
+      "bounds": {
+        "height": 53.65,
+        "width": 58.9,
+        "xMin": -40.0,
+        "yMin": -48.0
+      },
+      "svgSha256": "71bdb90dffe62122f20b4272061ccf5f1c15edcfbfbde0ca31812c2344148387"
+    },
+    "recovered/unit-sprites/DefineSprite_1116_A5_dead/1.png": {
+      "bounds": {
+        "height": 53.0,
+        "width": 93.0,
+        "xMin": -42.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "8368eea676994683b4554fdbe2f6811ea97c27a923eb716b30a6a59e6645176a"
+    },
+    "recovered/unit-sprites/DefineSprite_1116_A5_dead/2.png": {
+      "bounds": {
+        "height": 53.0,
+        "width": 93.0,
+        "xMin": -42.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "af1b6560ddc222b508356e08e80f39c17661626411d8cf7375fe120d3559304a"
+    },
+    "recovered/unit-sprites/DefineSprite_1116_A5_dead/3.png": {
+      "bounds": {
+        "height": 53.0,
+        "width": 93.0,
+        "xMin": -42.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "7b6e82e808797b6d21aaebf345df4f4741051ec1eb39809c0eccbd3d9d7380d6"
+    },
+    "recovered/unit-sprites/DefineSprite_1127_A5_attack/1.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "5126258671ab56299bf8855b26bcb4193955658ae2d8087f82128f050822fa08"
+    },
+    "recovered/unit-sprites/DefineSprite_1127_A5_attack/2.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "44b18466343b929e33cf8db66c4d71832ea46f6770305cb5b5465b20782bdbb6"
+    },
+    "recovered/unit-sprites/DefineSprite_1127_A5_attack/3.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "90bcd3b2b36f0286d932a3e1d7dc7d53b1ace359e1bcbf1e69205780fda80d03"
+    },
+    "recovered/unit-sprites/DefineSprite_1127_A5_attack/4.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "2fac3067a05ee61e646b978073fc00d45752ef93bbb7cdd83fe78d2e6d54744d"
+    },
+    "recovered/unit-sprites/DefineSprite_1127_A5_attack/5.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "9d34dd50187fdb225c1f28f28d466e9440f8d24c1e0a241ae6e5f62c657614ea"
+    },
+    "recovered/unit-sprites/DefineSprite_1140_A4_run/1.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "2c13297e3f00cb2a379736f447f8dda0244a695321ac16f8d09a9548412662a4"
+    },
+    "recovered/unit-sprites/DefineSprite_1140_A4_run/2.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "7eae1e96794fcfce9a92332320fd079a669f876c82e053eca958b058e3063edb"
+    },
+    "recovered/unit-sprites/DefineSprite_1140_A4_run/3.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "ab50ad09b31ac8295e17d6fe8894a4cbf8dd503030391ebd815e63a6e057d6af"
+    },
+    "recovered/unit-sprites/DefineSprite_1140_A4_run/4.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "e9937ebd2d85d2a11c5893a4bf493f5babc391e17aed838b2249664868cc850b"
+    },
+    "recovered/unit-sprites/DefineSprite_1140_A4_run/5.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "253b8fb195efe47aafa13f63a44cfe34d29bf9cd8e5c65061d5073cebd1bdd8f"
+    },
+    "recovered/unit-sprites/DefineSprite_1140_A4_run/6.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "32786154767d4943655eb571b6ecac13de4db412cdfa95b31c1fad21c76b841f"
+    },
+    "recovered/unit-sprites/DefineSprite_1147_A4_idle/1.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "ef047e3691bdc2dcbaf5e12e5db27fbba45ebbf71bf96f343b1b8836b576b7ce"
+    },
+    "recovered/unit-sprites/DefineSprite_1147_A4_idle/2.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "d9fafe96a26a6b1ad6ce1c292aa3165d68659084ad91a52cd4233f85de308da8"
+    },
+    "recovered/unit-sprites/DefineSprite_1147_A4_idle/3.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "5be0fc4e3a2a93d103f446c8944be910005c49426dfa6acc7b8eeff3b8cd369d"
+    },
+    "recovered/unit-sprites/DefineSprite_1154_A4_dead/1.png": {
+      "bounds": {
+        "height": 55.0,
+        "width": 92.0,
+        "xMin": -29.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "c3e6af426c996a788f39287fd1b851a02b76312910c973c95c750fd9e7b96b4e"
+    },
+    "recovered/unit-sprites/DefineSprite_1154_A4_dead/2.png": {
+      "bounds": {
+        "height": 55.0,
+        "width": 92.0,
+        "xMin": -29.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "b98367d853a1d5f67016a32fcdffe5a271970e8d244a88a556228f3c8f848303"
+    },
+    "recovered/unit-sprites/DefineSprite_1154_A4_dead/3.png": {
+      "bounds": {
+        "height": 55.0,
+        "width": 92.0,
+        "xMin": -29.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "52840d0e51574b0b202569d6bfc3384a04f2a327598a944cf6b3a5f065b9d5e4"
+    },
+    "recovered/unit-sprites/DefineSprite_115_B15_attack/1.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "74738c9baebdd73cc7a344a5be4c089c5d8f724dc52857e478eff0cef34f5038"
+    },
+    "recovered/unit-sprites/DefineSprite_115_B15_attack/2.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "bc4960b222fa50565b46c18fe6a5e14640929d94f8eed99004783cf131b72f04"
+    },
+    "recovered/unit-sprites/DefineSprite_115_B15_attack/3.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "0ef82d6ac04d58e712ebe0574ca52da6107bbe0f0c22799ec5db076142a35f81"
+    },
+    "recovered/unit-sprites/DefineSprite_115_B15_attack/4.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "551a1a016b98c2626d98a54b76d0cb462e8bb05db96245bf8a378fe23c2d8f72"
+    },
+    "recovered/unit-sprites/DefineSprite_115_B15_attack/5.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "b08ff9b01daec8ca0136d854f49f300ed01b03d11f3ed27190e84de687dd7eaf"
+    },
+    "recovered/unit-sprites/DefineSprite_1167_A4_attack/1.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "89a4268131db1ef207b743519b6b8f994af2c79b7371bcff630281068fe54733"
+    },
+    "recovered/unit-sprites/DefineSprite_1167_A4_attack/2.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "63149034b157ee5e6f48a19fa7007e1e688abf43584caeb3261f08eb7b788499"
+    },
+    "recovered/unit-sprites/DefineSprite_1167_A4_attack/3.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "07bcfbce270e41eb1367409218edd0ee44f1425d78f005c457a087db0d923bbb"
+    },
+    "recovered/unit-sprites/DefineSprite_1167_A4_attack/4.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "8d82905b87cfcb52fef8fb3d9029f863923f79794e6148abf2e4fa188201c78a"
+    },
+    "recovered/unit-sprites/DefineSprite_1167_A4_attack/5.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "4532ec5b0775904adfa969d2deff347d2f01d305498ae739060e76d891076d53"
+    },
+    "recovered/unit-sprites/DefineSprite_1167_A4_attack/6.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "66892ae958644cbd80da42e03ddc066be6e0d53329e5c30c0f5d42bdb135826a"
+    },
+    "recovered/unit-sprites/DefineSprite_1180_A3_run/1.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "ba5c67f95cf4facc48d6a969f69cc5ab81a3779cb4432e7d6e99f03048f066a9"
+    },
+    "recovered/unit-sprites/DefineSprite_1180_A3_run/2.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "00d36cedf46d23fb19495ca33ebaf731f0e0d2cec7b0868cfeb035e20a0e8aef"
+    },
+    "recovered/unit-sprites/DefineSprite_1180_A3_run/3.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "bf726df00eeda86ad9e6f34abbe819603940ce1d2f41e49adaa0fb96e8f295ad"
+    },
+    "recovered/unit-sprites/DefineSprite_1180_A3_run/4.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "6571742fedb9c632430b398a8dfa61bf15f9623af968a478a0aa967cb3775edb"
+    },
+    "recovered/unit-sprites/DefineSprite_1180_A3_run/5.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "d678059fb70c4964273c0e24aee33f23fe243ca05cec35ad4fec4737d5a90791"
+    },
+    "recovered/unit-sprites/DefineSprite_1180_A3_run/6.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "a6c9906dce1ecb6c656bb71d09b7721b7baa47b133ee6266a939acf051db1727"
+    },
+    "recovered/unit-sprites/DefineSprite_1187_A3_idle/1.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 58.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "bad529a8dbfd9512e42cf7ad6436b536f12cdba23852c56f811e98e36ca33a1a"
+    },
+    "recovered/unit-sprites/DefineSprite_1187_A3_idle/2.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 58.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "610bfe452f0da856053027320b8206eb8a506c511a941438604b6b7fa2dbebfd"
+    },
+    "recovered/unit-sprites/DefineSprite_1187_A3_idle/3.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 58.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "e6ed87ae4122df484f6c3a23a50b65f3bdd2cffc751e79bb5986e6d772a5986a"
+    },
+    "recovered/unit-sprites/DefineSprite_1194_A3_dead/1.png": {
+      "bounds": {
+        "height": 66.0,
+        "width": 86.0,
+        "xMin": -34.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "848d4c8e0f9123c53847d46f38db4b2b787c2d490cda8c2de2adbea9b56250f7"
+    },
+    "recovered/unit-sprites/DefineSprite_1194_A3_dead/2.png": {
+      "bounds": {
+        "height": 66.0,
+        "width": 86.0,
+        "xMin": -34.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "82a18e22db2f3772a46ef1ce8512cf028d1bc56d3561b5acdef57b2c4085f7af"
+    },
+    "recovered/unit-sprites/DefineSprite_1194_A3_dead/3.png": {
+      "bounds": {
+        "height": 66.0,
+        "width": 86.0,
+        "xMin": -34.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "89ab9cd5ee2ff02cac55d9a4297d2f8cb96dcc873f48cb0540b3d852c57ff835"
+    },
+    "recovered/unit-sprites/DefineSprite_1203_A3_attack/1.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 93.0,
+        "xMin": -67.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "4ee22edb31b392407641e51a702d5ad58315f8ac1480efb7376cde88bedfb917"
+    },
+    "recovered/unit-sprites/DefineSprite_1203_A3_attack/2.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 93.0,
+        "xMin": -67.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "bcf67040231818492b807dd3b0a5b07168e4862f34b0b570e16593cabe12af48"
+    },
+    "recovered/unit-sprites/DefineSprite_1203_A3_attack/3.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 93.0,
+        "xMin": -67.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "3a1bda27016c43e5656a3635d24d6fd4ded05f2a1adf49d87973812ecca0e5f8"
+    },
+    "recovered/unit-sprites/DefineSprite_1203_A3_attack/4.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 93.0,
+        "xMin": -67.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "5e13b38073181cd31f92ef5ce0bd1b3a9f036ce5d8b8cbc1df84a475b0db9a36"
+    },
+    "recovered/unit-sprites/DefineSprite_1216_A2_run/1.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "25adcbe8e85566a178a8b01c023f161502089fb994ea73059e04152f119af79b"
+    },
+    "recovered/unit-sprites/DefineSprite_1216_A2_run/2.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "feb8dbd7a7eb64b327e00699db86f615c58095c41102b8e07a47e0dc5562fe86"
+    },
+    "recovered/unit-sprites/DefineSprite_1216_A2_run/3.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "da05c753c85607e07c4a7cbe05b3901a289ebf49536f1bc2b9af9fe72963d942"
+    },
+    "recovered/unit-sprites/DefineSprite_1216_A2_run/4.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "bc93f87b454d9e93f2e2fe6797a202c15cc518f87ae6f751a3480219a0cfb55b"
+    },
+    "recovered/unit-sprites/DefineSprite_1216_A2_run/5.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "5fa549fb83132eb474becb3034e953123234b6ccd1b7b0da00145d9b20378906"
+    },
+    "recovered/unit-sprites/DefineSprite_1216_A2_run/6.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "829b5e203aa40661cae19bc4821dfdd5d34aed7b4e20375d76efb3dba6532166"
+    },
+    "recovered/unit-sprites/DefineSprite_1223_A2_idle/1.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 58.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "1905f12685e3f5e2cb440b79885e1978f74f39dd2bcbd8aa3d6cfa93935eab14"
+    },
+    "recovered/unit-sprites/DefineSprite_1223_A2_idle/2.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 58.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "0dd751e5e873f975e44f75b1ec0faa614440a3edf549d4ba2e3f6dedd168b5f0"
+    },
+    "recovered/unit-sprites/DefineSprite_1223_A2_idle/3.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 58.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "848727db7b9910d11e4495b3bf8319d52ca559e4cea4c492c5b70475a08899fa"
+    },
+    "recovered/unit-sprites/DefineSprite_1230_A2_dead/1.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 86.0,
+        "xMin": -32.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "7554405d9b91205d1daddb7dbed5c8a39963aacc20b92a8b84ac0733e37c5d20"
+    },
+    "recovered/unit-sprites/DefineSprite_1230_A2_dead/2.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 86.0,
+        "xMin": -32.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "7ea5bb17543e74d7f28046f1aa24bc716276b2c00cbb6b9bc644db71433ca60b"
+    },
+    "recovered/unit-sprites/DefineSprite_1230_A2_dead/3.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 86.0,
+        "xMin": -32.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "9823fa2ba2da4e381a003302f06a422a5e5263e3c6a3f1e42ed2c0fe9ac7bd78"
+    },
+    "recovered/unit-sprites/DefineSprite_1243_A2_attack/1.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "8413990cf83be1101621f55ec20bbcf6dbd71fdbb3a950d09c3bd501215bc0f7"
+    },
+    "recovered/unit-sprites/DefineSprite_1243_A2_attack/2.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "e07740461a9432a3a6001a4ce7cc35d4a00205b836dbe6367b52b193dffb0b0b"
+    },
+    "recovered/unit-sprites/DefineSprite_1243_A2_attack/3.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "a35cb0e6c128dbadb148a63fb80ae283320bca2b2f788de95e6805de427544d0"
+    },
+    "recovered/unit-sprites/DefineSprite_1243_A2_attack/4.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "2fef1cd4548db5b72a8be493ad46300565951c0a15fcce6219aa864d84716284"
+    },
+    "recovered/unit-sprites/DefineSprite_1243_A2_attack/5.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "216136da1dbe56ba8cc229a191cf1effa5116ee6f5826ad2412d19c02fc153dc"
+    },
+    "recovered/unit-sprites/DefineSprite_1243_A2_attack/6.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "1f31ad45e1d285160511c0647b6e687dfaf4bb68cd5934b41de115c8c0e0a996"
+    },
+    "recovered/unit-sprites/DefineSprite_1256_A1_run/1.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "c4ef0c472eef5e9642ec22c424c9065dcd2e875210f3649bd757bf50fbfddda3"
+    },
+    "recovered/unit-sprites/DefineSprite_1256_A1_run/2.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "a7b1d6a4d514530714ad93c3502ae760a6754b77ed97f64ea9c4ac5492a727b1"
+    },
+    "recovered/unit-sprites/DefineSprite_1256_A1_run/3.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "f3b8e9812acba1903eb31ed4ece915ccb206ef95ae18086991ae892f6c3e5360"
+    },
+    "recovered/unit-sprites/DefineSprite_1256_A1_run/4.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "296925be74b27b734b7873ae3d566b3d45c598976ad5d6bdcca45b9d521be4df"
+    },
+    "recovered/unit-sprites/DefineSprite_1256_A1_run/5.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "77dd69bc767ba9bbccc66339735de9cff46b555f7466f1032faa6569e31f0117"
+    },
+    "recovered/unit-sprites/DefineSprite_1256_A1_run/6.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "c67963af052769b7bc58d25f090a40766d1b9ffce7637c27e8cf101ce280439a"
+    },
+    "recovered/unit-sprites/DefineSprite_1263_A1_idle/1.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 63.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "2723e9bd8a7877eba0ec3363e549de47bd46cbdb80f36f1d971f942d2cadd532"
+    },
+    "recovered/unit-sprites/DefineSprite_1263_A1_idle/2.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 63.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "fd135da9b112a9400be70a3d1c3677be0ebe5474496866381a5b6f83b72e3ce2"
+    },
+    "recovered/unit-sprites/DefineSprite_1263_A1_idle/3.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 63.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "a91e153dee8015d36ed08338ee900b0aca1434562071f3a7b6d29fe10adc39c4"
+    },
+    "recovered/unit-sprites/DefineSprite_1274_A1_dead/1.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "34bbc7ed0ac55768f5bc19e7008a3c536a5a6e9671a7c2f589e8fdcbc35b5f9b"
+    },
+    "recovered/unit-sprites/DefineSprite_1274_A1_dead/2.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "986bd117d686dde60f177e2ed403e874d958c3255afe6755b0217dafc3bfa03e"
+    },
+    "recovered/unit-sprites/DefineSprite_1274_A1_dead/3.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "757e88e5d1ad97bd6ef552717416f781cc0a0eec23d6674f3fbeefb1f5cc4b30"
+    },
+    "recovered/unit-sprites/DefineSprite_1274_A1_dead/4.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "fa32049bb0f870d952acca142413e8ff84b2de25907f145f909ebf5f964131b3"
+    },
+    "recovered/unit-sprites/DefineSprite_1274_A1_dead/5.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "2bd1d1309a826d6389b53928fd02662c60e07bcdb066fd52087ec1bc4aed5838"
+    },
+    "recovered/unit-sprites/DefineSprite_1285_A1_attack/1.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "47811151207167c8c243efe720a4e3bf479dd1f316dcd3a0a819cfb4cad8105a"
+    },
+    "recovered/unit-sprites/DefineSprite_1285_A1_attack/2.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "9678ee8aa75443b7c64970748e669850ab2918da37eafc1f5677b3631d041e18"
+    },
+    "recovered/unit-sprites/DefineSprite_1285_A1_attack/3.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "73a497d35d78a7af722dd34d91a3ba2c40cf32bec79de47d5efe60c57d007bc2"
+    },
+    "recovered/unit-sprites/DefineSprite_1285_A1_attack/4.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "c653d854eb54bd82aaf2c91536dfcd07fc1a26ff7f230e2ec645e42d31459b57"
+    },
+    "recovered/unit-sprites/DefineSprite_1285_A1_attack/5.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "4596086862f8802768863c96a73739878e04e9549acf6b3b2d92b33cc09df95e"
+    },
+    "recovered/unit-sprites/DefineSprite_128_B14_run/1.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "2106a75b5ca1b1f0c48f2d5b624c5e8e469a653ff33cdf62d976cce339b38d83"
+    },
+    "recovered/unit-sprites/DefineSprite_128_B14_run/2.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "0794ac3e7cb1ce2d07217c5142b36b35b4163c2654b21d25c2e9de235eba08bc"
+    },
+    "recovered/unit-sprites/DefineSprite_128_B14_run/3.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "4c3b4cc9a251b663791379a54f39778941e5f1d515c536e2f59f50238841805b"
+    },
+    "recovered/unit-sprites/DefineSprite_128_B14_run/4.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "88a29c812485a353d3efc8132269170ea8532fc6e3f3667685299b8d11b8ef97"
+    },
+    "recovered/unit-sprites/DefineSprite_128_B14_run/5.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "0daba88d2360dbb456e59d79f0f75b01fee84c735dc7ebe83d17d22032e28011"
+    },
+    "recovered/unit-sprites/DefineSprite_128_B14_run/6.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "6bd6c687f7a567d66fba1e7b5336f2364242eb867ff096d139040f199b341bd5"
+    },
+    "recovered/unit-sprites/DefineSprite_1298_A0_run/1.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "8ff00f3516af619009693f1aa9f5b5154390279a115d83fb64defda3cbef389b"
+    },
+    "recovered/unit-sprites/DefineSprite_1298_A0_run/2.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "112a809b02ba2439ca517414695601761d6beb807e5f8659399c668bfe90899d"
+    },
+    "recovered/unit-sprites/DefineSprite_1298_A0_run/3.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "c2680acbc42c947eb05fd2ad1c0a38e2ceeea6ceb9808caaf9ca28c638cf15b7"
+    },
+    "recovered/unit-sprites/DefineSprite_1298_A0_run/4.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "7c9e9239fbd81ec89721ce70c319f363e99e4bcbbd8cfd0decc64ac32e5b3a45"
+    },
+    "recovered/unit-sprites/DefineSprite_1298_A0_run/5.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "9e417740e52f1f31370a6f7abf251f63e310b8d3bba9497fb302fb7e6e7c6385"
+    },
+    "recovered/unit-sprites/DefineSprite_1298_A0_run/6.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "0265972b44777dc918bef7894ccfc501e297411f04e8e4d2fdea56fc09ff8898"
+    },
+    "recovered/unit-sprites/DefineSprite_1305_A0_idle/1.png": {
+      "bounds": {
+        "height": 58.65,
+        "width": 62.0,
+        "xMin": -31.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "3c6853f02d3e1826486762acb91f6714572e29bb3c018d580ebfd5f39b221eea"
+    },
+    "recovered/unit-sprites/DefineSprite_1305_A0_idle/2.png": {
+      "bounds": {
+        "height": 58.65,
+        "width": 62.0,
+        "xMin": -31.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "4d1aed12412cc240fcce4a0c73174d241fb0172835216b468cc393a9dc33acd8"
+    },
+    "recovered/unit-sprites/DefineSprite_1305_A0_idle/3.png": {
+      "bounds": {
+        "height": 58.65,
+        "width": 62.0,
+        "xMin": -31.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "255d0e1dfe46a0b96839caf388ab2005f75a263c6243db315b07835327135017"
+    },
+    "recovered/unit-sprites/DefineSprite_1318_A0_dead/1.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "32f406a272bb2063dd6991f21b5db6ffeb78d8d617323af8ba124de0d70642c5"
+    },
+    "recovered/unit-sprites/DefineSprite_1318_A0_dead/2.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "7df9d901afeda260c19e894cb5e29aedd1e2b85c757a0e5deea90cbf45b34e4e"
+    },
+    "recovered/unit-sprites/DefineSprite_1318_A0_dead/3.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "b9eedc9ece885f9fc6556e8e221677d85385093eb95edb8a02ce9e754c19671b"
+    },
+    "recovered/unit-sprites/DefineSprite_1318_A0_dead/4.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "47da38cdf2021db604cb9e269300e7c981fbcab27fa38530c1fabe432d52ffea"
+    },
+    "recovered/unit-sprites/DefineSprite_1318_A0_dead/5.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "be6e83bb1bb141ef194b77e1aa2a5369bedf4bd91b999d67aa8179f57048af06"
+    },
+    "recovered/unit-sprites/DefineSprite_1318_A0_dead/6.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "1301b0fc2255f9a6889440e9f8d841ce59d5472ee1a07b72d61ff79cb4ce4b11"
+    },
+    "recovered/unit-sprites/DefineSprite_1329_A0_attack/1.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "41d2433f3be2671f425bb9651cfd8e22a703343e491d6cd3292da129891c80ee"
+    },
+    "recovered/unit-sprites/DefineSprite_1329_A0_attack/2.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "1cb16375ddfa8d28e91ab0bb0e86292bc8d894b6ad10e82adea2165b3ec9e878"
+    },
+    "recovered/unit-sprites/DefineSprite_1329_A0_attack/3.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "7c80c38bf6a8200b06385dc05e77b1af823a2e5888353b4ff4c57d1e72b4e363"
+    },
+    "recovered/unit-sprites/DefineSprite_1329_A0_attack/4.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "d91a77da5cb097b0c7a653fecf87949d698d6eed8651060074a801b27016d5a5"
+    },
+    "recovered/unit-sprites/DefineSprite_1329_A0_attack/5.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "c5264cf92ce1635e5a9018d2626acd67b32a7c17ed5753a92b1b7067a8dca5ec"
+    },
+    "recovered/unit-sprites/DefineSprite_1332_B_crystal/1.png": {
+      "bounds": {
+        "height": 149.65,
+        "width": 96.0,
+        "xMin": -48.0,
+        "yMin": -144.0
+      },
+      "svgSha256": "d4aadb16a1cc4869c3182a70e87433c3d12139e07e1bcc24547b884773447cc4"
+    },
+    "recovered/unit-sprites/DefineSprite_1335_A_crystal/1.png": {
+      "bounds": {
+        "height": 149.65,
+        "width": 96.0,
+        "xMin": -48.0,
+        "yMin": -144.0
+      },
+      "svgSha256": "c50950d9a8dd67f0cd3147a7783b70090071ef98d68adf2f444a50ff4d7a9097"
+    },
+    "recovered/unit-sprites/DefineSprite_135_B14_idle/1.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "ee1c67675defd00ee6f698df55b139bae6fa53f078fbfa6b9eead9113d9ef32c"
+    },
+    "recovered/unit-sprites/DefineSprite_135_B14_idle/2.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "5ef26877c6de5f6dd0e9a1ee6e838aaf3d57b13c273443ba1fc4f317357db809"
+    },
+    "recovered/unit-sprites/DefineSprite_135_B14_idle/3.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "b9edfd8f210ba3f10f0b05b88bcd12cca8e44415f1e0c2d3b0009e3d925c51be"
+    },
+    "recovered/unit-sprites/DefineSprite_142_B14_dead/1.png": {
+      "bounds": {
+        "height": 52.0,
+        "width": 66.0,
+        "xMin": -24.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "0a2fdd18aa6371e5549fc632a09f5b406e6ce3a48dc6a726b8cfe9630f362d75"
+    },
+    "recovered/unit-sprites/DefineSprite_142_B14_dead/2.png": {
+      "bounds": {
+        "height": 52.0,
+        "width": 66.0,
+        "xMin": -24.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "4e08a98f29738ddb61f382d4c6c95b020fe8f57e31bbdca92b7dfc905157b062"
+    },
+    "recovered/unit-sprites/DefineSprite_142_B14_dead/3.png": {
+      "bounds": {
+        "height": 52.0,
+        "width": 66.0,
+        "xMin": -24.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "594b8d944938aca935c8f4f80ef58afff30fbab2c26122a2592c4835548ffd74"
+    },
+    "recovered/unit-sprites/DefineSprite_157_B14_attack/1.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "f5685a9dcea20b3d404dcc0b59516698e6899c56669d2bc6cf950299ac534e7b"
+    },
+    "recovered/unit-sprites/DefineSprite_157_B14_attack/2.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "0e71e5c94d2cf3507fc0899fd2803de8a88461944a81589fbb78852acec530e7"
+    },
+    "recovered/unit-sprites/DefineSprite_157_B14_attack/3.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "1c645b66b42feb35c2e2e1d259e438f9dad299abc92463540c617d761e9407e8"
+    },
+    "recovered/unit-sprites/DefineSprite_157_B14_attack/4.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "1f0831573f0bab82eb1e785a29e9d8e58fb081f2b146f277ce38dfb743154cb6"
+    },
+    "recovered/unit-sprites/DefineSprite_157_B14_attack/5.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "2467f66ab06759133c0249ab3b8fc75b952e973ac33a35430f9470e83cf417d5"
+    },
+    "recovered/unit-sprites/DefineSprite_157_B14_attack/6.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "524c2df3178c7d5744bb0ea309a1b8c35ee20401b83c413b5c99fa06d5c933f2"
+    },
+    "recovered/unit-sprites/DefineSprite_157_B14_attack/7.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "4e6bbad99d3d2b95a27f48c350ec9dbe852d38e78e5ccaa8440863985759e9dc"
+    },
+    "recovered/unit-sprites/DefineSprite_170_B13_run/1.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "f72a377f2f6af8bf0a088dbe2a271c56a020e937601d41973aa8ad8bbeca3b76"
+    },
+    "recovered/unit-sprites/DefineSprite_170_B13_run/2.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "a8ec3259de748be5a17571ca8c41e40ffc8c6f83ab735f8d2afffa15d1aa9c87"
+    },
+    "recovered/unit-sprites/DefineSprite_170_B13_run/3.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "7bc014d150b79a0aab7f4b74aac03eeaccaddceab9b2e17398cabea825ef2e6b"
+    },
+    "recovered/unit-sprites/DefineSprite_170_B13_run/4.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "5c33aee88fdacdfa46ecd67aef95dc75ae95b178d1fe35021b95ed6ef658f5cb"
+    },
+    "recovered/unit-sprites/DefineSprite_170_B13_run/5.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "c74860ab6094dd061badf2c2971f257632141d2dce33ac1e9ae62d0952d87dd8"
+    },
+    "recovered/unit-sprites/DefineSprite_170_B13_run/6.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "f34be87e067c59c154cfd2820fe12f7f6506cca327180b0708ca3ee084c73fec"
+    },
+    "recovered/unit-sprites/DefineSprite_177_B13_idle/1.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 81.0,
+        "xMin": -54.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "767b976e38bfdf64263e20547823d3bac5722af24d3c2580f1353caba1404d02"
+    },
+    "recovered/unit-sprites/DefineSprite_177_B13_idle/2.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 81.0,
+        "xMin": -54.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "c1c1bdf75cc6a884686da75d3254cea1237a354c28d6b95fe4883a962ed35dc8"
+    },
+    "recovered/unit-sprites/DefineSprite_177_B13_idle/3.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 81.0,
+        "xMin": -54.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "2a7f4825643c0a022ce5602ce844ebae898c62e76f7062a01b5d1fc1deccae5e"
+    },
+    "recovered/unit-sprites/DefineSprite_184_B13_dead/1.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 91.0,
+        "xMin": -56.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "27aac675d4637301a4fb6adf11b2fbae9aadda03370dddc3fd468697be68fa69"
+    },
+    "recovered/unit-sprites/DefineSprite_184_B13_dead/2.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 91.0,
+        "xMin": -56.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "f7b3237b2482e52b9d30c49736859cfd575ab498fae2057328569447f93e5a16"
+    },
+    "recovered/unit-sprites/DefineSprite_184_B13_dead/3.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 91.0,
+        "xMin": -56.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "9bfffe730e0581db45c0c86e172809fabd8c2952eb35921612d036324463a246"
+    },
+    "recovered/unit-sprites/DefineSprite_193_B13_attack/1.png": {
+      "bounds": {
+        "height": 101.65,
+        "width": 112.0,
+        "xMin": -64.0,
+        "yMin": -96.0
+      },
+      "svgSha256": "670ce220eec1229491ba64ff60e9e2a1f1bd64dd0e2b3f28c59c1b24654c61bf"
+    },
+    "recovered/unit-sprites/DefineSprite_193_B13_attack/2.png": {
+      "bounds": {
+        "height": 101.65,
+        "width": 112.0,
+        "xMin": -64.0,
+        "yMin": -96.0
+      },
+      "svgSha256": "d076e36a5122b2e66f81944230b0027ecc466e123b2d013fbf765e14c2dc10ff"
+    },
+    "recovered/unit-sprites/DefineSprite_193_B13_attack/3.png": {
+      "bounds": {
+        "height": 101.65,
+        "width": 112.0,
+        "xMin": -64.0,
+        "yMin": -96.0
+      },
+      "svgSha256": "6e1dbde7d4b9ec04673ac3b03bced92559c654d66a2325db75f5af4a59d49302"
+    },
+    "recovered/unit-sprites/DefineSprite_193_B13_attack/4.png": {
+      "bounds": {
+        "height": 101.65,
+        "width": 112.0,
+        "xMin": -64.0,
+        "yMin": -96.0
+      },
+      "svgSha256": "fe31957b3697fd27453373dcc57eb02ea11de4dc3d3357e546c6197fd4228d8a"
+    },
+    "recovered/unit-sprites/DefineSprite_206_B12_run/1.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "168b234f31ebe03f01024ccf1a73526dcca216535a0c7d4af9e10c85fbf633cb"
+    },
+    "recovered/unit-sprites/DefineSprite_206_B12_run/2.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "ef194f707adf867e29509f3943b45485b9ae341f8c2fd10f8986b7da8478b8ee"
+    },
+    "recovered/unit-sprites/DefineSprite_206_B12_run/3.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "bbc0f17e7a922ea627b1c85a68ac4bb084e7832777d048b2f4d78576dcc886ab"
+    },
+    "recovered/unit-sprites/DefineSprite_206_B12_run/4.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "51e42e60bccb8ca98e783786ca9c29d67f1c21cbb2f12ebf948dd280e658c741"
+    },
+    "recovered/unit-sprites/DefineSprite_206_B12_run/5.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "b89bbdaa77f556206691464736268b9688b44808e8131bc79cbebb697904517f"
+    },
+    "recovered/unit-sprites/DefineSprite_206_B12_run/6.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "adc3bef0f7f3c6ee23a69e981bd9b1f767c15c88bec1b2f9d64f74262d6fc28f"
+    },
+    "recovered/unit-sprites/DefineSprite_213_B12_idle/1.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 54.0,
+        "xMin": -32.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "51fca1949727e14ae8a179fa887a97e6ca1be80de16d27df93570ba934d17ffc"
+    },
+    "recovered/unit-sprites/DefineSprite_213_B12_idle/2.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 54.0,
+        "xMin": -32.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "560def20abd97f6ca88339ab5ec5506cd09851f0cc565895d795353730e83d18"
+    },
+    "recovered/unit-sprites/DefineSprite_213_B12_idle/3.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 54.0,
+        "xMin": -32.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "d84f18afcca4957b1c1a7bdb1245a40d8633d54c160dd142e8a2753bc537a631"
+    },
+    "recovered/unit-sprites/DefineSprite_220_B12_dead/1.png": {
+      "bounds": {
+        "height": 47.0,
+        "width": 87.0,
+        "xMin": -40.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "ba523440def580e7816de4ec6a0272ecd7205d48f6939cf2914efb572d36385f"
+    },
+    "recovered/unit-sprites/DefineSprite_220_B12_dead/2.png": {
+      "bounds": {
+        "height": 47.0,
+        "width": 87.0,
+        "xMin": -40.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "3abc649f64a9c4417d9f6ff34f5462e1463e7ab692e677df3dcf1e3ae0601bbd"
+    },
+    "recovered/unit-sprites/DefineSprite_220_B12_dead/3.png": {
+      "bounds": {
+        "height": 47.0,
+        "width": 87.0,
+        "xMin": -40.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "6122f2e0451be09ab5c48997883e5a70244f1391cd47c43a25e5077b75820ec4"
+    },
+    "recovered/unit-sprites/DefineSprite_233_B12_attack/1.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "ab98a1aa568531e106275c186b1af735f4b316ffede855141d934fc8f537da75"
+    },
+    "recovered/unit-sprites/DefineSprite_233_B12_attack/2.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "e7d3eb95296dabdbe4b6c23054a19d11ae60e060b908358c0e05ae6bd52f7788"
+    },
+    "recovered/unit-sprites/DefineSprite_233_B12_attack/3.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "1d9b34aca5dfbc8cf24ec53ba06cb43514897f61c4d9d75662faba2ee3ff6468"
+    },
+    "recovered/unit-sprites/DefineSprite_233_B12_attack/4.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "496fd0cfb89ea42ec3812d548226c75d889c8baa9c65fc1539a79ae7d2ffa37c"
+    },
+    "recovered/unit-sprites/DefineSprite_233_B12_attack/5.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "3ab09d4ed7832b07130070e47c55f11d099469b10c13d89ae3ec6d61ce3b5c35"
+    },
+    "recovered/unit-sprites/DefineSprite_233_B12_attack/6.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "05a8848cad034119e0130751ac306e5320475e3a02968b58b11a211c765e274b"
+    },
+    "recovered/unit-sprites/DefineSprite_240_B11_run/1.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 56.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "d57fc37cbed0944ceb4b7f0c94ee7aa71a58c3ba98859bced99f50b9ed528d9f"
+    },
+    "recovered/unit-sprites/DefineSprite_240_B11_run/2.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 56.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "5a9f209605e4837f812f2ebe1544fdbcd2968790b3fcd42aa68dbc94930517a7"
+    },
+    "recovered/unit-sprites/DefineSprite_240_B11_run/3.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 56.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "1b0437afc4d48e8eb25025be5dfa6701fb85ae7bb25e5a15a8838ee1e23585ac"
+    },
+    "recovered/unit-sprites/DefineSprite_247_B11_idle/1.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 62.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "c17e6912ffc73c58033fa0a4d3c082d09b59d4e319d5d7cf5f7800abee22c326"
+    },
+    "recovered/unit-sprites/DefineSprite_247_B11_idle/2.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 62.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "3f5f92179a0d0c27d07bb1e9e02695ab975ac8b675bd1eba7cf9b6196ba7f466"
+    },
+    "recovered/unit-sprites/DefineSprite_247_B11_idle/3.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 62.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "3a68d4e35554dc9fc246fa6c72c370bf156b1924314325c37227223ffd4e1827"
+    },
+    "recovered/unit-sprites/DefineSprite_256_B11_dead/1.png": {
+      "bounds": {
+        "height": 60.0,
+        "width": 78.0,
+        "xMin": -26.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "0b520f5848452097f1a08c27ce4d982f34cbd1b4d20defbfb5fc0bd7e8473b4e"
+    },
+    "recovered/unit-sprites/DefineSprite_256_B11_dead/2.png": {
+      "bounds": {
+        "height": 60.0,
+        "width": 78.0,
+        "xMin": -26.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "9be08fe87cae7b17eb84824ef096818a72400cc4488fdf2cdb055abbcd8f2261"
+    },
+    "recovered/unit-sprites/DefineSprite_256_B11_dead/3.png": {
+      "bounds": {
+        "height": 60.0,
+        "width": 78.0,
+        "xMin": -26.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "64ed1d60a3e17c93bc32db746c9ee14eaa2daba97f2e8ba5b33438e5b486188e"
+    },
+    "recovered/unit-sprites/DefineSprite_256_B11_dead/4.png": {
+      "bounds": {
+        "height": 60.0,
+        "width": 78.0,
+        "xMin": -26.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "61e2f7fc431b4147b17cf329440daa227d72e6118c135c371b77b02982c93282"
+    },
+    "recovered/unit-sprites/DefineSprite_269_B11_attack/1.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "4ec3d295fc6641ab238fdb96a9ca10d5a33b91a15967e0a2933dc91cc298d040"
+    },
+    "recovered/unit-sprites/DefineSprite_269_B11_attack/2.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "28950dd0ed34c7615761450d5998b23bbbd0797f450b68046fb56709b0007e83"
+    },
+    "recovered/unit-sprites/DefineSprite_269_B11_attack/3.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "b86971c0b074a2c49ef7914f730194288d803d7b6d296a6c636fcb35eefd776c"
+    },
+    "recovered/unit-sprites/DefineSprite_269_B11_attack/4.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "f39c5189aa88b969a020c9e463d8cdc999510adc14a2cede21a2d132abb0b3ef"
+    },
+    "recovered/unit-sprites/DefineSprite_269_B11_attack/5.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "ce24cde2af5fca9d06cba8069c10251320b1e5bd3a3e88016f7b3b8d30df6a14"
+    },
+    "recovered/unit-sprites/DefineSprite_269_B11_attack/6.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "f85c59c0b06ead92d7613d5dadbe697126b1d345345d3c25561c0826ae051abf"
+    },
+    "recovered/unit-sprites/DefineSprite_276_B10_run/1.png": {
+      "bounds": {
+        "height": 73.65,
+        "width": 60.0,
+        "xMin": -32.0,
+        "yMin": -68.0
+      },
+      "svgSha256": "473ff77ba517f7ef0384988663367ec37cc61ad1775258546617cb988bf3dce8"
+    },
+    "recovered/unit-sprites/DefineSprite_276_B10_run/2.png": {
+      "bounds": {
+        "height": 73.65,
+        "width": 60.0,
+        "xMin": -32.0,
+        "yMin": -68.0
+      },
+      "svgSha256": "fd2d0b09d6d4ad3a3f00727e4ec45689cd51efc32031fcdcb8a9402f68a47d02"
+    },
+    "recovered/unit-sprites/DefineSprite_276_B10_run/3.png": {
+      "bounds": {
+        "height": 73.65,
+        "width": 60.0,
+        "xMin": -32.0,
+        "yMin": -68.0
+      },
+      "svgSha256": "b8598b92d2ddc9481ad65aa404ffd6a0b03868ddbe8559b7e75368f8e9e24d57"
+    },
+    "recovered/unit-sprites/DefineSprite_283_B10_idle/1.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "61a9d542bd97fdbd87eba372e42bad94ba5d095e19a84099d581d754b37acb43"
+    },
+    "recovered/unit-sprites/DefineSprite_283_B10_idle/2.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "05ed2e8bce5fc68250f9f6662819da01568709400e75cb5025c7c00daccb1356"
+    },
+    "recovered/unit-sprites/DefineSprite_283_B10_idle/3.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "002bf0713db6595f895e1620b0eaa368944cb547c82f9983c62ffb665205673c"
+    },
+    "recovered/unit-sprites/DefineSprite_296_B10_dead/1.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "cb2c2787377bf1d6cf03437f161d6848955d38ff71c9d00047894087fab2ccc3"
+    },
+    "recovered/unit-sprites/DefineSprite_296_B10_dead/2.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "1278d7443451078846edeedf1161a74b561b3878db090ee665af5981c78c1003"
+    },
+    "recovered/unit-sprites/DefineSprite_296_B10_dead/3.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "65560e7b8a37a62b775097bb51b699c6486580b74b8b4365a92fce3360282275"
+    },
+    "recovered/unit-sprites/DefineSprite_296_B10_dead/4.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "46b99ed3ce6f7661f41b93ddbfcdf0b08ae08ced2880b48f1a3c3bd02bd166b6"
+    },
+    "recovered/unit-sprites/DefineSprite_296_B10_dead/5.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "860c31f8bdb2df847291e4d7f887a8492829042d7e9bef4bedcdffd5ec4be781"
+    },
+    "recovered/unit-sprites/DefineSprite_296_B10_dead/6.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "b285dc292b6e0a674e9a8d681ca84d9b4fe175c7a7a9680325cd7cb7c35c1536"
+    },
+    "recovered/unit-sprites/DefineSprite_307_B10_attack/1.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "f3d2355a08f2f47e8bc03f7ac17bb4a8715e66b983b46c38b5880535c280ff80"
+    },
+    "recovered/unit-sprites/DefineSprite_307_B10_attack/2.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "d64fa4bbbf4a4893dfab164bdca16d14d471cce5c8c1e8d964a17a6b4c68a5d6"
+    },
+    "recovered/unit-sprites/DefineSprite_307_B10_attack/3.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "b915cbd82783361498b513c152270fb7f4db5b6f0f8263dde1e24a3b38de1f64"
+    },
+    "recovered/unit-sprites/DefineSprite_307_B10_attack/4.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "c5f79f67af5c1a307ca9579737130a5390dc0f0df57ce37b08b2f3c877dd8fa4"
+    },
+    "recovered/unit-sprites/DefineSprite_307_B10_attack/5.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "1a5feb749fc6c854c6d56ff18ef34f65d8321a061c9f4bc7003bfd82e8a589f7"
+    },
+    "recovered/unit-sprites/DefineSprite_320_B9_run/1.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "426008d3081fcde7f14085b88d1b4994aead9a2d167463ad49326eac09ad8952"
+    },
+    "recovered/unit-sprites/DefineSprite_320_B9_run/2.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "b2370722dfc5a09c41b8950d763f22e734b96143a2f9cfbd5fc85e91d5530136"
+    },
+    "recovered/unit-sprites/DefineSprite_320_B9_run/3.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "a685332de09a835ff55700f5f43e43eb56efe2077d6b15e71a1bea028ab57100"
+    },
+    "recovered/unit-sprites/DefineSprite_320_B9_run/4.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "4b88218b406e2b1659993921665890611c28e2a460c0bf36aa60dcdcd397f8fa"
+    },
+    "recovered/unit-sprites/DefineSprite_320_B9_run/5.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "b581b6b8554d19f40ec59872a965f24173fb87d9cc837b67545009fed38ac9f8"
+    },
+    "recovered/unit-sprites/DefineSprite_320_B9_run/6.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "e154e35e249100a31b3e5f34151938cd6a1441106fdc581bdcb1d98660caeee6"
+    },
+    "recovered/unit-sprites/DefineSprite_327_B9_idle/1.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 63.0,
+        "xMin": -37.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "329a1e04651c49e42702f3f304865eae297c3c6caf4dc91905b0cbc83c1267b6"
+    },
+    "recovered/unit-sprites/DefineSprite_327_B9_idle/2.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 63.0,
+        "xMin": -37.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "5d54750357442683be1450446ef07c0a9600cf7e7bb71f4bda719d3963866d1a"
+    },
+    "recovered/unit-sprites/DefineSprite_327_B9_idle/3.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 63.0,
+        "xMin": -37.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "8c8ef13a06494a07316c02109ee1ef7d2624375e7b76bd81b40f086be36c7983"
+    },
+    "recovered/unit-sprites/DefineSprite_334_B9_dead/1.png": {
+      "bounds": {
+        "height": 69.0,
+        "width": 77.0,
+        "xMin": -30.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "c31aaded99c1b74f03741ad5c1bfb24b7ad6ecebde6913ff03af54b5ab64edd8"
+    },
+    "recovered/unit-sprites/DefineSprite_334_B9_dead/2.png": {
+      "bounds": {
+        "height": 69.0,
+        "width": 77.0,
+        "xMin": -30.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "24746646d74c9bc7b405245d4b1e791769a47c9109c31f149640d5b8ff4c5550"
+    },
+    "recovered/unit-sprites/DefineSprite_334_B9_dead/3.png": {
+      "bounds": {
+        "height": 69.0,
+        "width": 77.0,
+        "xMin": -30.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "8a75b5a8c9f4c85ef3c2803f3485754aab3a40fbb211b9ab7b11102890de7911"
+    },
+    "recovered/unit-sprites/DefineSprite_345_B9_attack/1.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "aae434da5f3ff34837d74feb5a55cb1aaf19e1ddbea49fcfb6d6685c09838902"
+    },
+    "recovered/unit-sprites/DefineSprite_345_B9_attack/2.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "584894df727c68b9696dea5e324634326cf4599968e0e0636e1db3976bf2d34f"
+    },
+    "recovered/unit-sprites/DefineSprite_345_B9_attack/3.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "0a264a93d6417a6cf5f2a86dcfd26dcba982396ec429aa1d40c29fee0017616c"
+    },
+    "recovered/unit-sprites/DefineSprite_345_B9_attack/4.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "38f91efe101fc6669dbe9f4ca2ec95917212026e9ada07c2e1c412f8d731530e"
+    },
+    "recovered/unit-sprites/DefineSprite_345_B9_attack/5.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "aa81bdab8669093e4ab7534448eefea509e12b3d41aeaad53045f184d95dd970"
+    },
+    "recovered/unit-sprites/DefineSprite_358_B8_run/1.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "12d93e22c5a67121fd28071ab81063bba216a9d29491850b6f062b0a5f0d2f01"
+    },
+    "recovered/unit-sprites/DefineSprite_358_B8_run/2.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "8a9c7371252154d4b989ae436e0c08ce995bf23c96518defff1e99d7506b3338"
+    },
+    "recovered/unit-sprites/DefineSprite_358_B8_run/3.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "c1f43c2ddab018b88f81d1acb6424517c754929ce5e1dc3c52688f87457ccf99"
+    },
+    "recovered/unit-sprites/DefineSprite_358_B8_run/4.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "66b4a62f5ae7f1249633a6f6fb6ca60adb624d7a445d6868cecba3472db326f9"
+    },
+    "recovered/unit-sprites/DefineSprite_358_B8_run/5.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "d4457977fdac4cc46d3a91994a4d09fd80c3967d99ebc4656171078fa5845545"
+    },
+    "recovered/unit-sprites/DefineSprite_358_B8_run/6.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "356e7232785f3626d5d617712aa76659ab250ca29f4c48f40e2e5d0c5953abb2"
+    },
+    "recovered/unit-sprites/DefineSprite_365_B8_idle/1.png": {
+      "bounds": {
+        "height": 68.65,
+        "width": 63.0,
+        "xMin": -35.0,
+        "yMin": -63.0
+      },
+      "svgSha256": "f26ac55b4c3afdb896488b4fa18f5447187dc7f8a3f429e855e628d923c76cd7"
+    },
+    "recovered/unit-sprites/DefineSprite_365_B8_idle/2.png": {
+      "bounds": {
+        "height": 68.65,
+        "width": 63.0,
+        "xMin": -35.0,
+        "yMin": -63.0
+      },
+      "svgSha256": "b5feece700098964e0589550caca3d693699142f81fc730fe38206853d64fc8b"
+    },
+    "recovered/unit-sprites/DefineSprite_365_B8_idle/3.png": {
+      "bounds": {
+        "height": 68.65,
+        "width": 63.0,
+        "xMin": -35.0,
+        "yMin": -63.0
+      },
+      "svgSha256": "355a6d1c09fdd573a40cd46dc192db2065036ac078a7e952596afb37a57d92b4"
+    },
+    "recovered/unit-sprites/DefineSprite_370_B8_dead/1.png": {
+      "bounds": {
+        "height": 64.0,
+        "width": 73.0,
+        "xMin": -32.0,
+        "yMin": -64.0
+      },
+      "svgSha256": "fc8190b5e8fc785c6cc2506a87f2a853f6e5a73163ace5d5736de3c9350c6772"
+    },
+    "recovered/unit-sprites/DefineSprite_370_B8_dead/2.png": {
+      "bounds": {
+        "height": 64.0,
+        "width": 73.0,
+        "xMin": -32.0,
+        "yMin": -64.0
+      },
+      "svgSha256": "d748400ff37830ebdb4522af7205d7ab53b130a12e4769cb346d8f7916424cc8"
+    },
+    "recovered/unit-sprites/DefineSprite_383_B8_attack/1.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "529faa045cf40485cdfbfd04f60a5e8d748a333d049719cc4c7417cdbc71d20a"
+    },
+    "recovered/unit-sprites/DefineSprite_383_B8_attack/2.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "56674812f3f9d09f3506434a5bf7ef6811cc6db169362327b7d7917c2f234e3b"
+    },
+    "recovered/unit-sprites/DefineSprite_383_B8_attack/3.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "54dca74c4c5205f789c8b8e584396833741a8e2e9a8a3c381808f2835dc31151"
+    },
+    "recovered/unit-sprites/DefineSprite_383_B8_attack/4.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "28ee673cd5e9a5ad73f63ec4250fcb283b6187479b924f701266130d2e734806"
+    },
+    "recovered/unit-sprites/DefineSprite_383_B8_attack/5.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "2da4bd8f08093498464740b9cfdf23ff83800490e178d9837d792195abf22547"
+    },
+    "recovered/unit-sprites/DefineSprite_383_B8_attack/6.png": {
+      "bounds": {
+        "height": 71.65,
+        "width": 88.0,
+        "xMin": -56.0,
+        "yMin": -66.0
+      },
+      "svgSha256": "82c52fa6c0f90ae510ef52e2857724c44f7f29912164107345884341f62ee4f7"
+    },
+    "recovered/unit-sprites/DefineSprite_396_B7_run/1.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "c5d2caa9457cc0ea85a67d6dc854bb865c5c0e0bfe9006ee7936b9ce43d225a7"
+    },
+    "recovered/unit-sprites/DefineSprite_396_B7_run/2.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "f7fe6ab756e1d79afe368716cddc7000685b87bd3b42ed33ee0579e8cc4db9de"
+    },
+    "recovered/unit-sprites/DefineSprite_396_B7_run/3.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "8842e4a59eeff43c888dd9deecfde6e610a999baee112670297f5a5d63f85367"
+    },
+    "recovered/unit-sprites/DefineSprite_396_B7_run/4.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "fafe70c41ce27fa0bf57e3ead8a8db7d0801d47fb2294a684d4134b5497fb02f"
+    },
+    "recovered/unit-sprites/DefineSprite_396_B7_run/5.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "c170e52c256ffb320cd958bcb426a782128dbe805194f1be36d04fea78ed26db"
+    },
+    "recovered/unit-sprites/DefineSprite_396_B7_run/6.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 52.0,
+        "xMin": -27.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "f1ac126392c8edb8cc7f977b2017f157fe24fd31fd00eed8ce41b074631eadf5"
+    },
+    "recovered/unit-sprites/DefineSprite_403_B7_idle/1.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 37.8,
+        "xMin": -18.9,
+        "yMin": -55.0
+      },
+      "svgSha256": "5a88b655ece1ded117934aa58a5e83b9a3bb591fcede24f37425233427380c8c"
+    },
+    "recovered/unit-sprites/DefineSprite_403_B7_idle/2.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 37.8,
+        "xMin": -18.9,
+        "yMin": -55.0
+      },
+      "svgSha256": "3aa138919fbac741b5faf5d80bb053c9ecba2f8befcee29979036b2576e3b3f5"
+    },
+    "recovered/unit-sprites/DefineSprite_403_B7_idle/3.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 37.8,
+        "xMin": -18.9,
+        "yMin": -55.0
+      },
+      "svgSha256": "5ca6590d6bab0468a0d954f57ac7ea9b22e945a05d01e48999082cb37ff9cdad"
+    },
+    "recovered/unit-sprites/DefineSprite_410_B7_dead/1.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 71.0,
+        "xMin": -25.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "8a216e797e4672e401367f7149374f5cb3ebaba8cca2c4cab557cd88852b8549"
+    },
+    "recovered/unit-sprites/DefineSprite_410_B7_dead/2.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 71.0,
+        "xMin": -25.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "28c7529eeb73f5d90d6c052449befdb12b050aa10ff7893718e497483fed6006"
+    },
+    "recovered/unit-sprites/DefineSprite_410_B7_dead/3.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 71.0,
+        "xMin": -25.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "31761b89ca1d790f8e86393dde0f0346ee6a376cc23fa3b51f6b4e83ce7b2ba9"
+    },
+    "recovered/unit-sprites/DefineSprite_423_B7_attack/1.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "59f7bf535afbf53cbf382945ec174cbe9baaaa77c94e27e097c94672383b6ef4"
+    },
+    "recovered/unit-sprites/DefineSprite_423_B7_attack/2.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "7703ede133779f6f48349cb45d9dab35ccef7554efe0c80781afff240c5adb7e"
+    },
+    "recovered/unit-sprites/DefineSprite_423_B7_attack/3.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "c5cdf72ef4cc53faa7be97e2ce6be345124ac95dcaf472119ba8a13bdd89bcfb"
+    },
+    "recovered/unit-sprites/DefineSprite_423_B7_attack/4.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "b9b64387144831db8a1b0a32031b2d753563622a467dc187fdfad1aa03392701"
+    },
+    "recovered/unit-sprites/DefineSprite_423_B7_attack/5.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "162db9c60212cd459d6b1d85c6ec4da40b05a9d704d9ffe02a530e679d9cd8e2"
+    },
+    "recovered/unit-sprites/DefineSprite_423_B7_attack/6.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "49a46a1d9d89710e6df66103fc86c02251d0174d87b9f56d66872f5c5f4c0128"
+    },
+    "recovered/unit-sprites/DefineSprite_436_B6_run/1.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "87db2a68bf790f9e0abe46987087bd94ee467449ca1d9a9792464ba66e78d652"
+    },
+    "recovered/unit-sprites/DefineSprite_436_B6_run/2.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "a46e06f0c0770462d152bca4029a5647492822bd895bac16fdde9835527860e9"
+    },
+    "recovered/unit-sprites/DefineSprite_436_B6_run/3.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "ba2c495968e022b78bf4287104b6b8cd58dbf15d47e8933c2d3d6e1179cfefb5"
+    },
+    "recovered/unit-sprites/DefineSprite_436_B6_run/4.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "91c3357373ed7c34732c6541d19780afb5da987b4aae95cd76e0ec9b74c60cf6"
+    },
+    "recovered/unit-sprites/DefineSprite_436_B6_run/5.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "313e91f2b0c9a8d60955b0830fc2e162865d1295742aa9eb13b28aa166dbb830"
+    },
+    "recovered/unit-sprites/DefineSprite_436_B6_run/6.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 47.0,
+        "xMin": -25.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "021655584428ff2f92c3f7433b290bca2a86467181f9ddc4a36a0e4209d95755"
+    },
+    "recovered/unit-sprites/DefineSprite_443_B6_idle/1.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "a0fa6407299d5eab58f85c53ebf5c0c3b77328abdb9ea21bb1393078212d39bc"
+    },
+    "recovered/unit-sprites/DefineSprite_443_B6_idle/2.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "145967ddbe807b5a642e8183276d9defe3320a5160c963d03de4bffe25523959"
+    },
+    "recovered/unit-sprites/DefineSprite_443_B6_idle/3.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "059422687ec44d6bcfdc5fd90b0a20b802c8a7f202c711e19a73739c4fa7f46f"
+    },
+    "recovered/unit-sprites/DefineSprite_450_B6_dead/1.png": {
+      "bounds": {
+        "height": 43.0,
+        "width": 58.0,
+        "xMin": -30.0,
+        "yMin": -43.0
+      },
+      "svgSha256": "5cbd7567898bb3506c0d0c057c75544f29bf5c3552514059fa7a418737bab272"
+    },
+    "recovered/unit-sprites/DefineSprite_450_B6_dead/2.png": {
+      "bounds": {
+        "height": 43.0,
+        "width": 58.0,
+        "xMin": -30.0,
+        "yMin": -43.0
+      },
+      "svgSha256": "9509482e705b0772b0b4753c1175d30816d939016197da977b1416b47a64b58c"
+    },
+    "recovered/unit-sprites/DefineSprite_450_B6_dead/3.png": {
+      "bounds": {
+        "height": 43.0,
+        "width": 58.0,
+        "xMin": -30.0,
+        "yMin": -43.0
+      },
+      "svgSha256": "99638e9bfa8fc4939318d29bf9c527467d99dba43be0d9b87208faa169db114b"
+    },
+    "recovered/unit-sprites/DefineSprite_463_B6_attack/1.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "49b2bab455302141a5db3cc5f4447b1786afe5dcfcd7bbce2d36acf3f5a54c78"
+    },
+    "recovered/unit-sprites/DefineSprite_463_B6_attack/2.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "38c962771877288bc0a1614b28279a466b0a29096b1d0327fb58e6c2806e7fef"
+    },
+    "recovered/unit-sprites/DefineSprite_463_B6_attack/3.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "b023bc98813e9bdc214d6cd63b37d07a6a82a236ebdd588496c532b9eac1c9c3"
+    },
+    "recovered/unit-sprites/DefineSprite_463_B6_attack/4.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "65247eb210c631f5b147a7f5a488c3d27ec9f4b904c635536ebc7c6f8b85ac20"
+    },
+    "recovered/unit-sprites/DefineSprite_463_B6_attack/5.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "e8890afa9100af8f684857170f0ea69940bd56d2625c6c364b4998d2dd93379f"
+    },
+    "recovered/unit-sprites/DefineSprite_463_B6_attack/6.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 74.9,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "916f66ac3c86986b3824b13072b9b634b79b65a2ffff7be380a40fd2504613ba"
+    },
+    "recovered/unit-sprites/DefineSprite_476_B5_run/1.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "c14dd9d3184c83976ad097be7f21e60a1f68c86988c393385fe9e5c807eff11c"
+    },
+    "recovered/unit-sprites/DefineSprite_476_B5_run/2.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "20f9cba02082e6c8684935564649367d45be0a2438662687a45e475cd3ca60a0"
+    },
+    "recovered/unit-sprites/DefineSprite_476_B5_run/3.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "e3243b2defb96214472d9ef50620b6a3f3d9a4a26f0eaff4457ed6cb137f6bd5"
+    },
+    "recovered/unit-sprites/DefineSprite_476_B5_run/4.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "ca8b0cdcadb444f71993ca33a431692aad959502d0b8566741e51f12faeb1983"
+    },
+    "recovered/unit-sprites/DefineSprite_476_B5_run/5.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "d51342bcd66a521f691c3d8c078e7fb7a239a5e271dc45db3d996a5a03015d47"
+    },
+    "recovered/unit-sprites/DefineSprite_476_B5_run/6.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -28.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "954f1614522cdd35a9d3e535ae4fdcf1a9a63b2629b9c0334f07541d508c8d4d"
+    },
+    "recovered/unit-sprites/DefineSprite_483_B5_idle/1.png": {
+      "bounds": {
+        "height": 53.65,
+        "width": 58.9,
+        "xMin": -40.0,
+        "yMin": -48.0
+      },
+      "svgSha256": "92ad0c273bfb15af2f658a7d6144183604a98eb69be7a6c39187ec2f7dd6ac78"
+    },
+    "recovered/unit-sprites/DefineSprite_483_B5_idle/2.png": {
+      "bounds": {
+        "height": 53.65,
+        "width": 58.9,
+        "xMin": -40.0,
+        "yMin": -48.0
+      },
+      "svgSha256": "1fcbf5a023b8da90189fa052a83ddefa40ba63028c624d1936a3daf89f5ab7b9"
+    },
+    "recovered/unit-sprites/DefineSprite_483_B5_idle/3.png": {
+      "bounds": {
+        "height": 53.65,
+        "width": 58.9,
+        "xMin": -40.0,
+        "yMin": -48.0
+      },
+      "svgSha256": "7243733db12fa68452eb0027a63888913e0206bb0e8dc1debd1a95653060af0a"
+    },
+    "recovered/unit-sprites/DefineSprite_490_B5_dead/1.png": {
+      "bounds": {
+        "height": 53.0,
+        "width": 93.0,
+        "xMin": -42.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "f32c505f9aa3e3135c2edf497ff98cf5b5fd42514b8e18cdf0f14cfeab29898d"
+    },
+    "recovered/unit-sprites/DefineSprite_490_B5_dead/2.png": {
+      "bounds": {
+        "height": 53.0,
+        "width": 93.0,
+        "xMin": -42.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "6c722b500ced54d0c3d7c39ae8a22245d68938da908f16eab9230db59a94c802"
+    },
+    "recovered/unit-sprites/DefineSprite_490_B5_dead/3.png": {
+      "bounds": {
+        "height": 53.0,
+        "width": 93.0,
+        "xMin": -42.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "fd55ec0fee5cd1b4eeab2dc5b94f3cb46ba510ee81d52e432d77362724a45983"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/1.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "f4d8e231347ec1384d33c0bb53f498137221df2cf6bec29d56fee0e5b8c49fff"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/10.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "6666dd7d6b8e37451b70a3a9ff116a67b0e5e1c4cbf699d760997512f4c9fb4f"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/11.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "84c584ca43cd9fd1dd647cb1adab3c451c050233b0656af6ee8bdb0fe47640a5"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/12.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "ae5fb28f56f0316fd37e6ecf33f097a406dd37eb1292fd3feb0221a19a9f9dd2"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/13.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "3ea8432b782628899c21ef6089a1f6199a08e787f6a98dae9743f15f604c0e4e"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/14.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "b5baa8edc1d62e7c50b26949c1280f17cfad9080732f750be6ad917f0aeee0ac"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/15.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "14d7882c03221686596ff64a0a7b2cd41185a7430ba829923432e91ea815c5f6"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/16.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "46ba15172c0c8547166d0894a5c811bbfd762a7ea32a65dfe6be5d8e50e896c5"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/2.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "5792d17576b3de103bc40ef6631cb7cb685c0246af59e99eaf2e1d5f533522a2"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/3.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "ad540bcd52b097c9edc0c3030333be01b56ea07611083b775d490bf465d9e0bc"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/4.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "7895fbaa6d6a586866959a9e350ac84a6e6cc9a9c852364f423b57beb5e2b037"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/5.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "fad022e7e47c95102f6e9313678f6af31ae17a7baf5a30eb61ef4612c0d6d407"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/6.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "3ee960dea11d93d0790ef7e1b5b50f593fd37202d1204efe564e34b9349a77fe"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/7.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "4b4a7ea80247fefe9bddae96f80c434230a73929db27a2660fb10602519eb9fc"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/8.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "3cc3e3eb8292775444c99d9b025513b53eb9248552e84172ca29b5922c9931e8"
+    },
+    "recovered/unit-sprites/DefineSprite_49_thunderball/9.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "86af900c667cfc07caddb99eef5364429433e35bdf91068fd47cf590a5ed0096"
+    },
+    "recovered/unit-sprites/DefineSprite_501_B5_attack/1.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "ce01ea95f713e1ef7620f303f8054fbd3ed98442d2433fa72d14380b6e1bdb1a"
+    },
+    "recovered/unit-sprites/DefineSprite_501_B5_attack/2.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "ef06289c94b60bb7e11df8adeece78f46ba340b4596792921d2c929dd2812f8e"
+    },
+    "recovered/unit-sprites/DefineSprite_501_B5_attack/3.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "b262c890cc43abed6608f8449ee888f6de43c21b363ddee11d6a59b95249d9b5"
+    },
+    "recovered/unit-sprites/DefineSprite_501_B5_attack/4.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "fa722183e3cd4305b66da88ae4d993ee410749c0b346ec7d73db13304c9d2632"
+    },
+    "recovered/unit-sprites/DefineSprite_501_B5_attack/5.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 71.9,
+        "xMin": -53.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "0f482508b4cd990d1fa43cf89cf2db65c572cd95e1c26b5fad8dfbdede546e3d"
+    },
+    "recovered/unit-sprites/DefineSprite_514_B4_run/1.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "81f37e96f77d4d6dd5beac8139a2c548878e8eaf0e98ebfbfb6116fe9c76e53b"
+    },
+    "recovered/unit-sprites/DefineSprite_514_B4_run/2.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "e996dc20c968ee85a5c83e5956941f2d8ab695d6167b04826d26b8dd6a0c2984"
+    },
+    "recovered/unit-sprites/DefineSprite_514_B4_run/3.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "2a5669bc06eb4f5ecf0868de6dde82d39fbed00573e0950ec520f1ec48aae6c8"
+    },
+    "recovered/unit-sprites/DefineSprite_514_B4_run/4.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "dddf7580227b70a8f908bb59fdf2204b6d3da5cffd981ac591c4158897c92c32"
+    },
+    "recovered/unit-sprites/DefineSprite_514_B4_run/5.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "92915cce7185a517865fd5f6dc1b5d19ad3441c45ba243c82f261c2d89f7fa44"
+    },
+    "recovered/unit-sprites/DefineSprite_514_B4_run/6.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "f8a8f31082abba4da6fd25f6e05c6d6a316e14856bfcdd58fc0a44631b79f15f"
+    },
+    "recovered/unit-sprites/DefineSprite_521_B4_idle/1.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "919fcc206510d91dcf7f224dfb1df1f1ae5e6aa8875a21f8704502888e5c78f6"
+    },
+    "recovered/unit-sprites/DefineSprite_521_B4_idle/2.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "f2966815b869f1d6f9090de9dff7f0559c4c253e0e5b4970a5e5bf95f02e77b4"
+    },
+    "recovered/unit-sprites/DefineSprite_521_B4_idle/3.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "5e0ee1e0302110150bb01cc648d15ffdbc2e2821cae45c10e58577aa53ec8990"
+    },
+    "recovered/unit-sprites/DefineSprite_528_B4_dead/1.png": {
+      "bounds": {
+        "height": 55.0,
+        "width": 92.0,
+        "xMin": -29.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "3b95f356cc7df3b7bafb0d524bc80f6d5a59ffbdef39e8b933990513bc352d8c"
+    },
+    "recovered/unit-sprites/DefineSprite_528_B4_dead/2.png": {
+      "bounds": {
+        "height": 55.0,
+        "width": 92.0,
+        "xMin": -29.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "b6f11b78a18d0464f1451be52abd12971f2d2c8a69a9ad78a220be9215821c54"
+    },
+    "recovered/unit-sprites/DefineSprite_528_B4_dead/3.png": {
+      "bounds": {
+        "height": 55.0,
+        "width": 92.0,
+        "xMin": -29.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "c5e9a54e5248d696a40c178c00166421dea38456e78bf4aca50f5d5dce936034"
+    },
+    "recovered/unit-sprites/DefineSprite_541_B4_attack/1.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "1560fbd6d6c3472dec0aa95819b0630138564d62fa0206339a74e1c3f888b2ca"
+    },
+    "recovered/unit-sprites/DefineSprite_541_B4_attack/2.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "cf55ec3eae9abd6c081578812acfe4a4b5f0270dd3791b3e44c9539702a14791"
+    },
+    "recovered/unit-sprites/DefineSprite_541_B4_attack/3.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "b412a89b50ea6c0f96a1dd3fd5f7d61180128b7d6d95372e4ed2bc68e65baaa5"
+    },
+    "recovered/unit-sprites/DefineSprite_541_B4_attack/4.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "4631c9ef235c192bce5bd0ed4337711977a25746a78c46983b2656ccf20e86c9"
+    },
+    "recovered/unit-sprites/DefineSprite_541_B4_attack/5.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "1cf82acd9fadfdb43f819573a01e4f225e594fb63abe2d14ed4841a2c9eef96c"
+    },
+    "recovered/unit-sprites/DefineSprite_541_B4_attack/6.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 65.0,
+        "xMin": -45.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "bd14d94b5d50f03b76e10835980f8ea3dfd8b44f9dd2b8d0e6ad08d8e857dcca"
+    },
+    "recovered/unit-sprites/DefineSprite_554_B3_run/1.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "a9333d0a738003d78470cbe4835a43a1dd2aaac583835bc282d5ea06e3bf1efe"
+    },
+    "recovered/unit-sprites/DefineSprite_554_B3_run/2.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "a44198c9c326768d617b956dd4dcb570109e990fb56b2526d92c9ec65bf59f38"
+    },
+    "recovered/unit-sprites/DefineSprite_554_B3_run/3.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "8021650289a75263831aa19fecaf5f5fa73269b9874fa9f6f3995f1d9794686b"
+    },
+    "recovered/unit-sprites/DefineSprite_554_B3_run/4.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "2a45e1ad8325ab25c70ad59e30cd3cdb71a24d5691e6bbaa7f37b24f3a146465"
+    },
+    "recovered/unit-sprites/DefineSprite_554_B3_run/5.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "2f08e006ead9fb733825b5fdfaf286bffdceaeccfd0342b80ffc948129a9a4de"
+    },
+    "recovered/unit-sprites/DefineSprite_554_B3_run/6.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 64.0,
+        "xMin": -36.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "5334695dcaa619b1575d4ebea7628ab61ba55a9f1a0696ff7e50fd688be68f16"
+    },
+    "recovered/unit-sprites/DefineSprite_561_B3_idle/1.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 58.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "64469a64a79ce04b40d9adc709c565d70b5120bde115e2d924266795be2d6724"
+    },
+    "recovered/unit-sprites/DefineSprite_561_B3_idle/2.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 58.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "879ea283ec94c5a2613aab8e1f7de9c2090745a9117e5fb22fd5ea2304178b03"
+    },
+    "recovered/unit-sprites/DefineSprite_561_B3_idle/3.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 58.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "78a088a20881e7edf77373f17b24c1080a273f3fd06e030a5476655940d2d403"
+    },
+    "recovered/unit-sprites/DefineSprite_568_B3_dead/1.png": {
+      "bounds": {
+        "height": 66.0,
+        "width": 86.0,
+        "xMin": -34.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "16e9caad45bd9418e6c89463593889b99141f1654ff5ba983af0cedccff4f924"
+    },
+    "recovered/unit-sprites/DefineSprite_568_B3_dead/2.png": {
+      "bounds": {
+        "height": 66.0,
+        "width": 86.0,
+        "xMin": -34.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "130dd3d9124a12f37ee78a23d4d57303db5068db9999059fa4deea3804b2e81f"
+    },
+    "recovered/unit-sprites/DefineSprite_568_B3_dead/3.png": {
+      "bounds": {
+        "height": 66.0,
+        "width": 86.0,
+        "xMin": -34.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "8115dd07c068af6f85c5b843ff18c6dceea06e6a3f0f8e859a3665b93331999c"
+    },
+    "recovered/unit-sprites/DefineSprite_577_B3_attack/1.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 93.0,
+        "xMin": -67.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "05ff65875949b4b8dc2112babcf6c3a5a4309d192e5407749b90e92c41824186"
+    },
+    "recovered/unit-sprites/DefineSprite_577_B3_attack/2.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 93.0,
+        "xMin": -67.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "fd7eb09b7ecdba00797ed1fd691c69aea16458dca49ed6fd81a3fb6341cb092c"
+    },
+    "recovered/unit-sprites/DefineSprite_577_B3_attack/3.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 93.0,
+        "xMin": -67.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "cab0058e9138a7e72876544b65c9f4d077615579d0b7c7ca47aead35d57bc9cb"
+    },
+    "recovered/unit-sprites/DefineSprite_577_B3_attack/4.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 93.0,
+        "xMin": -67.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "22ef9b75afc8663b958ed5d41c2c48797290f3a48cbc3737c4318d01968d3ec1"
+    },
+    "recovered/unit-sprites/DefineSprite_590_B2_run/1.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "49283881dec29bd48cfb9930c7fbdca95c3034e148e5bb7692df3f34da25851c"
+    },
+    "recovered/unit-sprites/DefineSprite_590_B2_run/2.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "fec457c8bb9f28bce9c5edd5a840b478b7b34ac028aaed50f3d1aecc79e53507"
+    },
+    "recovered/unit-sprites/DefineSprite_590_B2_run/3.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "3a36ffc1acc81e513f951c713379edb14b0ce02134efa343b7b26419a30e75b2"
+    },
+    "recovered/unit-sprites/DefineSprite_590_B2_run/4.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "304edf1d68e7bd797534f07a096ce735a0a4c04840d8ee76debb06b3fdeac710"
+    },
+    "recovered/unit-sprites/DefineSprite_590_B2_run/5.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "045a8ab44251aa96555107b5f41981ae3758dbad99de0fe09111605a4e6f2830"
+    },
+    "recovered/unit-sprites/DefineSprite_590_B2_run/6.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 64.0,
+        "xMin": -37.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "51714ef85aa355a75103e6a1a94db2af2a1c5d0dd7fe7152c99d46dc2349b60e"
+    },
+    "recovered/unit-sprites/DefineSprite_597_B2_idle/1.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 58.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "db95cbecbcfc097e9f03a87503d8390f4febdc2898482831c3f1d06492707cf8"
+    },
+    "recovered/unit-sprites/DefineSprite_597_B2_idle/2.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 58.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "ec5760c82513e7f22e8face701f805cf20d2a25ae90c35e22f78db3653465f6a"
+    },
+    "recovered/unit-sprites/DefineSprite_597_B2_idle/3.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 58.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "6ccc8559f641f94c2d6cef912ab29f4b456ea3f56208f43979935b400680815b"
+    },
+    "recovered/unit-sprites/DefineSprite_604_B2_dead/1.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 86.0,
+        "xMin": -32.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "c9992a19050d6867a348c8adf61fb980a92be4940d7949bedc639848db34a942"
+    },
+    "recovered/unit-sprites/DefineSprite_604_B2_dead/2.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 86.0,
+        "xMin": -32.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "6de0e45606dc371a4d0533829553a261ac7da3281f94de4cb8dba63706ecd01c"
+    },
+    "recovered/unit-sprites/DefineSprite_604_B2_dead/3.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 86.0,
+        "xMin": -32.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "6e7e47eb545b1b95ce00b24144b9b56931a5ccda24d3b3dc364d842e0c42d859"
+    },
+    "recovered/unit-sprites/DefineSprite_617_B2_attack/1.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "84603a8878b0eb79e7f3743e2979bd07660b4a75fb81646b6a4e8b2d58847277"
+    },
+    "recovered/unit-sprites/DefineSprite_617_B2_attack/2.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "84123c951047539a7a670229ad419c94031444cdcd142ae14873ac9a1a707032"
+    },
+    "recovered/unit-sprites/DefineSprite_617_B2_attack/3.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "6b39690aeda9a3050041abeb5d9443f5decbf87e7f36c115c2353cbd1f18ac4a"
+    },
+    "recovered/unit-sprites/DefineSprite_617_B2_attack/4.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "48dd74ef3e68404e6a17d41f41c91cbaea287bc07ce1f160d8d25df55e1a38f4"
+    },
+    "recovered/unit-sprites/DefineSprite_617_B2_attack/5.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "b481cc92e285263f60ea0071b0698ddc5edaee874cd852679696215f378781be"
+    },
+    "recovered/unit-sprites/DefineSprite_617_B2_attack/6.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 120.0,
+        "xMin": -92.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "4fc00bf8619a208528ee2c4130d217cb3c8089111858014f7d82de551ec3b6c7"
+    },
+    "recovered/unit-sprites/DefineSprite_630_B1_run/1.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "0c2cd79ed282fead68b1e6d6b2706773b609dfbfcc6ccee430756fc3f5bad168"
+    },
+    "recovered/unit-sprites/DefineSprite_630_B1_run/2.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "3180909b35ad35bfa27ce7f3dbe6912dec92733f7b23bbcdb8a1fb99dac41603"
+    },
+    "recovered/unit-sprites/DefineSprite_630_B1_run/3.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "02b025a6a457a377342d9305c72d3800ba6e283b3474c18625c7f7ae5987a4ea"
+    },
+    "recovered/unit-sprites/DefineSprite_630_B1_run/4.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "c0b7db9ee662c6167b1736548ec19edbc63b10f93ffc2e57e73536983634b405"
+    },
+    "recovered/unit-sprites/DefineSprite_630_B1_run/5.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "5ce0af5c45b19a561cf1b1a8366fad7438db5c939e6a3b269d4bc32d53121fed"
+    },
+    "recovered/unit-sprites/DefineSprite_630_B1_run/6.png": {
+      "bounds": {
+        "height": 57.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -52.0
+      },
+      "svgSha256": "241ff522c701924206ac58bb8e79be7373b8e6ffa45639c47bd0e1aecfa3b4d7"
+    },
+    "recovered/unit-sprites/DefineSprite_637_B1_idle/1.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 63.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "700f0d7211c665a275abec9b5f69a457fbd2071a5b56059903db2817ee08a450"
+    },
+    "recovered/unit-sprites/DefineSprite_637_B1_idle/2.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 63.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "69d1750e6c1322ae5d2f92903b20beae89ab1256cb16cc7dacde8f42e65ed9a0"
+    },
+    "recovered/unit-sprites/DefineSprite_637_B1_idle/3.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 63.0,
+        "xMin": -31.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "60547b4f98d59c3dd7dc375e6efccf7d38caa28489b1906eadd44401be545629"
+    },
+    "recovered/unit-sprites/DefineSprite_648_B1_dead/1.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "5c6799fb880a7f5008c3a92bdd6806d9a822536cb681df4f465423c489f3f8ef"
+    },
+    "recovered/unit-sprites/DefineSprite_648_B1_dead/2.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "e007929185ce6a612eda7d24b9fceb23f914d94136094c17d592dd8900c5fca0"
+    },
+    "recovered/unit-sprites/DefineSprite_648_B1_dead/3.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "bad19ce6c892d40fd56ba6901032300901d99634b89a4c145653fc8090373e55"
+    },
+    "recovered/unit-sprites/DefineSprite_648_B1_dead/4.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "9409ccda7f27baa995f08ac7e7e3c37083233b3273d1d77fe8b835aaf771d06d"
+    },
+    "recovered/unit-sprites/DefineSprite_648_B1_dead/5.png": {
+      "bounds": {
+        "height": 72.0,
+        "width": 100.0,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "0412d0e6194121277abbfd38e0d0a2dc3a7527653276731aff56fb8dd045f64e"
+    },
+    "recovered/unit-sprites/DefineSprite_659_B1_attack/1.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "d9c832779938d6eaf274785d4663a88447f8029669b36f4689a05e4deaba53e2"
+    },
+    "recovered/unit-sprites/DefineSprite_659_B1_attack/2.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "c30d05048b76759702c6a3d668de52dfd418547e7912b92b631b4a580baf67c4"
+    },
+    "recovered/unit-sprites/DefineSprite_659_B1_attack/3.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "ec4299305105bc78a1b2682b8db829d6ae9bb9baacaba5d83b4e88e25af393b1"
+    },
+    "recovered/unit-sprites/DefineSprite_659_B1_attack/4.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "c0bd50f182d6d7e69b574a13863cca8d982aad4c9bb8eedbd08bbc005bdab7be"
+    },
+    "recovered/unit-sprites/DefineSprite_659_B1_attack/5.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 91.0,
+        "xMin": -62.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "f5f6b0a7ef8b9b729157b0deed464a63d63891df5a704325ecf8b695ee8e727a"
+    },
+    "recovered/unit-sprites/DefineSprite_672_B0_run/1.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "22a23bf919e3ee3dbd0e8fbc786c5354ad9798b21bddfb4ab274958dd36d1e2f"
+    },
+    "recovered/unit-sprites/DefineSprite_672_B0_run/2.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "7346510713d558ca5eeed8ac4139e2e4009b8f24305622c8851494d8449c74f9"
+    },
+    "recovered/unit-sprites/DefineSprite_672_B0_run/3.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "2cb45a1eae685d899c9d572b426964564e47203c57fec3302d69a76684947338"
+    },
+    "recovered/unit-sprites/DefineSprite_672_B0_run/4.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "eca6f515ac1b5f27c861cbbd9dc1d21f870521251aaf746bd81b84e6f7f5f61b"
+    },
+    "recovered/unit-sprites/DefineSprite_672_B0_run/5.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "39eb98b36557a4cd196ce7cd1501be2f7d6bbe73f507bc8be0bdabc3da143e2d"
+    },
+    "recovered/unit-sprites/DefineSprite_672_B0_run/6.png": {
+      "bounds": {
+        "height": 54.65,
+        "width": 46.0,
+        "xMin": -26.0,
+        "yMin": -49.0
+      },
+      "svgSha256": "e55bb9ee34b9229d18b1e3634fbfd02c479b47874280d529df38ce4f40268483"
+    },
+    "recovered/unit-sprites/DefineSprite_679_B0_idle/1.png": {
+      "bounds": {
+        "height": 58.65,
+        "width": 62.0,
+        "xMin": -31.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "4609e66df4e57dafe073eab1944c142a119c6402012fa1d39236396716b90e9a"
+    },
+    "recovered/unit-sprites/DefineSprite_679_B0_idle/2.png": {
+      "bounds": {
+        "height": 58.65,
+        "width": 62.0,
+        "xMin": -31.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "4a1c1dcdf7743c64bae0e6f07a1f4de995cae6762d6e7a917d25a64b68fb4f51"
+    },
+    "recovered/unit-sprites/DefineSprite_679_B0_idle/3.png": {
+      "bounds": {
+        "height": 58.65,
+        "width": 62.0,
+        "xMin": -31.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "867b11acacb317f98dd059227fafd21b41a3fb14142f0305d1d7ba51f525a5ca"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/1.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "a0d2dc7dcdca3d5ec4ba91da7945506d9066ebd1a02868a2461816ce767c22ef"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/10.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "7d1d6da0ef3288b07a97a9d0c1d09ed9c46ed8b871837b2efd863967135f1f8d"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/2.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "12cc1bc877232933c460ffcb4e92c4dda5fb89781289bac95114e10dc70c81e3"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/3.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "a528cab55125e2d0ead9754868fb1480d973867fa845e424cae8e72282acbfea"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/4.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "c83b78feaf8db604a20845f84090796a50dedb9d738ec5f1ff60f705b68d1666"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/5.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "8c766201932084619229f3b9635f8f0379d6f8482a0b5faefc4d45ad6acaf6b0"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/6.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "d6b7b89a185738e6e90b49d2963e07fb14f0b47274221cdd0edc9076c7940e64"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/7.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "d5b2aff1437f0baeb4691bd3530d53211849e4ef43bba064c67baae7dffeb2c9"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/8.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "4b0692847c4e82ebfac0ea9a245c1c34b4013a339e63f496d278b98c46a438d6"
+    },
+    "recovered/unit-sprites/DefineSprite_68_storm/9.png": {
+      "bounds": {
+        "height": 49.15,
+        "width": 83.85,
+        "xMin": -7.55,
+        "yMin": -4.45
+      },
+      "svgSha256": "758221130770e4f28170590e57e6126243bf961bb72d6f4f76c18198f930d436"
+    },
+    "recovered/unit-sprites/DefineSprite_692_B0_dead/1.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "164a01bbd89c610f02259d87e028ef2e3a16c37a4bc7b9e33f4e3c8acbcae42a"
+    },
+    "recovered/unit-sprites/DefineSprite_692_B0_dead/2.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "f0fb0e1ff48a5258008c587ab66d9c5c4cabb709a37a91bf1b79a0400c2b6871"
+    },
+    "recovered/unit-sprites/DefineSprite_692_B0_dead/3.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "f429ebf7449c6e42f1d9e79473e242c38a5fba9e7161ccf3f3f28818a35425f3"
+    },
+    "recovered/unit-sprites/DefineSprite_692_B0_dead/4.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "451214409f68d8a9a57b706b207ae19005ab129e411d35774296888dc8671a48"
+    },
+    "recovered/unit-sprites/DefineSprite_692_B0_dead/5.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "781c6829081d3fceb87ed027f9574ab246a6471d64670bb5907c1f2795fea601"
+    },
+    "recovered/unit-sprites/DefineSprite_692_B0_dead/6.png": {
+      "bounds": {
+        "height": 74.0,
+        "width": 99.0,
+        "xMin": -26.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "dbca2e7e606325384ca268aa2da76c4006d6189b238c3041205df2d64c6be19b"
+    },
+    "recovered/unit-sprites/DefineSprite_703_B0_attack/1.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "757a4f18cbedc81669acbdedd1ef9a8aed65a105daf044823438e4fe0614f4aa"
+    },
+    "recovered/unit-sprites/DefineSprite_703_B0_attack/2.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "9fe26d88785b082b3526bbcaa35b5d1f49b8f02875e15495594dd5699fb21f7e"
+    },
+    "recovered/unit-sprites/DefineSprite_703_B0_attack/3.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "db08e5660c876c678f69b2ae8dcf90beb56d12d9c46f0780c8e41be0a13087da"
+    },
+    "recovered/unit-sprites/DefineSprite_703_B0_attack/4.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "6fa642cd72826dd2dbffe521118412fee62d1841cf5167f81eb6b95eb110d18a"
+    },
+    "recovered/unit-sprites/DefineSprite_703_B0_attack/5.png": {
+      "bounds": {
+        "height": 70.65,
+        "width": 88.0,
+        "xMin": -63.0,
+        "yMin": -65.0
+      },
+      "svgSha256": "eba05c86bc89755ec05a792bca3a40ad7e6df4d671c6008f927d9afbfd5ef102"
+    },
+    "recovered/unit-sprites/DefineSprite_716_A15_run/1.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "dab6cab94a9c7b57d39ee6245293302131d503b694e56af07b2caa3a85423ad9"
+    },
+    "recovered/unit-sprites/DefineSprite_716_A15_run/2.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "919b2e21f6d5a808f805f87082bb243ed342e2f058cd7aadd1700b98b2a5fb7e"
+    },
+    "recovered/unit-sprites/DefineSprite_716_A15_run/3.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "a6149dc9c04aad6b61a56333b292a5a4244cd5167df7991d55524fe6b697dab1"
+    },
+    "recovered/unit-sprites/DefineSprite_716_A15_run/4.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "7ce4756f69846bdc081e28e4588b03068bb3f4f77b06eace4684a27e23f11e02"
+    },
+    "recovered/unit-sprites/DefineSprite_716_A15_run/5.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "9dd14dba775383c63be61ead550062cd355969ac75f13156b70b4bf1a9fa613c"
+    },
+    "recovered/unit-sprites/DefineSprite_716_A15_run/6.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "92d689db0e095b82e1c661d5cde86ec054642bbf4b2ffb5640ae4a714ea18949"
+    },
+    "recovered/unit-sprites/DefineSprite_723_A15_idle/1.png": {
+      "bounds": {
+        "height": 52.65,
+        "width": 57.9,
+        "xMin": -39.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "6742a6138b75603ccf9dd4fe282ada3a233f54227a9329a82be4110b7704f82a"
+    },
+    "recovered/unit-sprites/DefineSprite_723_A15_idle/2.png": {
+      "bounds": {
+        "height": 52.65,
+        "width": 57.9,
+        "xMin": -39.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "05d02fbb5f8c45feb3d171a5bdaf66d2fb8b026725f852c2350f914407cb52c6"
+    },
+    "recovered/unit-sprites/DefineSprite_723_A15_idle/3.png": {
+      "bounds": {
+        "height": 52.65,
+        "width": 57.9,
+        "xMin": -39.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "86a4f5d003c1dc4d41de99d3dac93ec97387a29b171f96e26bfc1dd0c1a271e4"
+    },
+    "recovered/unit-sprites/DefineSprite_730_A15_dead/1.png": {
+      "bounds": {
+        "height": 51.0,
+        "width": 95.0,
+        "xMin": -42.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "20365e11ae74c4a15d3b17752f69bb0cd5261fae80de96c493211110e40e15d9"
+    },
+    "recovered/unit-sprites/DefineSprite_730_A15_dead/2.png": {
+      "bounds": {
+        "height": 51.0,
+        "width": 95.0,
+        "xMin": -42.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "cec3c806d03d14915551b92ad7241a7e2de7ff02b5613eb37bd52b1ad9ed2d10"
+    },
+    "recovered/unit-sprites/DefineSprite_730_A15_dead/3.png": {
+      "bounds": {
+        "height": 51.0,
+        "width": 95.0,
+        "xMin": -42.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "56c75809078f899b5a3d0c6cc4eaba97127b04dd9e13cc8fa3cbb40a134b25b8"
+    },
+    "recovered/unit-sprites/DefineSprite_741_A15_attack/1.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "bd4d7bc528fa9bff65ef8f06729f013da530a5c58ac1b997f51cefa0191c0352"
+    },
+    "recovered/unit-sprites/DefineSprite_741_A15_attack/2.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "7f70e4907752b69aca0d3f0626399e4469bb282c93715fd6940f7bd9f9a5bafe"
+    },
+    "recovered/unit-sprites/DefineSprite_741_A15_attack/3.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "88a38e480c9894207c5ee6feafa434c0ecc0953d98da2f7062aba926d4bf1a40"
+    },
+    "recovered/unit-sprites/DefineSprite_741_A15_attack/4.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "273ad9fdcda3b34ec212ff2d520c788ec3696311bc6c20ae14140cb587cdafc2"
+    },
+    "recovered/unit-sprites/DefineSprite_741_A15_attack/5.png": {
+      "bounds": {
+        "height": 64.65,
+        "width": 70.0,
+        "xMin": -51.0,
+        "yMin": -59.0
+      },
+      "svgSha256": "949bdc89ccb9ff63cb0a0b238036bee53c354b9fa816a9bd9fa8eb2cbc72076f"
+    },
+    "recovered/unit-sprites/DefineSprite_754_A14_run/1.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "24f12c78db249dd43f99c2ea33ac102eb488aa76a4d233bebe3c52cab1cc59dc"
+    },
+    "recovered/unit-sprites/DefineSprite_754_A14_run/2.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "01263703e22dc0ae4e30c027f541f75d05e89be87b3c6358fe9f79e8b04c6ed8"
+    },
+    "recovered/unit-sprites/DefineSprite_754_A14_run/3.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "cbfb42889c9d32c2010601d7c26c333210537eff992af7ea0c5815962d320b37"
+    },
+    "recovered/unit-sprites/DefineSprite_754_A14_run/4.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "94ea0701a1ccf6dc9a821ce438ed04ff98e90b8fc20cb38c30db2bdc836dfeb8"
+    },
+    "recovered/unit-sprites/DefineSprite_754_A14_run/5.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "c2400e341d4a91d034a91498b73245f8c3ec449a7ed33c76354a405eb5ca6e8a"
+    },
+    "recovered/unit-sprites/DefineSprite_754_A14_run/6.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "69c5e3966e128c6ece957950c179419940d4a284e26ddf531937ec84d2950541"
+    },
+    "recovered/unit-sprites/DefineSprite_75_fireball/1.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "78ffc3eacf066d4eaf63cb52a4461dbd3b766d67b2dd43f462586d7a9f1c589b"
+    },
+    "recovered/unit-sprites/DefineSprite_75_fireball/2.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "1bf7c47bf307c41c8c91e6e84d9e0fcc07bf7c84d08a179c7b7953dbc3e18d92"
+    },
+    "recovered/unit-sprites/DefineSprite_75_fireball/3.png": {
+      "bounds": {
+        "height": 32.0,
+        "width": 32.0,
+        "xMin": 0.0,
+        "yMin": 0.0
+      },
+      "svgSha256": "e6465acee1a75ce5e3da36847d3c1cf5412b402092dca3742b658dcacfe2a0ba"
+    },
+    "recovered/unit-sprites/DefineSprite_761_A14_idle/1.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "1fb45adc400c8e490cdeaf3e6304e385b7b2143fb2ec7580b0b54c68a156e7d6"
+    },
+    "recovered/unit-sprites/DefineSprite_761_A14_idle/2.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "7271fa63142e227525ec7b41e398088a56b013f8711466f43a85bce236b526c2"
+    },
+    "recovered/unit-sprites/DefineSprite_761_A14_idle/3.png": {
+      "bounds": {
+        "height": 55.65,
+        "width": 44.9,
+        "xMin": -26.0,
+        "yMin": -50.0
+      },
+      "svgSha256": "2c7eda8542d9e65a6e74bec6b22eaebf3eab43cadf29fd61593c506d272d4d49"
+    },
+    "recovered/unit-sprites/DefineSprite_768_A14_dead/1.png": {
+      "bounds": {
+        "height": 52.0,
+        "width": 66.0,
+        "xMin": -24.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "bb26a466ac254bf203ce81d872de8eeabacfa97c36e21d7a4bd442758951c797"
+    },
+    "recovered/unit-sprites/DefineSprite_768_A14_dead/2.png": {
+      "bounds": {
+        "height": 52.0,
+        "width": 66.0,
+        "xMin": -24.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "f9db8b01d1fe6e49cc726a5bbf358b61e456bd6702fba5f90b088d56c5135137"
+    },
+    "recovered/unit-sprites/DefineSprite_768_A14_dead/3.png": {
+      "bounds": {
+        "height": 52.0,
+        "width": 66.0,
+        "xMin": -24.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "82faebd1d10769eec9b8aa48dbc3bd00ef4d25d666b0f4313c0db909981ce521"
+    },
+    "recovered/unit-sprites/DefineSprite_77/1.png": {
+      "bounds": {
+        "height": 14.65,
+        "width": 37.8,
+        "xMin": -18.9,
+        "yMin": -9.0
+      },
+      "svgSha256": "6825bc110cda1645102f4c1a107a695d6995ebc44b2a187ba950fbc87ad93768"
+    },
+    "recovered/unit-sprites/DefineSprite_783_A14_attack/1.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "b706aef1092b74fc03630d988bbb117d3b3223411760c4929b185cdcbb399a80"
+    },
+    "recovered/unit-sprites/DefineSprite_783_A14_attack/2.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "bdc0fdf5cc6f5f37d20d44d62268d5d24efa3831fe4e6c525b7972baceac5ce7"
+    },
+    "recovered/unit-sprites/DefineSprite_783_A14_attack/3.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "64a2bf6954d89bce121c5d760b58f6e825add7fb686ba701bbe1b4d88964439d"
+    },
+    "recovered/unit-sprites/DefineSprite_783_A14_attack/4.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "f97f3f750e07fe31912b1b6121d7de284493782b2a8fb550e01963e5c9bd9dd5"
+    },
+    "recovered/unit-sprites/DefineSprite_783_A14_attack/5.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "df441b15f36fbd6619908cdc578da224095a3bd892b05ddf6b36d09b1f7219f3"
+    },
+    "recovered/unit-sprites/DefineSprite_783_A14_attack/6.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "c95572eb07fe926a5443e29929c363ff3296dfcb57643abbec9b0b4f2419bba0"
+    },
+    "recovered/unit-sprites/DefineSprite_783_A14_attack/7.png": {
+      "bounds": {
+        "height": 62.65,
+        "width": 76.0,
+        "xMin": -46.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "990927c78f37113307a1d0fd89465eef163208260fc4ea5234a1014e024b1777"
+    },
+    "recovered/unit-sprites/DefineSprite_796_A13_run/1.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "26b030fe694051b3d3d715bb4db1d238d5320166e067b1604a7648a8bdc31422"
+    },
+    "recovered/unit-sprites/DefineSprite_796_A13_run/2.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "9bf7af33ff91b791bec50614284cf88a4b358e01588c19c0d4ffac58202943b0"
+    },
+    "recovered/unit-sprites/DefineSprite_796_A13_run/3.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "e45b372fe692b302a13e2a2ed81fc18f32f606bf3768a0b399a8dad3a5c585b8"
+    },
+    "recovered/unit-sprites/DefineSprite_796_A13_run/4.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "4ac80c35a24ee2265812e3808c3933cd62f52a5be5d71fe745dca8b6cd01e93e"
+    },
+    "recovered/unit-sprites/DefineSprite_796_A13_run/5.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "e41b8756383fdf2515cde446a156b1576ca0733516b092f16b85bbb9d7a2347d"
+    },
+    "recovered/unit-sprites/DefineSprite_796_A13_run/6.png": {
+      "bounds": {
+        "height": 60.65,
+        "width": 103.0,
+        "xMin": -65.0,
+        "yMin": -55.0
+      },
+      "svgSha256": "fe3c0e248d8b1750550f93a03783c7f3a7633298eb6738e943ac88ea7af54e23"
+    },
+    "recovered/unit-sprites/DefineSprite_803_A13_idle/1.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 81.0,
+        "xMin": -54.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "698753ef904881f38400a79f189c275e92a817db185983cfc299e7b3b9d0028c"
+    },
+    "recovered/unit-sprites/DefineSprite_803_A13_idle/2.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 81.0,
+        "xMin": -54.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "c66492f39a85132c43e955223c3d83e435032eee863df99e5e999941b4ce4454"
+    },
+    "recovered/unit-sprites/DefineSprite_803_A13_idle/3.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 81.0,
+        "xMin": -54.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "6191656ab18d5e5cd537cea0c1372eb64f56de2188e1a0b2af3dc324fc057e17"
+    },
+    "recovered/unit-sprites/DefineSprite_810_A13_dead/1.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 91.0,
+        "xMin": -56.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "92e87bcdbb812299da7e464a9742a5c6bf5f5843274ba408ac503b1389cde103"
+    },
+    "recovered/unit-sprites/DefineSprite_810_A13_dead/2.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 91.0,
+        "xMin": -56.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "89f074477b5a1865a4b60e6707601747c668e0c3ebe94544b0daa46df323df76"
+    },
+    "recovered/unit-sprites/DefineSprite_810_A13_dead/3.png": {
+      "bounds": {
+        "height": 61.0,
+        "width": 91.0,
+        "xMin": -56.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "ee3d9a6e84c364b03c9a9c29b2a22732363817b8db4c28b89236a0a560ab3d28"
+    },
+    "recovered/unit-sprites/DefineSprite_819_A13_attack/1.png": {
+      "bounds": {
+        "height": 101.65,
+        "width": 112.0,
+        "xMin": -64.0,
+        "yMin": -96.0
+      },
+      "svgSha256": "acf14e9388a2e8b81865ad14832adf3e7c881411e38a61bcbb0d01b79ae4fec9"
+    },
+    "recovered/unit-sprites/DefineSprite_819_A13_attack/2.png": {
+      "bounds": {
+        "height": 101.65,
+        "width": 112.0,
+        "xMin": -64.0,
+        "yMin": -96.0
+      },
+      "svgSha256": "6c5f017e01f57897d2c3812a2ca0f7e705b36562e5d027c4984f722d6b3bff1a"
+    },
+    "recovered/unit-sprites/DefineSprite_819_A13_attack/3.png": {
+      "bounds": {
+        "height": 101.65,
+        "width": 112.0,
+        "xMin": -64.0,
+        "yMin": -96.0
+      },
+      "svgSha256": "f9faf99a1e4f1a35f2f45161c7a1e64f71ac72d2497f29bf208be24c315b0caa"
+    },
+    "recovered/unit-sprites/DefineSprite_819_A13_attack/4.png": {
+      "bounds": {
+        "height": 101.65,
+        "width": 112.0,
+        "xMin": -64.0,
+        "yMin": -96.0
+      },
+      "svgSha256": "b6f69b47d06f4ead7b896f14776b7c1f4d9442ba8f0e900a183e3300620ccbce"
+    },
+    "recovered/unit-sprites/DefineSprite_832_A12_run/1.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "03ee5ebdf6a02e1525ea5cdf951ab27ef9831c462581ae074f96b3bd9a70c350"
+    },
+    "recovered/unit-sprites/DefineSprite_832_A12_run/2.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "f57de6f8d1cf9b73de82a3be737ed4b57732ae2d90b28bc31e08534b451a74b3"
+    },
+    "recovered/unit-sprites/DefineSprite_832_A12_run/3.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "e8994b27b41f92371808bee57be9801440d4d261ebbf71692a5edf6090355fa1"
+    },
+    "recovered/unit-sprites/DefineSprite_832_A12_run/4.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "b4a8486ee73ad306f9d5de20aac363804a16b41a52343fae8a4df356221750df"
+    },
+    "recovered/unit-sprites/DefineSprite_832_A12_run/5.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "6aee53e0d7b2eaa80ac59c427ad89241fd4cb0683cef8904a37c9a5dc8c8ea4f"
+    },
+    "recovered/unit-sprites/DefineSprite_832_A12_run/6.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 53.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "cdb0d1abebf73936cc160e0fc51f4e7a5fb6afe8945ba2d742987c38a0077e25"
+    },
+    "recovered/unit-sprites/DefineSprite_839_A12_idle/1.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 54.0,
+        "xMin": -32.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "38ce78a76256a5ddd89c1d5303d8d6415b2a1824a0c2a287d71c47a4fef0b4a5"
+    },
+    "recovered/unit-sprites/DefineSprite_839_A12_idle/2.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 54.0,
+        "xMin": -32.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "7ccfe766703ff59b843a4218c51ae06b06e2efaa37a2db4ed49dccbc4f56ee82"
+    },
+    "recovered/unit-sprites/DefineSprite_839_A12_idle/3.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 54.0,
+        "xMin": -32.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "cce6593dba69fec74654bb19b5596ebd2fe9752de4d66c15ca1b71be86e837d0"
+    },
+    "recovered/unit-sprites/DefineSprite_846_A12_dead/1.png": {
+      "bounds": {
+        "height": 47.0,
+        "width": 87.0,
+        "xMin": -40.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "b0e65483098fcf7d8140fc2bb0cb3b3f9341880bbfdcf63f3047593de1594d0c"
+    },
+    "recovered/unit-sprites/DefineSprite_846_A12_dead/2.png": {
+      "bounds": {
+        "height": 47.0,
+        "width": 87.0,
+        "xMin": -40.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "54f906487c53dda47a447a72fb92b58efbb8ad43d3e5f9dc92d64fd47473352a"
+    },
+    "recovered/unit-sprites/DefineSprite_846_A12_dead/3.png": {
+      "bounds": {
+        "height": 47.0,
+        "width": 87.0,
+        "xMin": -40.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "4c116103226c7e361b4125bb08046a883f4c93252982ad26505abec16c5118b8"
+    },
+    "recovered/unit-sprites/DefineSprite_859_A12_attack/1.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "a182e9eeeed728444eb5a4a74c489c8ea75c5bd326cbee8da399f75ba62aae13"
+    },
+    "recovered/unit-sprites/DefineSprite_859_A12_attack/2.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "9496d14490bc5ad707f8f0a7892b5252c10299f4acd2673254cb52b2e5dfa391"
+    },
+    "recovered/unit-sprites/DefineSprite_859_A12_attack/3.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "c2c0e6c40770f1f7ca8618a528edd5428ee603ab8c63d57d0234e2ed79a5f1b7"
+    },
+    "recovered/unit-sprites/DefineSprite_859_A12_attack/4.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "1f65eb89d1133f6ccf8e476a329de303fbcdef1dc870cc4e6acbaf8c12763ff2"
+    },
+    "recovered/unit-sprites/DefineSprite_859_A12_attack/5.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "d6ffbc3817e72176b13b74cce9172fb23ca609c78b3e3654860c7a6e7588ecd7"
+    },
+    "recovered/unit-sprites/DefineSprite_859_A12_attack/6.png": {
+      "bounds": {
+        "height": 77.65,
+        "width": 78.0,
+        "xMin": -52.0,
+        "yMin": -72.0
+      },
+      "svgSha256": "5ecc4eb2a3bb28cbdc2140eaf77243b6b155938189efa5e118b0824c6d1b4a6b"
+    },
+    "recovered/unit-sprites/DefineSprite_866_A11_run/1.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 56.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "dac7f169b4faeb98471ff792ff9a42c5c4ca2524f374d57a3133b5650c2a2153"
+    },
+    "recovered/unit-sprites/DefineSprite_866_A11_run/2.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 56.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "1a07337c87d59e5d0e3790c2c323372c2508fb202e07bf4d9da083262f8ae7c4"
+    },
+    "recovered/unit-sprites/DefineSprite_866_A11_run/3.png": {
+      "bounds": {
+        "height": 51.65,
+        "width": 56.0,
+        "xMin": -34.0,
+        "yMin": -46.0
+      },
+      "svgSha256": "8151cb69dd12f2021874ed0d5582666052a14302cafb45a34996e1ec79cddc2c"
+    },
+    "recovered/unit-sprites/DefineSprite_873_A11_idle/1.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 62.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "c4742de7f12c90e737798134397374081a0b36b028cf8e708ce6ea226151ee33"
+    },
+    "recovered/unit-sprites/DefineSprite_873_A11_idle/2.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 62.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "c1c65ef6c5178fe96d9bfea8757789cd3e9079090283971a30c885622ef4ab95"
+    },
+    "recovered/unit-sprites/DefineSprite_873_A11_idle/3.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 62.0,
+        "xMin": -32.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "47faf97200167ba267a51b4f2026daaf25edc76b349048f1193547497a7b97ad"
+    },
+    "recovered/unit-sprites/DefineSprite_882_A11_dead/1.png": {
+      "bounds": {
+        "height": 60.0,
+        "width": 78.0,
+        "xMin": -26.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "afea386310e6c3ab38ece9eec1bc7d194408f35ee1a461dfb08667824e3980f1"
+    },
+    "recovered/unit-sprites/DefineSprite_882_A11_dead/2.png": {
+      "bounds": {
+        "height": 60.0,
+        "width": 78.0,
+        "xMin": -26.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "0c3618755a56095cd4ea93ae48a14c1d98df8a1d083efbef0fdc4705e8aa019b"
+    },
+    "recovered/unit-sprites/DefineSprite_882_A11_dead/3.png": {
+      "bounds": {
+        "height": 60.0,
+        "width": 78.0,
+        "xMin": -26.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "b5d8d3f2415ba90c2198e8c05851381d3a3b0029fb4b2e6882cc05cd95c923a1"
+    },
+    "recovered/unit-sprites/DefineSprite_882_A11_dead/4.png": {
+      "bounds": {
+        "height": 60.0,
+        "width": 78.0,
+        "xMin": -26.0,
+        "yMin": -53.0
+      },
+      "svgSha256": "ade4499b41d04c25032e2a447d35afb85e8427371341a16c9d8d42143537a272"
+    },
+    "recovered/unit-sprites/DefineSprite_895_A11_attack/1.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "af8cf6b5e6eefad4d2ce446899d70b70a54c4cecc1d88dfd6a979e317ef56e32"
+    },
+    "recovered/unit-sprites/DefineSprite_895_A11_attack/2.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "71e584a903b6f7256788653684de4f94736828653cee802a857329da2a229501"
+    },
+    "recovered/unit-sprites/DefineSprite_895_A11_attack/3.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "745982980f055f6d399be256824cb99bd13e95a879d1f35fa5582fea97d5be86"
+    },
+    "recovered/unit-sprites/DefineSprite_895_A11_attack/4.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "96e2c6ab49fb5e967c6f3e0ee73c797da622e0ac87ac2b98475f0f6f6dbda1b3"
+    },
+    "recovered/unit-sprites/DefineSprite_895_A11_attack/5.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "adadc94b62ad78b8f279dc336b180e3141f04f324f287e0ca60f3a75372e4abf"
+    },
+    "recovered/unit-sprites/DefineSprite_895_A11_attack/6.png": {
+      "bounds": {
+        "height": 56.65,
+        "width": 82.0,
+        "xMin": -56.0,
+        "yMin": -51.0
+      },
+      "svgSha256": "44fe2845d70f2237dc666b5aea3a0501d59b15fd20bc7a0e5e514b611c4aeaa7"
+    },
+    "recovered/unit-sprites/DefineSprite_902_A10_run/1.png": {
+      "bounds": {
+        "height": 74.65,
+        "width": 60.0,
+        "xMin": -32.0,
+        "yMin": -69.0
+      },
+      "svgSha256": "843cce35ef658aa0c45858189beff4fd8089f666e7e306f18f0e8b003d0532d7"
+    },
+    "recovered/unit-sprites/DefineSprite_902_A10_run/2.png": {
+      "bounds": {
+        "height": 74.65,
+        "width": 60.0,
+        "xMin": -32.0,
+        "yMin": -69.0
+      },
+      "svgSha256": "8e42284b83fa7c2814f041de965054f8b03f991f7ce973e8b869219a25d799aa"
+    },
+    "recovered/unit-sprites/DefineSprite_902_A10_run/3.png": {
+      "bounds": {
+        "height": 74.65,
+        "width": 60.0,
+        "xMin": -32.0,
+        "yMin": -69.0
+      },
+      "svgSha256": "2460b09b2fcd1741577426425fb513da2898652e6f6d5eb605f2c8e24b1f682d"
+    },
+    "recovered/unit-sprites/DefineSprite_909_A10_idle/1.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "61708f64af296cd1a21223a5e3c427ad59bfa5bad661449bd294f0e807d17e9c"
+    },
+    "recovered/unit-sprites/DefineSprite_909_A10_idle/2.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "a1c2c39c97133543882625c7860ddcfd22a3f945d70716a18f2d780d59f9e825"
+    },
+    "recovered/unit-sprites/DefineSprite_909_A10_idle/3.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 45.9,
+        "xMin": -27.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "796d576b7cb2055fd9fc4f1b12f625f868e5206b48205b8abf0a4aee20f8b2d1"
+    },
+    "recovered/unit-sprites/DefineSprite_90_B15_run/1.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "1e62cc01361963032c1c112311ff01038d34b66f6d41f180ba3f51a23a242a5d"
+    },
+    "recovered/unit-sprites/DefineSprite_90_B15_run/2.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "e9069a9db78f4f40bcd0db8a4649197a6274725834f6c4b25ac5bd44d4b38c69"
+    },
+    "recovered/unit-sprites/DefineSprite_90_B15_run/3.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "00fab82fe18db62ec8a36d711a35248fdfa27e3c8ae579dcb1bad50ec4cf60cf"
+    },
+    "recovered/unit-sprites/DefineSprite_90_B15_run/4.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "65ed49cb3ad2ad33ade373d9d4c58b86fd1ecb311bbb761cc671d121e2e98d3d"
+    },
+    "recovered/unit-sprites/DefineSprite_90_B15_run/5.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "b16f63eb6401b2319609f3850df524c5f6a3734e5e230b23f8a49dbbabf60339"
+    },
+    "recovered/unit-sprites/DefineSprite_90_B15_run/6.png": {
+      "bounds": {
+        "height": 61.65,
+        "width": 49.0,
+        "xMin": -26.0,
+        "yMin": -56.0
+      },
+      "svgSha256": "a3858f8c4ec736084d3d67a9ee31d3c4a90a7bd5b8ff719b1921b8e5490ac352"
+    },
+    "recovered/unit-sprites/DefineSprite_922_A10_dead/1.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "56064379241410bf821af5f71fcd4f3c888e59ad25b95535d7926a0e61dcec1b"
+    },
+    "recovered/unit-sprites/DefineSprite_922_A10_dead/2.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "547c79537bf47ade6486d6871e8d6f9455ff17787dd4e7611f9a60a87c3ee7fd"
+    },
+    "recovered/unit-sprites/DefineSprite_922_A10_dead/3.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "d7623a5a7c2f6b4efb91b4f65b726b5e6d9b9da819785938834479951d03dc1e"
+    },
+    "recovered/unit-sprites/DefineSprite_922_A10_dead/4.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "e7f171d3c6528d17b355873c120b4083b13acb2f283936dbd5bad7dbe941326d"
+    },
+    "recovered/unit-sprites/DefineSprite_922_A10_dead/5.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "d2fb1ca246960b7f48ae58fadec56246fefd38160f40e16d707de7179e78d29d"
+    },
+    "recovered/unit-sprites/DefineSprite_922_A10_dead/6.png": {
+      "bounds": {
+        "height": 63.0,
+        "width": 71.0,
+        "xMin": -27.0,
+        "yMin": -57.0
+      },
+      "svgSha256": "f180ab7436eeb975f13b9495ddb30c6045b8d3172d8b70b396e470dc31bd869f"
+    },
+    "recovered/unit-sprites/DefineSprite_933_A10_attack/1.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "59d10d8c2264b56b72dd93a374268d45c1c23cadff80048793872c8daa796bb7"
+    },
+    "recovered/unit-sprites/DefineSprite_933_A10_attack/2.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "6f79946903ce32c80129ae955556533b5c465d8b560cca61f4033b2ad29e26a0"
+    },
+    "recovered/unit-sprites/DefineSprite_933_A10_attack/3.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "7af05de4cd9b4ba851dc32962fdc9a3613fa9913c161a2b5ccbc3dccb9c1e99c"
+    },
+    "recovered/unit-sprites/DefineSprite_933_A10_attack/4.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "92300a88ef75a0adf3de0a3e18949082a5413348de36ee0baa6cb9d848896aa0"
+    },
+    "recovered/unit-sprites/DefineSprite_933_A10_attack/5.png": {
+      "bounds": {
+        "height": 63.65,
+        "width": 74.0,
+        "xMin": -42.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "0ab12d73dd18f766266e92f527e21db3ce507174b59058e533fa4963f8d17278"
+    },
+    "recovered/unit-sprites/DefineSprite_946_A9_run/1.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "eb02e82520ee3be24c5498c41af3194a817ad2197309d9e149e10036f5af6f6b"
+    },
+    "recovered/unit-sprites/DefineSprite_946_A9_run/2.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "aac14b12892bdf8ec67915b5aaa7851e5e9bddae3da7c5c695f1faad337ff176"
+    },
+    "recovered/unit-sprites/DefineSprite_946_A9_run/3.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "f92418720461d2e665bb4bab5197fa0c2f4721026ca63349d12a392233dada0d"
+    },
+    "recovered/unit-sprites/DefineSprite_946_A9_run/4.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "5d79b2a38cfcb8b94fead1b94fce32f81e766de0d6a0b5bee4a42e9bba360ec1"
+    },
+    "recovered/unit-sprites/DefineSprite_946_A9_run/5.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "b0ccbcccb03383a90c8ec3c33d98e3935d188f0d8bbef2161417f18c41790de4"
+    },
+    "recovered/unit-sprites/DefineSprite_946_A9_run/6.png": {
+      "bounds": {
+        "height": 66.65,
+        "width": 63.0,
+        "xMin": -33.0,
+        "yMin": -61.0
+      },
+      "svgSha256": "359e82fa511c0ca48ba816ec6abc73b0bed05141496ed6fe53646ee0dca47ade"
+    },
+    "recovered/unit-sprites/DefineSprite_953_A9_idle/1.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 63.0,
+        "xMin": -37.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "ef8a9935fe3896c03076948aeba9a3704f089982793a225cdda96dbb3d75e569"
+    },
+    "recovered/unit-sprites/DefineSprite_953_A9_idle/2.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 63.0,
+        "xMin": -37.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "5dd7c8b33af05221c8475204a70660d7496b65429058adeccabe900c12f23c2c"
+    },
+    "recovered/unit-sprites/DefineSprite_953_A9_idle/3.png": {
+      "bounds": {
+        "height": 65.65,
+        "width": 63.0,
+        "xMin": -37.0,
+        "yMin": -60.0
+      },
+      "svgSha256": "9164247aaccab0bdde3a41d1026b1136a2c0976e9fed63b47e985015d482e183"
+    },
+    "recovered/unit-sprites/DefineSprite_960_A9_dead/1.png": {
+      "bounds": {
+        "height": 69.0,
+        "width": 77.0,
+        "xMin": -30.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "0dd093f5abc16dfa7a45e11c94e0b6779ff68bf7bfb53f9ed347ac083c0a6a5b"
+    },
+    "recovered/unit-sprites/DefineSprite_960_A9_dead/2.png": {
+      "bounds": {
+        "height": 69.0,
+        "width": 77.0,
+        "xMin": -30.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "c09e9b2bc6663cd5de38666e78602ca158b81812d32314cd39695f7679c54526"
+    },
+    "recovered/unit-sprites/DefineSprite_960_A9_dead/3.png": {
+      "bounds": {
+        "height": 69.0,
+        "width": 77.0,
+        "xMin": -30.0,
+        "yMin": -58.0
+      },
+      "svgSha256": "3da30ab6f892bf18857ab6327df1d248f8db9469ba8a93bcc4a4f4bd71b720ae"
+    },
+    "recovered/unit-sprites/DefineSprite_971_A9_attack/1.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "f71c6edfabb1aea673393f7dfbb289e8791dd4139ef307142019c2be1d2ff273"
+    },
+    "recovered/unit-sprites/DefineSprite_971_A9_attack/2.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "30e9cbe21ef77d7ad896ca108c74f487dbbfabd2ba2679dd8d3b8787530d9c3a"
+    },
+    "recovered/unit-sprites/DefineSprite_971_A9_attack/3.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "ba083e18ee51b67aa1428b50d06c46334cfe8fe7ae6f30fb49f8914993914083"
+    },
+    "recovered/unit-sprites/DefineSprite_971_A9_attack/4.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "f2498fc3db123f2ff55782ecaac7f6edfc2ffa522480a0aa859437b3c34acead"
+    },
+    "recovered/unit-sprites/DefineSprite_971_A9_attack/5.png": {
+      "bounds": {
+        "height": 72.65,
+        "width": 84.0,
+        "xMin": -61.0,
+        "yMin": -67.0
+      },
+      "svgSha256": "62e98157cd9bea2c2622919daad88cf313160bf99630807f58299596d5459957"
+    },
+    "recovered/unit-sprites/DefineSprite_97_B15_idle/1.png": {
+      "bounds": {
+        "height": 52.65,
+        "width": 57.9,
+        "xMin": -39.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "7f9bd8de6b8bdd6a6416514d7e3ce850e15ba872438d41df30240db78d982b0a"
+    },
+    "recovered/unit-sprites/DefineSprite_97_B15_idle/2.png": {
+      "bounds": {
+        "height": 52.65,
+        "width": 57.9,
+        "xMin": -39.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "91efbf2ff45c9f91d829bef654ef1ed0ab238f64c82b23551a95e3787bf1526a"
+    },
+    "recovered/unit-sprites/DefineSprite_97_B15_idle/3.png": {
+      "bounds": {
+        "height": 52.65,
+        "width": 57.9,
+        "xMin": -39.0,
+        "yMin": -47.0
+      },
+      "svgSha256": "ae4119aa519202ee6bf4865dd670a726d470c35d90760ad6e10f7b33ddcfe3da"
+    },
+    "recovered/unit-sprites/DefineSprite_984_A8_run/1.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "e4eac9caa8302c6b1d3bc297286393ce62d927acc62dc7713f0013cde5eb325c"
+    },
+    "recovered/unit-sprites/DefineSprite_984_A8_run/2.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "a5a074898653ce6ebf946f2437f5470f0a4ae442b3245b7bbd2b80e1ed5cd9e2"
+    },
+    "recovered/unit-sprites/DefineSprite_984_A8_run/3.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "7b779ecae3053eca5fff187ad01fad1b3e05bd81578bcdb963f5b7ccf7d185e3"
+    },
+    "recovered/unit-sprites/DefineSprite_984_A8_run/4.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "0047cf82277ee387e6db027d8d3f6e99d52ea17ba8884fa34b0784eae1beeccb"
+    },
+    "recovered/unit-sprites/DefineSprite_984_A8_run/5.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "ac7c23efa164c2da3253b7fe425a4f865c35c7975724dcef36b9e86cb7d6d789"
+    },
+    "recovered/unit-sprites/DefineSprite_984_A8_run/6.png": {
+      "bounds": {
+        "height": 67.65,
+        "width": 71.0,
+        "xMin": -37.0,
+        "yMin": -62.0
+      },
+      "svgSha256": "ce7a42a5d0de8e9782c001aaa95b7e2fe00f5a8604103e653a2fe482917ee141"
+    },
+    "recovered/unit-sprites/DefineSprite_991_A8_idle/1.png": {
+      "bounds": {
+        "height": 68.65,
+        "width": 63.0,
+        "xMin": -32.0,
+        "yMin": -63.0
+      },
+      "svgSha256": "e0b46cb5913f505d0d47529ee267bdc6eb7fd1b752127a88917e517fff8a04e2"
+    },
+    "recovered/unit-sprites/DefineSprite_991_A8_idle/2.png": {
+      "bounds": {
+        "height": 68.65,
+        "width": 63.0,
+        "xMin": -32.0,
+        "yMin": -63.0
+      },
+      "svgSha256": "ba24abecac02dd982943a20b53855ad9379ef2cb7bce515a8eade75c20691ce4"
+    },
+    "recovered/unit-sprites/DefineSprite_991_A8_idle/3.png": {
+      "bounds": {
+        "height": 68.65,
+        "width": 63.0,
+        "xMin": -32.0,
+        "yMin": -63.0
+      },
+      "svgSha256": "0145ccc20a2813fdc0e931fad2ab9a898bfa75784b637f41637bb2ce9f9c54cd"
+    },
+    "recovered/unit-sprites/DefineSprite_996_A8_dead/1.png": {
+      "bounds": {
+        "height": 64.0,
+        "width": 73.0,
+        "xMin": -32.0,
+        "yMin": -64.0
+      },
+      "svgSha256": "4b36488c5ece4b7f350424a3ea6ec86c920e49ae6db91e5f9d0fb0569c5232a8"
+    },
+    "recovered/unit-sprites/DefineSprite_996_A8_dead/2.png": {
+      "bounds": {
+        "height": 64.0,
+        "width": 73.0,
+        "xMin": -32.0,
+        "yMin": -64.0
+      },
+      "svgSha256": "c0ef6ea0240358ebd359adacafdfc63435ae170023c602fbcb884ce678fa6321"
+    }
+  },
+  "method": "FFDec frame SVG root float width/height; xMin/yMin are negative first-group translation",
+  "schemaVersion": 1
+}

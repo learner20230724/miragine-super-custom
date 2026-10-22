@@ -1,0 +1,17 @@
+[
+  {
+    "job": "game-canvas",
+    "exitCode": 0,
+    "seconds": 2.79,
+    "source": "reference/super-original.swf",
+    "arguments": [
+      "-format",
+      "frame:canvas",
+      "-export",
+      "frame",
+      "recovered/game-canvas",
+      "reference/super-original.swf"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  }
+]

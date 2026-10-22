@@ -1,0 +1,19 @@
+.local/
+.cache/
+.tmp/
+node_modules/
+dist/
+artifacts/
+output/
+.playwright-cli/
+.playwright/
+*.log
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+# Preserve recovered legacy tween sources locally; do not republish them under
+# this project's license without verifying the applicable historical terms.
+recovered/as3/scripts/com/greensock/
+recovered/pcode/scripts/com/greensock/

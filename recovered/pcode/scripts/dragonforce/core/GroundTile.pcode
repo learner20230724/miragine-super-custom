@@ -1,0 +1,174 @@
+package dragonforce.core
+{
+   import flash.display.BitmapData;
+   import flash.geom.Vector3D;
+   
+   public class GroundTile
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 3
+            maxscopedepth 4
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public var x:int;
+      
+      public var y:int;
+      
+      public var width:int;
+      
+      public var height:int;
+      
+      public var bitmapData:BitmapData;
+      
+      private var v0:Vector3D;
+      
+      private var v1:Vector3D;
+      
+      private var v2:Vector3D;
+      
+      private var v3:Vector3D;
+      
+      public var vectors:Vector.<Vector3D>;
+      
+      public function GroundTile(param1:BitmapData, param2:int = 0, param3:int = 0, param4:int = 0, param5:int = 0)
+      {
+         method
+            name null
+            flag HAS_OPTIONAL
+            param QName(PackageNamespace("flash.display"),"BitmapData")
+            param QName(PackageNamespace(""),"int")
+            param QName(PackageNamespace(""),"int")
+            param QName(PackageNamespace(""),"int")
+            param QName(PackageNamespace(""),"int")
+            optional Integer(0)
+            optional Integer(0)
+            optional Integer(0)
+            optional Integer(0)
+            returns null
+            
+            body
+               maxstack 5
+               localcount 6
+               initscopedepth 4
+               maxscopedepth 5
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  getlocal0
+                  getlocal1
+                  initproperty QName(PackageNamespace(""),"bitmapData")
+                  getlocal0
+                  getlocal2
+                  initproperty QName(PackageNamespace(""),"x")
+                  getlocal0
+                  getlocal3
+                  initproperty QName(PackageNamespace(""),"y")
+                  getlocal0
+                  getlocal 4
+                  initproperty QName(PackageNamespace(""),"width")
+                  getlocal0
+                  getlocal 5
+                  initproperty QName(PackageNamespace(""),"height")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.geom"),"Vector3D")
+                  getlocal2
+                  getlocal3
+                  pushbyte 0
+                  constructprop QName(PackageNamespace("flash.geom"),"Vector3D"), 3
+                  initproperty QName(PrivateNamespace(null,"5"),"v0")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.geom"),"Vector3D")
+                  getlocal2
+                  getlocal 4
+                  add
+                  getlocal3
+                  pushbyte 0
+                  constructprop QName(PackageNamespace("flash.geom"),"Vector3D"), 3
+                  initproperty QName(PrivateNamespace(null,"5"),"v1")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.geom"),"Vector3D")
+                  getlocal2
+                  getlocal 4
+                  add
+                  getlocal3
+                  getlocal 5
+                  add
+                  pushbyte 0
+                  constructprop QName(PackageNamespace("flash.geom"),"Vector3D"), 3
+                  initproperty QName(PrivateNamespace(null,"5"),"v2")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.geom"),"Vector3D")
+                  getlocal2
+                  getlocal3
+                  getlocal 5
+                  add
+                  pushbyte 0
+                  constructprop QName(PackageNamespace("flash.geom"),"Vector3D"), 3
+                  initproperty QName(PrivateNamespace(null,"5"),"v3")
+                  getlocal0
+                  getlex Multiname("Vector",[PrivateNamespace(null,"5"),PackageNamespace(""),PrivateNamespace(null,"31"),PackageNamespace("dragonforce.core"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:GroundTile"),StaticProtectedNs("dragonforce.core:GroundTile"),PackageNamespace("__AS3__.vec")])
+                  getlex QName(PackageNamespace("flash.geom"),"Vector3D")
+                  applytype 1
+                  construct 0
+                  initproperty QName(PackageNamespace(""),"vectors")
+                  getlocal0
+                  getproperty QName(PackageNamespace(""),"vectors")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"5"),"v0")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"5"),"v1")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"5"),"v2")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"5"),"v3")
+                  callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 4
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+   }
+}
+
+method
+   name null
+   returns null
+   
+   body
+      maxstack 2
+      localcount 1
+      initscopedepth 1
+      maxscopedepth 3
+      
+      code
+         getlocal0
+         pushscope
+         findpropstrict Multiname("GroundTile",[PackageNamespace("dragonforce.core")])
+         getlex QName(PackageNamespace(""),"Object")
+         pushscope
+         getlex QName(PackageNamespace(""),"Object")
+         newclass 13
+         popscope
+         initproperty QName(PackageNamespace("dragonforce.core"),"GroundTile")
+         returnvoid
+      end ; code
+   end ; body
+end ; method
+

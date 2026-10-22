@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "baseline": "reference/baseline.json",
+  "version": "Super Miragine War / 超级米拉奇战记",
+  "mainClass": "miragine3d_fla.MainTimeline",
+  "sourceGameSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
+  "gameLogic": "Source-based manual AS3-to-JavaScript port, not a SWF-player wrapper",
+  "assets": "Unchanged extracted frames, images, sounds and font subsets; hashes recorded in generated/asset-manifest.json",
+  "originalAuthorProjectRecovered": false,
+  "originalAuthorOpenSourceReleaseClaimed": false,
+  "rawRecoveredSources": "recovered/as3 and recovered/pcode; legacy third-party tween sources remain local and excluded from public synchronization",
+  "sourceToPortMap": "src/core/port-map.json",
+  "configProvenance": "generated/config-provenance.json",
+  "regenerationPolicy": "Only generated outputs may be replaced. config/custom.json and src/extensions/custom.mjs are user-owned.",
+  "permissions": "User confirmed original assets and recovered code may be publicly redistributed on 2026-10-23; third-party components retain separate terms.",
+  "fidelityStatus": "Original-runtime frame-by-frame, rendering and full UI parity verification remain required. Passing headless matches alone is not completion."
+}

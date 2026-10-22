@@ -1,0 +1,43 @@
+{
+  "title": "超级米拉奇战记",
+  "platform_listing_date": "2011-01-29",
+  "source_page": "https://www.4399.com/flash/48390_2.htm",
+  "download_url": "https://sda.4399.com/4399swf/upload_swf/ftp8/honghao/20120712/29.swf",
+  "original_download_sha256": "0be1a27e251f4ae4a4eb933334affb1aee2ce1cf6413b7e3e0ac37aca15a311f",
+  "game_extraction_chain": [
+    {
+      "parent_sha256": "0be1a27e251f4ae4a4eb933334affb1aee2ce1cf6413b7e3e0ac37aca15a311f",
+      "define_binary_data_character_id": 3,
+      "offset_in_decompressed_parent_body": 42395,
+      "child_sha256": "e70fefe3c1c65414df1ff6da130487ab41c5802e9e6541674c06ca7c7445a685"
+    },
+    {
+      "parent_sha256": "e70fefe3c1c65414df1ff6da130487ab41c5802e9e6541674c06ca7c7445a685",
+      "define_binary_data_character_id": 2,
+      "offset_in_decompressed_parent_body": 6178,
+      "child_sha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149"
+    }
+  ],
+  "asset_extraction_chain": [
+    {
+      "parent_sha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
+      "define_binary_data_character_id": 14,
+      "offset_in_decompressed_parent_body": 2630530,
+      "child_sha256": "31f0fc1a147bac308d794fcecb087ff47260ee830ea6b9287bad98c93e7b5a2e"
+    }
+  ],
+  "game": {
+    "path": "super-original.swf",
+    "bytes": 4650981,
+    "sha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
+    "width": 640,
+    "height": 480,
+    "framesPerSecond": 30
+  },
+  "assets": {
+    "path": "super-assets-original.swf",
+    "bytes": 1679140,
+    "sha256": "31f0fc1a147bac308d794fcecb087ff47260ee830ea6b9287bad98c93e7b5a2e"
+  },
+  "purpose": "Read-only source evidence and reference oracle; production must not execute these SWFs."
+}

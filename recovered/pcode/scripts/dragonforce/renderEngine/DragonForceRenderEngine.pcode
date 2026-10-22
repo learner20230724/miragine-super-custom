@@ -1,0 +1,534 @@
+package dragonforce.renderEngine
+{
+   import dragonforce.core.Camera;
+   import dragonforce.core.Scene;
+   import dragonforce.core.Symbol;
+   import flash.geom.Matrix;
+   import flash.geom.Matrix3D;
+   import flash.geom.Vector3D;
+   
+   public class DragonForceRenderEngine implements IRenderEngine
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 3
+            maxscopedepth 4
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      private var v:Vector3D;
+      
+      private var m3d:Matrix3D;
+      
+      private var vertices:Vector.<Number>;
+      
+      private var indices:Vector.<int>;
+      
+      private var uvtData:Vector.<Number>;
+      
+      private var focalLength:int;
+      
+      public function DragonForceRenderEngine()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 13
+               localcount 1
+               initscopedepth 4
+               maxscopedepth 5
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.geom"),"Vector3D")
+                  constructprop QName(PackageNamespace("flash.geom"),"Vector3D"), 0
+                  initproperty QName(PrivateNamespace(null,"6"),"v")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.geom"),"Matrix3D")
+                  constructprop QName(PackageNamespace("flash.geom"),"Matrix3D"), 0
+                  initproperty QName(PrivateNamespace(null,"6"),"m3d")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"6"),"m3d")
+                  pushbyte -70
+                  getlex QName(PackageNamespace("flash.geom"),"Vector3D")
+                  getproperty QName(PackageNamespace(""),"X_AXIS")
+                  callpropvoid QName(PackageNamespace(""),"appendRotation"), 2
+                  getlocal0
+                  getlex Multiname("Vector",[PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine"),PackageNamespace("__AS3__.vec")])
+                  getlex QName(PackageNamespace(""),"Number")
+                  applytype 1
+                  pushbyte 8
+                  construct 1
+                  initproperty QName(PrivateNamespace(null,"6"),"vertices")
+                  getlocal0
+                  getlex Multiname("Vector",[PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine"),PackageNamespace("__AS3__.vec")])
+                  getlex QName(PackageNamespace(""),"int")
+                  applytype 1
+                  construct 0
+                  initproperty QName(PrivateNamespace(null,"6"),"indices")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"6"),"indices")
+                  pushbyte 0
+                  pushbyte 1
+                  pushbyte 3
+                  pushbyte 1
+                  pushbyte 2
+                  pushbyte 3
+                  callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 6
+                  getlocal0
+                  getlex Multiname("Vector",[PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine"),PackageNamespace("__AS3__.vec")])
+                  getlex QName(PackageNamespace(""),"Number")
+                  applytype 1
+                  construct 0
+                  initproperty QName(PrivateNamespace(null,"6"),"uvtData")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"6"),"uvtData")
+                  pushbyte 0
+                  dup
+                  dup
+                  pushbyte 1
+                  pushbyte 0
+                  dup
+                  pushbyte 1
+                  dup
+                  pushbyte 0
+                  dup
+                  pushbyte 1
+                  pushbyte 0
+                  callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 12
+                  getlocal0
+                  pushshort 600
+                  initproperty QName(PrivateNamespace(null,"6"),"focalLength")
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function renderScene(param1:Scene, param2:Camera) : void
+      {
+         trait method QName(PackageNamespace(""),"renderScene")
+            dispid 0
+            method
+               name null
+               param QName(PackageNamespace("dragonforce.core"),"Scene")
+               param QName(PackageNamespace("dragonforce.core"),"Camera")
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 9
+                  localcount 9
+                  initscopedepth 4
+                  maxscopedepth 5
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     pushnull
+                     coerce QName(PackageNamespace("dragonforce.core"),"Symbol")
+                     setlocal 4
+                     pushnan
+                     setlocal 5
+                     pushbyte 0
+                     setlocal 6
+                     pushnan
+                     setlocal 7
+                     pushbyte 0
+                     setlocal 8
+                     newarray 0
+                     coerce QName(PackageNamespace(""),"Array")
+                     setlocal3
+                     pushbyte 0
+                     setlocal 6
+                     jump ofs003d
+            ofs0023:
+                     label
+                     getlocal1
+                     getlocal 6
+                     callproperty QName(PackageNamespace(""),"getChildAt"), 1
+                     getlex QName(PackageNamespace("dragonforce.core"),"Symbol")
+                     astypelate
+                     coerce QName(PackageNamespace("dragonforce.core"),"Symbol")
+                     setlocal 4
+                     getlocal3
+                     getlocal 4
+                     callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 1
+                     inclocal_i 6
+            ofs003d:
+                     getlocal 6
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"numChildren")
+                     iflt ofs0023
+                     getlocal3
+                     pushstring "py"
+                     getlex QName(PackageNamespace(""),"Array")
+                     getproperty QName(PackageNamespace(""),"NUMERIC")
+                     getlex QName(PackageNamespace(""),"Array")
+                     getproperty QName(PackageNamespace(""),"DESCENDING")
+                     bitor
+                     callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"sortOn"), 2
+                     getlocal3
+                     getproperty QName(PackageNamespace(""),"length")
+                     convert_i
+                     setlocal 6
+                     jump ofs0125
+            ofs0065:
+                     label
+                     getlocal3
+                     getlocal 6
+                     getproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     coerce QName(PackageNamespace("dragonforce.core"),"Symbol")
+                     setlocal 4
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getlocal 4
+                     getproperty QName(PackageNamespace(""),"px")
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"x")
+                     subtract
+                     setproperty QName(PackageNamespace(""),"x")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getlocal 4
+                     getproperty QName(PackageNamespace(""),"py")
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"y")
+                     subtract
+                     setproperty QName(PackageNamespace(""),"y")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     pushbyte 0
+                     setproperty QName(PackageNamespace(""),"z")
+                     getlocal0
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"m3d")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     callproperty QName(PackageNamespace(""),"transformVector"), 1
+                     initproperty QName(PrivateNamespace(null,"6"),"v")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"focalLength")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"focalLength")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getproperty QName(PackageNamespace(""),"z")
+                     add
+                     divide
+                     convert_d
+                     setlocal 5
+                     getlex QName(PackageNamespace(""),"Math")
+                     pushbyte 0
+                     getlex QName(PackageNamespace(""),"Math")
+                     getlocal 5
+                     pushbyte 10
+                     callproperty QName(PackageNamespace(""),"min"), 2
+                     callproperty QName(PackageNamespace(""),"max"), 2
+                     convert_d
+                     setlocal 7
+                     getlocal 4
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getproperty QName(PackageNamespace(""),"x")
+                     getlocal 5
+                     multiply
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"width")
+                     pushdouble 0.5
+                     multiply
+                     add
+                     setproperty QName(PackageNamespace(""),"x")
+                     getlocal 4
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getproperty QName(PackageNamespace(""),"y")
+                     getlocal 5
+                     multiply
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"height")
+                     pushdouble 0.5
+                     multiply
+                     add
+                     getlocal 4
+                     getproperty QName(PackageNamespace(""),"pz")
+                     getlocal 5
+                     multiply
+                     subtract
+                     setproperty QName(PackageNamespace(""),"y")
+                     getlocal 4
+                     getlocal 4
+                     getproperty QName(PackageNamespace(""),"sx")
+                     getlocal 7
+                     multiply
+                     setproperty QName(PackageNamespace(""),"scaleX")
+                     getlocal 4
+                     getlocal 4
+                     getproperty QName(PackageNamespace(""),"sy")
+                     getlocal 7
+                     multiply
+                     setproperty QName(PackageNamespace(""),"scaleY")
+                     getlocal1
+                     getlocal 4
+                     callpropvoid QName(PackageNamespace(""),"addChild"), 1
+            ofs0125:
+                     getlocal 6
+                     dup
+                     decrement_i
+                     setlocal 6
+                     pushbyte 0
+                     ifgt ofs0065
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"graphics")
+                     callpropvoid QName(PackageNamespace(""),"clear"), 0
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"grounds")
+                     getproperty QName(PackageNamespace(""),"length")
+                     convert_i
+                     setlocal 6
+                     jump ofs024a
+            ofs0147:
+                     label
+                     pushbyte 0
+                     setlocal 8
+                     jump ofs0212
+            ofs0150:
+                     label
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"grounds")
+                     getlocal 6
+                     getproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     getproperty QName(PackageNamespace(""),"vectors")
+                     getlocal 8
+                     getproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     getproperty QName(PackageNamespace(""),"x")
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"x")
+                     subtract
+                     setproperty QName(PackageNamespace(""),"x")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"grounds")
+                     getlocal 6
+                     getproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     getproperty QName(PackageNamespace(""),"vectors")
+                     getlocal 8
+                     getproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     getproperty QName(PackageNamespace(""),"y")
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"y")
+                     subtract
+                     setproperty QName(PackageNamespace(""),"y")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     pushbyte 0
+                     setproperty QName(PackageNamespace(""),"z")
+                     getlocal0
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"m3d")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     callproperty QName(PackageNamespace(""),"transformVector"), 1
+                     initproperty QName(PrivateNamespace(null,"6"),"v")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"focalLength")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"focalLength")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getproperty QName(PackageNamespace(""),"z")
+                     add
+                     divide
+                     convert_d
+                     setlocal 5
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"vertices")
+                     getlocal 8
+                     pushbyte 2
+                     multiply
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getproperty QName(PackageNamespace(""),"x")
+                     getlocal 5
+                     multiply
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"width")
+                     pushdouble 0.5
+                     multiply
+                     add
+                     setproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"vertices")
+                     getlocal 8
+                     pushbyte 2
+                     multiply
+                     pushbyte 1
+                     add
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"v")
+                     getproperty QName(PackageNamespace(""),"y")
+                     getlocal 5
+                     multiply
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"height")
+                     pushdouble 0.5
+                     multiply
+                     add
+                     setproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"uvtData")
+                     getlocal 8
+                     pushbyte 3
+                     multiply
+                     pushbyte 2
+                     add
+                     getlocal 5
+                     setproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     getlocal 5
+                     pushbyte 0
+                     ifnlt ofs0210
+                     jump ofs021a
+            ofs0210:
+                     inclocal_i 8
+            ofs0212:
+                     getlocal 8
+                     pushbyte 4
+                     iflt ofs0150
+            ofs021a:
+                     getlocal 5
+                     pushbyte 0
+                     ifngt ofs024a
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"graphics")
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"grounds")
+                     getlocal 6
+                     getproperty MultinameL([PrivateNamespace(null,"6"),PackageNamespace(""),PrivateNamespace(null,"33"),PackageNamespace("dragonforce.renderEngine"),PackageInternalNs("dragonforce.renderEngine"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.renderEngine:DragonForceRenderEngine"),StaticProtectedNs("dragonforce.renderEngine:DragonForceRenderEngine")])
+                     getproperty QName(PackageNamespace(""),"bitmapData")
+                     callpropvoid QName(PackageNamespace(""),"beginBitmapFill"), 1
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"graphics")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"vertices")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"indices")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"6"),"uvtData")
+                     callpropvoid QName(PackageNamespace(""),"drawTriangles"), 3
+            ofs024a:
+                     getlocal 6
+                     dup
+                     decrement_i
+                     setlocal 6
+                     pushbyte 0
+                     ifgt ofs0147
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"bg1BitmapData")
+                     iffalse ofs0294
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"graphics")
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"bg1BitmapData")
+                     findpropstrict QName(PackageNamespace("flash.geom"),"Matrix")
+                     pushbyte 1
+                     pushbyte 0
+                     dup
+                     pushbyte 1
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"x")
+                     pushbyte 80
+                     divide
+                     pushshort 250
+                     subtract
+                     pushbyte 0
+                     constructprop QName(PackageNamespace("flash.geom"),"Matrix"), 6
+                     callpropvoid QName(PackageNamespace(""),"beginBitmapFill"), 2
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"graphics")
+                     pushbyte 0
+                     dup
+                     pushshort 640
+                     pushbyte 79
+                     callpropvoid QName(PackageNamespace(""),"drawRect"), 4
+            ofs0294:
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"bg2BitmapData")
+                     iffalse ofs02d0
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"graphics")
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"bg2BitmapData")
+                     findpropstrict QName(PackageNamespace("flash.geom"),"Matrix")
+                     pushbyte 1
+                     pushbyte 0
+                     dup
+                     pushbyte 1
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"x")
+                     negate
+                     pushbyte 4
+                     divide
+                     pushbyte 55
+                     constructprop QName(PackageNamespace("flash.geom"),"Matrix"), 6
+                     callpropvoid QName(PackageNamespace(""),"beginBitmapFill"), 2
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"graphics")
+                     pushbyte 0
+                     pushbyte 55
+                     pushshort 640
+                     pushbyte 31
+                     callpropvoid QName(PackageNamespace(""),"drawRect"), 4
+            ofs02d0:
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+      }
+   }
+   
+   method
+      name null
+      returns null
+      
+      body
+         maxstack 2
+         localcount 1
+         initscopedepth 1
+         maxscopedepth 3
+         
+         code
+            getlocal0
+            pushscope
+            findpropstrict Multiname("DragonForceRenderEngine",[PackageNamespace("dragonforce.renderEngine")])
+            getlex QName(PackageNamespace(""),"Object")
+            pushscope
+            getlex QName(PackageNamespace(""),"Object")
+            newclass 20
+            popscope
+            initproperty QName(PackageNamespace("dragonforce.renderEngine"),"DragonForceRenderEngine")
+            returnvoid
+         end ; code
+      end ; body
+   end ; method
+   

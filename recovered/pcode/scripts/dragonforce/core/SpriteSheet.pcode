@@ -1,0 +1,367 @@
+package dragonforce.core
+{
+   import flash.display.BitmapData;
+   import flash.display.MovieClip;
+   import flash.geom.Matrix;
+   import flash.geom.Rectangle;
+   import flash.utils.Dictionary;
+   
+   public class SpriteSheet
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 3
+            maxscopedepth 4
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      private var dict:Dictionary;
+      
+      public function SpriteSheet()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 2
+               localcount 1
+               initscopedepth 4
+               maxscopedepth 5
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.utils"),"Dictionary")
+                  constructprop QName(PackageNamespace("flash.utils"),"Dictionary"), 0
+                  initproperty QName(PrivateNamespace(null,"4"),"dict")
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function createActionFromMovieClip(param1:String, param2:MovieClip, param3:Boolean = true, param4:Number = 1) : void
+      {
+         trait method QName(PackageNamespace(""),"createActionFromMovieClip")
+            dispid 0
+            method
+               name null
+               flag HAS_OPTIONAL
+               param QName(PackageNamespace(""),"String")
+               param QName(PackageNamespace("flash.display"),"MovieClip")
+               param QName(PackageNamespace(""),"Boolean")
+               param QName(PackageNamespace(""),"Number")
+               optional True()
+               optional Integer(1)
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 8
+                  localcount 12
+                  initscopedepth 4
+                  maxscopedepth 5
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     pushnull
+                     coerce QName(PackageNamespace("flash.display"),"BitmapData")
+                     setlocal 11
+                     pushdouble 0.9
+                     convert_d
+                     setlocal 5
+                     getlocal2
+                     getlocal2
+                     callproperty QName(PackageNamespace(""),"getRect"), 1
+                     coerce QName(PackageNamespace("flash.geom"),"Rectangle")
+                     setlocal 6
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"totalFrames")
+                     pushbyte 1
+                     add
+                     convert_i
+                     setlocal 7
+                     findpropstrict QName(PackageNamespace("flash.geom"),"Matrix")
+                     getlocal 5
+                     pushbyte 0
+                     dup
+                     getlocal 5
+                     getlocal 6
+                     getproperty QName(PackageNamespace(""),"x")
+                     negate
+                     getlocal 5
+                     multiply
+                     getlocal 6
+                     getproperty QName(PackageNamespace(""),"y")
+                     negate
+                     getlocal 5
+                     multiply
+                     constructprop QName(PackageNamespace("flash.geom"),"Matrix"), 6
+                     coerce QName(PackageNamespace("flash.geom"),"Matrix")
+                     setlocal 8
+                     findpropstrict QName(PackageNamespace("dragonforce.core"),"SpriteMap")
+                     constructprop QName(PackageNamespace("dragonforce.core"),"SpriteMap"), 0
+                     coerce QName(PackageNamespace("dragonforce.core"),"SpriteMap")
+                     dup
+                     setlocal 9
+                     getlocal 6
+                     getproperty QName(PackageNamespace(""),"x")
+                     getlocal 5
+                     multiply
+                     setproperty QName(PackageNamespace(""),"offX")
+                     getlocal 9
+                     getlocal 6
+                     getproperty QName(PackageNamespace(""),"y")
+                     getlocal 5
+                     multiply
+                     setproperty QName(PackageNamespace(""),"offY")
+                     getlocal 9
+                     getlex Multiname("Vector",[PrivateNamespace(null,"4"),PackageNamespace(""),PackageNamespace("dragonforce.core"),PrivateNamespace(null,"27"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:SpriteSheet"),StaticProtectedNs("dragonforce.core:SpriteSheet"),PackageNamespace("__AS3__.vec")])
+                     getlex QName(PackageNamespace("flash.display"),"BitmapData")
+                     applytype 1
+                     getlocal 7
+                     pushtrue
+                     construct 2
+                     setproperty QName(PackageNamespace(""),"frames")
+                     getlocal 9
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"totalFrames")
+                     setproperty QName(PackageNamespace(""),"totalFrames")
+                     getlocal 9
+                     getlocal3
+                     setproperty QName(PackageNamespace(""),"loop")
+                     getlocal 9
+                     getlocal 4
+                     setproperty QName(PackageNamespace(""),"speed")
+                     pushbyte 1
+                     setlocal 10
+                     jump ofs00d0
+            ofs0093:
+                     label
+                     findpropstrict QName(PackageNamespace("flash.display"),"BitmapData")
+                     getlocal 6
+                     getproperty QName(PackageNamespace(""),"width")
+                     getlocal 5
+                     multiply
+                     getlocal 6
+                     getproperty QName(PackageNamespace(""),"height")
+                     getlocal 5
+                     multiply
+                     pushtrue
+                     pushbyte 0
+                     constructprop QName(PackageNamespace("flash.display"),"BitmapData"), 4
+                     coerce QName(PackageNamespace("flash.display"),"BitmapData")
+                     setlocal 11
+                     getlocal2
+                     getlocal 10
+                     callpropvoid QName(PackageNamespace(""),"gotoAndStop"), 1
+                     getlocal 11
+                     getlocal2
+                     getlocal 8
+                     pushnull
+                     pushnull
+                     pushnull
+                     pushtrue
+                     callpropvoid QName(PackageNamespace(""),"draw"), 6
+                     getlocal 9
+                     getproperty QName(PackageNamespace(""),"frames")
+                     getlocal 10
+                     getlocal 11
+                     setproperty MultinameL([PrivateNamespace(null,"4"),PackageNamespace(""),PackageNamespace("dragonforce.core"),PrivateNamespace(null,"27"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:SpriteSheet"),StaticProtectedNs("dragonforce.core:SpriteSheet")])
+                     inclocal_i 10
+            ofs00d0:
+                     getlocal 10
+                     getlocal 7
+                     iflt ofs0093
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"4"),"dict")
+                     getlocal1
+                     getlocal 9
+                     setproperty MultinameL([PrivateNamespace(null,"4"),PackageNamespace(""),PackageNamespace("dragonforce.core"),PrivateNamespace(null,"27"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:SpriteSheet"),StaticProtectedNs("dragonforce.core:SpriteSheet")])
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         public function createActionFromBitmapData() : void
+         {
+            trait method QName(PackageNamespace(""),"createActionFromBitmapData")
+               dispid 0
+               method
+                  name null
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 1
+                     localcount 1
+                     initscopedepth 4
+                     maxscopedepth 5
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            public function map(param1:String) : SpriteMap
+            {
+               trait method QName(PackageNamespace(""),"map")
+                  dispid 0
+                  method
+                     name null
+                     param QName(PackageNamespace(""),"String")
+                     returns QName(PackageNamespace("dragonforce.core"),"SpriteMap")
+                     
+                     body
+                        maxstack 2
+                        localcount 2
+                        initscopedepth 4
+                        maxscopedepth 5
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           getlocal0
+                           getproperty QName(PrivateNamespace(null,"4"),"dict")
+                           getlocal1
+                           getproperty MultinameL([PrivateNamespace(null,"4"),PackageNamespace(""),PackageNamespace("dragonforce.core"),PrivateNamespace(null,"27"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:SpriteSheet"),StaticProtectedNs("dragonforce.core:SpriteSheet")])
+                           getlex QName(PackageNamespace("dragonforce.core"),"SpriteMap")
+                           astypelate
+                           returnvalue
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+               
+               public function destory() : void
+               {
+                  trait method QName(PackageNamespace(""),"destory")
+                     dispid 0
+                     method
+                        name null
+                        returns QName(PackageNamespace(""),"void")
+                        
+                        body
+                           maxstack 2
+                           localcount 8
+                           initscopedepth 4
+                           maxscopedepth 5
+                           
+                           code
+                              getlocal0
+                              pushscope
+                              pushnull
+                              coerce_s
+                              setlocal1
+                              pushnull
+                              coerce QName(PackageNamespace("dragonforce.core"),"SpriteMap")
+                              setlocal2
+                              pushnull
+                              coerce QName(PackageNamespace("flash.display"),"BitmapData")
+                              setlocal3
+                              pushbyte 0
+                              setlocal 4
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"4"),"dict")
+                              coerce_a
+                              setlocal 5
+                              jump ofs0062
+                     ofs001b:
+                              label
+                              getlocal 5
+                              getlocal 4
+                              nextname
+                              coerce_s
+                              setlocal1
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"4"),"dict")
+                              getlocal1
+                              getproperty MultinameL([PrivateNamespace(null,"4"),PackageNamespace(""),PackageNamespace("dragonforce.core"),PrivateNamespace(null,"27"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:SpriteSheet"),StaticProtectedNs("dragonforce.core:SpriteSheet")])
+                              coerce QName(PackageNamespace("dragonforce.core"),"SpriteMap")
+                              setlocal2
+                              pushbyte 0
+                              setlocal 6
+                              getlocal2
+                              getproperty QName(PackageNamespace(""),"frames")
+                              coerce_a
+                              setlocal 7
+                              jump ofs004f
+                     ofs003c:
+                              label
+                              getlocal 7
+                              getlocal 6
+                              nextvalue
+                              coerce QName(PackageNamespace("flash.display"),"BitmapData")
+                              setlocal3
+                              getlocal3
+                              iffalse ofs004f
+                              getlocal3
+                              callpropvoid QName(PackageNamespace(""),"dispose"), 0
+                     ofs004f:
+                              hasnext2 7, 6
+                              iftrue ofs003c
+                              kill 7
+                              kill 6
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"4"),"dict")
+                              getlocal1
+                              deleteproperty MultinameL([PrivateNamespace(null,"4"),PackageNamespace(""),PackageNamespace("dragonforce.core"),PrivateNamespace(null,"27"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:SpriteSheet"),StaticProtectedNs("dragonforce.core:SpriteSheet")])
+                              pop
+                     ofs0062:
+                              hasnext2 5, 4
+                              iftrue ofs001b
+                              kill 5
+                              kill 4
+                              returnvoid
+                           end ; code
+                        end ; body
+                     end ; method
+                  }
+               }
+            }
+            
+            method
+               name null
+               returns null
+               
+               body
+                  maxstack 2
+                  localcount 1
+                  initscopedepth 1
+                  maxscopedepth 3
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     findpropstrict Multiname("SpriteSheet",[PackageNamespace("dragonforce.core")])
+                     getlex QName(PackageNamespace(""),"Object")
+                     pushscope
+                     getlex QName(PackageNamespace(""),"Object")
+                     newclass 8
+                     popscope
+                     initproperty QName(PackageNamespace("dragonforce.core"),"SpriteSheet")
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+            

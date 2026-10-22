@@ -1,0 +1,470 @@
+package dragonforce.core
+{
+   import dragonforce.utils.SWFExplorer;
+   import flash.display.Loader;
+   import flash.display.LoaderInfo;
+   import flash.events.Event;
+   import flash.events.EventDispatcher;
+   import flash.events.IOErrorEvent;
+   import flash.events.ProgressEvent;
+   import flash.net.URLRequest;
+   import flash.utils.ByteArray;
+   import flash.utils.Dictionary;
+   import flash.utils.getDefinitionByName;
+   
+   public class Library extends EventDispatcher
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 4
+            maxscopedepth 5
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      private var dict:Dictionary;
+      
+      private var queue:int;
+      
+      public function Library()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 2
+               localcount 1
+               initscopedepth 5
+               maxscopedepth 6
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.utils"),"Dictionary")
+                  constructprop QName(PackageNamespace("flash.utils"),"Dictionary"), 0
+                  initproperty QName(PrivateNamespace(null,"8"),"dict")
+                  getlocal0
+                  constructsuper 0
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function loadUrl(param1:String, param2:Function = null, param3:Object = null, ... rest) : void
+      {
+         trait method QName(PackageNamespace(""),"loadUrl")
+            dispid 0
+            method
+               name null
+               flag HAS_OPTIONAL
+               flag NEED_ACTIVATION
+               flag NEED_REST
+               param QName(PackageNamespace(""),"String")
+               param QName(PackageNamespace(""),"Function")
+               param QName(PackageNamespace(""),"Object")
+               optional Null()
+               optional Null()
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 3
+                  localcount 8
+                  initscopedepth 6
+                  maxscopedepth 8
+                  trait slot QName(PackageInternalNs("dragonforce.core"),"url")
+                     slotid 1
+                     type QName(PackageNamespace(""),"String")
+                  end ; trait
+                  trait slot QName(PackageInternalNs("dragonforce.core"),"func")
+                     slotid 2
+                     type QName(PackageNamespace(""),"Function")
+                     value Null()
+                  end ; trait
+                  trait slot QName(PackageInternalNs("dragonforce.core"),"thisObj")
+                     slotid 3
+                     type QName(PackageNamespace(""),"Object")
+                     value Null()
+                  end ; trait
+                  trait slot QName(PackageNamespace(""),"rest")
+                     slotid 4
+                     type QName(PackageNamespace(""),"Array")
+                  end ; trait
+                  trait slot QName(PackageInternalNs("dragonforce.core"),"loader")
+                     slotid 5
+                     type QName(PackageNamespace("flash.display"),"Loader")
+                  end ; trait
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     newactivation
+                     dup
+                     setlocal 5
+                     pushscope
+                     getscopeobject 1
+                     getlocal1
+                     setslot 1
+                     getscopeobject 1
+                     getlocal2
+                     setslot 2
+                     getscopeobject 1
+                     getlocal3
+                     setslot 3
+                     getscopeobject 1
+                     getlocal 4
+                     setslot 4
+                     getlocal0
+                     dup
+                     setlocal 6
+                     getproperty QName(PrivateNamespace(null,"8"),"queue")
+                     increment_i
+                     setlocal 7
+                     getlocal 6
+                     getlocal 7
+                     setproperty QName(PrivateNamespace(null,"8"),"queue")
+                     kill 7
+                     kill 6
+                     getscopeobject 1
+                     findpropstrict QName(PackageNamespace("flash.display"),"Loader")
+                     constructprop QName(PackageNamespace("flash.display"),"Loader"), 0
+                     coerce QName(PackageNamespace("flash.display"),"Loader")
+                     setslot 5
+                     getscopeobject 1
+                     getslot 5
+                     findpropstrict QName(PackageNamespace("flash.net"),"URLRequest")
+                     getscopeobject 1
+                     getslot 1
+                     constructprop QName(PackageNamespace("flash.net"),"URLRequest"), 1
+                     callpropvoid QName(PackageNamespace(""),"load"), 1
+                     getscopeobject 1
+                     getslot 5
+                     getproperty QName(PackageNamespace(""),"contentLoaderInfo")
+                     getlex QName(PackageNamespace("flash.events"),"IOErrorEvent")
+                     getproperty QName(PackageNamespace(""),"IO_ERROR")
+                     newfunction 236
+                     callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                     getscopeobject 1
+                     getslot 5
+                     getproperty QName(PackageNamespace(""),"contentLoaderInfo")
+                     getlex QName(PackageNamespace("flash.events"),"ProgressEvent")
+                     getproperty QName(PackageNamespace(""),"PROGRESS")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"8"),"progress")
+                     callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                     getscopeobject 1
+                     getslot 5
+                     getproperty QName(PackageNamespace(""),"contentLoaderInfo")
+                     getlex QName(PackageNamespace("flash.events"),"Event")
+                     getproperty QName(PackageNamespace(""),"COMPLETE")
+                     newfunction 237
+                     callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         public function loadBytes(param1:ByteArray, param2:Function = null, param3:Object = null, ... rest) : void
+         {
+            trait method QName(PackageNamespace(""),"loadBytes")
+               dispid 0
+               method
+                  name null
+                  flag HAS_OPTIONAL
+                  flag NEED_ACTIVATION
+                  flag NEED_REST
+                  param QName(PackageNamespace("flash.utils"),"ByteArray")
+                  param QName(PackageNamespace(""),"Function")
+                  param QName(PackageNamespace(""),"Object")
+                  optional Null()
+                  optional Null()
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 3
+                     localcount 8
+                     initscopedepth 6
+                     maxscopedepth 8
+                     trait slot QName(PackageInternalNs("dragonforce.core"),"bytes")
+                        slotid 1
+                        type QName(PackageNamespace("flash.utils"),"ByteArray")
+                     end ; trait
+                     trait slot QName(PackageInternalNs("dragonforce.core"),"func")
+                        slotid 2
+                        type QName(PackageNamespace(""),"Function")
+                        value Null()
+                     end ; trait
+                     trait slot QName(PackageInternalNs("dragonforce.core"),"thisObj")
+                        slotid 3
+                        type QName(PackageNamespace(""),"Object")
+                        value Null()
+                     end ; trait
+                     trait slot QName(PackageNamespace(""),"rest")
+                        slotid 4
+                        type QName(PackageNamespace(""),"Array")
+                     end ; trait
+                     trait slot QName(PackageInternalNs("dragonforce.core"),"loader")
+                        slotid 5
+                        type QName(PackageNamespace("flash.display"),"Loader")
+                     end ; trait
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        newactivation
+                        dup
+                        setlocal 5
+                        pushscope
+                        getscopeobject 1
+                        getlocal1
+                        setslot 1
+                        getscopeobject 1
+                        getlocal2
+                        setslot 2
+                        getscopeobject 1
+                        getlocal3
+                        setslot 3
+                        getscopeobject 1
+                        getlocal 4
+                        setslot 4
+                        getlocal0
+                        dup
+                        setlocal 6
+                        getproperty QName(PrivateNamespace(null,"8"),"queue")
+                        increment_i
+                        setlocal 7
+                        getlocal 6
+                        getlocal 7
+                        setproperty QName(PrivateNamespace(null,"8"),"queue")
+                        kill 7
+                        kill 6
+                        getscopeobject 1
+                        findpropstrict QName(PackageNamespace("flash.display"),"Loader")
+                        constructprop QName(PackageNamespace("flash.display"),"Loader"), 0
+                        coerce QName(PackageNamespace("flash.display"),"Loader")
+                        setslot 5
+                        getscopeobject 1
+                        getslot 5
+                        getscopeobject 1
+                        getslot 1
+                        callpropvoid QName(PackageNamespace(""),"loadBytes"), 1
+                        getscopeobject 1
+                        getslot 5
+                        getproperty QName(PackageNamespace(""),"contentLoaderInfo")
+                        getlex QName(PackageNamespace("flash.events"),"Event")
+                        getproperty QName(PackageNamespace(""),"COMPLETE")
+                        newfunction 239
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            private function parse(param1:LoaderInfo) : void
+            {
+               trait method QName(PrivateNamespace(null,"8"),"parse")
+                  dispid 0
+                  method
+                     name null
+                     param QName(PackageNamespace("flash.display"),"LoaderInfo")
+                     returns QName(PackageNamespace(""),"void")
+                     
+                     body
+                        maxstack 4
+                        localcount 7
+                        initscopedepth 5
+                        maxscopedepth 6
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           pushnull
+                           coerce_s
+                           setlocal3
+                           getlex QName(PackageNamespace("dragonforce.utils"),"SWFExplorer")
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"bytes")
+                           callproperty QName(PackageNamespace(""),"parse"), 1
+                           coerce QName(PackageNamespace(""),"Array")
+                           setlocal2
+                           pushbyte 0
+                           setlocal 4
+                           jump ofs0037
+                  ofs001b:
+                           label
+                           getlocal2
+                           getlocal 4
+                           getproperty MultinameL([PrivateNamespace(null,"8"),PackageNamespace(""),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),PrivateNamespace(null,"53"),PackageNamespace("dragonforce.core"),ProtectedNamespace("dragonforce.core:Library"),StaticProtectedNs("dragonforce.core:Library"),StaticProtectedNs("flash.events:EventDispatcher")])
+                           coerce_s
+                           setlocal3
+                           getlocal0
+                           getproperty QName(PrivateNamespace(null,"8"),"dict")
+                           getlocal3
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"applicationDomain")
+                           getlocal3
+                           callproperty QName(PackageNamespace(""),"getDefinition"), 1
+                           setproperty MultinameL([PrivateNamespace(null,"8"),PackageNamespace(""),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),PrivateNamespace(null,"53"),PackageNamespace("dragonforce.core"),ProtectedNamespace("dragonforce.core:Library"),StaticProtectedNs("dragonforce.core:Library"),StaticProtectedNs("flash.events:EventDispatcher")])
+                           inclocal_i 4
+                  ofs0037:
+                           getlocal 4
+                           getlocal2
+                           getproperty QName(PackageNamespace(""),"length")
+                           iflt ofs001b
+                           getlocal0
+                           dup
+                           setlocal 5
+                           getproperty QName(PrivateNamespace(null,"8"),"queue")
+                           decrement_i
+                           setlocal 6
+                           getlocal 5
+                           getlocal 6
+                           setproperty QName(PrivateNamespace(null,"8"),"queue")
+                           kill 6
+                           kill 5
+                           getlocal0
+                           getproperty QName(PrivateNamespace(null,"8"),"queue")
+                           pushbyte 0
+                           ifne ofs0071
+                           findpropstrict QName(PackageNamespace(""),"dispatchEvent")
+                           findpropstrict QName(PackageNamespace("flash.events"),"Event")
+                           getlex QName(PackageNamespace("flash.events"),"Event")
+                           getproperty QName(PackageNamespace(""),"COMPLETE")
+                           constructprop QName(PackageNamespace("flash.events"),"Event"), 1
+                           callpropvoid QName(PackageNamespace(""),"dispatchEvent"), 1
+                  ofs0071:
+                           returnvoid
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+               
+               private function progress(param1:ProgressEvent) : void
+               {
+                  trait method QName(PrivateNamespace(null,"8"),"progress")
+                     dispid 0
+                     method
+                        name null
+                        param QName(PackageNamespace("flash.events"),"ProgressEvent")
+                        returns QName(PackageNamespace(""),"void")
+                        
+                        body
+                           maxstack 2
+                           localcount 2
+                           initscopedepth 5
+                           maxscopedepth 6
+                           
+                           code
+                              getlocal0
+                              pushscope
+                              findpropstrict QName(PackageNamespace(""),"dispatchEvent")
+                              getlocal1
+                              callpropvoid QName(PackageNamespace(""),"dispatchEvent"), 1
+                              returnvoid
+                           end ; code
+                        end ; body
+                     end ; method
+                  }
+                  
+                  public function getDefinition(param1:String) : Object
+                  {
+                     trait method QName(PackageNamespace(""),"getDefinition")
+                        dispid 0
+                        method
+                           name null
+                           param QName(PackageNamespace(""),"String")
+                           returns QName(PackageNamespace(""),"Object")
+                           
+                           body
+                              maxstack 2
+                              localcount 2
+                              initscopedepth 5
+                              maxscopedepth 6
+                              
+                              code
+                                 getlocal0
+                                 pushscope
+                                 getlocal0
+                                 getproperty QName(PrivateNamespace(null,"8"),"dict")
+                                 getlocal1
+                                 getproperty MultinameL([PrivateNamespace(null,"8"),PackageNamespace(""),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),PrivateNamespace(null,"53"),PackageNamespace("dragonforce.core"),ProtectedNamespace("dragonforce.core:Library"),StaticProtectedNs("dragonforce.core:Library"),StaticProtectedNs("flash.events:EventDispatcher")])
+                                 returnvalue
+                              end ; code
+                           end ; body
+                        end ; method
+                     }
+                     
+                     public function getInstance(param1:String) : *
+                     {
+                        trait method QName(PackageNamespace(""),"getInstance")
+                           dispid 0
+                           method
+                              name null
+                              param QName(PackageNamespace(""),"String")
+                              returns null
+                              
+                              body
+                                 maxstack 2
+                                 localcount 2
+                                 initscopedepth 5
+                                 maxscopedepth 6
+                                 
+                                 code
+                                    getlocal0
+                                    pushscope
+                                    getlocal0
+                                    getproperty QName(PrivateNamespace(null,"8"),"dict")
+                                    getlocal1
+                                    getproperty MultinameL([PrivateNamespace(null,"8"),PackageNamespace(""),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),PrivateNamespace(null,"53"),PackageNamespace("dragonforce.core"),ProtectedNamespace("dragonforce.core:Library"),StaticProtectedNs("dragonforce.core:Library"),StaticProtectedNs("flash.events:EventDispatcher")])
+                                    construct 0
+                                    returnvalue
+                                 end ; code
+                              end ; body
+                           end ; method
+                        }
+                     }
+                  }
+                  
+                  method
+                     name null
+                     returns null
+                     
+                     body
+                        maxstack 2
+                        localcount 1
+                        initscopedepth 1
+                        maxscopedepth 4
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           findpropstrict Multiname("Library",[PackageNamespace("dragonforce.core")])
+                           getlex QName(PackageNamespace(""),"Object")
+                           pushscope
+                           getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+                           pushscope
+                           getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+                           newclass 33
+                           popscope
+                           popscope
+                           initproperty QName(PackageNamespace("dragonforce.core"),"Library")
+                           returnvoid
+                        end ; code
+                     end ; body
+                  end ; method
+                  

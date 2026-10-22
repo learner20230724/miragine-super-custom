@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 1,
+  "generator": "tools/extract_game_config.py",
+  "baselineGameSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
+  "baselineAssetsSha256": "31f0fc1a147bac308d794fcecb087ff47260ee830ea6b9287bad98c93e7b5a2e",
+  "sources": [
+    {
+      "path": "recovered/as3/scripts/Grid.as",
+      "sha256": "4ea6da7273ebb98c33c6d4b6d7a2794f729c0cef98c693bd2fce4e06be6dc580"
+    },
+    {
+      "path": "recovered/as3/scripts/DragonForce.as",
+      "sha256": "86405dde299dc60b599b76da4ad01b8533ef8f5b2378f045dc103f38470d640e"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/isometric2D/Isometric2DEntity.as",
+      "sha256": "08e4253266a58c504d03d010bcc9589c00e748947dc2acb8ede8e2a15dd25a98"
+    },
+    {
+      "path": "recovered/pcode/scripts/dragonforce/isometric2D/Isometric2DEntity.pcode",
+      "sha256": "fa171957adc3bb799e3f397b0bd082c7263341c6f233c364ed2149cc1af3063d"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/isometric2D/Isometric2DAttack.as",
+      "sha256": "e45ac0d5f68edb7ca7c68cf701b66aa1d25db9343b3d7a71b72c7d550766aef2"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/core/Symbol.as",
+      "sha256": "9004bc85aaa04574522abf2c3d5ee8c6d0713758f179b010f46273f964bd58cb"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/core/SpriteSheet.as",
+      "sha256": "e35dee5b6cc3dbbb1454d8294dc0f3e00677de58b6d60140dc395ef0e8a4a6da"
+    },
+    {
+      "path": "recovered/as3/scripts/miragine3d_fla/MainTimeline.as",
+      "sha256": "67f1356cf04b246f6d770f12a757975673ce5e036ebb1a849fe7afb69d13f30b"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/renderEngine/DragonForceRenderEngine.as",
+      "sha256": "61445a2355c7a71c6cd69e93142eeb5e24f8c4876c0bfa00562fee42fb9e966d"
+    }
+  ],
+  "unitFields": {
+    "0": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 11,
+      "lastLine": 27,
+      "fields": {
+        "name": 12,
+        "id": 13,
+        "description": 14,
+        "cost": 15,
+        "population": 16,
+        "income": 17,
+        "hp": 18,
+        "armorTypeID": 19,
+        "armor": 20,
+        "moveSpeed": 21,
+        "damage": 22,
+        "range": 23,
+        "weaponSpeed": 24,
+        "delayAttack": 25,
+        "ss": 26
+      }
+    },
+    "1": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 27,
+      "lastLine": 43,
+      "fields": {
+        "name": 28,
+        "id": 29,
+        "description": 30,
+        "cost": 31,
+        "population": 32,
+        "income": 33,
+        "hp": 34,
+        "armorTypeID": 35,
+        "armor": 36,
+        "moveSpeed": 37,
+        "damage": 38,
+        "range": 39,
+        "weaponSpeed": 40,
+        "delayAttack": 41,
+        "ss": 42
+      }
+    },
+    "2": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 43,
+      "lastLine": 58,
+      "fields": {
+        "name": 44,
+        "id": 45,
+        "cost": 46,
+        "population": 47,
+        "income": 48,
+        "hp": 49,
+        "armorTypeID": 50,
+        "armor": 51,
+        "moveSpeed": 52,
+        "damage": 53,
+        "range": 54,
+        "weaponSpeed": 55,
+        "delayAttack": 56,
+        "ss": 57
+      }
+    },
+    "3": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 58,
+      "lastLine": 73,
+      "fields": {
+        "name": 59,
+        "id": 60,
+        "cost": 61,
+        "population": 62,
+        "income": 63,
+        "hp": 64,
+        "armorTypeID": 65,
+        "armor": 66,
+        "moveSpeed": 67,
+        "damage": 68,
+        "range": 69,
+        "weaponSpeed": 70,
+        "delayAttack": 71,
+        "ss": 72
+      }
+    },
+    "4": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 73,
+      "lastLine": 88,
+      "fields": {
+        "name": 74,
+        "id": 75,
+        "cost": 76,
+        "population": 77,
+        "income": 78,
+        "hp": 79,
+        "armorTypeID": 80,
+        "armor": 81,
+        "moveSpeed": 82,
+        "damage": 83,
+        "range": 84,
+        "weaponSpeed": 85,
+        "delayAttack": 86,
+        "ss": 87
+      }
+    },
+    "5": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 88,
+      "lastLine": 103,
+      "fields": {
+        "name": 89,
+        "id": 90,
+        "cost": 91,
+        "population": 92,
+        "income": 93,
+        "hp": 94,
+        "armorTypeID": 95,
+        "armor": 96,
+        "moveSpeed": 97,
+        "damage": 98,
+        "range": 99,
+        "weaponSpeed": 100,
+        "delayAttack": 101,
+        "ss": 102
+      }
+    },
+    "6": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 103,
+      "lastLine": 119,
+      "fields": {
+        "name": 104,
+        "id": 105,
+        "cost": 106,
+        "population": 107,
+        "income": 108,
+        "hp": 109,
+        "armorTypeID": 110,
+        "armor": 111,
+        "moveSpeed": 112,
+        "damage": 113,
+        "range": 114,
+        "weaponSpeed": 115,
+        "delayAttack": 116,
+        "ss": 117,
+        "wss": 118
+      }
+    },
+    "7": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 119,
+      "lastLine": 134,
+      "fields": {
+        "name": 120,
+        "id": 121,
+        "cost": 122,
+        "population": 123,
+        "income": 124,
+        "hp": 125,
+        "armorTypeID": 126,
+        "armor": 127,
+        "moveSpeed": 128,
+        "damage": 129,
+        "range": 130,
+        "weaponSpeed": 131,
+        "delayAttack": 132,
+        "ss": 133
+      }
+    },
+    "8": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 134,
+      "lastLine": 149,
+      "fields": {
+        "name": 135,
+        "id": 136,
+        "cost": 137,
+        "population": 138,
+        "income": 139,
+        "hp": 140,
+        "armorTypeID": 141,
+        "armor": 142,
+        "moveSpeed": 143,
+        "damage": 144,
+        "range": 145,
+        "weaponSpeed": 146,
+        "delayAttack": 147,
+        "ss": 148
+      }
+    },
+    "9": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 149,
+      "lastLine": 165,
+      "fields": {
+        "name": 150,
+        "id": 151,
+        "cost": 152,
+        "population": 153,
+        "income": 154,
+        "hp": 155,
+        "armorTypeID": 156,
+        "armor": 157,
+        "moveSpeed": 158,
+        "damage": 159,
+        "range": 160,
+        "weaponSpeed": 161,
+        "delayAttack": 162,
+        "ss": 163,
+        "wss": 164
+      }
+    },
+    "10": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 165,
+      "lastLine": 180,
+      "fields": {
+        "name": 166,
+        "id": 167,
+        "cost": 168,
+        "population": 169,
+        "income": 170,
+        "hp": 171,
+        "armorTypeID": 172,
+        "armor": 173,
+        "moveSpeed": 174,
+        "damage": 175,
+        "range": 176,
+        "weaponSpeed": 177,
+        "delayAttack": 178,
+        "ss": 179
+      }
+    },
+    "11": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 180,
+      "lastLine": 195,
+      "fields": {
+        "name": 181,
+        "id": 182,
+        "cost": 183,
+        "population": 184,
+        "income": 185,
+        "hp": 186,
+        "armorTypeID": 187,
+        "armor": 188,
+        "moveSpeed": 189,
+        "damage": 190,
+        "range": 191,
+        "weaponSpeed": 192,
+        "delayAttack": 193,
+        "ss": 194
+      }
+    },
+    "12": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 195,
+      "lastLine": 211,
+      "fields": {
+        "name": 196,
+        "id": 197,
+        "cost": 198,
+        "population": 199,
+        "income": 200,
+        "hp": 201,
+        "armorTypeID": 202,
+        "armor": 203,
+        "moveSpeed": 204,
+        "damage": 205,
+        "range": 206,
+        "weaponSpeed": 207,
+        "delayAttack": 208,
+        "ss": 209,
+        "wss": 210
+      }
+    },
+    "13": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 211,
+      "lastLine": 226,
+      "fields": {
+        "name": 212,
+        "id": 213,
+        "cost": 214,
+        "population": 215,
+        "income": 216,
+        "hp": 217,
+        "armorTypeID": 218,
+        "armor": 219,
+        "moveSpeed": 220,
+        "damage": 221,
+        "range": 222,
+        "weaponSpeed": 223,
+        "delayAttack": 224,
+        "ss": 225
+      }
+    },
+    "14": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 226,
+      "lastLine": 241,
+      "fields": {
+        "name": 227,
+        "id": 228,
+        "cost": 229,
+        "population": 230,
+        "income": 231,
+        "hp": 232,
+        "armorTypeID": 233,
+        "armor": 234,
+        "moveSpeed": 235,
+        "damage": 236,
+        "range": 237,
+        "weaponSpeed": 238,
+        "delayAttack": 239,
+        "ss": 240
+      }
+    },
+    "15": {
+      "source": "recovered/as3/scripts/Grid.as",
+      "firstLine": 241,
+      "lastLine": 256,
+      "fields": {
+        "name": 242,
+        "id": 243,
+        "cost": 244,
+        "population": 245,
+        "income": 246,
+        "hp": 247,
+        "armorTypeID": 248,
+        "armor": 249,
+        "moveSpeed": 250,
+        "damage": 251,
+        "range": 252,
+        "weaponSpeed": 253,
+        "delayAttack": 254,
+        "ss": 255
+      }
+    }
+  },
+  "mappings": {
+    "units.* raw fields": "Grid.Grid: this.entity JSON-compatible literal; id is the menu unit ID, ss is a different animation index.",
+    "units.*.runtime": "DragonForce.createUnit: moveSpeed * 1.3; range * 60; weaponSpeed * 20. Isometric2DEntity.attack assigns Number weaponSpeed to private int t, truncating toward zero.",
+    "units.*.animation / animations": "SymbolClass and DefineSprite frame counts in original asset SWF; playback rates/loop flags in DragonForce.libraryComplete and SpriteSheet defaults.",
+    "rules economy": "DragonForce.init and step, not field initializers that init replaces. Population is a per-round recruitment budget, not a living-unit cap.",
+    "difficulties": "DragonForce.ai probability switch and init difficulty==3 branch. Difficulty 3 population 100 applies only before first reset; step subsequently resets both to populationLimit (80).",
+    "ai": "DragonForce.ai counter table and strict >/< branch thresholds; the crystal has no menu id and may be counted under undefined."
+  },
+  "semantics": {
+    "cooldown": "floor(raw weaponSpeed * 20) frames for the positive defaults, NOT raw seconds. Attack animation speed/delayAttack are independent. Elapsed wall time depends on achieved rendering frame rate.",
+    "animation": "Symbol.step displays int(currentFrame), then increments by speed; non-loop actions freeze on last frame. gotoAndPlay restarts non-loop actions even if already selected.",
+    "damage": "nowHP -= damage[target.armorTypeID] - target.armor; original has no max(1,...) clamp. Custom armor above damage can heal; not silently corrected.",
+    "income": "Recruit cost deducted immediately; income increase applied immediately and capped at incomeLimit; settlement credits the current income when round reaches zero.",
+    "population": "Recruit deducts population; death does not refund it. Both budgets reset to populationLimit on round zero.",
+    "unitMaxHP": "createUnit assigns nowHP from hp but does not assign maxHP; Isometric2DEntity.maxHP remains its default 100 for ordinary units. Crystal maxHP is explicitly 3500.",
+    "spawnAndAI": "No invented reinforcement waves: selected units are repeatedly attempted when the countdown modulo 3 equals zero; AI selection is reconsidered at settlement only.",
+    "derivedFields": "units.*.runtime and animation are documentation/extraction results; the core recalculates raw stat conversions after custom overrides. Unit ss selects actual flat animation frame lengths; rules.animationSpeeds/Loops govern unit action playback, while crystal/effect speeds are stored in the flat animation entries."
+  },
+  "units": {
+    "cost": "gold / recruit",
+    "population": "per-round manpower budget / recruit",
+    "income": "gold / settlement added per recruit",
+    "hp": "initial health points",
+    "damage": "[damage against light armor, damage against heavy armor] before flat armor",
+    "armorTypeID": "0 = light, 1 = heavy",
+    "armor": "flat health points subtracted from incoming damage",
+    "moveSpeed": "raw display coefficient; actual world units / simulation frame = raw * 1.3",
+    "range": "raw display coefficient; actual horizontal world units = raw * 60",
+    "weaponSpeed": "raw display coefficient; actual positive-default cooldown frames = trunc(raw * 20)",
+    "delayAttack": "simulation frames before projectile begins moving, independent of animation",
+    "animation.speed": "source animation frames advanced per simulation frame, not animations/second"
+  },
+  "limits": [
+    "A static source extraction is not proof of full-match runtime parity.",
+    "The historical platform listing date is not proof of the binary build date.",
+    "No author-original FLA/source project is claimed; recovered AS3 was decompiled from the verified SWF."
+  ]
+}

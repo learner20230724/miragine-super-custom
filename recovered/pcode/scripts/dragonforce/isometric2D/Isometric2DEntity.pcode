@@ -1,0 +1,1086 @@
+package dragonforce.isometric2D
+{
+   import dragonforce.core.SpriteSheet;
+   import dragonforce.core.Symbol;
+   import dragonforce.math.Vec2;
+   import flash.events.Event;
+   
+   public dynamic class Isometric2DEntity extends Symbol
+   {
+      
+      public static var WALK:String = "walk";
+      
+      public static var RUN:String = "run";
+      
+      public static var IDLE:String = "idle";
+      
+      public static var HURT:String = "dead";
+      
+      public static var DEAD:String = "dead";
+      
+      public static var ATTACK:String = "attack";
+      
+      public static var LIGHT:int = 0;
+      
+      public static var ARMORED:int = 1;
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 2
+            localcount 1
+            initscopedepth 9
+            maxscopedepth 10
+            
+            code
+               getlocal0
+               pushscope
+               findproperty QName(PackageNamespace(""),"WALK")
+               pushstring "walk"
+               setproperty QName(PackageNamespace(""),"WALK")
+               findproperty QName(PackageNamespace(""),"RUN")
+               pushstring "run"
+               setproperty QName(PackageNamespace(""),"RUN")
+               findproperty QName(PackageNamespace(""),"IDLE")
+               pushstring "idle"
+               setproperty QName(PackageNamespace(""),"IDLE")
+               findproperty QName(PackageNamespace(""),"HURT")
+               pushstring "dead"
+               setproperty QName(PackageNamespace(""),"HURT")
+               findproperty QName(PackageNamespace(""),"DEAD")
+               pushstring "dead"
+               setproperty QName(PackageNamespace(""),"DEAD")
+               findproperty QName(PackageNamespace(""),"ATTACK")
+               pushstring "attack"
+               setproperty QName(PackageNamespace(""),"ATTACK")
+               findproperty QName(PackageNamespace(""),"LIGHT")
+               pushbyte 0
+               setproperty QName(PackageNamespace(""),"LIGHT")
+               findproperty QName(PackageNamespace(""),"ARMORED")
+               pushbyte 1
+               setproperty QName(PackageNamespace(""),"ARMORED")
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public var vx:Number = 0;
+      
+      public var vy:Number = 0;
+      
+      public var vz:Number = 0;
+      
+      public var moveSpeed:Number = 0;
+      
+      public var weaponSpeed:Number = 0;
+      
+      public var damage:Array;
+      
+      public var range:Number = 0;
+      
+      public var armor:Number = 0;
+      
+      public var armorTypeID:int;
+      
+      public var nowHP:Number = 100;
+      
+      public var maxHP:Number = 100;
+      
+      public var opposite:int = -1;
+      
+      public var direction:int = 1;
+      
+      public var data:*;
+      
+      public var targetList:Vector.<Isometric2DEntity>;
+      
+      public var target:Isometric2DEntity;
+      
+      public var weaponSpriteSheet:SpriteSheet;
+      
+      public var delayAttack:int;
+      
+      private var gravity:Number = -0.8;
+      
+      private var t:int = 0;
+      
+      private var jumpTimes:int = 2;
+      
+      private var deadTime:int = 0;
+      
+      public function Isometric2DEntity()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 3
+               localcount 1
+               initscopedepth 10
+               maxscopedepth 11
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  pushbyte 0
+                  dup
+                  newarray 2
+                  initproperty QName(PackageNamespace(""),"damage")
+                  getlocal0
+                  getlex QName(PackageNamespace(""),"LIGHT")
+                  initproperty QName(PackageNamespace(""),"armorTypeID")
+                  getlocal0
+                  getlex Multiname("Vector",[PrivateNamespace(null,"13"),PackageNamespace(""),PrivateNamespace(null,"83"),PackageNamespace("dragonforce.isometric2D"),PackageInternalNs("dragonforce.isometric2D"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.isometric2D:Isometric2DEntity"),StaticProtectedNs("dragonforce.isometric2D:Isometric2DEntity"),StaticProtectedNs("dragonforce.core:Symbol"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("__AS3__.vec")])
+                  getlex QName(PackageNamespace("dragonforce.isometric2D"),"Isometric2DEntity")
+                  applytype 1
+                  construct 0
+                  initproperty QName(PackageNamespace(""),"targetList")
+                  getlocal0
+                  constructsuper 0
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function move(param1:Vec2) : void
+      {
+         trait method QName(PackageNamespace(""),"move")
+            dispid 0
+            method
+               name null
+               param QName(PackageNamespace("dragonforce.math"),"Vec2")
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 3
+                  localcount 3
+                  initscopedepth 10
+                  maxscopedepth 11
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     pushnull
+                     coerce QName(PackageNamespace("dragonforce.math"),"Vec2")
+                     setlocal2
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"13"),"t")
+                     pushbyte 0
+                     equals
+                     dup
+                     iftrue ofs0019
+                     pop
+                     getlex QName(PackageNamespace(""),"pz")
+                     pushbyte 0
+                     greaterthan
+            ofs0019:
+                     iffalse ofs0054
+                     getlocal1
+                     callproperty QName(PackageNamespace(""),"getUnit"), 0
+                     coerce QName(PackageNamespace("dragonforce.math"),"Vec2")
+                     setlocal2
+                     getlocal0
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"x")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"moveSpeed")
+                     multiply
+                     initproperty QName(PackageNamespace(""),"vx")
+                     getlocal0
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"y")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"moveSpeed")
+                     multiply
+                     initproperty QName(PackageNamespace(""),"vy")
+                     getlocal0
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"vx")
+                     pushbyte 0
+                     greaterthan
+                     iffalse ofs004f
+                     pushbyte 1
+                     jump ofs0051
+            ofs004f:
+                     pushbyte -1
+            ofs0051:
+                     initproperty QName(PackageNamespace(""),"direction")
+            ofs0054:
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         public function moveTo(param1:Vec2) : void
+         {
+            trait method QName(PackageNamespace(""),"moveTo")
+               dispid 0
+               method
+                  name null
+                  param QName(PackageNamespace("dragonforce.math"),"Vec2")
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 4
+                     localcount 3
+                     initscopedepth 10
+                     maxscopedepth 11
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        pushnull
+                        coerce QName(PackageNamespace("dragonforce.math"),"Vec2")
+                        setlocal2
+                        getlocal0
+                        getproperty QName(PrivateNamespace(null,"13"),"t")
+                        pushbyte 0
+                        equals
+                        dup
+                        iftrue ofs0019
+                        pop
+                        getlex QName(PackageNamespace(""),"pz")
+                        pushbyte 0
+                        greaterthan
+               ofs0019:
+                        iffalse ofs0099
+                        findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"x")
+                        getlex QName(PackageNamespace(""),"px")
+                        subtract
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"y")
+                        getlex QName(PackageNamespace(""),"py")
+                        subtract
+                        constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                        coerce QName(PackageNamespace("dragonforce.math"),"Vec2")
+                        setlocal2
+                        getlocal2
+                        getproperty QName(PackageNamespace(""),"x")
+                        getlocal2
+                        getproperty QName(PackageNamespace(""),"x")
+                        multiply
+                        getlocal2
+                        getproperty QName(PackageNamespace(""),"y")
+                        getlocal2
+                        getproperty QName(PackageNamespace(""),"y")
+                        multiply
+                        add
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"moveSpeed")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"moveSpeed")
+                        multiply
+                        ifnlt ofs0065
+                        findproperty QName(PackageNamespace(""),"px")
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"x")
+                        initproperty QName(PackageNamespace(""),"px")
+                        findproperty QName(PackageNamespace(""),"py")
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"y")
+                        initproperty QName(PackageNamespace(""),"py")
+                        jump ofs0082
+               ofs0065:
+                        getlocal2
+                        callpropvoid QName(PackageNamespace(""),"normalize"), 0
+                        getlocal0
+                        getlocal2
+                        getproperty QName(PackageNamespace(""),"x")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"moveSpeed")
+                        multiply
+                        initproperty QName(PackageNamespace(""),"vx")
+                        getlocal0
+                        getlocal2
+                        getproperty QName(PackageNamespace(""),"y")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"moveSpeed")
+                        multiply
+                        initproperty QName(PackageNamespace(""),"vy")
+               ofs0082:
+                        getlocal0
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"vx")
+                        pushbyte 0
+                        greaterthan
+                        iffalse ofs0094
+                        pushbyte 1
+                        jump ofs0096
+               ofs0094:
+                        pushbyte -1
+               ofs0096:
+                        initproperty QName(PackageNamespace(""),"direction")
+               ofs0099:
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            public function jump() : void
+            {
+               trait method QName(PackageNamespace(""),"jump")
+                  dispid 0
+                  method
+                     name null
+                     returns QName(PackageNamespace(""),"void")
+                     
+                     body
+                        maxstack 2
+                        localcount 3
+                        initscopedepth 10
+                        maxscopedepth 11
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           getlex QName(PackageNamespace(""),"pz")
+                           pushbyte 0
+                           equals
+                           dup
+                           iffalse ofs0015
+                           pop
+                           getlocal0
+                           getproperty QName(PrivateNamespace(null,"13"),"t")
+                           pushbyte 0
+                           equals
+                  ofs0015:
+                           iffalse ofs0021
+                           findproperty QName(PackageNamespace(""),"pz")
+                           pushbyte 1
+                           initproperty QName(PackageNamespace(""),"pz")
+                  ofs0021:
+                           getlocal0
+                           getproperty QName(PrivateNamespace(null,"13"),"jumpTimes")
+                           pushbyte 0
+                           ifngt ofs0042
+                           getlocal0
+                           pushbyte 10
+                           initproperty QName(PackageNamespace(""),"vz")
+                           getlocal0
+                           dup
+                           setlocal1
+                           getproperty QName(PrivateNamespace(null,"13"),"jumpTimes")
+                           decrement_i
+                           setlocal2
+                           getlocal1
+                           getlocal2
+                           setproperty QName(PrivateNamespace(null,"13"),"jumpTimes")
+                           kill 2
+                           kill 1
+                  ofs0042:
+                           returnvoid
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+               
+               public function hurt() : void
+               {
+                  trait method QName(PackageNamespace(""),"hurt")
+                     dispid 0
+                     method
+                        name null
+                        returns QName(PackageNamespace(""),"void")
+                        
+                        body
+                           maxstack 2
+                           localcount 1
+                           initscopedepth 10
+                           maxscopedepth 11
+                           
+                           code
+                              getlocal0
+                              pushscope
+                              getlocal0
+                              pushbyte 10
+                              initproperty QName(PrivateNamespace(null,"13"),"t")
+                              findpropstrict QName(PackageNamespace(""),"gotoAndPlay")
+                              getlex QName(PackageNamespace(""),"HURT")
+                              callpropvoid QName(PackageNamespace(""),"gotoAndPlay"), 1
+                              returnvoid
+                           end ; code
+                        end ; body
+                     end ; method
+                  }
+                  
+                  public function dead() : void
+                  {
+                     trait method QName(PackageNamespace(""),"dead")
+                        dispid 0
+                        method
+                           name null
+                           returns QName(PackageNamespace(""),"void")
+                           
+                           body
+                              maxstack 3
+                              localcount 1
+                              initscopedepth 10
+                              maxscopedepth 11
+                              
+                              code
+                                 getlocal0
+                                 pushscope
+                                 getlocal0
+                                 pushshort 1000
+                                 initproperty QName(PrivateNamespace(null,"13"),"t")
+                                 getlocal0
+                                 pushbyte 0
+                                 initproperty QName(PackageNamespace(""),"nowHP")
+                                 findpropstrict QName(PackageNamespace(""),"gotoAndPlay")
+                                 getlex QName(PackageNamespace(""),"DEAD")
+                                 callpropvoid QName(PackageNamespace(""),"gotoAndPlay"), 1
+                                 getlocal0
+                                 pushbyte 25
+                                 initproperty QName(PrivateNamespace(null,"13"),"deadTime")
+                                 findpropstrict QName(PackageNamespace(""),"dispatchEvent")
+                                 findpropstrict QName(PackageNamespace("flash.events"),"Event")
+                                 pushstring "destroy"
+                                 constructprop QName(PackageNamespace("flash.events"),"Event"), 1
+                                 callpropvoid QName(PackageNamespace(""),"dispatchEvent"), 1
+                                 findproperty QName(PackageNamespace(""),"pz")
+                                 pushbyte 1
+                                 initproperty QName(PackageNamespace(""),"pz")
+                                 getlocal0
+                                 pushbyte -5
+                                 getlocal0
+                                 getproperty QName(PackageNamespace(""),"direction")
+                                 multiply
+                                 initproperty QName(PackageNamespace(""),"vx")
+                                 getlocal0
+                                 pushbyte 8
+                                 initproperty QName(PackageNamespace(""),"vz")
+                                 returnvoid
+                              end ; code
+                           end ; body
+                        end ; method
+                     }
+                     
+                     public function attack() : void
+                     {
+                        trait method QName(PackageNamespace(""),"attack")
+                           dispid 0
+                           method
+                              name null
+                              returns QName(PackageNamespace(""),"void")
+                              
+                              body
+                                 maxstack 4
+                                 localcount 2
+                                 initscopedepth 10
+                                 maxscopedepth 11
+                                 
+                                 code
+                                    getlocal0
+                                    pushscope
+                                    pushnull
+                                    coerce QName(PackageNamespace("dragonforce.isometric2D"),"Isometric2DAttack")
+                                    setlocal1
+                                    getlocal0
+                                    getproperty QName(PrivateNamespace(null,"13"),"t")
+                                    pushbyte 0
+                                    ifne ofs0076
+                                    getlocal0
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"weaponSpeed")
+                                    initproperty QName(PrivateNamespace(null,"13"),"t")
+                                    findpropstrict QName(PackageNamespace(""),"gotoAndPlay")
+                                    getlex QName(PackageNamespace(""),"ATTACK")
+                                    callpropvoid QName(PackageNamespace(""),"gotoAndPlay"), 1
+                                    findpropstrict QName(PackageNamespace("dragonforce.isometric2D"),"Isometric2DAttack")
+                                    getlocal0
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"target")
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"delayAttack")
+                                    constructprop QName(PackageNamespace("dragonforce.isometric2D"),"Isometric2DAttack"), 3
+                                    coerce QName(PackageNamespace("dragonforce.isometric2D"),"Isometric2DAttack")
+                                    setlocal1
+                                    getlocal1
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"weaponSpriteSheet")
+                                    setproperty QName(PackageNamespace(""),"spriteSheet")
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"weaponSpriteSheet")
+                                    iffalse ofs004e
+                                    getlocal1
+                                    pushstring "idle"
+                                    callpropvoid QName(PackageNamespace(""),"gotoAndPlay"), 1
+                           ofs004e:
+                                    getlocal1
+                                    pushbyte 40
+                                    setproperty QName(PackageNamespace(""),"pz")
+                                    getlocal1
+                                    pushbyte 20
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"direction")
+                                    multiply
+                                    setproperty QName(PackageNamespace(""),"vx")
+                                    getlex QName(PackageNamespace(""),"parent")
+                                    getlocal1
+                                    callpropvoid QName(PackageNamespace(""),"addChild"), 1
+                                    findpropstrict QName(PackageNamespace(""),"dispatchEvent")
+                                    findpropstrict QName(PackageNamespace("flash.events"),"Event")
+                                    pushstring "attack"
+                                    constructprop QName(PackageNamespace("flash.events"),"Event"), 1
+                                    callpropvoid QName(PackageNamespace(""),"dispatchEvent"), 1
+                           ofs0076:
+                                    returnvoid
+                                 end ; code
+                              end ; body
+                           end ; method
+                        }
+                        
+                        public function minusHP(param1:Array) : void
+                        {
+                           trait method QName(PackageNamespace(""),"minusHP")
+                              dispid 0
+                              method
+                                 name null
+                                 param QName(PackageNamespace(""),"Array")
+                                 returns QName(PackageNamespace(""),"void")
+                                 
+                                 body
+                                    maxstack 4
+                                    localcount 2
+                                    initscopedepth 10
+                                    maxscopedepth 11
+                                    
+                                    code
+                                       getlocal0
+                                       pushscope
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"nowHP")
+                                       pushbyte 0
+                                       ifngt ofs0037
+                                       getlocal0
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"nowHP")
+                                       getlocal1
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"armorTypeID")
+                                       getproperty MultinameL([PrivateNamespace(null,"13"),PackageNamespace(""),PrivateNamespace(null,"83"),PackageNamespace("dragonforce.isometric2D"),PackageInternalNs("dragonforce.isometric2D"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.isometric2D:Isometric2DEntity"),StaticProtectedNs("dragonforce.isometric2D:Isometric2DEntity"),StaticProtectedNs("dragonforce.core:Symbol"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"armor")
+                                       subtract
+                                       subtract
+                                       initproperty QName(PackageNamespace(""),"nowHP")
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"nowHP")
+                                       pushbyte 0
+                                       ifnle ofs0037
+                                       getlocal0
+                                       pushbyte 0
+                                       initproperty QName(PackageNamespace(""),"nowHP")
+                                       getlocal0
+                                       callpropvoid QName(PackageNamespace(""),"dead"), 0
+                              ofs0037:
+                                       returnvoid
+                                    end ; code
+                                 end ; body
+                              end ; method
+                           }
+                           
+                           private function findTarget() : void
+                           {
+                              trait method QName(PrivateNamespace(null,"13"),"findTarget")
+                                 dispid 0
+                                 method
+                                    name null
+                                    returns QName(PackageNamespace(""),"void")
+                                    
+                                    body
+                                       maxstack 3
+                                       localcount 7
+                                       initscopedepth 10
+                                       maxscopedepth 11
+                                       
+                                       code
+                                          getlocal0
+                                          pushscope
+                                          pushnull
+                                          coerce QName(PackageNamespace("dragonforce.isometric2D"),"Isometric2DEntity")
+                                          setlocal1
+                                          pushnan
+                                          setlocal 4
+                                          pushnan
+                                          setlocal 5
+                                          pushnan
+                                          setlocal 6
+                                          getlocal0
+                                          pushnull
+                                          initproperty QName(PackageNamespace(""),"target")
+                                          getlex QName(PackageNamespace(""),"Number")
+                                          getproperty QName(PackageNamespace(""),"MAX_VALUE")
+                                          convert_d
+                                          setlocal2
+                                          pushbyte 0
+                                          setlocal3
+                                          jump ofs007e
+                                 ofs0021:
+                                          label
+                                          getlocal0
+                                          getproperty QName(PackageNamespace(""),"targetList")
+                                          getlocal3
+                                          getproperty MultinameL([PrivateNamespace(null,"13"),PackageNamespace(""),PrivateNamespace(null,"83"),PackageNamespace("dragonforce.isometric2D"),PackageInternalNs("dragonforce.isometric2D"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.isometric2D:Isometric2DEntity"),StaticProtectedNs("dragonforce.isometric2D:Isometric2DEntity"),StaticProtectedNs("dragonforce.core:Symbol"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                                          coerce QName(PackageNamespace("dragonforce.isometric2D"),"Isometric2DEntity")
+                                          setlocal1
+                                          getlocal1
+                                          getproperty QName(PackageNamespace(""),"nowHP")
+                                          pushbyte 0
+                                          ifne ofs003b
+                                          jump ofs007c
+                                 ofs003b:
+                                          getlocal1
+                                          getproperty QName(PackageNamespace(""),"px")
+                                          getlex QName(PackageNamespace(""),"px")
+                                          subtract
+                                          getlocal1
+                                          getproperty QName(PackageNamespace(""),"px")
+                                          getlex QName(PackageNamespace(""),"px")
+                                          subtract
+                                          multiply
+                                          convert_d
+                                          setlocal 4
+                                          getlocal1
+                                          getproperty QName(PackageNamespace(""),"py")
+                                          getlex QName(PackageNamespace(""),"py")
+                                          subtract
+                                          getlocal1
+                                          getproperty QName(PackageNamespace(""),"py")
+                                          getlex QName(PackageNamespace(""),"py")
+                                          subtract
+                                          multiply
+                                          convert_d
+                                          setlocal 5
+                                          getlocal 4
+                                          pushbyte 30
+                                          getlocal 5
+                                          multiply
+                                          add
+                                          convert_d
+                                          dup
+                                          setlocal 6
+                                          getlocal2
+                                          ifnlt ofs007c
+                                          getlocal 6
+                                          convert_d
+                                          setlocal2
+                                          getlocal0
+                                          getlocal1
+                                          initproperty QName(PackageNamespace(""),"target")
+                                 ofs007c:
+                                          inclocal_i 3
+                                 ofs007e:
+                                          getlocal3
+                                          getlocal0
+                                          getproperty QName(PackageNamespace(""),"targetList")
+                                          getproperty QName(PackageNamespace(""),"length")
+                                          iflt ofs0021
+                                          returnvoid
+                                       end ; code
+                                    end ; body
+                                 end ; method
+                              }
+                              
+                              private function approachTarget() : void
+                              {
+                                 trait method QName(PrivateNamespace(null,"13"),"approachTarget")
+                                    dispid 0
+                                    method
+                                       name null
+                                       returns QName(PackageNamespace(""),"void")
+                                       
+                                       body
+                                          maxstack 3
+                                          localcount 2
+                                          initscopedepth 10
+                                          maxscopedepth 11
+                                          
+                                          code
+                                             getlocal0
+                                             pushscope
+                                             findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"target")
+                                             getproperty QName(PackageNamespace(""),"px")
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"target")
+                                             getproperty QName(PackageNamespace(""),"py")
+                                             constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                             coerce QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                             setlocal1
+                                             getlocal1
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"target")
+                                             getproperty QName(PackageNamespace(""),"px")
+                                             getlex QName(PackageNamespace(""),"px")
+                                             subtract
+                                             pushbyte 0
+                                             greaterthan
+                                             iffalse ofs0035
+                                             getlocal1
+                                             getproperty QName(PackageNamespace(""),"x")
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"range")
+                                             subtract
+                                             convert_d
+                                             jump ofs003e
+                                    ofs0035:
+                                             getlocal1
+                                             getproperty QName(PackageNamespace(""),"x")
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"range")
+                                             add
+                                             convert_d
+                                    ofs003e:
+                                             setproperty QName(PackageNamespace(""),"x")
+                                             getlex QName(PackageNamespace(""),"Math")
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"target")
+                                             getproperty QName(PackageNamespace(""),"px")
+                                             getlex QName(PackageNamespace(""),"px")
+                                             subtract
+                                             callproperty QName(PackageNamespace(""),"abs"), 1
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"range")
+                                             lessequals
+                                             dup
+                                             iffalse ofs0070
+                                             pop
+                                             getlex QName(PackageNamespace(""),"Math")
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"target")
+                                             getproperty QName(PackageNamespace(""),"py")
+                                             getlex QName(PackageNamespace(""),"py")
+                                             subtract
+                                             callproperty QName(PackageNamespace(""),"abs"), 1
+                                             pushbyte 40
+                                             lessequals
+                                    ofs0070:
+                                             iffalse ofs009a
+                                             getlocal0
+                                             getlocal0
+                                             getproperty QName(PackageNamespace(""),"target")
+                                             getproperty QName(PackageNamespace(""),"px")
+                                             getlex QName(PackageNamespace(""),"px")
+                                             subtract
+                                             pushbyte 0
+                                             greaterthan
+                                             iffalse ofs008c
+                                             pushbyte 1
+                                             jump ofs008e
+                                    ofs008c:
+                                             pushbyte -1
+                                    ofs008e:
+                                             initproperty QName(PackageNamespace(""),"direction")
+                                             getlocal0
+                                             callpropvoid QName(PackageNamespace(""),"attack"), 0
+                                             jump ofs00a0
+                                    ofs009a:
+                                             getlocal0
+                                             getlocal1
+                                             callpropvoid QName(PackageNamespace(""),"moveTo"), 1
+                                    ofs00a0:
+                                             returnvoid
+                                          end ; code
+                                       end ; body
+                                    end ; method
+                                 }
+                                 
+                                 public function ai() : void
+                                 {
+                                    trait method QName(PackageNamespace(""),"ai")
+                                       dispid 0
+                                       method
+                                          name null
+                                          returns QName(PackageNamespace(""),"void")
+                                          
+                                          body
+                                             maxstack 2
+                                             localcount 1
+                                             initscopedepth 10
+                                             maxscopedepth 11
+                                             
+                                             code
+                                                getlocal0
+                                                pushscope
+                                                getlocal0
+                                                getproperty QName(PackageNamespace(""),"nowHP")
+                                                pushbyte 0
+                                                ifngt ofs001e
+                                                getlocal0
+                                                callpropvoid QName(PrivateNamespace(null,"13"),"findTarget"), 0
+                                                getlocal0
+                                                getproperty QName(PackageNamespace(""),"target")
+                                                pushnull
+                                                ifeq ofs001e
+                                                getlocal0
+                                                callpropvoid QName(PrivateNamespace(null,"13"),"approachTarget"), 0
+                                       ofs001e:
+                                                returnvoid
+                                             end ; code
+                                          end ; body
+                                       end ; method
+                                    }
+                                    
+                                    override public function step() : void
+                                    {
+                                       trait method QName(PackageNamespace(""),"step")
+                                          flag OVERRIDE
+                                          dispid 0
+                                          method
+                                             name null
+                                             returns QName(PackageNamespace(""),"void")
+                                             
+                                             body
+                                                maxstack 3
+                                                localcount 3
+                                                initscopedepth 10
+                                                maxscopedepth 11
+                                                
+                                                code
+                                                   getlocal0
+                                                   pushscope
+                                                   getlocal0
+                                                   callsupervoid QName(PackageNamespace(""),"step"), 0
+                                                   getlocal0
+                                                   callpropvoid QName(PackageNamespace(""),"ai"), 0
+                                                   getlocal0
+                                                   getproperty QName(PrivateNamespace(null,"13"),"t")
+                                                   pushbyte 0
+                                                   ifne ofs0071
+                                                   findproperty QName(PackageNamespace(""),"px")
+                                                   getlex QName(PackageNamespace(""),"px")
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"vx")
+                                                   add
+                                                   initproperty QName(PackageNamespace(""),"px")
+                                                   findproperty QName(PackageNamespace(""),"py")
+                                                   getlex QName(PackageNamespace(""),"py")
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"vy")
+                                                   add
+                                                   initproperty QName(PackageNamespace(""),"py")
+                                                   getlex QName(PackageNamespace(""),"pz")
+                                                   pushbyte 0
+                                                   equals
+                                                   dup
+                                                   iffalse ofs0044
+                                                   pop
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"vx")
+                                                   pushbyte 0
+                                                   equals
+                                          ofs0044:
+                                                   dup
+                                                   iffalse ofs0051
+                                                   pop
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"vy")
+                                                   pushbyte 0
+                                                   equals
+                                          ofs0051:
+                                                   iffalse ofs0063
+                                                   findpropstrict QName(PackageNamespace(""),"gotoAndPlay")
+                                                   getlex QName(PackageNamespace(""),"IDLE")
+                                                   callpropvoid QName(PackageNamespace(""),"gotoAndPlay"), 1
+                                                   jump ofs006d
+                                          ofs0063:
+                                                   findpropstrict QName(PackageNamespace(""),"gotoAndPlay")
+                                                   getlex QName(PackageNamespace(""),"RUN")
+                                                   callpropvoid QName(PackageNamespace(""),"gotoAndPlay"), 1
+                                          ofs006d:
+                                                   jump ofs00a7
+                                          ofs0071:
+                                                   getlex QName(PackageNamespace(""),"pz")
+                                                   pushbyte 0
+                                                   ifngt ofs0096
+                                                   findproperty QName(PackageNamespace(""),"px")
+                                                   getlex QName(PackageNamespace(""),"px")
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"vx")
+                                                   add
+                                                   initproperty QName(PackageNamespace(""),"px")
+                                                   findproperty QName(PackageNamespace(""),"py")
+                                                   getlex QName(PackageNamespace(""),"py")
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"vy")
+                                                   add
+                                                   initproperty QName(PackageNamespace(""),"py")
+                                          ofs0096:
+                                                   getlocal0
+                                                   dup
+                                                   setlocal1
+                                                   getproperty QName(PrivateNamespace(null,"13"),"t")
+                                                   decrement_i
+                                                   setlocal2
+                                                   getlocal1
+                                                   getlocal2
+                                                   setproperty QName(PrivateNamespace(null,"13"),"t")
+                                                   kill 2
+                                                   kill 1
+                                          ofs00a7:
+                                                   getlex QName(PackageNamespace(""),"pz")
+                                                   pushbyte 0
+                                                   ifngt ofs00f8
+                                                   getlocal0
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"vz")
+                                                   getlocal0
+                                                   getproperty QName(PrivateNamespace(null,"13"),"gravity")
+                                                   add
+                                                   initproperty QName(PackageNamespace(""),"vz")
+                                                   findproperty QName(PackageNamespace(""),"pz")
+                                                   getlex QName(PackageNamespace(""),"pz")
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"vz")
+                                                   add
+                                                   initproperty QName(PackageNamespace(""),"pz")
+                                                   getlex QName(PackageNamespace(""),"pz")
+                                                   pushbyte 0
+                                                   ifnle ofs00f4
+                                                   findproperty QName(PackageNamespace(""),"pz")
+                                                   pushbyte 0
+                                                   initproperty QName(PackageNamespace(""),"pz")
+                                                   getlocal0
+                                                   pushbyte 0
+                                                   initproperty QName(PackageNamespace(""),"vx")
+                                                   getlocal0
+                                                   pushbyte 0
+                                                   initproperty QName(PackageNamespace(""),"vy")
+                                                   getlocal0
+                                                   pushbyte 0
+                                                   initproperty QName(PackageNamespace(""),"vz")
+                                                   getlocal0
+                                                   pushbyte 2
+                                                   initproperty QName(PrivateNamespace(null,"13"),"jumpTimes")
+                                          ofs00f4:
+                                                   jump ofs010a
+                                          ofs00f8:
+                                                   getlocal0
+                                                   pushbyte 0
+                                                   initproperty QName(PackageNamespace(""),"vx")
+                                                   getlocal0
+                                                   pushbyte 0
+                                                   initproperty QName(PackageNamespace(""),"vy")
+                                                   getlocal0
+                                                   pushbyte 0
+                                                   initproperty QName(PackageNamespace(""),"vz")
+                                          ofs010a:
+                                                   getlocal0
+                                                   getproperty QName(PrivateNamespace(null,"13"),"deadTime")
+                                                   pushbyte 0
+                                                   ifngt ofs0137
+                                                   getlocal0
+                                                   dup
+                                                   setlocal1
+                                                   getproperty QName(PrivateNamespace(null,"13"),"deadTime")
+                                                   decrement_i
+                                                   setlocal2
+                                                   getlocal1
+                                                   getlocal2
+                                                   setproperty QName(PrivateNamespace(null,"13"),"deadTime")
+                                                   kill 2
+                                                   kill 1
+                                                   getlocal0
+                                                   getproperty QName(PrivateNamespace(null,"13"),"deadTime")
+                                                   pushbyte 1
+                                                   ifne ofs0137
+                                                   getlex QName(PackageNamespace(""),"parent")
+                                                   getlocal0
+                                                   callpropvoid QName(PackageNamespace(""),"removeChild"), 1
+                                          ofs0137:
+                                                   findproperty QName(PackageNamespace(""),"sx")
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"direction")
+                                                   getlocal0
+                                                   getproperty QName(PackageNamespace(""),"opposite")
+                                                   multiply
+                                                   initproperty QName(PackageNamespace(""),"sx")
+                                                   returnvoid
+                                                end ; code
+                                             end ; body
+                                          end ; method
+                                       }
+                                       
+                                       public function get position() : Vec2
+                                       {
+                                          trait getter QName(PackageNamespace(""),"position")
+                                             dispid 0
+                                             method
+                                                name null
+                                                returns QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                
+                                                body
+                                                   maxstack 3
+                                                   localcount 1
+                                                   initscopedepth 10
+                                                   maxscopedepth 11
+                                                   
+                                                   code
+                                                      getlocal0
+                                                      pushscope
+                                                      findpropstrict QName(PackageNamespace("dragonforce.math"),"Vec2")
+                                                      getlex QName(PackageNamespace(""),"px")
+                                                      getlex QName(PackageNamespace(""),"py")
+                                                      constructprop QName(PackageNamespace("dragonforce.math"),"Vec2"), 2
+                                                      returnvalue
+                                                   end ; code
+                                                end ; body
+                                             end ; method
+                                          }
+                                       }
+                                    }
+                                    
+                                    method
+                                       name null
+                                       returns null
+                                       
+                                       body
+                                          maxstack 2
+                                          localcount 1
+                                          initscopedepth 1
+                                          maxscopedepth 9
+                                          
+                                          code
+                                             getlocal0
+                                             pushscope
+                                             findpropstrict Multiname("Isometric2DEntity",[PackageNamespace("dragonforce.isometric2D")])
+                                             getlex QName(PackageNamespace(""),"Object")
+                                             pushscope
+                                             getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+                                             pushscope
+                                             getlex QName(PackageNamespace("flash.display"),"DisplayObject")
+                                             pushscope
+                                             getlex QName(PackageNamespace("flash.display"),"InteractiveObject")
+                                             pushscope
+                                             getlex QName(PackageNamespace("flash.display"),"DisplayObjectContainer")
+                                             pushscope
+                                             getlex QName(PackageNamespace("flash.display"),"Sprite")
+                                             pushscope
+                                             getlex QName(PackageNamespace("dragonforce.core"),"Symbol")
+                                             pushscope
+                                             getlex QName(PackageNamespace("dragonforce.core"),"Symbol")
+                                             newclass 73
+                                             popscope
+                                             popscope
+                                             popscope
+                                             popscope
+                                             popscope
+                                             popscope
+                                             popscope
+                                             initproperty QName(PackageNamespace("dragonforce.isometric2D"),"Isometric2DEntity")
+                                             returnvoid
+                                          end ; code
+                                       end ; body
+                                    end ; method
+                                    

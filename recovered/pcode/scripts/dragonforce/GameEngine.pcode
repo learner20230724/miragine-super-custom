@@ -1,0 +1,395 @@
+package dragonforce
+{
+   import dragonforce.core.Camera;
+   import dragonforce.core.Library;
+   import dragonforce.core.Scene;
+   import dragonforce.renderEngine.DragonForceRenderEngine;
+   import dragonforce.renderEngine.IRenderEngine;
+   import dragonforce.utils.KeyManager;
+   import flash.display.Sprite;
+   import flash.events.Event;
+   
+   public class GameEngine extends Sprite
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 8
+            maxscopedepth 9
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      private var _scene:Scene;
+      
+      private var _camera:Camera;
+      
+      private var _render:IRenderEngine;
+      
+      private var _library:Library;
+      
+      private var _keyManager:KeyManager;
+      
+      private var _rendering:Boolean = false;
+      
+      public function GameEngine()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 3
+               localcount 1
+               initscopedepth 9
+               maxscopedepth 10
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("dragonforce.core"),"Scene")
+                  constructprop QName(PackageNamespace("dragonforce.core"),"Scene"), 0
+                  initproperty QName(PrivateNamespace(null,"11"),"_scene")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("dragonforce.core"),"Camera")
+                  constructprop QName(PackageNamespace("dragonforce.core"),"Camera"), 0
+                  initproperty QName(PrivateNamespace(null,"11"),"_camera")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("dragonforce.renderEngine"),"DragonForceRenderEngine")
+                  constructprop QName(PackageNamespace("dragonforce.renderEngine"),"DragonForceRenderEngine"), 0
+                  initproperty QName(PrivateNamespace(null,"11"),"_render")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("dragonforce.core"),"Library")
+                  constructprop QName(PackageNamespace("dragonforce.core"),"Library"), 0
+                  initproperty QName(PrivateNamespace(null,"11"),"_library")
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("dragonforce.utils"),"KeyManager")
+                  constructprop QName(PackageNamespace("dragonforce.utils"),"KeyManager"), 0
+                  initproperty QName(PrivateNamespace(null,"11"),"_keyManager")
+                  findpropstrict QName(PackageNamespace(""),"addChild")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"11"),"_scene")
+                  callpropvoid QName(PackageNamespace(""),"addChild"), 1
+                  findpropstrict QName(PackageNamespace(""),"addEventListener")
+                  getlex QName(PackageNamespace("flash.events"),"Event")
+                  getproperty QName(PackageNamespace(""),"ADDED_TO_STAGE")
+                  getlocal0
+                  getproperty QName(PrivateNamespace(null,"11"),"onAddedToStage")
+                  callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      private function onAddedToStage(param1:Event) : void
+      {
+         trait method QName(PrivateNamespace(null,"11"),"onAddedToStage")
+            dispid 0
+            method
+               name null
+               param QName(PackageNamespace("flash.events"),"Event")
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 3
+                  localcount 2
+                  initscopedepth 9
+                  maxscopedepth 10
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     findpropstrict QName(PackageNamespace(""),"removeEventListener")
+                     getlex QName(PackageNamespace("flash.events"),"Event")
+                     getproperty QName(PackageNamespace(""),"ADDED_TO_STAGE")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"11"),"onAddedToStage")
+                     callpropvoid QName(PackageNamespace(""),"removeEventListener"), 2
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"11"),"_keyManager")
+                     getlex QName(PackageNamespace(""),"stage")
+                     pushfalse
+                     callpropvoid QName(PackageNamespace(""),"init"), 2
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         public function startEngine() : void
+         {
+            trait method QName(PackageNamespace(""),"startEngine")
+               dispid 0
+               method
+                  name null
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 3
+                     localcount 1
+                     initscopedepth 9
+                     maxscopedepth 10
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal0
+                        callpropvoid QName(ProtectedNamespace("dragonforce:GameEngine"),"step"), 0
+                        getlocal0
+                        getproperty QName(PrivateNamespace(null,"11"),"_rendering")
+                        iftrue ofs0024
+                        getlocal0
+                        pushtrue
+                        initproperty QName(PrivateNamespace(null,"11"),"_rendering")
+                        findpropstrict QName(PackageNamespace(""),"addEventListener")
+                        getlex QName(PackageNamespace("flash.events"),"Event")
+                        getproperty QName(PackageNamespace(""),"ENTER_FRAME")
+                        getlocal0
+                        getproperty QName(ProtectedNamespace("dragonforce:GameEngine"),"step")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+               ofs0024:
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            public function stopEngine(param1:Boolean = false) : void
+            {
+               trait method QName(PackageNamespace(""),"stopEngine")
+                  dispid 0
+                  method
+                     name null
+                     flag HAS_OPTIONAL
+                     param QName(PackageNamespace(""),"Boolean")
+                     optional False()
+                     returns QName(PackageNamespace(""),"void")
+                     
+                     body
+                        maxstack 3
+                        localcount 2
+                        initscopedepth 9
+                        maxscopedepth 10
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           getlocal0
+                           getproperty QName(PrivateNamespace(null,"11"),"_rendering")
+                           iffalse ofs001f
+                           getlocal0
+                           pushfalse
+                           initproperty QName(PrivateNamespace(null,"11"),"_rendering")
+                           findpropstrict QName(PackageNamespace(""),"removeEventListener")
+                           getlex QName(PackageNamespace("flash.events"),"Event")
+                           getproperty QName(PackageNamespace(""),"ENTER_FRAME")
+                           getlocal0
+                           getproperty QName(ProtectedNamespace("dragonforce:GameEngine"),"step")
+                           callpropvoid QName(PackageNamespace(""),"removeEventListener"), 2
+                  ofs001f:
+                           getlocal1
+                           iffalse ofs0029
+                           getlocal0
+                           callpropvoid QName(ProtectedNamespace("dragonforce:GameEngine"),"step"), 0
+                  ofs0029:
+                           returnvoid
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+               
+               protected function step(param1:Event = null) : void
+               {
+                  trait method QName(ProtectedNamespace("dragonforce:GameEngine"),"step")
+                     dispid 0
+                     method
+                        name null
+                        flag HAS_OPTIONAL
+                        param QName(PackageNamespace("flash.events"),"Event")
+                        optional Null()
+                        returns QName(PackageNamespace(""),"void")
+                        
+                        body
+                           maxstack 3
+                           localcount 2
+                           initscopedepth 9
+                           maxscopedepth 10
+                           
+                           code
+                              getlocal0
+                              pushscope
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"11"),"_keyManager")
+                              callpropvoid QName(PackageNamespace(""),"step"), 0
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"11"),"_scene")
+                              callpropvoid QName(PackageNamespace(""),"step"), 0
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"11"),"_render")
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"11"),"_scene")
+                              getlocal0
+                              getproperty QName(PrivateNamespace(null,"11"),"_camera")
+                              callpropvoid QName(Namespace("dragonforce.renderEngine:IRenderEngine"),"renderScene"), 2
+                              returnvoid
+                           end ; code
+                        end ; body
+                     end ; method
+                  }
+                  
+                  public function get scene() : Scene
+                  {
+                     trait getter QName(PackageNamespace(""),"scene")
+                        dispid 0
+                        method
+                           name null
+                           returns QName(PackageNamespace("dragonforce.core"),"Scene")
+                           
+                           body
+                              maxstack 1
+                              localcount 1
+                              initscopedepth 9
+                              maxscopedepth 10
+                              
+                              code
+                                 getlocal0
+                                 pushscope
+                                 getlocal0
+                                 getproperty QName(PrivateNamespace(null,"11"),"_scene")
+                                 returnvalue
+                              end ; code
+                           end ; body
+                        end ; method
+                     }
+                     
+                     public function get camera() : Camera
+                     {
+                        trait getter QName(PackageNamespace(""),"camera")
+                           dispid 0
+                           method
+                              name null
+                              returns QName(PackageNamespace("dragonforce.core"),"Camera")
+                              
+                              body
+                                 maxstack 1
+                                 localcount 1
+                                 initscopedepth 9
+                                 maxscopedepth 10
+                                 
+                                 code
+                                    getlocal0
+                                    pushscope
+                                    getlocal0
+                                    getproperty QName(PrivateNamespace(null,"11"),"_camera")
+                                    returnvalue
+                                 end ; code
+                              end ; body
+                           end ; method
+                        }
+                        
+                        public function get library() : Library
+                        {
+                           trait getter QName(PackageNamespace(""),"library")
+                              dispid 0
+                              method
+                                 name null
+                                 returns QName(PackageNamespace("dragonforce.core"),"Library")
+                                 
+                                 body
+                                    maxstack 1
+                                    localcount 1
+                                    initscopedepth 9
+                                    maxscopedepth 10
+                                    
+                                    code
+                                       getlocal0
+                                       pushscope
+                                       getlocal0
+                                       getproperty QName(PrivateNamespace(null,"11"),"_library")
+                                       returnvalue
+                                    end ; code
+                                 end ; body
+                              end ; method
+                           }
+                           
+                           public function get keyManager() : KeyManager
+                           {
+                              trait getter QName(PackageNamespace(""),"keyManager")
+                                 dispid 0
+                                 method
+                                    name null
+                                    returns QName(PackageNamespace("dragonforce.utils"),"KeyManager")
+                                    
+                                    body
+                                       maxstack 1
+                                       localcount 1
+                                       initscopedepth 9
+                                       maxscopedepth 10
+                                       
+                                       code
+                                          getlocal0
+                                          pushscope
+                                          getlocal0
+                                          getproperty QName(PrivateNamespace(null,"11"),"_keyManager")
+                                          returnvalue
+                                       end ; code
+                                    end ; body
+                                 end ; method
+                              }
+                           }
+                        }
+                        
+                        method
+                           name null
+                           returns null
+                           
+                           body
+                              maxstack 2
+                              localcount 1
+                              initscopedepth 1
+                              maxscopedepth 8
+                              
+                              code
+                                 getlocal0
+                                 pushscope
+                                 findpropstrict Multiname("GameEngine",[PackageNamespace("dragonforce")])
+                                 getlex QName(PackageNamespace(""),"Object")
+                                 pushscope
+                                 getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+                                 pushscope
+                                 getlex QName(PackageNamespace("flash.display"),"DisplayObject")
+                                 pushscope
+                                 getlex QName(PackageNamespace("flash.display"),"InteractiveObject")
+                                 pushscope
+                                 getlex QName(PackageNamespace("flash.display"),"DisplayObjectContainer")
+                                 pushscope
+                                 getlex QName(PackageNamespace("flash.display"),"Sprite")
+                                 pushscope
+                                 getlex QName(PackageNamespace("flash.display"),"Sprite")
+                                 newclass 52
+                                 popscope
+                                 popscope
+                                 popscope
+                                 popscope
+                                 popscope
+                                 popscope
+                                 initproperty QName(PackageNamespace("dragonforce"),"GameEngine")
+                                 returnvoid
+                              end ; code
+                           end ; body
+                        end ; method
+                        

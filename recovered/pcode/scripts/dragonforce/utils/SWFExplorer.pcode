@@ -1,0 +1,494 @@
+package dragonforce.utils
+{
+   import flash.utils.ByteArray;
+   import flash.utils.Endian;
+   
+   public final class SWFExplorer
+   {
+      
+      private static var criteria:int;
+      
+      private static const NOT_COMPRESSED:int = 70;
+      
+      private static const COMPRESSED:int = 67;
+      
+      private static const FULL:int = 63;
+      
+      private static const SYMBOLCLASS:int = 76;
+      
+      public static const CLASSES:String = "classes";
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 2
+            localcount 1
+            initscopedepth 3
+            maxscopedepth 4
+            
+            code
+               getlocal0
+               pushscope
+               findproperty QName(PrivateNamespace(null,"16"),"NOT_COMPRESSED")
+               pushbyte 70
+               initproperty QName(PrivateNamespace(null,"16"),"NOT_COMPRESSED")
+               findproperty QName(PrivateNamespace(null,"16"),"COMPRESSED")
+               pushbyte 67
+               initproperty QName(PrivateNamespace(null,"16"),"COMPRESSED")
+               findproperty QName(PrivateNamespace(null,"16"),"FULL")
+               pushbyte 63
+               initproperty QName(PrivateNamespace(null,"16"),"FULL")
+               findproperty QName(PrivateNamespace(null,"16"),"SYMBOLCLASS")
+               pushbyte 76
+               initproperty QName(PrivateNamespace(null,"16"),"SYMBOLCLASS")
+               findproperty QName(PackageNamespace(""),"CLASSES")
+               pushstring "classes"
+               initproperty QName(PackageNamespace(""),"CLASSES")
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public function SWFExplorer()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 2
+               localcount 1
+               initscopedepth 4
+               maxscopedepth 5
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  findpropstrict QName(PackageNamespace(""),"Error")
+                  pushstring "You shouldn\'t use the new operator!"
+                  constructprop QName(PackageNamespace(""),"Error"), 1
+                  throw
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public static function parse(param1:ByteArray, param2:String = "classes") : Array
+      {
+         trait method QName(PackageNamespace(""),"parse")
+            flag FINAL
+            dispid 3
+            method
+               name null
+               flag HAS_OPTIONAL
+               param QName(PackageNamespace("flash.utils"),"ByteArray")
+               param QName(PackageNamespace(""),"String")
+               optional Utf8("classes")
+               returns QName(PackageNamespace(""),"Array")
+               
+               body
+                  maxstack 5
+                  localcount 17
+                  initscopedepth 3
+                  maxscopedepth 4
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     pushnull
+                     coerce QName(PackageNamespace(""),"Array")
+                     setlocal 12
+                     pushbyte 0
+                     setlocal 13
+                     pushbyte 0
+                     setlocal 14
+                     pushbyte 0
+                     setlocal 15
+                     pushnull
+                     coerce_s
+                     setlocal 16
+                     findpropstrict QName(PackageNamespace(""),"Array")
+                     constructprop QName(PackageNamespace(""),"Array"), 0
+                     coerce QName(PackageNamespace(""),"Array")
+                     setlocal3
+                     getlocal1
+                     pushbyte 0
+                     setproperty QName(PackageNamespace(""),"position")
+                     getlocal1
+                     callproperty QName(PackageNamespace(""),"readUnsignedByte"), 0
+                     convert_i
+                     setlocal 4
+                     getlocal1
+                     getlocal1
+                     getproperty QName(PackageNamespace(""),"position")
+                     pushbyte 2
+                     add
+                     setproperty QName(PackageNamespace(""),"position")
+                     getlocal1
+                     callproperty QName(PackageNamespace(""),"readByte"), 0
+                     convert_i
+                     setlocal 5
+                     getlocal1
+                     getlex QName(PackageNamespace("flash.utils"),"Endian")
+                     getproperty QName(PackageNamespace(""),"LITTLE_ENDIAN")
+                     setproperty QName(PackageNamespace(""),"endian")
+                     getlocal1
+                     callproperty QName(PackageNamespace(""),"readUnsignedInt"), 0
+                     convert_i
+                     setlocal 6
+                     findpropstrict QName(PackageNamespace("flash.utils"),"ByteArray")
+                     constructprop QName(PackageNamespace("flash.utils"),"ByteArray"), 0
+                     coerce QName(PackageNamespace("flash.utils"),"ByteArray")
+                     setlocal 7
+                     getlocal1
+                     getlocal 7
+                     pushbyte 0
+                     callpropvoid QName(PackageNamespace(""),"readBytes"), 2
+                     getlocal 4
+                     getlex QName(PackageNamespace("dragonforce.utils"),"SWFExplorer")
+                     getproperty QName(PrivateNamespace(null,"16"),"COMPRESSED")
+                     ifne ofs0076
+                     getlocal 7
+                     callpropvoid QName(PackageNamespace(""),"uncompress"), 0
+            ofs0076:
+                     getlocal 7
+                     getlex QName(PackageNamespace("flash.utils"),"Endian")
+                     getproperty QName(PackageNamespace(""),"LITTLE_ENDIAN")
+                     setproperty QName(PackageNamespace(""),"endian")
+                     getlocal 7
+                     callproperty QName(PackageNamespace(""),"readUnsignedByte"), 0
+                     pushbyte 3
+                     rshift
+                     setlocal 8
+                     getlocal 7
+                     getlocal 7
+                     getproperty QName(PackageNamespace(""),"position")
+                     getlex QName(PackageNamespace(""),"Math")
+                     getlocal 8
+                     pushbyte 4
+                     multiply
+                     pushbyte 8
+                     divide
+                     callproperty QName(PackageNamespace(""),"ceil"), 1
+                     pushbyte 1
+                     add
+                     add
+                     setproperty QName(PackageNamespace(""),"position")
+                     getlocal 7
+                     callproperty QName(PackageNamespace(""),"readByte"), 0
+                     convert_i
+                     setlocal 9
+                     getlocal 7
+                     callproperty QName(PackageNamespace(""),"readShort"), 0
+                     convert_i
+                     setlocal 10
+                     findpropstrict QName(PrivateNamespace(null,"16"),"browseTables")
+                     getlocal 7
+                     callproperty QName(PrivateNamespace(null,"16"),"browseTables"), 1
+                     coerce QName(PackageNamespace(""),"Array")
+                     setlocal 11
+                     getlocal2
+                     getlex QName(PackageNamespace("dragonforce.utils"),"SWFExplorer")
+                     getproperty QName(PackageNamespace(""),"CLASSES")
+                     ifne ofs0161
+                     findproperty QName(PrivateNamespace(null,"16"),"criteria")
+                     getlex QName(PackageNamespace("dragonforce.utils"),"SWFExplorer")
+                     getproperty QName(PrivateNamespace(null,"16"),"SYMBOLCLASS")
+                     setproperty QName(PrivateNamespace(null,"16"),"criteria")
+                     getlocal 11
+                     getlex QName(PrivateNamespace(null,"16"),"filter")
+                     callproperty QName(Namespace("http://adobe.com/AS3/2006/builtin"),"filter"), 1
+                     coerce QName(PackageNamespace(""),"Array")
+                     dup
+                     setlocal 12
+                     getproperty QName(PackageNamespace(""),"length")
+                     iffalse ofs0161
+                     getlocal 7
+                     getlocal 12
+                     pushbyte 0
+                     getproperty MultinameL([PrivateNamespace(null,"16"),PackageNamespace(""),PackageNamespace("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),PrivateNamespace(null),PackageInternalNs("dragonforce.utils"),ProtectedNamespace("dragonforce.utils:SWFExplorer"),StaticProtectedNs("dragonforce.utils:SWFExplorer")])
+                     getproperty Multiname("offset",[PrivateNamespace(null,"16"),PackageNamespace(""),PackageNamespace("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),PrivateNamespace(null),PackageInternalNs("dragonforce.utils"),ProtectedNamespace("dragonforce.utils:SWFExplorer"),StaticProtectedNs("dragonforce.utils:SWFExplorer")])
+                     setproperty QName(PackageNamespace(""),"position")
+                     getlocal 7
+                     callproperty QName(PackageNamespace(""),"readUnsignedShort"), 0
+                     convert_i
+                     setlocal 14
+                     pushbyte 0
+                     setlocal 13
+                     jump ofs0159
+            ofs0114:
+                     label
+                     getlocal 7
+                     callpropvoid QName(PackageNamespace(""),"readUnsignedShort"), 0
+                     getlocal 7
+                     callproperty QName(PackageNamespace(""),"readByte"), 0
+                     convert_i
+                     setlocal 15
+                     findpropstrict QName(PackageNamespace(""),"String")
+                     constructprop QName(PackageNamespace(""),"String"), 0
+                     coerce_s
+                     setlocal 16
+                     jump ofs0148
+            ofs0130:
+                     label
+                     getlocal 16
+                     getlex QName(PackageNamespace(""),"String")
+                     getlocal 15
+                     callproperty QName(Namespace("http://adobe.com/AS3/2006/builtin"),"fromCharCode"), 1
+                     add
+                     coerce_s
+                     setlocal 16
+                     getlocal 7
+                     callproperty QName(PackageNamespace(""),"readByte"), 0
+                     convert_i
+                     setlocal 15
+            ofs0148:
+                     getlocal 15
+                     pushbyte 0
+                     ifne ofs0130
+                     getlocal3
+                     getlocal 16
+                     callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 1
+                     inclocal_i 13
+            ofs0159:
+                     getlocal 13
+                     getlocal 14
+                     iflt ofs0114
+            ofs0161:
+                     getlocal3
+                     returnvalue
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         private static function filter(param1:TagInfos, param2:int, param3:Array) : Boolean
+         {
+            trait method QName(PrivateNamespace(null,"16"),"filter")
+               flag FINAL
+               dispid 4
+               method
+                  name null
+                  param QName(PrivateNamespace(null),"TagInfos")
+                  param QName(PackageNamespace(""),"int")
+                  param QName(PackageNamespace(""),"Array")
+                  returns QName(PackageNamespace(""),"Boolean")
+                  
+                  body
+                     maxstack 2
+                     localcount 4
+                     initscopedepth 3
+                     maxscopedepth 4
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"tag")
+                        getlex QName(PrivateNamespace(null,"16"),"criteria")
+                        equals
+                        returnvalue
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            private static function browseTables(param1:ByteArray) : Array
+            {
+               trait method QName(PrivateNamespace(null,"16"),"browseTables")
+                  flag FINAL
+                  dispid 5
+                  method
+                     name null
+                     param QName(PackageNamespace("flash.utils"),"ByteArray")
+                     returns QName(PackageNamespace(""),"Array")
+                     
+                     body
+                        maxstack 3
+                        localcount 7
+                        initscopedepth 3
+                        maxscopedepth 4
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           pushbyte 0
+                           setlocal2
+                           pushbyte 0
+                           setlocal3
+                           pushnull
+                           coerce QName(PrivateNamespace(null),"TagInfos")
+                           setlocal 5
+                           findpropstrict QName(PackageNamespace(""),"Array")
+                           constructprop QName(PackageNamespace(""),"Array"), 0
+                           coerce QName(PackageNamespace(""),"Array")
+                           setlocal 4
+                           jump ofs008a
+                  ofs001a:
+                           label
+                           findpropstrict QName(PrivateNamespace(null),"TagInfos")
+                           constructprop QName(PrivateNamespace(null),"TagInfos"), 0
+                           coerce QName(PrivateNamespace(null),"TagInfos")
+                           dup
+                           setlocal 5
+                           getlocal2
+                           setproperty QName(PackageNamespace(""),"tag")
+                           getlocal 5
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"position")
+                           setproperty QName(PackageNamespace(""),"offset")
+                           getlocal1
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"position")
+                           pushbyte 2
+                           subtract
+                           setproperty QName(PackageNamespace(""),"position")
+                           getlocal1
+                           callproperty QName(PackageNamespace(""),"readShort"), 0
+                           pushbyte 63
+                           bitand
+                           setlocal3
+                           getlocal3
+                           getlex QName(PackageNamespace("dragonforce.utils"),"SWFExplorer")
+                           getproperty QName(PrivateNamespace(null,"16"),"FULL")
+                           ifnlt ofs005f
+                           getlocal1
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"position")
+                           getlocal3
+                           add
+                           setproperty QName(PackageNamespace(""),"position")
+                           jump ofs0079
+                  ofs005f:
+                           getlocal1
+                           callproperty QName(PackageNamespace(""),"readUnsignedInt"), 0
+                           convert_i
+                           setlocal3
+                           getlocal 5
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"position")
+                           setproperty QName(PackageNamespace(""),"offset")
+                           getlocal1
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"position")
+                           getlocal3
+                           add
+                           setproperty QName(PackageNamespace(""),"position")
+                  ofs0079:
+                           getlocal 5
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"position")
+                           setproperty QName(PackageNamespace(""),"endOffset")
+                           getlocal 4
+                           getlocal 5
+                           callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 1
+                  ofs008a:
+                           getlocal1
+                           callproperty QName(PackageNamespace(""),"readShort"), 0
+                           pushbyte 6
+                           rshift
+                           pushshort 1023
+                           bitand
+                           dup
+                           setlocal 6
+                           convert_i
+                           setlocal2
+                           getlocal 6
+                           kill 6
+                           iftrue ofs001a
+                           getlocal 4
+                           returnvalue
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+            }
+         }
+         
+         final class TagInfos
+         {
+            
+            method
+               name null
+               returns null
+               
+               body
+                  maxstack 1
+                  localcount 1
+                  initscopedepth 3
+                  maxscopedepth 4
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+            
+            public var offset:int;
+            
+            public var endOffset:int;
+            
+            public var tag:int;
+            
+            public function TagInfos()
+            {
+               method
+                  name null
+                  returns null
+                  
+                  body
+                     maxstack 1
+                     localcount 1
+                     initscopedepth 4
+                     maxscopedepth 5
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal0
+                        constructsuper 0
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+         }
+         
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 2
+               localcount 1
+               initscopedepth 1
+               maxscopedepth 3
+               
+               code
+                  getlocal0
+                  pushscope
+                  findpropstrict Multiname("SWFExplorer",[PackageNamespace("dragonforce.utils")])
+                  getlex QName(PackageNamespace(""),"Object")
+                  pushscope
+                  getlex QName(PackageNamespace(""),"Object")
+                  newclass 15
+                  popscope
+                  initproperty QName(PackageNamespace("dragonforce.utils"),"SWFExplorer")
+                  findpropstrict Multiname("TagInfos",[PrivateNamespace(null)])
+                  getlex QName(PackageNamespace(""),"Object")
+                  pushscope
+                  getlex QName(PackageNamespace(""),"Object")
+                  newclass 16
+                  popscope
+                  initproperty QName(PrivateNamespace(null),"TagInfos")
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+         

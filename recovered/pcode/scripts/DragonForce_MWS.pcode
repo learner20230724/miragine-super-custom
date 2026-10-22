@@ -1,0 +1,82 @@
+package
+{
+   import mx.core.ByteArrayAsset;
+   
+   [Embed(source="/_assets/14_DragonForce_MWS.bin", mimeType="application/octet-stream")]
+   public class DragonForce_MWS extends ByteArrayAsset
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 5
+            maxscopedepth 6
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public function DragonForce_MWS()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 1
+               localcount 1
+               initscopedepth 6
+               maxscopedepth 7
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+   }
+}
+
+method
+   name null
+   returns null
+   
+   body
+      maxstack 2
+      localcount 1
+      initscopedepth 1
+      maxscopedepth 5
+      
+      code
+         getlocal0
+         pushscope
+         findpropstrict Multiname("DragonForce_MWS",[PackageNamespace("")])
+         getlex QName(PackageNamespace(""),"Object")
+         pushscope
+         getlex QName(PackageNamespace("flash.utils"),"ByteArray")
+         pushscope
+         getlex QName(PackageNamespace("mx.core"),"ByteArrayAsset")
+         pushscope
+         getlex QName(PackageNamespace("mx.core"),"ByteArrayAsset")
+         newclass 49
+         popscope
+         popscope
+         popscope
+         initproperty QName(PackageNamespace(""),"DragonForce_MWS")
+         returnvoid
+      end ; code
+   end ; body
+end ; method
+

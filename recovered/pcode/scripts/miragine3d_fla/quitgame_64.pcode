@@ -1,0 +1,208 @@
+package miragine3d_fla
+{
+   import adobe.utils.*;
+   import flash.accessibility.*;
+   import flash.desktop.*;
+   import flash.display.*;
+   import flash.errors.*;
+   import flash.events.*;
+   import flash.external.*;
+   import flash.filters.*;
+   import flash.geom.*;
+   import flash.globalization.*;
+   import flash.media.*;
+   import flash.net.*;
+   import flash.net.drm.*;
+   import flash.printing.*;
+   import flash.profiler.*;
+   import flash.sampler.*;
+   import flash.sensors.*;
+   import flash.system.*;
+   import flash.text.*;
+   import flash.text.engine.*;
+   import flash.text.ime.*;
+   import flash.ui.*;
+   import flash.utils.*;
+   import flash.xml.*;
+   
+   [Embed(source="/_assets/assets.swf", symbol="symbol238")]
+   public dynamic class quitgame_64 extends MovieClip
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 9
+            maxscopedepth 10
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public var never:SimpleButton;
+      
+      public var okay:SimpleButton;
+      
+      public function quitgame_64()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 3
+               localcount 1
+               initscopedepth 10
+               maxscopedepth 11
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  findpropstrict QName(PackageNamespace(""),"addFrameScript")
+                  pushbyte 0
+                  getlocal0
+                  getproperty QName(PackageInternalNs("miragine3d_fla"),"frame1")
+                  callpropvoid QName(PackageNamespace(""),"addFrameScript"), 2
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function onClick(param1:*) : *
+      {
+         trait method QName(PackageNamespace(""),"onClick")
+            dispid 0
+            method
+               name null
+               param null
+               returns null
+               
+               body
+                  maxstack 3
+                  localcount 2
+                  initscopedepth 10
+                  maxscopedepth 11
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     getlocal1
+                     getproperty Multiname("currentTarget",[PrivateNamespace(null,"74"),PrivateNamespace(null,"75"),PackageNamespace(""),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:quitgame_64"),StaticProtectedNs("miragine3d_fla:quitgame_64"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"never")
+                     ifne ofs0017
+                     getlocal0
+                     pushfalse
+                     setproperty QName(PackageNamespace(""),"visible")
+                     jump ofs003c
+            ofs0017:
+                     findpropstrict QName(PackageNamespace(""),"DragonForce")
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     getproperty Multiname("game",[PrivateNamespace(null,"74"),PrivateNamespace(null,"75"),PackageNamespace(""),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:quitgame_64"),StaticProtectedNs("miragine3d_fla:quitgame_64"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                     callproperty QName(PackageNamespace(""),"DragonForce"), 1
+                     callpropvoid QName(PackageNamespace(""),"stopEngine"), 0
+                     findpropstrict QName(PackageNamespace("flash.display"),"MovieClip")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace("flash.display"),"MovieClip"), 1
+                     pushstring "title"
+                     callpropvoid QName(PackageNamespace(""),"gotoAndStop"), 1
+            ofs003c:
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         internal function frame1() : *
+         {
+            trait method QName(PackageInternalNs("miragine3d_fla"),"frame1")
+               dispid 0
+               method
+                  name null
+                  returns null
+                  
+                  body
+                     maxstack 3
+                     localcount 1
+                     initscopedepth 10
+                     maxscopedepth 11
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"okay")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"never")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+         }
+      }
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 2
+            localcount 1
+            initscopedepth 1
+            maxscopedepth 9
+            
+            code
+               getlocal0
+               pushscope
+               getscopeobject 0
+               getlex QName(PackageNamespace(""),"Object")
+               pushscope
+               getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"DisplayObject")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"InteractiveObject")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"DisplayObjectContainer")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"Sprite")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"MovieClip")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"MovieClip")
+               newclass 63
+               popscope
+               popscope
+               popscope
+               popscope
+               popscope
+               popscope
+               popscope
+               initproperty QName(PackageNamespace("miragine3d_fla"),"quitgame_64")
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      

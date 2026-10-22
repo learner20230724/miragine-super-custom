@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "reportDate": "2026-10-23",
+  "stage": "native-preview",
+  "overallAcceptance": "incomplete",
+  "reportScope": "Static snapshot of completed local integration checks. CI configuration is not a record of a completed CI run. Later release or original-runtime evidence must be recorded separately.",
+  "baseline": {
+    "name": "Super Miragine War / 超级米拉奇战记",
+    "swfSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
+    "width": 640,
+    "height": 480,
+    "framesPerSecond": 30
+  },
+  "localChecks": {
+    "automatedTests": {
+      "status": "passed-local",
+      "command": "npm test",
+      "passed": 181,
+      "failed": 0,
+      "scope": "Native source, recovered data, assets, configuration, viewport, UI structure and privacy guard. Not original-runtime parity."
+    },
+    "browserSmoke": {
+      "status": "passed-local",
+      "runner": "tools/browser-smoke.cli.js",
+      "browser": "Microsoft Edge",
+      "passed": 36,
+      "failed": 0,
+      "inputMethod": "Actual browser keyboard and mouse input; debug state is read for assertions, not mutated to force success.",
+      "viewportSizes": [
+        {
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "width": 900,
+          "height": 1400
+        },
+        {
+          "width": 1280,
+          "height": 960
+        },
+        {
+          "width": 640,
+          "height": 480
+        },
+        {
+          "width": 2560,
+          "height": 1440
+        },
+        {
+          "width": 480,
+          "height": 900
+        }
+      ],
+      "deviceScaleFactorsVerified": [
+        1,
+        1.25,
+        1.5,
+        2
+      ],
+      "scope": "Native startup, menu navigation, local two-player controls, recruitment, sound toggles, camera, quit confirmation, aspect fit and transformed pointer accuracy. Not an independent portable installation or a full-match original oracle."
+    },
+    "defaultNaturalMatches": {
+      "status": "passed-local",
+      "difficultyProfiles": 4,
+      "seed": 123,
+      "finishedNaturally": 4,
+      "forcedWinner": false,
+      "scope": "Unmodified native default simulation. Natural completion does not establish an identical original Flash match."
+    },
+    "publicPrivacyScan": {
+      "status": "passed-local",
+      "command": "npm run check:public -- --root .",
+      "scannedFiles": 2932,
+      "scannedBytes": 64581573,
+      "findings": 0,
+      "warnings": 0,
+      "scope": "Repository publication candidates at the recorded integration snapshot, excluding private logs and caches. Not a scan of a future release package."
+    },
+    "browserDpi": {
+      "status": "passed-local",
+      "runner": "tools/browser-dpi.cli.js",
+      "passed": 3,
+      "actualBackingStoreAndPointerVerified": true,
+      "deviceScaleFactors": [
+        1.25,
+        1.5,
+        2
+      ]
+    },
+    "regenerationPreservation": {
+      "status": "passed-local",
+      "runner": "tests/custom-preservation.test.mjs",
+      "customBytesPreserved": true,
+      "extensionBytesPreserved": true,
+      "naturalSettlementAndRecruitmentVerified": {
+        "income": 777,
+        "cost": 7,
+        "hp": 99
+      }
+    }
+  },
+  "continuousIntegration": {
+    "status": "configured-not-yet-run",
+    "workflow": ".github/workflows/verify.yml",
+    "node": "24",
+    "matrix": [
+      {
+        "os": "ubuntu-latest",
+        "python": "3.13"
+      },
+      {
+        "os": "windows-latest",
+        "python": "3.14"
+      }
+    ],
+    "commands": [
+      "npm ci --ignore-scripts",
+      "npm test",
+      "npm run check:data",
+      "python -B tools/build_assets.py --check --retained-bounds-only",
+      "npm run check:public -- --root ."
+    ],
+    "downloadsElectronRuntime": false,
+    "downloadsPlaywrightBrowser": false,
+    "rerunsFfdecExport": false,
+    "runsBrowserSmoke": false,
+    "buildsPortableRelease": false
+  },
+  "separateAcceptanceGates": {
+    "originalRuntimeFullMatchParity": "not-verified",
+    "pixelPerfectFlashRasterization": "not-verified",
+    "highDpiBeyondDeviceScaleFactorOne": "passed-local",
+    "portableWindowsIsolatedInstallation": "not-verified",
+    "releaseSourceVersionConsistency": "not-verified",
+    "publishedReleaseIndependentLaunch": "not-verified",
+    "allFourteenUserRequirements": "not-complete"
+  },
+  "knownBoundariesDocument": "docs/known-issues.md"
+}

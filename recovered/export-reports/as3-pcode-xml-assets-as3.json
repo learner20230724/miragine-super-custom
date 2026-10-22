@@ -1,0 +1,59 @@
+[
+  {
+    "job": "as3",
+    "exitCode": 0,
+    "seconds": 5.13,
+    "source": "reference/super-original.swf",
+    "arguments": [
+      "-format",
+      "script:as",
+      "-export",
+      "script",
+      "recovered/as3",
+      "reference/super-original.swf"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  },
+  {
+    "job": "pcode",
+    "exitCode": 0,
+    "seconds": 5.37,
+    "source": "reference/super-original.swf",
+    "arguments": [
+      "-format",
+      "script:pcode",
+      "-export",
+      "script",
+      "recovered/pcode",
+      "reference/super-original.swf"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  },
+  {
+    "job": "xml",
+    "exitCode": 0,
+    "seconds": 5.33,
+    "source": "reference/super-original.swf",
+    "arguments": [
+      "-swf2xml",
+      "reference/super-original.swf",
+      "recovered/super.xml"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  },
+  {
+    "job": "assets-as3",
+    "exitCode": 0,
+    "seconds": 3.82,
+    "source": "reference/super-assets-original.swf",
+    "arguments": [
+      "-format",
+      "script:as",
+      "-export",
+      "script",
+      "recovered/assets-as3",
+      "reference/super-assets-original.swf"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  }
+]

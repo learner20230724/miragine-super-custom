@@ -1,0 +1,7 @@
+:root { color-scheme: dark; background: #0e0e0e; }
+@font-face { font-family: OriginalYahei; src: url('../assets/generated/fonts/microsoft-yahei.ttf') format('truetype'); font-display: swap; }
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body { background: #0e0e0e; font-family: Arial, sans-serif; }
+#game-stage { position: fixed; inset: 0; overflow: hidden; }
+#game { position: absolute; display: block; outline: none; touch-action: none; user-select: none; -webkit-user-select: none; }

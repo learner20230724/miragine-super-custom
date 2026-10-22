@@ -1,0 +1,1926 @@
+{
+  "schemaVersion": 1,
+  "profile": "faithful",
+  "units": {
+    "0": {
+      "name": "新兵",
+      "id": 0,
+      "description": "最基础的士兵，通常都被作为炮灰，但是初期可以用来增加收入。",
+      "cost": 20,
+      "population": 1,
+      "income": 4,
+      "hp": 45,
+      "armorTypeID": 0,
+      "armor": 0,
+      "moveSpeed": 2.25,
+      "damage": [
+        5,
+        5
+      ],
+      "range": 1,
+      "weaponSpeed": 0.83,
+      "delayAttack": 0,
+      "ss": 5,
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 60,
+        "weaponSpeed": 16.599999999999998,
+        "attackCooldownFrames": 16,
+        "attackCooldownSeconds": 0.5333333333333333
+      },
+      "animation": {
+        "spriteIndex": 5,
+        "idle": {
+          "redSymbol": "A5_idle",
+          "blueSymbol": "B5_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A5_run",
+          "blueSymbol": "B5_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A5_attack",
+          "blueSymbol": "B5_attack",
+          "frames": 5,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A5_dead",
+          "blueSymbol": "B5_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "1": {
+      "name": "经验丰富的老兵",
+      "id": 1,
+      "description": "基础士兵的升级版，对方一些重甲单位有一定作用。",
+      "cost": 30,
+      "population": 1,
+      "income": 5,
+      "hp": 65,
+      "armorTypeID": 0,
+      "armor": 0,
+      "moveSpeed": 2.25,
+      "damage": [
+        6,
+        10
+      ],
+      "range": 1,
+      "weaponSpeed": 0.86,
+      "delayAttack": 0,
+      "ss": 15,
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 60,
+        "weaponSpeed": 17.2,
+        "attackCooldownFrames": 17,
+        "attackCooldownSeconds": 0.5666666666666667
+      },
+      "animation": {
+        "spriteIndex": 15,
+        "idle": {
+          "redSymbol": "A15_idle",
+          "blueSymbol": "B15_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A15_run",
+          "blueSymbol": "B15_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A15_attack",
+          "blueSymbol": "B15_attack",
+          "frames": 5,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A15_dead",
+          "blueSymbol": "B15_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "2": {
+      "name": "腐烂的尸体",
+      "id": 2,
+      "cost": 35,
+      "population": 1,
+      "income": 6,
+      "hp": 125,
+      "armorTypeID": 1,
+      "armor": 1,
+      "moveSpeed": 2.25,
+      "damage": [
+        16,
+        16
+      ],
+      "range": 1,
+      "weaponSpeed": 2,
+      "delayAttack": 10,
+      "ss": 6,
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 60,
+        "weaponSpeed": 40,
+        "attackCooldownFrames": 40,
+        "attackCooldownSeconds": 1.3333333333333333
+      },
+      "animation": {
+        "spriteIndex": 6,
+        "idle": {
+          "redSymbol": "A6_idle",
+          "blueSymbol": "B6_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A6_run",
+          "blueSymbol": "B6_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A6_attack",
+          "blueSymbol": "B6_attack",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A6_dead",
+          "blueSymbol": "B6_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "3": {
+      "name": "武士",
+      "id": 3,
+      "cost": 30,
+      "population": 1,
+      "income": 6,
+      "hp": 96,
+      "armorTypeID": 1,
+      "armor": 1,
+      "moveSpeed": 2.25,
+      "damage": [
+        17,
+        5
+      ],
+      "range": 1,
+      "weaponSpeed": 1.2,
+      "delayAttack": 10,
+      "ss": 12,
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 60,
+        "weaponSpeed": 24.0,
+        "attackCooldownFrames": 24,
+        "attackCooldownSeconds": 0.8
+      },
+      "animation": {
+        "spriteIndex": 12,
+        "idle": {
+          "redSymbol": "A12_idle",
+          "blueSymbol": "B12_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A12_run",
+          "blueSymbol": "B12_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A12_attack",
+          "blueSymbol": "B12_attack",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A12_dead",
+          "blueSymbol": "B12_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "4": {
+      "name": "剑兵",
+      "id": 4,
+      "cost": 40,
+      "population": 1,
+      "income": 7,
+      "hp": 100,
+      "armorTypeID": 1,
+      "armor": 1,
+      "moveSpeed": 2.25,
+      "damage": [
+        10,
+        20
+      ],
+      "range": 1,
+      "weaponSpeed": 1.3,
+      "delayAttack": 10,
+      "ss": 0,
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 60,
+        "weaponSpeed": 26.0,
+        "attackCooldownFrames": 26,
+        "attackCooldownSeconds": 0.8666666666666667
+      },
+      "animation": {
+        "spriteIndex": 0,
+        "idle": {
+          "redSymbol": "A0_idle",
+          "blueSymbol": "B0_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A0_run",
+          "blueSymbol": "B0_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A0_attack",
+          "blueSymbol": "B0_attack",
+          "frames": 5,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A0_dead",
+          "blueSymbol": "B0_dead",
+          "frames": 6,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "5": {
+      "name": "忍者",
+      "id": 5,
+      "cost": 45,
+      "population": 1,
+      "income": 8,
+      "hp": 100,
+      "armorTypeID": 0,
+      "armor": 0,
+      "moveSpeed": 3.2,
+      "damage": [
+        22,
+        10
+      ],
+      "range": 1.5,
+      "weaponSpeed": 1.3,
+      "delayAttack": 10,
+      "ss": 11,
+      "runtime": {
+        "moveSpeed": 4.16,
+        "range": 90.0,
+        "weaponSpeed": 26.0,
+        "attackCooldownFrames": 26,
+        "attackCooldownSeconds": 0.8666666666666667
+      },
+      "animation": {
+        "spriteIndex": 11,
+        "idle": {
+          "redSymbol": "A11_idle",
+          "blueSymbol": "B11_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A11_run",
+          "blueSymbol": "B11_run",
+          "frames": 3,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A11_attack",
+          "blueSymbol": "B11_attack",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A11_dead",
+          "blueSymbol": "B11_dead",
+          "frames": 4,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "6": {
+      "name": "悲伤的修女",
+      "id": 6,
+      "cost": 45,
+      "population": 1,
+      "income": 8,
+      "hp": 75,
+      "armorTypeID": 0,
+      "armor": 0,
+      "moveSpeed": 2.25,
+      "damage": [
+        11,
+        12
+      ],
+      "range": 5.5,
+      "weaponSpeed": 2.4,
+      "delayAttack": 5,
+      "ss": 7,
+      "wss": "tb",
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 330.0,
+        "weaponSpeed": 48.0,
+        "attackCooldownFrames": 48,
+        "attackCooldownSeconds": 1.6
+      },
+      "animation": {
+        "spriteIndex": 7,
+        "idle": {
+          "redSymbol": "A7_idle",
+          "blueSymbol": "B7_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A7_run",
+          "blueSymbol": "B7_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A7_attack",
+          "blueSymbol": "B7_attack",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A7_dead",
+          "blueSymbol": "B7_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "7": {
+      "name": "重甲剑兵",
+      "id": 7,
+      "cost": 45,
+      "population": 1,
+      "income": 8,
+      "hp": 160,
+      "armorTypeID": 1,
+      "armor": 1,
+      "moveSpeed": 2.5,
+      "damage": [
+        12,
+        15
+      ],
+      "range": 1,
+      "weaponSpeed": 1.44,
+      "delayAttack": 10,
+      "ss": 1,
+      "runtime": {
+        "moveSpeed": 3.25,
+        "range": 60,
+        "weaponSpeed": 28.799999999999997,
+        "attackCooldownFrames": 28,
+        "attackCooldownSeconds": 0.9333333333333333
+      },
+      "animation": {
+        "spriteIndex": 1,
+        "idle": {
+          "redSymbol": "A1_idle",
+          "blueSymbol": "B1_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A1_run",
+          "blueSymbol": "B1_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A1_attack",
+          "blueSymbol": "B1_attack",
+          "frames": 5,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A1_dead",
+          "blueSymbol": "B1_dead",
+          "frames": 5,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "8": {
+      "name": "武斗家",
+      "id": 8,
+      "cost": 100,
+      "population": 2,
+      "income": 15,
+      "hp": 225,
+      "armorTypeID": 0,
+      "armor": 1,
+      "moveSpeed": 2.69,
+      "damage": [
+        18,
+        38
+      ],
+      "range": 1,
+      "weaponSpeed": 1.5,
+      "delayAttack": 10,
+      "ss": 14,
+      "runtime": {
+        "moveSpeed": 3.497,
+        "range": 60,
+        "weaponSpeed": 30.0,
+        "attackCooldownFrames": 30,
+        "attackCooldownSeconds": 1.0
+      },
+      "animation": {
+        "spriteIndex": 14,
+        "idle": {
+          "redSymbol": "A14_idle",
+          "blueSymbol": "B14_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A14_run",
+          "blueSymbol": "B14_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A14_attack",
+          "blueSymbol": "B14_attack",
+          "frames": 7,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A14_dead",
+          "blueSymbol": "B14_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "9": {
+      "name": "吸血鬼",
+      "id": 9,
+      "cost": 125,
+      "population": 2,
+      "income": 19,
+      "hp": 140,
+      "armorTypeID": 1,
+      "armor": 1,
+      "moveSpeed": 2.25,
+      "damage": [
+        11,
+        42
+      ],
+      "range": 5,
+      "weaponSpeed": 2.4,
+      "delayAttack": 5,
+      "ss": 10,
+      "wss": "storm",
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 300,
+        "weaponSpeed": 48.0,
+        "attackCooldownFrames": 48,
+        "attackCooldownSeconds": 1.6
+      },
+      "animation": {
+        "spriteIndex": 10,
+        "idle": {
+          "redSymbol": "A10_idle",
+          "blueSymbol": "B10_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A10_run",
+          "blueSymbol": "B10_run",
+          "frames": 3,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A10_attack",
+          "blueSymbol": "B10_attack",
+          "frames": 5,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A10_dead",
+          "blueSymbol": "B10_dead",
+          "frames": 6,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "10": {
+      "name": "骑兵",
+      "id": 10,
+      "cost": 150,
+      "population": 2,
+      "income": 21,
+      "hp": 240,
+      "armorTypeID": 1,
+      "armor": 1,
+      "moveSpeed": 4,
+      "damage": [
+        30,
+        30
+      ],
+      "range": 1,
+      "weaponSpeed": 1,
+      "delayAttack": 10,
+      "ss": 8,
+      "runtime": {
+        "moveSpeed": 5.2,
+        "range": 60,
+        "weaponSpeed": 20,
+        "attackCooldownFrames": 20,
+        "attackCooldownSeconds": 0.6666666666666666
+      },
+      "animation": {
+        "spriteIndex": 8,
+        "idle": {
+          "redSymbol": "A8_idle",
+          "blueSymbol": "B8_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A8_run",
+          "blueSymbol": "B8_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A8_attack",
+          "blueSymbol": "B8_attack",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A8_dead",
+          "blueSymbol": "B8_dead",
+          "frames": 2,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "11": {
+      "name": "不朽者",
+      "id": 11,
+      "cost": 180,
+      "population": 2,
+      "income": 27,
+      "hp": 350,
+      "armorTypeID": 1,
+      "armor": 1,
+      "moveSpeed": 2.25,
+      "damage": [
+        20,
+        50
+      ],
+      "range": 1,
+      "weaponSpeed": 1.45,
+      "delayAttack": 10,
+      "ss": 9,
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 60,
+        "weaponSpeed": 29.0,
+        "attackCooldownFrames": 29,
+        "attackCooldownSeconds": 0.9666666666666667
+      },
+      "animation": {
+        "spriteIndex": 9,
+        "idle": {
+          "redSymbol": "A9_idle",
+          "blueSymbol": "B9_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A9_run",
+          "blueSymbol": "B9_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A9_attack",
+          "blueSymbol": "B9_attack",
+          "frames": 5,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A9_dead",
+          "blueSymbol": "B9_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "12": {
+      "name": "魔法师",
+      "id": 12,
+      "cost": 220,
+      "population": 2,
+      "income": 33,
+      "hp": 210,
+      "armorTypeID": 1,
+      "armor": 0,
+      "moveSpeed": 2.25,
+      "damage": [
+        50,
+        25
+      ],
+      "range": 5,
+      "weaponSpeed": 2.4,
+      "delayAttack": 5,
+      "ss": 4,
+      "wss": "fb",
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 300,
+        "weaponSpeed": 48.0,
+        "attackCooldownFrames": 48,
+        "attackCooldownSeconds": 1.6
+      },
+      "animation": {
+        "spriteIndex": 4,
+        "idle": {
+          "redSymbol": "A4_idle",
+          "blueSymbol": "B4_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A4_run",
+          "blueSymbol": "B4_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A4_attack",
+          "blueSymbol": "B4_attack",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A4_dead",
+          "blueSymbol": "B4_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "13": {
+      "name": "铁面骑士",
+      "id": 13,
+      "cost": 295,
+      "population": 2,
+      "income": 41,
+      "hp": 450,
+      "armorTypeID": 1,
+      "armor": 3,
+      "moveSpeed": 2.95,
+      "damage": [
+        15,
+        36
+      ],
+      "range": 1,
+      "weaponSpeed": 1.08,
+      "delayAttack": 10,
+      "ss": 3,
+      "runtime": {
+        "moveSpeed": 3.8350000000000004,
+        "range": 60,
+        "weaponSpeed": 21.6,
+        "attackCooldownFrames": 21,
+        "attackCooldownSeconds": 0.7
+      },
+      "animation": {
+        "spriteIndex": 3,
+        "idle": {
+          "redSymbol": "A3_idle",
+          "blueSymbol": "B3_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A3_run",
+          "blueSymbol": "B3_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A3_attack",
+          "blueSymbol": "B3_attack",
+          "frames": 4,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A3_dead",
+          "blueSymbol": "B3_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "14": {
+      "name": "恐惧魔王",
+      "id": 14,
+      "cost": 800,
+      "population": 4,
+      "income": 100,
+      "hp": 800,
+      "armorTypeID": 1,
+      "armor": 2,
+      "moveSpeed": 2.25,
+      "damage": [
+        80,
+        80
+      ],
+      "range": 1.4,
+      "weaponSpeed": 1.18,
+      "delayAttack": 10,
+      "ss": 13,
+      "runtime": {
+        "moveSpeed": 2.9250000000000003,
+        "range": 84.0,
+        "weaponSpeed": 23.599999999999998,
+        "attackCooldownFrames": 23,
+        "attackCooldownSeconds": 0.7666666666666667
+      },
+      "animation": {
+        "spriteIndex": 13,
+        "idle": {
+          "redSymbol": "A13_idle",
+          "blueSymbol": "B13_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A13_run",
+          "blueSymbol": "B13_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A13_attack",
+          "blueSymbol": "B13_attack",
+          "frames": 4,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A13_dead",
+          "blueSymbol": "B13_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    },
+    "15": {
+      "name": "大领主",
+      "id": 15,
+      "cost": 1500,
+      "population": 7,
+      "income": 160,
+      "hp": 1200,
+      "armorTypeID": 1,
+      "armor": 4,
+      "moveSpeed": 2.81,
+      "damage": [
+        155,
+        155
+      ],
+      "range": 1.5,
+      "weaponSpeed": 1.59,
+      "delayAttack": 10,
+      "ss": 2,
+      "runtime": {
+        "moveSpeed": 3.653,
+        "range": 90.0,
+        "weaponSpeed": 31.8,
+        "attackCooldownFrames": 31,
+        "attackCooldownSeconds": 1.0333333333333334
+      },
+      "animation": {
+        "spriteIndex": 2,
+        "idle": {
+          "redSymbol": "A2_idle",
+          "blueSymbol": "B2_idle",
+          "frames": 3,
+          "speed": 0.15,
+          "loop": true
+        },
+        "run": {
+          "redSymbol": "A2_run",
+          "blueSymbol": "B2_run",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": true
+        },
+        "attack": {
+          "redSymbol": "A2_attack",
+          "blueSymbol": "B2_attack",
+          "frames": 6,
+          "speed": 0.3,
+          "loop": false
+        },
+        "dead": {
+          "redSymbol": "A2_dead",
+          "blueSymbol": "B2_dead",
+          "frames": 3,
+          "speed": 0.2,
+          "loop": false
+        }
+      }
+    }
+  },
+  "rules": {
+    "frameRate": 30.0,
+    "mapWidth": 4500,
+    "mapHeight": 800,
+    "incomeLimit": 8000,
+    "populationLimit": 80,
+    "initialMoney": 0,
+    "startingIncome": 500,
+    "initialRoundFrames": 180,
+    "roundFrames": 900,
+    "recruitEveryFrames": 3,
+    "movementMultiplier": 1.3,
+    "rangeMultiplier": 60,
+    "weaponSpeedMultiplier": 20,
+    "baseHp": 3500,
+    "baseDamage": [
+      100,
+      100
+    ],
+    "baseWeaponSpeedFrames": 30,
+    "baseRange": 600,
+    "baseSpawnInset": 300,
+    "spawnJitterY": 200,
+    "gameOverDelayFrames": 30,
+    "unitSeparationDistance": 40.0,
+    "targetVerticalWeight": 30,
+    "attackVerticalTolerance": 40,
+    "projectileSpeed": 20,
+    "projectileSpawnHeight": 40,
+    "projectileLifeFrames": 100,
+    "projectileVerticalTolerance": 30,
+    "gravity": -0.8,
+    "deathAnimationFrames": 25,
+    "spriteRasterScale": 0.9,
+    "animationSpeeds": {
+      "idle": 0.15,
+      "run": 0.3,
+      "attack": 0.3,
+      "dead": 0.2
+    },
+    "animationLoops": {
+      "idle": true,
+      "run": true,
+      "attack": false,
+      "dead": false
+    },
+    "focalLength": 600,
+    "groundTiltDegrees": -70,
+    "cameraFollowFactor": 0.1,
+    "manualCameraHoldFrames": 60,
+    "minimapScale": 0.06
+  },
+  "difficulties": {
+    "0": {
+      "name": "简单",
+      "nameEn": "Easy",
+      "counterSelectionProbability": 0,
+      "rightStartingIncome": 500,
+      "rightStartingPopulation": 80,
+      "blueBaseDamage": [
+        100,
+        100
+      ],
+      "blueBaseWeaponSpeedFrames": 30
+    },
+    "1": {
+      "name": "普通",
+      "nameEn": "Normal",
+      "counterSelectionProbability": 0.5,
+      "rightStartingIncome": 500,
+      "rightStartingPopulation": 80,
+      "blueBaseDamage": [
+        100,
+        100
+      ],
+      "blueBaseWeaponSpeedFrames": 30
+    },
+    "2": {
+      "name": "困难",
+      "nameEn": "Hard",
+      "counterSelectionProbability": 1,
+      "rightStartingIncome": 500,
+      "rightStartingPopulation": 80,
+      "blueBaseDamage": [
+        100,
+        100
+      ],
+      "blueBaseWeaponSpeedFrames": 30
+    },
+    "3": {
+      "name": "不可战胜",
+      "nameEn": "Impossible",
+      "counterSelectionProbability": 1,
+      "rightStartingIncome": 600,
+      "rightStartingPopulation": 100,
+      "blueBaseDamage": [
+        110,
+        110
+      ],
+      "blueBaseWeaponSpeedFrames": 25
+    }
+  },
+  "ai": {
+    "counterChoices": {
+      "1": [
+        1,
+        3,
+        5
+      ],
+      "2": [
+        4,
+        6,
+        7,
+        8
+      ],
+      "3": [
+        4,
+        7
+      ],
+      "4": [
+        1,
+        6,
+        8
+      ],
+      "5": [
+        3,
+        10
+      ],
+      "6": [
+        5,
+        6,
+        12
+      ],
+      "7": [
+        4,
+        8,
+        9
+      ],
+      "8": [
+        5,
+        6,
+        12
+      ],
+      "9": [
+        6,
+        8,
+        9,
+        11
+      ],
+      "10": [
+        11,
+        13,
+        14
+      ],
+      "11": [
+        8,
+        9
+      ],
+      "12": [
+        9,
+        10,
+        12,
+        13
+      ],
+      "13": [
+        8,
+        9,
+        11
+      ],
+      "14": [
+        9,
+        10,
+        11
+      ],
+      "15": [
+        9,
+        10,
+        11
+      ]
+    },
+    "newbieIncomeThreshold": 200,
+    "newbieBelowThresholdChoice": 0,
+    "newbieAtOrAboveThresholdChoice": 3,
+    "counterFallbackIncomeThreshold": 1000,
+    "counterFallbackRandomUnitCount": 16,
+    "counterFallbackLowIncomeChoice": 0,
+    "randomIncomeThreshold": 450,
+    "randomHighIncomeUnitCount": 14,
+    "randomLowIncomeUnitCount": 8,
+    "forceOverlordMoneyThreshold": 15030,
+    "forceOverlordEliteCountThreshold": 2,
+    "eliteUnitIds": [
+      14,
+      15
+    ],
+    "forcedUnitId": 15
+  },
+  "animations": {
+    "A_crystal": {
+      "characterId": 1335,
+      "frames": 1,
+      "speed": 1,
+      "loop": true
+    },
+    "B_crystal": {
+      "characterId": 1332,
+      "frames": 1,
+      "speed": 1,
+      "loop": true
+    },
+    "A0_attack": {
+      "characterId": 1329,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A0_dead": {
+      "characterId": 1318,
+      "frames": 6,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A0_idle": {
+      "characterId": 1305,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A0_run": {
+      "characterId": 1298,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A1_attack": {
+      "characterId": 1285,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A1_dead": {
+      "characterId": 1274,
+      "frames": 5,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A1_idle": {
+      "characterId": 1263,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A1_run": {
+      "characterId": 1256,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A2_attack": {
+      "characterId": 1243,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A2_dead": {
+      "characterId": 1230,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A2_idle": {
+      "characterId": 1223,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A2_run": {
+      "characterId": 1216,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A3_attack": {
+      "characterId": 1203,
+      "frames": 4,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A3_dead": {
+      "characterId": 1194,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A3_idle": {
+      "characterId": 1187,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A3_run": {
+      "characterId": 1180,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A4_attack": {
+      "characterId": 1167,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A4_dead": {
+      "characterId": 1154,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A4_idle": {
+      "characterId": 1147,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A4_run": {
+      "characterId": 1140,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A5_attack": {
+      "characterId": 1127,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A5_dead": {
+      "characterId": 1116,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A5_idle": {
+      "characterId": 1109,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A5_run": {
+      "characterId": 1102,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A6_attack": {
+      "characterId": 1089,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A6_dead": {
+      "characterId": 1076,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A6_idle": {
+      "characterId": 1069,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A6_run": {
+      "characterId": 1062,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A7_attack": {
+      "characterId": 1049,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A7_dead": {
+      "characterId": 1036,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A7_idle": {
+      "characterId": 1029,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A7_run": {
+      "characterId": 1022,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A8_attack": {
+      "characterId": 1009,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A8_dead": {
+      "characterId": 996,
+      "frames": 2,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A8_idle": {
+      "characterId": 991,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A8_run": {
+      "characterId": 984,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A9_attack": {
+      "characterId": 971,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A9_dead": {
+      "characterId": 960,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A9_idle": {
+      "characterId": 953,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A9_run": {
+      "characterId": 946,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A10_attack": {
+      "characterId": 933,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A10_dead": {
+      "characterId": 922,
+      "frames": 6,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A10_idle": {
+      "characterId": 909,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A10_run": {
+      "characterId": 902,
+      "frames": 3,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A11_attack": {
+      "characterId": 895,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A11_dead": {
+      "characterId": 882,
+      "frames": 4,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A11_idle": {
+      "characterId": 873,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A11_run": {
+      "characterId": 866,
+      "frames": 3,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A12_attack": {
+      "characterId": 859,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A12_dead": {
+      "characterId": 846,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A12_idle": {
+      "characterId": 839,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A12_run": {
+      "characterId": 832,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A13_attack": {
+      "characterId": 819,
+      "frames": 4,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A13_dead": {
+      "characterId": 810,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A13_idle": {
+      "characterId": 803,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A13_run": {
+      "characterId": 796,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A14_attack": {
+      "characterId": 783,
+      "frames": 7,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A14_dead": {
+      "characterId": 768,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A14_idle": {
+      "characterId": 761,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A14_run": {
+      "characterId": 754,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "A15_attack": {
+      "characterId": 741,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "A15_dead": {
+      "characterId": 730,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "A15_idle": {
+      "characterId": 723,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "A15_run": {
+      "characterId": 716,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B0_attack": {
+      "characterId": 703,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B0_dead": {
+      "characterId": 692,
+      "frames": 6,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B0_idle": {
+      "characterId": 679,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B0_run": {
+      "characterId": 672,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B1_attack": {
+      "characterId": 659,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B1_dead": {
+      "characterId": 648,
+      "frames": 5,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B1_idle": {
+      "characterId": 637,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B1_run": {
+      "characterId": 630,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B2_attack": {
+      "characterId": 617,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B2_dead": {
+      "characterId": 604,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B2_idle": {
+      "characterId": 597,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B2_run": {
+      "characterId": 590,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B3_attack": {
+      "characterId": 577,
+      "frames": 4,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B3_dead": {
+      "characterId": 568,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B3_idle": {
+      "characterId": 561,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B3_run": {
+      "characterId": 554,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B4_attack": {
+      "characterId": 541,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B4_dead": {
+      "characterId": 528,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B4_idle": {
+      "characterId": 521,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B4_run": {
+      "characterId": 514,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B5_attack": {
+      "characterId": 501,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B5_dead": {
+      "characterId": 490,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B5_idle": {
+      "characterId": 483,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B5_run": {
+      "characterId": 476,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B6_attack": {
+      "characterId": 463,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B6_dead": {
+      "characterId": 450,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B6_idle": {
+      "characterId": 443,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B6_run": {
+      "characterId": 436,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B7_attack": {
+      "characterId": 423,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B7_dead": {
+      "characterId": 410,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B7_idle": {
+      "characterId": 403,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B7_run": {
+      "characterId": 396,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B8_attack": {
+      "characterId": 383,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B8_dead": {
+      "characterId": 370,
+      "frames": 2,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B8_idle": {
+      "characterId": 365,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B8_run": {
+      "characterId": 358,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B9_attack": {
+      "characterId": 345,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B9_dead": {
+      "characterId": 334,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B9_idle": {
+      "characterId": 327,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B9_run": {
+      "characterId": 320,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B10_attack": {
+      "characterId": 307,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B10_dead": {
+      "characterId": 296,
+      "frames": 6,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B10_idle": {
+      "characterId": 283,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B10_run": {
+      "characterId": 276,
+      "frames": 3,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B11_attack": {
+      "characterId": 269,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B11_dead": {
+      "characterId": 256,
+      "frames": 4,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B11_idle": {
+      "characterId": 247,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B11_run": {
+      "characterId": 240,
+      "frames": 3,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B12_attack": {
+      "characterId": 233,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B12_dead": {
+      "characterId": 220,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B12_idle": {
+      "characterId": 213,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B12_run": {
+      "characterId": 206,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B13_attack": {
+      "characterId": 193,
+      "frames": 4,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B13_dead": {
+      "characterId": 184,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B13_idle": {
+      "characterId": 177,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B13_run": {
+      "characterId": 170,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B14_attack": {
+      "characterId": 157,
+      "frames": 7,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B14_dead": {
+      "characterId": 142,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B14_idle": {
+      "characterId": 135,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B14_run": {
+      "characterId": 128,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "B15_attack": {
+      "characterId": 115,
+      "frames": 5,
+      "speed": 0.3,
+      "loop": false
+    },
+    "B15_dead": {
+      "characterId": 104,
+      "frames": 3,
+      "speed": 0.2,
+      "loop": false
+    },
+    "B15_idle": {
+      "characterId": 97,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "B15_run": {
+      "characterId": 90,
+      "frames": 6,
+      "speed": 0.3,
+      "loop": true
+    },
+    "fireball": {
+      "characterId": 75,
+      "frames": 3,
+      "speed": 0.15,
+      "loop": true
+    },
+    "storm": {
+      "characterId": 68,
+      "frames": 10,
+      "speed": 1,
+      "loop": true
+    },
+    "thunderball": {
+      "characterId": 49,
+      "frames": 16,
+      "speed": 1,
+      "loop": true
+    }
+  },
+  "notApplicable": [
+    "buildingConstruction",
+    "buildingUpgrades",
+    "playerSkills",
+    "levelWaves"
+  ]
+}

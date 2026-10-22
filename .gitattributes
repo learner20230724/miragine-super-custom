@@ -1,0 +1,9 @@
+* text=auto eol=lf
+recovered/** -text
+reference/*.swf -text
+assets/**/*.png -text
+assets/**/*.mp3 -text
+assets/**/*.wav -text
+assets/**/*.ttf -text
+assets/**/*.woff -text
+assets/**/*.woff2 -text

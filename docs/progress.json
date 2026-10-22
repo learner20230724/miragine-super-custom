@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "goalStatus": "active",
+  "stage": "native-preview-integration-and-release-verification",
+  "baseline": {
+    "version": "Super Miragine War / 超级米拉奇战记",
+    "sha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
+    "width": 640,
+    "height": 480,
+    "framesPerSecond": 30
+  },
+  "completed": [
+    "read linked task and explicit 14 acceptance criteria",
+    "confirm game-specific redistribution authorization",
+    "verify frozen super-version SWF and embedded assets",
+    "export original AS3, P-code, XML, Canvas artwork and media",
+    "extract original 16 units and four difficulty profiles with field provenance",
+    "port native simulation and source-order semantics",
+    "finish four natural default headless matches",
+    "generate hashed original animation/image/audio/font assets",
+    "implement native Matrix3D projection and UVT WebGL ground",
+    "implement original menu, HUD, help, audio and local controls",
+    "pass 181 automated tests",
+    "pass 36 real-browser UI checks including resized pointer accuracy",
+    "privacy scan: 2932 files, zero findings/warnings",
+    "create public remote repository",
+    "verify device scale factors 1.25, 1.5 and 2 with real backing store and pointer checks",
+    "verify edited custom values and extension bytes survive actual regeneration, and affect natural recruitment"
+  ],
+  "inProgress": [
+    "original-runtime oracle trace and pixel comparison",
+    "source commit and push",
+    "portable Windows build and isolated validation",
+    "remaining UI visual fidelity gates"
+  ],
+  "notYetClaimed": [
+    "full original-runtime frame-by-frame parity",
+    "pixel-perfect Flash rasterization",
+    "finished 14-requirement acceptance",
+    "independently validated Windows release uploaded"
+  ]
+}

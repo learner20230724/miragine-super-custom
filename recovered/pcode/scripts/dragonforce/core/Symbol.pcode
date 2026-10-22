@@ -1,0 +1,319 @@
+package dragonforce.core
+{
+   import flash.display.Bitmap;
+   import flash.display.Sprite;
+   
+   public class Symbol extends Sprite
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 8
+            maxscopedepth 9
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public var px:Number = 0;
+      
+      public var py:Number = 0;
+      
+      public var pz:Number = 0;
+      
+      public var sx:Number = 1;
+      
+      public var sy:Number = 1;
+      
+      public var scene:Scene;
+      
+      public var prev:Symbol;
+      
+      public var next:Symbol;
+      
+      public var spriteMap:SpriteMap;
+      
+      public var spriteSheet:SpriteSheet;
+      
+      public var canvas:Bitmap;
+      
+      public var currentRow:int;
+      
+      public var currentFrame:Number;
+      
+      public function Symbol()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 2
+               localcount 1
+               initscopedepth 9
+               maxscopedepth 10
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  findpropstrict QName(PackageNamespace("flash.display"),"Bitmap")
+                  constructprop QName(PackageNamespace("flash.display"),"Bitmap"), 0
+                  initproperty QName(PackageNamespace(""),"canvas")
+                  getlocal0
+                  constructsuper 0
+                  findpropstrict QName(PackageNamespace(""),"addChild")
+                  getlocal0
+                  getproperty QName(PackageNamespace(""),"canvas")
+                  callpropvoid QName(PackageNamespace(""),"addChild"), 1
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function gotoAndPlay(param1:String) : void
+      {
+         trait method QName(PackageNamespace(""),"gotoAndPlay")
+            dispid 0
+            method
+               name null
+               param QName(PackageNamespace(""),"String")
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 5
+                  localcount 3
+                  initscopedepth 9
+                  maxscopedepth 10
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"spriteSheet")
+                     pushnull
+                     ifne ofs000c
+                     returnvoid
+            ofs000c:
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"spriteSheet")
+                     getlocal1
+                     callproperty QName(PackageNamespace(""),"map"), 1
+                     coerce QName(PackageNamespace("dragonforce.core"),"SpriteMap")
+                     setlocal2
+                     getlocal2
+                     pushnull
+                     ifne ofs001f
+                     returnvoid
+            ofs001f:
+                     getlocal2
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"spriteMap")
+                     equals
+                     dup
+                     iffalse ofs0033
+                     pop
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"spriteMap")
+                     getproperty QName(PackageNamespace(""),"loop")
+                     convert_b
+            ofs0033:
+                     iffalse ofs0038
+                     returnvoid
+            ofs0038:
+                     getlocal0
+                     getlocal2
+                     initproperty QName(PackageNamespace(""),"spriteMap")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"canvas")
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"offX")
+                     setproperty QName(PackageNamespace(""),"x")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"canvas")
+                     getlocal2
+                     getproperty QName(PackageNamespace(""),"offY")
+                     setproperty QName(PackageNamespace(""),"y")
+                     getlocal0
+                     pushbyte 1
+                     initproperty QName(PackageNamespace(""),"currentFrame")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"canvas")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"spriteMap")
+                     getproperty QName(PackageNamespace(""),"frames")
+                     findpropstrict QName(PackageNamespace(""),"int")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"currentRow")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"spriteMap")
+                     getproperty QName(PackageNamespace(""),"totalFrames")
+                     multiply
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"currentFrame")
+                     add
+                     callproperty QName(PackageNamespace(""),"int"), 1
+                     getproperty MultinameL([PrivateNamespace(null,"68"),PackageNamespace(""),PackageNamespace("dragonforce.core"),PrivateNamespace(null,"69"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:Symbol"),StaticProtectedNs("dragonforce.core:Symbol"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                     setproperty QName(PackageNamespace(""),"bitmapData")
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         public function destroy() : void
+         {
+            trait method QName(PackageNamespace(""),"destroy")
+               dispid 0
+               method
+                  name null
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 2
+                     localcount 1
+                     initscopedepth 9
+                     maxscopedepth 10
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"scene")
+                        getlocal0
+                        callpropvoid QName(PackageNamespace(""),"removeChild"), 1
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            public function step() : void
+            {
+               trait method QName(PackageNamespace(""),"step")
+                  dispid 0
+                  method
+                     name null
+                     returns QName(PackageNamespace(""),"void")
+                     
+                     body
+                        maxstack 5
+                        localcount 1
+                        initscopedepth 9
+                        maxscopedepth 10
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"spriteMap")
+                           iffalse ofs0073
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"canvas")
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"spriteMap")
+                           getproperty QName(PackageNamespace(""),"frames")
+                           findpropstrict QName(PackageNamespace(""),"int")
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"currentRow")
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"spriteMap")
+                           getproperty QName(PackageNamespace(""),"totalFrames")
+                           multiply
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"currentFrame")
+                           add
+                           callproperty QName(PackageNamespace(""),"int"), 1
+                           getproperty MultinameL([PrivateNamespace(null,"68"),PackageNamespace(""),PackageNamespace("dragonforce.core"),PrivateNamespace(null,"69"),PackageInternalNs("dragonforce.core"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.core:Symbol"),StaticProtectedNs("dragonforce.core:Symbol"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                           setproperty QName(PackageNamespace(""),"bitmapData")
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"currentFrame")
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"spriteMap")
+                           getproperty QName(PackageNamespace(""),"totalFrames")
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"spriteMap")
+                           getproperty QName(PackageNamespace(""),"speed")
+                           subtract
+                           pushbyte 1
+                           add
+                           pushdouble 0.001
+                           subtract
+                           ifnge ofs0063
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"spriteMap")
+                           getproperty QName(PackageNamespace(""),"loop")
+                           iffalse ofs005f
+                           getlocal0
+                           pushbyte 1
+                           initproperty QName(PackageNamespace(""),"currentFrame")
+                  ofs005f:
+                           jump ofs0073
+                  ofs0063:
+                           getlocal0
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"currentFrame")
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"spriteMap")
+                           getproperty QName(PackageNamespace(""),"speed")
+                           add
+                           initproperty QName(PackageNamespace(""),"currentFrame")
+                  ofs0073:
+                           returnvoid
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+            }
+         }
+         
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 2
+               localcount 1
+               initscopedepth 1
+               maxscopedepth 8
+               
+               code
+                  getlocal0
+                  pushscope
+                  findpropstrict Multiname("Symbol",[PackageNamespace("dragonforce.core")])
+                  getlex QName(PackageNamespace(""),"Object")
+                  pushscope
+                  getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+                  pushscope
+                  getlex QName(PackageNamespace("flash.display"),"DisplayObject")
+                  pushscope
+                  getlex QName(PackageNamespace("flash.display"),"InteractiveObject")
+                  pushscope
+                  getlex QName(PackageNamespace("flash.display"),"DisplayObjectContainer")
+                  pushscope
+                  getlex QName(PackageNamespace("flash.display"),"Sprite")
+                  pushscope
+                  getlex QName(PackageNamespace("flash.display"),"Sprite")
+                  newclass 54
+                  popscope
+                  popscope
+                  popscope
+                  popscope
+                  popscope
+                  popscope
+                  initproperty QName(PackageNamespace("dragonforce.core"),"Symbol")
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+         

@@ -1,0 +1,530 @@
+package
+{
+   import flash.display.Bitmap;
+   import flash.display.BitmapData;
+   import flash.display.DisplayObject;
+   import flash.display.Shape;
+   import flash.display.Sprite;
+   import flash.events.Event;
+   import flash.filters.DisplacementMapFilter;
+   import flash.filters.DropShadowFilter;
+   import flash.geom.Matrix;
+   import flash.geom.Point;
+   
+   public class Flag extends Sprite
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 8
+            maxscopedepth 9
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public var source:DisplayObject;
+      
+      public var sourceBitmapData:BitmapData;
+      
+      public var output:Bitmap;
+      
+      public var outputBitmapData:BitmapData;
+      
+      public var perlinNoiseBitmapData:BitmapData;
+      
+      public var perlinNoiseFallOff:BitmapData;
+      
+      public var srcWidth:Number;
+      
+      public var srcHeight:Number;
+      
+      public var origi:Point;
+      
+      public var offsets:Array;
+      
+      public var animated:Boolean;
+      
+      public function Flag(param1:DisplayObject, param2:Boolean = false)
+      {
+         method
+            name null
+            flag HAS_OPTIONAL
+            param QName(PackageNamespace("flash.display"),"DisplayObject")
+            param QName(PackageNamespace(""),"Boolean")
+            optional False()
+            returns null
+            
+            body
+               maxstack 2
+               localcount 3
+               initscopedepth 9
+               maxscopedepth 10
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  getlocal0
+                  getlocal1
+                  initproperty QName(PackageNamespace(""),"source")
+                  getlocal0
+                  getlocal2
+                  initproperty QName(PackageNamespace(""),"animated")
+                  getlocal0
+                  callpropvoid QName(PrivateNamespace(null,"10"),"init"), 0
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      private function init() : void
+      {
+         trait method QName(PrivateNamespace(null,"10"),"init")
+            dispid 0
+            method
+               name null
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 7
+                  localcount 1
+                  initscopedepth 9
+                  maxscopedepth 10
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     getlocal0
+                     callpropvoid QName(PrivateNamespace(null,"10"),"assemble"), 0
+                     getlocal0
+                     findpropstrict QName(PackageNamespace("flash.display"),"Bitmap")
+                     constructprop QName(PackageNamespace("flash.display"),"Bitmap"), 0
+                     initproperty QName(PackageNamespace(""),"output")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"output")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"outputBitmapData")
+                     setproperty QName(PackageNamespace(""),"bitmapData")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"output")
+                     getlocal0
+                     callproperty QName(PrivateNamespace(null,"10"),"getDisplacementMapFilter"), 0
+                     findpropstrict QName(PackageNamespace("flash.filters"),"DropShadowFilter")
+                     pushbyte 4
+                     pushbyte 45
+                     pushbyte 0
+                     pushdouble 0.5
+                     constructprop QName(PackageNamespace("flash.filters"),"DropShadowFilter"), 4
+                     newarray 2
+                     setproperty QName(PackageNamespace(""),"filters")
+                     findpropstrict QName(PackageNamespace(""),"addChild")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"output")
+                     callpropvoid QName(PackageNamespace(""),"addChild"), 1
+                     findpropstrict QName(PackageNamespace(""),"addEventListener")
+                     getlex QName(PackageNamespace("flash.events"),"Event")
+                     getproperty QName(PackageNamespace(""),"ENTER_FRAME")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"10"),"render")
+                     callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                     findpropstrict QName(PackageNamespace(""),"addEventListener")
+                     getlex QName(PackageNamespace("flash.events"),"Event")
+                     getproperty QName(PackageNamespace(""),"REMOVED_FROM_STAGE")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"10"),"destory")
+                     callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         private function assemble() : void
+         {
+            trait method QName(PrivateNamespace(null,"10"),"assemble")
+               dispid 0
+               method
+                  name null
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 6
+                     localcount 3
+                     initscopedepth 9
+                     maxscopedepth 10
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        findproperty QName(PackageNamespace(""),"x")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"source")
+                        getproperty QName(PackageNamespace(""),"x")
+                        initproperty QName(PackageNamespace(""),"x")
+                        findproperty QName(PackageNamespace(""),"y")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"source")
+                        getproperty QName(PackageNamespace(""),"y")
+                        initproperty QName(PackageNamespace(""),"y")
+                        getlocal0
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"source")
+                        getproperty QName(PackageNamespace(""),"width")
+                        initproperty QName(PackageNamespace(""),"srcWidth")
+                        getlocal0
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"source")
+                        getproperty QName(PackageNamespace(""),"height")
+                        initproperty QName(PackageNamespace(""),"srcHeight")
+                        getlocal0
+                        findpropstrict QName(PackageNamespace("flash.geom"),"Point")
+                        constructprop QName(PackageNamespace("flash.geom"),"Point"), 0
+                        initproperty QName(PackageNamespace(""),"origi")
+                        getlocal0
+                        findpropstrict QName(PackageNamespace("flash.geom"),"Point")
+                        constructprop QName(PackageNamespace("flash.geom"),"Point"), 0
+                        newarray 1
+                        initproperty QName(PackageNamespace(""),"offsets")
+                        getlocal0
+                        findpropstrict QName(PackageNamespace("flash.display"),"BitmapData")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcWidth")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcHeight")
+                        pushtrue
+                        pushbyte 0
+                        constructprop QName(PackageNamespace("flash.display"),"BitmapData"), 4
+                        initproperty QName(PackageNamespace(""),"sourceBitmapData")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"sourceBitmapData")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"source")
+                        callpropvoid QName(PackageNamespace(""),"draw"), 1
+                        getlocal0
+                        findpropstrict QName(PackageNamespace("flash.display"),"BitmapData")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcWidth")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcHeight")
+                        pushtrue
+                        pushbyte 0
+                        constructprop QName(PackageNamespace("flash.display"),"BitmapData"), 4
+                        initproperty QName(PackageNamespace(""),"outputBitmapData")
+                        getlocal0
+                        findpropstrict QName(PackageNamespace("flash.display"),"BitmapData")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcWidth")
+                        pushdouble 1.2
+                        multiply
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcHeight")
+                        pushdouble 1.2
+                        multiply
+                        constructprop QName(PackageNamespace("flash.display"),"BitmapData"), 2
+                        initproperty QName(PackageNamespace(""),"perlinNoiseBitmapData")
+                        getlocal0
+                        findpropstrict QName(PackageNamespace("flash.display"),"BitmapData")
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcWidth")
+                        pushdouble 1.2
+                        multiply
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcHeight")
+                        pushdouble 1.2
+                        multiply
+                        pushtrue
+                        pushbyte 0
+                        constructprop QName(PackageNamespace("flash.display"),"BitmapData"), 4
+                        initproperty QName(PackageNamespace(""),"perlinNoiseFallOff")
+                        findpropstrict QName(PackageNamespace("flash.display"),"Shape")
+                        constructprop QName(PackageNamespace("flash.display"),"Shape"), 0
+                        coerce QName(PackageNamespace("flash.display"),"Shape")
+                        setlocal1
+                        findpropstrict QName(PackageNamespace("flash.geom"),"Matrix")
+                        constructprop QName(PackageNamespace("flash.geom"),"Matrix"), 0
+                        coerce QName(PackageNamespace("flash.geom"),"Matrix")
+                        setlocal2
+                        getlocal2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcWidth")
+                        pushdouble 1.2
+                        multiply
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcHeight")
+                        pushdouble 1.2
+                        multiply
+                        getlex QName(PackageNamespace(""),"Math")
+                        getproperty QName(PackageNamespace(""),"PI")
+                        pushbyte 2
+                        divide
+                        pushbyte 0
+                        pushbyte 25
+                        callpropvoid QName(PackageNamespace(""),"createGradientBox"), 5
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"graphics")
+                        pushstring "linear"
+                        pushint 8421504
+                        pushint 8421504
+                        newarray 2
+                        pushbyte 99
+                        pushbyte 0
+                        newarray 2
+                        pushbyte 0
+                        pushbyte 96
+                        newarray 2
+                        getlocal2
+                        callpropvoid QName(PackageNamespace(""),"beginGradientFill"), 5
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"graphics")
+                        pushbyte 0
+                        dup
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcWidth")
+                        pushdouble 1.2
+                        multiply
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"srcHeight")
+                        pushdouble 1.2
+                        multiply
+                        callpropvoid QName(PackageNamespace(""),"drawRect"), 4
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"graphics")
+                        callpropvoid QName(PackageNamespace(""),"endFill"), 0
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"perlinNoiseFallOff")
+                        getlocal1
+                        callpropvoid QName(PackageNamespace(""),"draw"), 1
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            private function getDisplacementMapFilter() : DisplacementMapFilter
+            {
+               trait method QName(PrivateNamespace(null,"10"),"getDisplacementMapFilter")
+                  dispid 0
+                  method
+                     name null
+                     returns QName(PackageNamespace("flash.filters"),"DisplacementMapFilter")
+                     
+                     body
+                        maxstack 8
+                        localcount 1
+                        initscopedepth 9
+                        maxscopedepth 10
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           findpropstrict QName(PackageNamespace("flash.filters"),"DisplacementMapFilter")
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"perlinNoiseBitmapData")
+                           findpropstrict QName(PackageNamespace("flash.geom"),"Point")
+                           pushbyte 0
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"srcHeight")
+                           negate
+                           pushdouble 0.1
+                           multiply
+                           constructprop QName(PackageNamespace("flash.geom"),"Point"), 2
+                           pushbyte 2
+                           pushbyte 4
+                           pushdouble 0.125
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"srcWidth")
+                           multiply
+                           pushdouble 0.125
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"srcHeight")
+                           multiply
+                           pushstring "color"
+                           constructprop QName(PackageNamespace("flash.filters"),"DisplacementMapFilter"), 7
+                           returnvalue
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+               
+               private function render(param1:Event) : void
+               {
+                  trait method QName(PrivateNamespace(null,"10"),"render")
+                     dispid 0
+                     method
+                        name null
+                        param QName(PackageNamespace("flash.events"),"Event")
+                        returns QName(PackageNamespace(""),"void")
+                        
+                        body
+                           maxstack 10
+                           localcount 2
+                           initscopedepth 9
+                           maxscopedepth 10
+                           
+                           code
+                              getlocal0
+                              pushscope
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"animated")
+                              iffalse ofs0016
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"sourceBitmapData")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"source")
+                              callpropvoid QName(PackageNamespace(""),"draw"), 1
+                     ofs0016:
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"offsets")
+                              pushbyte 0
+                              getproperty MultinameL([PrivateNamespace(null,"10"),PackageNamespace(""),PrivateNamespace(null,"65"),PackageInternalNs(""),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("Flag"),StaticProtectedNs("Flag"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"offsets")
+                              pushbyte 0
+                              getproperty MultinameL([PrivateNamespace(null,"10"),PackageNamespace(""),PrivateNamespace(null,"65"),PackageInternalNs(""),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("Flag"),StaticProtectedNs("Flag"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                              getproperty Multiname("y",[PrivateNamespace(null,"10"),PackageNamespace(""),PrivateNamespace(null,"65"),PackageInternalNs(""),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("Flag"),StaticProtectedNs("Flag"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                              pushdouble 0.05
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"srcWidth")
+                              multiply
+                              subtract
+                              setproperty Multiname("y",[PrivateNamespace(null,"10"),PackageNamespace(""),PrivateNamespace(null,"65"),PackageInternalNs(""),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("Flag"),StaticProtectedNs("Flag"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher")])
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"perlinNoiseBitmapData")
+                              pushdouble 0.55
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"srcWidth")
+                              multiply
+                              pushdouble 0.55
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"srcHeight")
+                              multiply
+                              pushbyte 1
+                              pushbyte 0
+                              pushtrue
+                              pushtrue
+                              pushbyte 1
+                              pushtrue
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"offsets")
+                              callpropvoid QName(PackageNamespace(""),"perlinNoise"), 9
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"perlinNoiseBitmapData")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"perlinNoiseFallOff")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"perlinNoiseFallOff")
+                              getproperty QName(PackageNamespace(""),"rect")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"origi")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"perlinNoiseFallOff")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"origi")
+                              pushtrue
+                              callpropvoid QName(PackageNamespace(""),"copyPixels"), 6
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"outputBitmapData")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"sourceBitmapData")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"sourceBitmapData")
+                              getproperty QName(PackageNamespace(""),"rect")
+                              getlocal0
+                              getproperty QName(PackageNamespace(""),"origi")
+                              callpropvoid QName(PackageNamespace(""),"copyPixels"), 3
+                              returnvoid
+                           end ; code
+                        end ; body
+                     end ; method
+                  }
+                  
+                  private function destory(param1:Event) : void
+                  {
+                     trait method QName(PrivateNamespace(null,"10"),"destory")
+                        dispid 0
+                        method
+                           name null
+                           param QName(PackageNamespace("flash.events"),"Event")
+                           returns QName(PackageNamespace(""),"void")
+                           
+                           body
+                              maxstack 3
+                              localcount 2
+                              initscopedepth 9
+                              maxscopedepth 10
+                              
+                              code
+                                 getlocal0
+                                 pushscope
+                                 findpropstrict QName(PackageNamespace(""),"removeEventListener")
+                                 getlex QName(PackageNamespace("flash.events"),"Event")
+                                 getproperty QName(PackageNamespace(""),"ENTER_FRAME")
+                                 getlocal0
+                                 getproperty QName(PrivateNamespace(null,"10"),"render")
+                                 callpropvoid QName(PackageNamespace(""),"removeEventListener"), 2
+                                 findpropstrict QName(PackageNamespace(""),"removeEventListener")
+                                 getlex QName(PackageNamespace("flash.events"),"Event")
+                                 getproperty QName(PackageNamespace(""),"REMOVED_FROM_STAGE")
+                                 getlocal0
+                                 getproperty QName(PrivateNamespace(null,"10"),"destory")
+                                 callpropvoid QName(PackageNamespace(""),"removeEventListener"), 2
+                                 returnvoid
+                              end ; code
+                           end ; body
+                        end ; method
+                     }
+                  }
+               }
+               
+               method
+                  name null
+                  returns null
+                  
+                  body
+                     maxstack 2
+                     localcount 1
+                     initscopedepth 1
+                     maxscopedepth 8
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        findpropstrict Multiname("Flag",[PackageNamespace("")])
+                        getlex QName(PackageNamespace(""),"Object")
+                        pushscope
+                        getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+                        pushscope
+                        getlex QName(PackageNamespace("flash.display"),"DisplayObject")
+                        pushscope
+                        getlex QName(PackageNamespace("flash.display"),"InteractiveObject")
+                        pushscope
+                        getlex QName(PackageNamespace("flash.display"),"DisplayObjectContainer")
+                        pushscope
+                        getlex QName(PackageNamespace("flash.display"),"Sprite")
+                        pushscope
+                        getlex QName(PackageNamespace("flash.display"),"Sprite")
+                        newclass 51
+                        popscope
+                        popscope
+                        popscope
+                        popscope
+                        popscope
+                        popscope
+                        initproperty QName(PackageNamespace(""),"Flag")
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+               

@@ -1,0 +1,131 @@
+package miragine3d_fla
+{
+   import flash.display.MovieClip;
+   import flash.events.DataEvent;
+   
+   [Embed(source="/_assets/assets.swf", symbol="symbol196")]
+   public dynamic class icon_money_54 extends MovieClip
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 9
+            maxscopedepth 10
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public function icon_money_54()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 3
+               localcount 1
+               initscopedepth 10
+               maxscopedepth 11
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  findpropstrict QName(PackageNamespace(""),"addFrameScript")
+                  pushbyte 0
+                  getlocal0
+                  getproperty QName(PackageInternalNs("miragine3d_fla"),"frame1")
+                  callpropvoid QName(PackageNamespace(""),"addFrameScript"), 2
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      internal function frame1() : *
+      {
+         trait method QName(PackageInternalNs("miragine3d_fla"),"frame1")
+            dispid 0
+            method
+               name null
+               returns null
+               
+               body
+                  maxstack 6
+                  localcount 1
+                  initscopedepth 10
+                  maxscopedepth 11
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     findpropstrict QName(PackageNamespace(""),"dispatchEvent")
+                     findpropstrict QName(PackageNamespace("flash.events"),"DataEvent")
+                     pushstring "tips"
+                     pushtrue
+                     pushfalse
+                     pushstring "<font color=\'#ffffff\'>金币: 这些金币是用来招兵的主要资源</font>"
+                     constructprop QName(PackageNamespace("flash.events"),"DataEvent"), 4
+                     callpropvoid QName(PackageNamespace(""),"dispatchEvent"), 1
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+      }
+   }
+   
+   method
+      name null
+      returns null
+      
+      body
+         maxstack 2
+         localcount 1
+         initscopedepth 1
+         maxscopedepth 9
+         
+         code
+            getlocal0
+            pushscope
+            getscopeobject 0
+            getlex QName(PackageNamespace(""),"Object")
+            pushscope
+            getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+            pushscope
+            getlex QName(PackageNamespace("flash.display"),"DisplayObject")
+            pushscope
+            getlex QName(PackageNamespace("flash.display"),"InteractiveObject")
+            pushscope
+            getlex QName(PackageNamespace("flash.display"),"DisplayObjectContainer")
+            pushscope
+            getlex QName(PackageNamespace("flash.display"),"Sprite")
+            pushscope
+            getlex QName(PackageNamespace("flash.display"),"MovieClip")
+            pushscope
+            getlex QName(PackageNamespace("flash.display"),"MovieClip")
+            newclass 60
+            popscope
+            popscope
+            popscope
+            popscope
+            popscope
+            popscope
+            popscope
+            initproperty QName(PackageNamespace("miragine3d_fla"),"icon_money_54")
+            returnvoid
+         end ; code
+      end ; body
+   end ; method
+   

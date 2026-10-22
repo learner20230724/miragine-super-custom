@@ -1,0 +1,39 @@
+Original game
+-------------
+Super Miragine War / 超级米拉奇战记 belongs to its original creators and rights holders.
+This project uses the Super version distributed on the 4399 page identified in
+reference/baseline.json. The project owner confirmed authorization on 2026-10-23
+to redistribute original game assets and recovered game code.
+The original materials are not newly licensed under this project's MIT license,
+and this is not a claim that the original author published an open-source project.
+
+New project code
+----------------
+The MIT license covers newly authored tooling, adapters, configuration plumbing,
+tests, and other newly authored portions. Game-derived portions retain their
+original attribution and the applicable authorization described above.
+
+JPEXS Free Flash Decompiler library
+----------------------------------
+The Canvas helper embedded in generated/ui/original-graphics.js originates
+from JPEXS FFDec library 26.4.0, under LGPL-3.0-or-later. The unchanged original
+is retained at recovered/game-canvas/canvas.js. Its enclosing export and native
+adaptation are documented in tools/build_ui.py and generated/ui/NOTICE.md.
+The readable helper bundle is available separately in portable builds so it
+can be inspected, replaced, or regenerated.
+The decompiler application itself is a development tool, not bundled in the app.
+Retained license texts: docs/licenses/FFDec-library-LGPL-3.0.txt and GPL-3.0.txt.
+Upstream source:
+https://github.com/jindrapetrik/jpexs-decompiler/tree/version26.4.0/libsrc/ffdec_lib
+
+Legacy GreenSock AS3 code
+------------------------
+The original SWF includes legacy GreenSock code: TweenLite 11.3, TweenMax 11.2,
+OverwriteManager 6, and TweenCore 1.13. The native reconstruction does not use
+these AS3 libraries to execute game logic. Locally recovered com/greensock AS3
+and P-code files are excluded from public source synchronization while the
+applicable historical redistribution terms remain unverified. They must not be
+relicensed under MIT or confused with current GreenSock releases.
+
+Original compiled reference SWFs are retained as source evidence and are not
+loaded by the production game. See docs/provenance.json for recovery boundaries.

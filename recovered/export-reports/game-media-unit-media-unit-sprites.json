@@ -1,0 +1,47 @@
+[
+  {
+    "job": "game-media",
+    "exitCode": 0,
+    "seconds": 4.34,
+    "source": "reference/super-original.swf",
+    "arguments": [
+      "-format",
+      "image:png,sound:mp3_wav,font:ttf,shape:svg",
+      "-export",
+      "image,sound,font,shape,symbolClass",
+      "recovered/game-media",
+      "reference/super-original.swf"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  },
+  {
+    "job": "unit-media",
+    "exitCode": 0,
+    "seconds": 10.19,
+    "source": "reference/super-assets-original.swf",
+    "arguments": [
+      "-format",
+      "image:png,sound:mp3_wav,font:ttf,shape:svg",
+      "-export",
+      "image,sound,font,shape,symbolClass",
+      "recovered/unit-media",
+      "reference/super-assets-original.swf"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  },
+  {
+    "job": "unit-sprites",
+    "exitCode": 0,
+    "seconds": 5.93,
+    "source": "reference/super-assets-original.swf",
+    "arguments": [
+      "-format",
+      "sprite:png",
+      "-export",
+      "sprite",
+      "recovered/unit-sprites",
+      "reference/super-assets-original.swf"
+    ],
+    "tool": "JPEXS FFDec 26.4.0"
+  }
+]

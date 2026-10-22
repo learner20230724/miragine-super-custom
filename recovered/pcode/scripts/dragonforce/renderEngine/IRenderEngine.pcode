@@ -1,0 +1,50 @@
+package dragonforce.renderEngine
+{
+   import dragonforce.core.Camera;
+   import dragonforce.core.Scene;
+   
+   public interface IRenderEngine
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 0
+            localcount 1
+            initscopedepth 3
+            maxscopedepth 3
+            
+            code
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      function renderScene(param1:Scene, param2:Camera) : void;
+   }
+}
+
+method
+   name null
+   returns null
+   
+   body
+      maxstack 2
+      localcount 1
+      initscopedepth 1
+      maxscopedepth 2
+      
+      code
+         getlocal0
+         pushscope
+         findpropstrict Multiname("IRenderEngine",[PackageNamespace("dragonforce.renderEngine")])
+         pushnull
+         newclass 7
+         initproperty QName(PackageNamespace("dragonforce.renderEngine"),"IRenderEngine")
+         returnvoid
+      end ; code
+   end ; body
+end ; method
+

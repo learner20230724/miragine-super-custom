@@ -1,0 +1,8 @@
+{
+  "name": "JPEXS Free Flash Decompiler",
+  "version": "26.4.0",
+  "url": "https://github.com/jindrapetrik/jpexs-decompiler/releases/download/version26.4.0/ffdec_26.4.0.zip",
+  "bytes": 21917740,
+  "sha256": "56ce960aeafc7caf034e2052ba49f878a883f7c7ca690da6eeffca9587b5e4b9",
+  "official_cli": "https://github.com/jindrapetrik/jpexs-decompiler/wiki/Commandline-arguments"
+}

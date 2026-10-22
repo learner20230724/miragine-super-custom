@@ -1,0 +1,852 @@
+package dragonforce.utils
+{
+   import flash.display.Stage;
+   import flash.events.Event;
+   import flash.events.KeyboardEvent;
+   
+   public class KeyManager
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 3
+            maxscopedepth 4
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      private var index:int = 0;
+      
+      public var keyTable:Array;
+      
+      public var hitTable:Array;
+      
+      public function KeyManager()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 2
+               localcount 1
+               initscopedepth 4
+               maxscopedepth 5
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  newarray 0
+                  initproperty QName(PackageNamespace(""),"keyTable")
+                  getlocal0
+                  newarray 0
+                  initproperty QName(PackageNamespace(""),"hitTable")
+                  getlocal0
+                  constructsuper 0
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function init(param1:Stage, param2:Boolean = true) : void
+      {
+         trait method QName(PackageNamespace(""),"init")
+            dispid 0
+            method
+               name null
+               flag HAS_OPTIONAL
+               param QName(PackageNamespace("flash.display"),"Stage")
+               param QName(PackageNamespace(""),"Boolean")
+               optional True()
+               returns QName(PackageNamespace(""),"void")
+               
+               body
+                  maxstack 3
+                  localcount 3
+                  initscopedepth 4
+                  maxscopedepth 5
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     getlocal1
+                     getlex QName(PackageNamespace("flash.events"),"KeyboardEvent")
+                     getproperty QName(PackageNamespace(""),"KEY_DOWN")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"1"),"keyDownHandle")
+                     callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                     getlocal1
+                     getlex QName(PackageNamespace("flash.events"),"KeyboardEvent")
+                     getproperty QName(PackageNamespace(""),"KEY_UP")
+                     getlocal0
+                     getproperty QName(PrivateNamespace(null,"1"),"keyUpHandle")
+                     callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                     getlocal2
+                     iffalse ofs002e
+                     getlocal1
+                     getlex QName(PackageNamespace("flash.events"),"Event")
+                     getproperty QName(PackageNamespace(""),"ENTER_FRAME")
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"step")
+                     callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+            ofs002e:
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         private function keyDownHandle(param1:KeyboardEvent) : void
+         {
+            trait method QName(PrivateNamespace(null,"1"),"keyDownHandle")
+               dispid 0
+               method
+                  name null
+                  param QName(PackageNamespace("flash.events"),"KeyboardEvent")
+                  returns QName(PackageNamespace(""),"void")
+                  
+                  body
+                     maxstack 3
+                     localcount 4
+                     initscopedepth 4
+                     maxscopedepth 5
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal1
+                        getproperty QName(PackageNamespace(""),"keyCode")
+                        convert_i
+                        setlocal2
+                        pushbyte 0
+                        setlocal3
+                        jump ofs001f
+               ofs000f:
+                        label
+                        getlocal2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"keyTable")
+                        getlocal3
+                        getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                        ifne ofs001d
+                        returnvoid
+               ofs001d:
+                        inclocal_i 3
+               ofs001f:
+                        getlocal3
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"keyTable")
+                        getproperty QName(PackageNamespace(""),"length")
+                        iflt ofs000f
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"keyTable")
+                        getlocal2
+                        callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 1
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+            
+            private function keyUpHandle(param1:KeyboardEvent) : void
+            {
+               trait method QName(PrivateNamespace(null,"1"),"keyUpHandle")
+                  dispid 0
+                  method
+                     name null
+                     param QName(PackageNamespace("flash.events"),"KeyboardEvent")
+                     returns QName(PackageNamespace(""),"void")
+                     
+                     body
+                        maxstack 3
+                        localcount 4
+                        initscopedepth 4
+                        maxscopedepth 5
+                        
+                        code
+                           getlocal0
+                           pushscope
+                           getlocal1
+                           getproperty QName(PackageNamespace(""),"keyCode")
+                           convert_i
+                           setlocal2
+                           pushbyte 0
+                           setlocal3
+                           jump ofs0028
+                  ofs000f:
+                           label
+                           getlocal2
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"keyTable")
+                           getlocal3
+                           getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                           ifne ofs0026
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"keyTable")
+                           getlocal3
+                           pushbyte 1
+                           callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"splice"), 2
+                  ofs0026:
+                           inclocal_i 3
+                  ofs0028:
+                           getlocal3
+                           getlocal0
+                           getproperty QName(PackageNamespace(""),"keyTable")
+                           getproperty QName(PackageNamespace(""),"length")
+                           iflt ofs000f
+                           returnvoid
+                        end ; code
+                     end ; body
+                  end ; method
+               }
+               
+               public function clearKeyTable() : void
+               {
+                  trait method QName(PackageNamespace(""),"clearKeyTable")
+                     dispid 0
+                     method
+                        name null
+                        returns QName(PackageNamespace(""),"void")
+                        
+                        body
+                           maxstack 2
+                           localcount 1
+                           initscopedepth 4
+                           maxscopedepth 5
+                           
+                           code
+                              getlocal0
+                              pushscope
+                              getlocal0
+                              newarray 0
+                              initproperty QName(PackageNamespace(""),"keyTable")
+                              returnvoid
+                           end ; code
+                        end ; body
+                     end ; method
+                  }
+                  
+                  public function clearHitTable() : void
+                  {
+                     trait method QName(PackageNamespace(""),"clearHitTable")
+                        dispid 0
+                        method
+                           name null
+                           returns QName(PackageNamespace(""),"void")
+                           
+                           body
+                              maxstack 2
+                              localcount 1
+                              initscopedepth 4
+                              maxscopedepth 5
+                              
+                              code
+                                 getlocal0
+                                 pushscope
+                                 getlocal0
+                                 newarray 0
+                                 initproperty QName(PackageNamespace(""),"hitTable")
+                                 returnvoid
+                              end ; code
+                           end ; body
+                        end ; method
+                     }
+                     
+                     public function step(param1:Event = null) : void
+                     {
+                        trait method QName(PackageNamespace(""),"step")
+                           dispid 0
+                           method
+                              name null
+                              flag HAS_OPTIONAL
+                              param QName(PackageNamespace("flash.events"),"Event")
+                              optional Null()
+                              returns QName(PackageNamespace(""),"void")
+                              
+                              body
+                                 maxstack 4
+                                 localcount 9
+                                 initscopedepth 4
+                                 maxscopedepth 5
+                                 
+                                 code
+                                    getlocal0
+                                    pushscope
+                                    pushnull
+                                    coerce QName(PackageNamespace(""),"Array")
+                                    setlocal 5
+                                    pushbyte 0
+                                    setlocal 6
+                                    pushbyte 0
+                                    setlocal 7
+                                    pushbyte 0
+                                    setlocal 8
+                                    pushbyte 0
+                                    setlocal2
+                                    pushbyte 0
+                                    setlocal3
+                                    newarray 0
+                                    coerce QName(PackageNamespace(""),"Array")
+                                    setlocal 4
+                                    pushbyte 0
+                                    setlocal2
+                                    jump ofs00a2
+                           ofs0026:
+                                    label
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"hitTable")
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    pushfalse
+                                    setproperty Multiname("isWeak",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"hitTable")
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("keys",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    coerce QName(PackageNamespace(""),"Array")
+                                    setlocal 5
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"hitTable")
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("keys",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("length",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    convert_i
+                                    setlocal 6
+                                    pushbyte 0
+                                    setlocal3
+                                    jump ofs0072
+                           ofs0057:
+                                    label
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"keyTable")
+                                    getlocal 5
+                                    getlocal3
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    callproperty QName(Namespace("http://adobe.com/AS3/2006/builtin"),"indexOf"), 1
+                                    pushbyte -1
+                                    ifngt ofs0070
+                                    getlocal 6
+                                    decrement_i
+                                    setlocal 6
+                           ofs0070:
+                                    inclocal_i 3
+                           ofs0072:
+                                    getlocal3
+                                    getlocal 5
+                                    getproperty QName(PackageNamespace(""),"length")
+                                    iflt ofs0057
+                                    getlocal 6
+                                    pushbyte 0
+                                    ifne ofs0095
+                                    getlocal 4
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"hitTable")
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 1
+                                    jump ofs00a0
+                           ofs0095:
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"hitTable")
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    pushfalse
+                                    setproperty Multiname("isDown",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                           ofs00a0:
+                                    inclocal_i 2
+                           ofs00a2:
+                                    getlocal2
+                                    getlocal0
+                                    getproperty QName(PackageNamespace(""),"hitTable")
+                                    getproperty QName(PackageNamespace(""),"length")
+                                    iflt ofs0026
+                                    pushbyte 0
+                                    setlocal2
+                                    jump ofs0156
+                           ofs00b4:
+                                    label
+                                    pushbyte 0
+                                    setlocal3
+                                    jump ofs014a
+                           ofs00bc:
+                                    label
+                                    getlocal2
+                                    getlocal3
+                                    equals
+                                    not
+                                    dup
+                                    iffalse ofs00e0
+                                    pop
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("keys",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("length",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 4
+                                    getlocal3
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("keys",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("length",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    lessthan
+                           ofs00e0:
+                                    iffalse ofs0148
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("keys",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("length",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    convert_i
+                                    setlocal 7
+                                    pushbyte 0
+                                    setlocal 8
+                                    jump ofs0124
+                           ofs00fb:
+                                    label
+                                    getlocal 4
+                                    getlocal3
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("keys",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("keys",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 8
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    callproperty Multiname("indexOf",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")]), 1
+                                    pushbyte -1
+                                    ifngt ofs0122
+                                    getlocal 7
+                                    decrement_i
+                                    setlocal 7
+                           ofs0122:
+                                    inclocal_i 8
+                           ofs0124:
+                                    getlocal 8
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("keys",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("length",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    iflt ofs00fb
+                                    getlocal 7
+                                    pushbyte 0
+                                    ifne ofs0148
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    pushtrue
+                                    setproperty Multiname("isWeak",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                           ofs0148:
+                                    inclocal_i 3
+                           ofs014a:
+                                    getlocal3
+                                    getlocal 4
+                                    getproperty QName(PackageNamespace(""),"length")
+                                    iflt ofs00bc
+                                    inclocal_i 2
+                           ofs0156:
+                                    getlocal2
+                                    getlocal 4
+                                    getproperty QName(PackageNamespace(""),"length")
+                                    iflt ofs00b4
+                                    pushbyte 0
+                                    setlocal2
+                                    jump ofs01ee
+                           ofs0167:
+                                    label
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("isWeak",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    iftrue ofs01ec
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("tracking",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    iffalse ofs01a8
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    pushtrue
+                                    setproperty Multiname("isDown",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("func",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("rest",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    callpropvoid Multiname("apply",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")]), 2
+                           ofs01a8:
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("tracking",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    not
+                                    dup
+                                    iffalse ofs01c2
+                                    pop
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("isDown",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    not
+                           ofs01c2:
+                                    iffalse ofs01ec
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    pushtrue
+                                    setproperty Multiname("isDown",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("func",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getlocal 4
+                                    getlocal2
+                                    getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    getproperty Multiname("rest",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                    callpropvoid Multiname("apply",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")]), 2
+                           ofs01ec:
+                                    inclocal_i 2
+                           ofs01ee:
+                                    getlocal2
+                                    getlocal 4
+                                    getproperty QName(PackageNamespace(""),"length")
+                                    iflt ofs0167
+                                    returnvoid
+                                 end ; code
+                              end ; body
+                           end ; method
+                        }
+                        
+                        public function addKeyHitter(param1:Array, param2:Boolean, param3:Function, ... rest) : int
+                        {
+                           trait method QName(PackageNamespace(""),"addKeyHitter")
+                              dispid 0
+                              method
+                                 name null
+                                 flag NEED_REST
+                                 param QName(PackageNamespace(""),"Array")
+                                 param QName(PackageNamespace(""),"Boolean")
+                                 param QName(PackageNamespace(""),"Function")
+                                 returns QName(PackageNamespace(""),"int")
+                                 
+                                 body
+                                    maxstack 7
+                                    localcount 10
+                                    initscopedepth 4
+                                    maxscopedepth 5
+                                    
+                                    code
+                                       getlocal0
+                                       pushscope
+                                       pushnull
+                                       coerce QName(PrivateNamespace(null,"2"),"KeyHitter")
+                                       setlocal 6
+                                       getlocal0
+                                       dup
+                                       setlocal 8
+                                       getproperty QName(PrivateNamespace(null,"1"),"index")
+                                       dup
+                                       increment_i
+                                       setlocal 9
+                                       getlocal 8
+                                       getlocal 9
+                                       setproperty QName(PrivateNamespace(null,"1"),"index")
+                                       kill 9
+                                       kill 8
+                                       convert_i
+                                       setlocal 5
+                                       pushbyte 0
+                                       setlocal 7
+                                       jump ofs005a
+                              ofs0026:
+                                       label
+                                       getlocal3
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"hitTable")
+                                       getlocal 7
+                                       getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                       getproperty Multiname("func",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                       equals
+                                       dup
+                                       iffalse ofs0048
+                                       pop
+                                       getlocal 4
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"hitTable")
+                                       getlocal 7
+                                       getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                       getproperty Multiname("rest",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                       equals
+                              ofs0048:
+                                       iffalse ofs0058
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"hitTable")
+                                       getlocal 7
+                                       getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                       coerce QName(PrivateNamespace(null,"2"),"KeyHitter")
+                                       setlocal 6
+                              ofs0058:
+                                       inclocal_i 7
+                              ofs005a:
+                                       getlocal 7
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"hitTable")
+                                       getproperty QName(PackageNamespace(""),"length")
+                                       iflt ofs0026
+                                       getlocal 6
+                                       pushnull
+                                       ifne ofs0083
+                                       getlocal0
+                                       getproperty QName(PackageNamespace(""),"hitTable")
+                                       findpropstrict QName(PrivateNamespace(null,"2"),"KeyHitter")
+                                       getlocal1
+                                       getlocal2
+                                       getlocal3
+                                       getlocal 4
+                                       getlocal 5
+                                       constructprop QName(PrivateNamespace(null,"2"),"KeyHitter"), 5
+                                       callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"push"), 1
+                                       getlocal 5
+                                       returnvalue
+                              ofs0083:
+                                       getlocal 6
+                                       getlocal1
+                                       setproperty QName(PackageNamespace(""),"keys")
+                                       getlocal 6
+                                       getproperty QName(PackageNamespace(""),"id")
+                                       returnvalue
+                                    end ; code
+                                 end ; body
+                              end ; method
+                           }
+                           
+                           public function removeKeyHitter(param1:int) : void
+                           {
+                              trait method QName(PackageNamespace(""),"removeKeyHitter")
+                                 dispid 0
+                                 method
+                                    name null
+                                    param QName(PackageNamespace(""),"int")
+                                    returns QName(PackageNamespace(""),"void")
+                                    
+                                    body
+                                       maxstack 3
+                                       localcount 3
+                                       initscopedepth 4
+                                       maxscopedepth 5
+                                       
+                                       code
+                                          getlocal0
+                                          pushscope
+                                          pushbyte 0
+                                          setlocal2
+                                          jump ofs0025
+                                 ofs0009:
+                                          label
+                                          getlocal1
+                                          getlocal0
+                                          getproperty QName(PackageNamespace(""),"hitTable")
+                                          getlocal2
+                                          getproperty MultinameL([PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                          getproperty Multiname("id",[PrivateNamespace(null,"1"),PackageNamespace(""),PrivateNamespace(null,"2"),PackageNamespace("dragonforce.utils"),PackageInternalNs("dragonforce.utils"),Namespace("http://adobe.com/AS3/2006/builtin"),ProtectedNamespace("dragonforce.utils:KeyManager"),StaticProtectedNs("dragonforce.utils:KeyManager")])
+                                          ifne ofs0023
+                                          getlocal0
+                                          getproperty QName(PackageNamespace(""),"hitTable")
+                                          getlocal2
+                                          pushbyte 1
+                                          callpropvoid QName(Namespace("http://adobe.com/AS3/2006/builtin"),"splice"), 2
+                                 ofs0023:
+                                          inclocal_i 2
+                                 ofs0025:
+                                          getlocal2
+                                          getlocal0
+                                          getproperty QName(PackageNamespace(""),"hitTable")
+                                          getproperty QName(PackageNamespace(""),"length")
+                                          iflt ofs0009
+                                          returnvoid
+                                       end ; code
+                                    end ; body
+                                 end ; method
+                              }
+                           }
+                        }
+                        
+                        class KeyHitter
+                        {
+                           
+                           method
+                              name null
+                              returns null
+                              
+                              body
+                                 maxstack 1
+                                 localcount 1
+                                 initscopedepth 3
+                                 maxscopedepth 4
+                                 
+                                 code
+                                    getlocal0
+                                    pushscope
+                                    returnvoid
+                                 end ; code
+                              end ; body
+                           end ; method
+                           
+                           public var keys:Array;
+                           
+                           public var func:Function;
+                           
+                           public var rest:*;
+                           
+                           public var id:int;
+                           
+                           public var tracking:Boolean;
+                           
+                           public var isDown:Boolean;
+                           
+                           public var isWeak:Boolean;
+                           
+                           public function KeyHitter(param1:Array, param2:Boolean, param3:Function, param4:*, param5:int)
+                           {
+                              method
+                                 name null
+                                 param QName(PackageNamespace(""),"Array")
+                                 param QName(PackageNamespace(""),"Boolean")
+                                 param QName(PackageNamespace(""),"Function")
+                                 param null
+                                 param QName(PackageNamespace(""),"int")
+                                 returns null
+                                 
+                                 body
+                                    maxstack 2
+                                    localcount 6
+                                    initscopedepth 4
+                                    maxscopedepth 5
+                                    
+                                    code
+                                       getlocal0
+                                       pushscope
+                                       getlocal0
+                                       constructsuper 0
+                                       getlocal0
+                                       getlocal1
+                                       initproperty QName(PackageNamespace(""),"keys")
+                                       getlocal0
+                                       getlocal2
+                                       initproperty QName(PackageNamespace(""),"tracking")
+                                       getlocal0
+                                       getlocal3
+                                       initproperty QName(PackageNamespace(""),"func")
+                                       getlocal0
+                                       getlocal 4
+                                       initproperty QName(PackageNamespace(""),"rest")
+                                       getlocal0
+                                       getlocal 5
+                                       initproperty QName(PackageNamespace(""),"id")
+                                       getlocal0
+                                       pushfalse
+                                       initproperty QName(PackageNamespace(""),"isDown")
+                                       getlocal0
+                                       pushfalse
+                                       initproperty QName(PackageNamespace(""),"isWeak")
+                                       returnvoid
+                                    end ; code
+                                 end ; body
+                              end ; method
+                           }
+                           
+                           public function toString() : String
+                           {
+                              trait method QName(PackageNamespace(""),"toString")
+                                 dispid 0
+                                 method
+                                    name null
+                                    returns QName(PackageNamespace(""),"String")
+                                    
+                                    body
+                                       maxstack 2
+                                       localcount 1
+                                       initscopedepth 4
+                                       maxscopedepth 5
+                                       
+                                       code
+                                          getlocal0
+                                          pushscope
+                                          pushstring "keys:["
+                                          getlocal0
+                                          getproperty QName(PackageNamespace(""),"keys")
+                                          callproperty Multiname("toString",[PackageNamespace(""),PrivateNamespace(null,"2"),Namespace("http://adobe.com/AS3/2006/builtin"),PrivateNamespace(null,"26"),ProtectedNamespace("KeyManager.as$131:KeyHitter"),StaticProtectedNs("KeyManager.as$131:KeyHitter")]), 0
+                                          add
+                                          pushstring "], tracking:"
+                                          add
+                                          getlocal0
+                                          getproperty QName(PackageNamespace(""),"tracking")
+                                          add
+                                          pushstring " id:"
+                                          add
+                                          getlocal0
+                                          getproperty QName(PackageNamespace(""),"id")
+                                          add
+                                          returnvalue
+                                       end ; code
+                                    end ; body
+                                 end ; method
+                              }
+                           }
+                           
+                           method
+                              name null
+                              returns null
+                              
+                              body
+                                 maxstack 2
+                                 localcount 1
+                                 initscopedepth 1
+                                 maxscopedepth 3
+                                 
+                                 code
+                                    getlocal0
+                                    pushscope
+                                    findpropstrict Multiname("KeyManager",[PackageNamespace("dragonforce.utils")])
+                                    getlex QName(PackageNamespace(""),"Object")
+                                    pushscope
+                                    getlex QName(PackageNamespace(""),"Object")
+                                    newclass 4
+                                    popscope
+                                    initproperty QName(PackageNamespace("dragonforce.utils"),"KeyManager")
+                                    findpropstrict Multiname("KeyHitter",[PrivateNamespace(null,"2")])
+                                    getlex QName(PackageNamespace(""),"Object")
+                                    pushscope
+                                    getlex QName(PackageNamespace(""),"Object")
+                                    newclass 5
+                                    popscope
+                                    initproperty QName(PrivateNamespace(null,"2"),"KeyHitter")
+                                    returnvoid
+                                 end ; code
+                              end ; body
+                           end ; method
+                           

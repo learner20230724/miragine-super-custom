@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "method": "Manual, source-based AS3-to-ESM port; not behavior-guessed and not a SWF player wrapper",
+  "baselineSwfSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
+  "sourceFiles": [
+    {
+      "path": "recovered/as3/scripts/DragonForce.as",
+      "sha256": "86405dde299dc60b599b76da4ad01b8533ef8f5b2378f045dc103f38470d640e"
+    },
+    {
+      "path": "recovered/as3/scripts/Grid.as",
+      "sha256": "4ea6da7273ebb98c33c6d4b6d7a2794f729c0cef98c693bd2fce4e06be6dc580"
+    },
+    {
+      "path": "recovered/as3/scripts/Flag.as",
+      "sha256": "68c19ef3ba480fb96ee29d269627e2817a561a8dd1fea1850841fa4917a0093c"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/GameEngine.as",
+      "sha256": "9403422672547af5bc473d5d15d00c6a1ea03c62f975383f96c0d1cc7fc39272"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/core/Scene.as",
+      "sha256": "63753a6a4aec680f6820fa14dd67c59d5d9d3172593a96fd6112c260c033acde"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/core/Symbol.as",
+      "sha256": "9004bc85aaa04574522abf2c3d5ee8c6d0713758f179b010f46273f964bd58cb"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/core/SpriteSheet.as",
+      "sha256": "e35dee5b6cc3dbbb1454d8294dc0f3e00677de58b6d60140dc395ef0e8a4a6da"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/isometric2D/Isometric2DEntity.as",
+      "sha256": "08e4253266a58c504d03d010bcc9589c00e748947dc2acb8ede8e2a15dd25a98"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/isometric2D/Isometric2DAttack.as",
+      "sha256": "e45ac0d5f68edb7ca7c68cf701b66aa1d25db9343b3d7a71b72c7d550766aef2"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/math/Vec2.as",
+      "sha256": "08a4ab07f1e25b05c42a96feda157a75bbe8c06b3aa53487c9a5b2c659eb76ba"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/renderEngine/DragonForceRenderEngine.as",
+      "sha256": "61445a2355c7a71c6cd69e93142eeb5e24f8c4876c0bfa00562fee42fb9e966d"
+    },
+    {
+      "path": "recovered/as3/scripts/dragonforce/core/Camera.as",
+      "sha256": "17dc5c654ee061c52bf60bd514351bc378c2706f46069de1ad8a61019e5466b2"
+    }
+  ],
+  "modules": {
+    "as3.mjs": [
+      "AVM2 int conversion",
+      "Vec2 movement operations",
+      "optional deterministic test RNG"
+    ],
+    "scene.mjs": [
+      "core/Symbol timeline state",
+      "core/Scene live display-list iteration",
+      "renderEngine child painter reordering"
+    ],
+    "entity.mjs": [
+      "isometric2D/Isometric2DEntity",
+      "isometric2D/Isometric2DAttack"
+    ],
+    "simulation.mjs": [
+      "DragonForce init/createUnit/AI/controls/step",
+      "Camera clamping",
+      "headless presentation-event separation"
+    ]
+  },
+  "presentationOnly": [
+    "Flag.as Perlin displacement and drop shadow are not simulation behavior; visual parity belongs to presentation adapter",
+    "Bitmap rasterization, projections, actual audio, menus, dialogs, fonts, and storage belong to renderer/platform adapters"
+  ],
+  "knownParityGates": [
+    "No full-match frame-by-frame original Flash oracle trace comparison yet",
+    "Flash Dictionary key enumeration for equal-count AI groups is runtime-specific; Map insertion order is default and dictionaryKeys can be injected",
+    "Flash sortOn equal-py ordering unspecified; JS stable descending sort reversed is used",
+    "Math.random sequences differ across virtual machines; injected seeded tests verify determinism, not original random sequence"
+  ],
+  "configurationCanonical": {
+    "units": "Raw Grid fields are canonical. units.runtime and units.animation are generated documentation, not runtime override sources.",
+    "animation": "units.ss selects real A/B symbol metadata in config.animations; rules.animationSpeeds and rules.animationLoops control all normal-unit actions; crystal/effects read flat symbol animation metadata.",
+    "rules": "Actual recovered numeric rules drive simulation; absence of level/wave/building/skill systems must not be filled with invented rules."
+  }
+}

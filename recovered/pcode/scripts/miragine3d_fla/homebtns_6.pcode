@@ -1,0 +1,407 @@
+package miragine3d_fla
+{
+   import adobe.utils.*;
+   import com.greensock.*;
+   import com.greensock.easing.*;
+   import flash.accessibility.*;
+   import flash.desktop.*;
+   import flash.display.*;
+   import flash.errors.*;
+   import flash.events.*;
+   import flash.external.*;
+   import flash.filters.*;
+   import flash.geom.*;
+   import flash.globalization.*;
+   import flash.media.*;
+   import flash.net.*;
+   import flash.net.drm.*;
+   import flash.printing.*;
+   import flash.profiler.*;
+   import flash.sampler.*;
+   import flash.sensors.*;
+   import flash.system.*;
+   import flash.text.*;
+   import flash.text.engine.*;
+   import flash.text.ime.*;
+   import flash.ui.*;
+   import flash.utils.*;
+   import flash.xml.*;
+   
+   [Embed(source="/_assets/assets.swf", symbol="symbol55")]
+   public dynamic class homebtns_6 extends MovieClip
+   {
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 1
+            localcount 1
+            initscopedepth 9
+            maxscopedepth 10
+            
+            code
+               getlocal0
+               pushscope
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      
+      public var bn_creadit:SimpleButton;
+      
+      public var bn_mp:SimpleButton;
+      
+      public var bn_easy:SimpleButton;
+      
+      public var bn_back:SimpleButton;
+      
+      public var bn_hard:SimpleButton;
+      
+      public var bn_sp:SimpleButton;
+      
+      public var bn_normal:SimpleButton;
+      
+      public var bn_abyss:SimpleButton;
+      
+      public function homebtns_6()
+      {
+         method
+            name null
+            returns null
+            
+            body
+               maxstack 3
+               localcount 1
+               initscopedepth 10
+               maxscopedepth 11
+               
+               code
+                  getlocal0
+                  pushscope
+                  getlocal0
+                  constructsuper 0
+                  findpropstrict QName(PackageNamespace(""),"addFrameScript")
+                  pushbyte 0
+                  getlocal0
+                  getproperty QName(PackageInternalNs("miragine3d_fla"),"frame1")
+                  callpropvoid QName(PackageNamespace(""),"addFrameScript"), 2
+                  returnvoid
+               end ; code
+            end ; body
+         end ; method
+      }
+      
+      public function onClick(param1:*) : *
+      {
+         trait method QName(PackageNamespace(""),"onClick")
+            dispid 0
+            method
+               name null
+               param null
+               returns null
+               
+               body
+                  maxstack 5
+                  localcount 3
+                  initscopedepth 10
+                  maxscopedepth 11
+                  
+                  code
+                     getlocal0
+                     pushscope
+                     jump ofs00fa
+            ofs0006:
+                     label
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushtrue
+                     setproperty Multiname("singlePlay",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     getlex QName(PackageNamespace("com.greensock"),"TweenMax")
+                     getlocal0
+                     pushdouble 0.5
+                     pushstring "x"
+                     pushbyte -43
+                     newobject 1
+                     callpropvoid QName(PackageNamespace(""),"to"), 3
+                     jump ofs01a5
+            ofs0027:
+                     label
+                     getlex QName(PackageNamespace("com.greensock"),"TweenMax")
+                     getlocal0
+                     pushdouble 0.5
+                     pushstring "x"
+                     pushshort 212
+                     newobject 1
+                     callpropvoid QName(PackageNamespace(""),"to"), 3
+                     jump ofs01a5
+            ofs003d:
+                     label
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushfalse
+                     setproperty Multiname("singlePlay",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushstring "game"
+                     callpropvoid Multiname("gotoAndStop",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")]), 1
+                     jump ofs01a5
+            ofs005d:
+                     label
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushbyte 0
+                     setproperty Multiname("difficulty",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushstring "game"
+                     callpropvoid Multiname("gotoAndStop",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")]), 1
+                     jump ofs01a5
+            ofs007e:
+                     label
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushbyte 1
+                     setproperty Multiname("difficulty",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushstring "game"
+                     callpropvoid Multiname("gotoAndStop",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")]), 1
+                     jump ofs01a5
+            ofs009f:
+                     label
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushbyte 2
+                     setproperty Multiname("difficulty",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushstring "game"
+                     callpropvoid Multiname("gotoAndStop",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")]), 1
+                     jump ofs01a5
+            ofs00c0:
+                     label
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushbyte 3
+                     setproperty Multiname("difficulty",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"root")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     pushstring "game"
+                     callpropvoid Multiname("gotoAndStop",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")]), 1
+                     jump ofs01a5
+            ofs00e1:
+                     label
+                     findpropstrict QName(PackageNamespace(""),"Object")
+                     getlex QName(PackageNamespace(""),"parent")
+                     callproperty QName(PackageNamespace(""),"Object"), 1
+                     getproperty Multiname("credit",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     pushtrue
+                     setproperty Multiname("visible",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     jump ofs01a5
+            ofs00f5:
+                     label
+                     jump ofs01a5
+            ofs00fa:
+                     getlocal1
+                     getproperty Multiname("currentTarget",[PrivateNamespace(null,"72"),PackageNamespace(""),PrivateNamespace(null,"73"),PackageNamespace("miragine3d_fla"),PackageInternalNs("miragine3d_fla"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("adobe.utils"),PackageNamespace("flash.accessibility"),PackageNamespace("flash.desktop"),PackageNamespace("flash.display"),PackageNamespace("flash.errors"),PackageNamespace("flash.events"),PackageNamespace("flash.external"),PackageNamespace("flash.filters"),PackageNamespace("flash.geom"),PackageNamespace("flash.globalization"),PackageNamespace("flash.media"),PackageNamespace("flash.net"),PackageNamespace("flash.net.drm"),PackageNamespace("flash.printing"),PackageNamespace("flash.profiler"),PackageNamespace("flash.sampler"),PackageNamespace("flash.sensors"),PackageNamespace("flash.system"),PackageNamespace("flash.text"),PackageNamespace("flash.text.ime"),PackageNamespace("flash.text.engine"),PackageNamespace("flash.ui"),PackageNamespace("flash.utils"),PackageNamespace("flash.xml"),ProtectedNamespace("miragine3d_fla:homebtns_6"),StaticProtectedNs("miragine3d_fla:homebtns_6"),StaticProtectedNs("flash.display:MovieClip"),StaticProtectedNs("flash.display:Sprite"),StaticProtectedNs("flash.display:DisplayObjectContainer"),StaticProtectedNs("flash.display:InteractiveObject"),StaticProtectedNs("flash.display:DisplayObject"),StaticProtectedNs("flash.events:EventDispatcher"),PackageNamespace("com.greensock"),PackageNamespace("com.greensock.easing")])
+                     setlocal2
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"bn_sp")
+                     getlocal2
+                     ifstrictne ofs010e
+                     pushbyte 0
+                     jump ofs0183
+            ofs010e:
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"bn_back")
+                     getlocal2
+                     ifstrictne ofs011d
+                     pushbyte 1
+                     jump ofs0183
+            ofs011d:
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"bn_mp")
+                     getlocal2
+                     ifstrictne ofs012c
+                     pushbyte 2
+                     jump ofs0183
+            ofs012c:
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"bn_easy")
+                     getlocal2
+                     ifstrictne ofs013b
+                     pushbyte 3
+                     jump ofs0183
+            ofs013b:
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"bn_normal")
+                     getlocal2
+                     ifstrictne ofs014a
+                     pushbyte 4
+                     jump ofs0183
+            ofs014a:
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"bn_hard")
+                     getlocal2
+                     ifstrictne ofs0159
+                     pushbyte 5
+                     jump ofs0183
+            ofs0159:
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"bn_abyss")
+                     getlocal2
+                     ifstrictne ofs0168
+                     pushbyte 6
+                     jump ofs0183
+            ofs0168:
+                     getlocal0
+                     getproperty QName(PackageNamespace(""),"bn_creadit")
+                     getlocal2
+                     ifstrictne ofs0177
+                     pushbyte 7
+                     jump ofs0183
+            ofs0177:
+                     jump ofs0181
+                     pushbyte 8
+                     jump ofs0181
+            ofs0181:
+                     pushbyte 8
+            ofs0183:
+                     kill 2
+                     lookupswitch ofs00f5, [ofs0006, ofs0027, ofs003d, ofs005d, ofs007e, ofs009f, ofs00c0, ofs00e1, ofs00f5]
+            ofs01a5:
+                     returnvoid
+                  end ; code
+               end ; body
+            end ; method
+         }
+         
+         internal function frame1() : *
+         {
+            trait method QName(PackageInternalNs("miragine3d_fla"),"frame1")
+               dispid 0
+               method
+                  name null
+                  returns null
+                  
+                  body
+                     maxstack 3
+                     localcount 1
+                     initscopedepth 10
+                     maxscopedepth 11
+                     
+                     code
+                        getlocal0
+                        pushscope
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"bn_sp")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"bn_mp")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"bn_easy")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"bn_normal")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"bn_hard")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"bn_abyss")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"bn_back")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"bn_creadit")
+                        pushstring "click"
+                        getlocal0
+                        getproperty QName(PackageNamespace(""),"onClick")
+                        callpropvoid QName(PackageNamespace(""),"addEventListener"), 2
+                        returnvoid
+                     end ; code
+                  end ; body
+               end ; method
+            }
+         }
+      }
+      
+      method
+         name null
+         returns null
+         
+         body
+            maxstack 2
+            localcount 1
+            initscopedepth 1
+            maxscopedepth 9
+            
+            code
+               getlocal0
+               pushscope
+               getscopeobject 0
+               getlex QName(PackageNamespace(""),"Object")
+               pushscope
+               getlex QName(PackageNamespace("flash.events"),"EventDispatcher")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"DisplayObject")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"InteractiveObject")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"DisplayObjectContainer")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"Sprite")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"MovieClip")
+               pushscope
+               getlex QName(PackageNamespace("flash.display"),"MovieClip")
+               newclass 58
+               popscope
+               popscope
+               popscope
+               popscope
+               popscope
+               popscope
+               popscope
+               initproperty QName(PackageNamespace("miragine3d_fla"),"homebtns_6")
+               returnvoid
+            end ; code
+         end ; body
+      end ; method
+      

@@ -1,0 +1,24 @@
+{
+  "name": "miragine-super-rebuild",
+  "version": "0.1.0-preview.1",
+  "private": true,
+  "type": "module",
+  "main": "desktop/main.cjs",
+  "description": "Source-based Super Miragine War reconstruction with editable configuration",
+  "scripts": {
+    "dev": "node tools/dev-server.mjs",
+    "test": "node --test",
+    "test:config": "node --test tests/config.test.mjs",
+    "test:viewport": "node --test tests/viewport.test.mjs",
+    "check:public": "node tools/check-public.mjs",
+    "check:data": "python -B tools/extract_game_config.py --check",
+    "start": "node tools/start-desktop.mjs",
+    "setup:electron": "node tools/setup-electron.mjs",
+    "build:windows": "node tools/build-windows.mjs"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "electron": "44.4.3",
+    "playwright": "1.63.0"
+  }
+}
