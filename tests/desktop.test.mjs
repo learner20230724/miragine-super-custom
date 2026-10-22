@@ -252,7 +252,7 @@ test('portable extras include licenses, replacement source/instructions and matc
   for (const file of required) put(project, file);
   const info = { version: '0.1.0-preview.1', sourceCommit: 'a'.repeat(40), platform: 'win32', arch: 'x64', electronVersion: '44.4.3' };
   writePortableExtras(project, output, info);
-  for (const file of ['LICENSE', 'NOTICE.txt', 'README.md', 'README.en.md', 'docs/licenses/LGPL.txt', 'docs/licenses/GPL.txt',
+  for (const file of ['LICENSE', 'LICENSE.project.txt', 'NOTICE.txt', 'README.md', 'README.en.md', 'docs/licenses/LGPL.txt', 'docs/licenses/GPL.txt',
     'config/custom.json', 'ui-helper/original-graphics.js', 'ui-helper/source/canvas.js', 'ui-helper/source/build_ui.py', 'Start-Game.cmd']) {
     assert.ok(fs.statSync(path.join(output, file)).isFile(), file);
   }

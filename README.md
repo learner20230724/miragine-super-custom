@@ -12,9 +12,11 @@
 
 包外的 `config/custom.json` 可直接编辑，重启生效；升级前请备份此文件。`ui-helper/` 提供可替换的绘图源码及说明。`build-info.json` 标明对应源码提交。预览版的验证结果和尚存差异见 [验证记录](docs/verification.json) 与 [已知问题](docs/known-issues.md)。
 
+建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。
+
 ## 本地运行
 
-需要 Git、**Node.js 22.12 或更新版本**及 npm；重新生成数据与素材还需要 Python 3。首次安装依赖和 Electron 需要联网。
+需要 Git、**Node.js 22.12 或更新版本**及 npm；重新生成数据与素材还需要 Python 3.10 或更新版本。首次安装依赖和 Electron 需要联网。
 
 ```sh
 git clone https://github.com/learner20230724/miragine-super-rebuild.git

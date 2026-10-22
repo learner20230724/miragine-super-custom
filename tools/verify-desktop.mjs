@@ -5,7 +5,9 @@
  *
  * The caller prepares any custom fixture. This tool never edits configuration,
  * drawing helpers, localStorage, simulation state, clocks, or victory flags.
- * All game actions use actual mapped mouse hotspots or 55 ms key holds.
+ * Game actions use actual mapped mouse hotspots or 55 ms CDP key holds.
+ * F11 uses Electron webContents.sendInputEvent so the native before-input-event
+ * shortcut runs; CDP dispatch does not exercise that Electron event path.
  * Native window maximize/fullscreen and read-only package inspection are tested
  * separately from the game's read-only __MIRAGINE__ inspection hook.
  */
@@ -13,6 +15,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
 import { _electron } from 'playwright';
@@ -59,6 +62,36 @@ export function redact(value, privateValues = []) {
 
 function expect(condition, message) { if (!condition) throw new Error(message); }
 
+/** A modal native ErrorBox can block the main inspector and app.close(). */
+export function bounded(operation, description, timeout = 10000) {
+  let timer;
+  return Promise.race([
+    Promise.resolve(operation),
+    new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`Timed out: ${description}`)), timeout); }),
+  ]).finally(() => clearTimeout(timer));
+}
+
+/** Kill only the launcher handle/tree created by this invocation, never a name. */
+async function terminateOwnedApplication(launcher, applicationPid) {
+  if (launcher?.exitCode === null && Number.isInteger(launcher.pid) && launcher.pid > 0) {
+    if (process.platform === 'win32') {
+      await new Promise((resolve, reject) => {
+        execFile('taskkill.exe', ['/PID', String(launcher.pid), '/T', '/F'],
+          { windowsHide: true, timeout: 5000 }, error => error ? reject(error) : resolve());
+      });
+      return 'owned-launcher-tree';
+    }
+    launcher.kill('SIGKILL');
+    return 'owned-launcher-handle';
+  }
+  // The PID is read from the launched app itself only after execPath matches.
+  if (Number.isInteger(applicationPid) && applicationPid > 0 && applicationPid !== process.pid) {
+    process.kill(applicationPid, 'SIGKILL');
+    return 'verified-owned-application-pid';
+  }
+  throw new Error('No live owned launcher or verified application PID is available for cleanup');
+}
+
 async function until(probe, description, timeout = 10000) {
   const deadline = Date.now() + timeout;
   do {
@@ -95,7 +128,8 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
   const report = {
     schemaVersion: 1, profile, status: 'running',
     startedAt: new Date().toISOString(), checks: [], errors: [],
-    inputPolicy: 'Mapped pointer hotspots, 55 ms key holds, real-time simulation; no state injection',
+    inputPolicy: 'Mapped pointer hotspots; 55 ms CDP game keys; native F11 via Electron webContents.sendInputEvent; real-time simulation; no state injection',
+    keyboardInputs: [],
     network: { scope: 'Renderer BrowserContext requests, including a full observed reload',
       auditCompleted: false, requests: 0, paths: [], forbiddenRuntimeRequests: [], externalRequests: [], failedRequests: [] },
     cleanup: { ownedApplicationClosed: false },
@@ -103,23 +137,51 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
   let app;
   let page;
   let ownedProcess;
+  let ownedApplicationPid;
   let origin = null;
   let customHash;
   let helperHash;
   const requestUrls = new Set();
   const httpFailures = [];
-  const check = (condition, name, details) => {
-    expect(condition, `Desktop verification failed: ${name}`);
-    report.checks.push({ name, passed: true, ...(details === undefined ? {} : { details }) });
+  const writeProgress = stage => {
+    if (stage) report.progress = { stage, at: new Date().toISOString() };
+    fs.writeFileSync(reportFile, `${JSON.stringify(redact(report, privateValues), null, 2)}\n`);
   };
-  const state = () => page.evaluate(() => window.__MIRAGINE__.getState());
-  const nativeState = () => app.evaluate(({ BrowserWindow }) => {
+  const check = (condition, name, details) => {
+    report.checks.push({ name, passed: Boolean(condition), ...(details === undefined ? {} : { details }) });
+    writeProgress(name);
+    expect(condition, `Desktop verification failed: ${name}`);
+  };
+  const state = () => bounded(page.evaluate(() => window.__MIRAGINE__.getState()), 'read-only game state');
+  const nativeState = () => bounded(app.evaluate(({ BrowserWindow }) => {
     const win = BrowserWindow.getAllWindows()[0];
     return { maximized: win.isMaximized(), fullscreen: win.isFullScreen(), content: win.getContentBounds() };
-  });
+  }), 'native window state');
   async function press(code) {
+    if (code === 'F11') {
+      // Input.dispatchKeyEvent used by page.keyboard does not reach Electron's
+      // before-input-event shortcut. Send a real native-window input event;
+      // never call setFullScreen from this verification tool.
+      await bounded(app.evaluate(({ BrowserWindow }) => {
+        const win = BrowserWindow.getAllWindows()[0];
+        win.focus();
+        win.webContents.focus();
+        win.webContents.sendInputEvent({ type: 'keyDown', keyCode: 'F11' });
+      }), 'native F11 keyDown');
+      try { await delay(55); }
+      finally {
+        await bounded(app.evaluate(({ BrowserWindow }) => {
+          BrowserWindow.getAllWindows()[0].webContents.sendInputEvent({ type: 'keyUp', keyCode: 'F11' });
+        }), 'native F11 keyUp');
+      }
+      report.keyboardInputs.push({ code, backend: 'Electron webContents.sendInputEvent', holdMs: 55 });
+      writeProgress('native F11 sent through Electron before-input-event path');
+      await delay(150);
+      return;
+    }
     await page.keyboard.down(code);
     try { await page.waitForTimeout(55); } finally { await page.keyboard.up(code); }
+    report.keyboardInputs.push({ code, backend: 'Playwright CDP keyboard input', holdMs: 55 });
     await page.waitForTimeout(110);
   }
   async function hit(action, matches = {}) {
@@ -128,11 +190,11 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
     let previous = null;
     let stableSince = 0;
     const target = await until(async () => {
-      const candidate = await page.evaluate(({ action, matches }) => ({
+      const candidate = await bounded(page.evaluate(({ action, matches }) => ({
         hotspot: window.__MIRAGINE__.getHotspots().find(value => value.action === action
           && Object.entries(matches).every(([key, expected]) => value[key] === expected)),
         viewport: window.__MIRAGINE__.getState().viewport,
-      }), { action, matches });
+      }), { action, matches }), 'read-only current hotspot');
       if (!candidate.hotspot) return false;
       const signature = JSON.stringify(candidate);
       if (signature !== previous) { previous = signature; stableSince = Date.now(); return false; }
@@ -150,6 +212,7 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
     });
   };
   try {
+    writeProgress('checking portable release files');
     for (const file of [executable, archive, customFile, helperFile, path.join(directory, 'build-info.json')]) {
       expect(fs.statSync(file).isFile(), 'The portable directory is missing a required release file');
     }
@@ -164,14 +227,20 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
     }
     const env = { ...process.env };
     delete env.ELECTRON_RUN_AS_NODE;
+    writeProgress('launching the supplied portable executable');
     app = await _electron.launch({ executablePath: executable, args: [], cwd: directory,
       env, timeout: 60000, artifactsDir: path.join(root, '.local', `desktop-automation-${profile}`) });
     app.on('console', message => {
       if (message.type() === 'error') report.errors.push({ type: 'main-console', message: message.text() });
     });
     ownedProcess = app.process();
+    report.launcher = { executable: path.basename(ownedProcess.spawnfile) };
+    writeProgress('reading actual Electron executable identity');
+    const actualProcess = await bounded(app.evaluate(() => ({ executable: process.execPath, pid: process.pid })),
+      'actual Electron executable identity');
     const normalize = file => fs.realpathSync(file).toLowerCase();
-    check(normalize(ownedProcess.spawnfile) === normalize(executable), 'the supplied portable EXE was actually launched');
+    check(normalize(actualProcess.executable) === normalize(executable), 'the supplied portable EXE was actually launched');
+    ownedApplicationPid = actualProcess.pid;
     const context = app.context();
     const observedPages = new WeakSet();
     const attachPage = candidate => {
@@ -187,12 +256,13 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
     context.on('response', response => {
       if (response.status() >= 400) httpFailures.push({ url: response.url(), status: response.status() });
     });
+    writeProgress('waiting for the packaged application window');
     page = await app.firstWindow({ timeout: 60000 });
     attachPage(page);
     await page.waitForURL(/^http:\/\/127\.0\.0\.1:\d+\//, { timeout: 60000 });
     origin = new URL(page.url()).origin;
     check(/^http:\/\/127\.0\.0\.1:\d+$/.test(origin), 'packaged application uses its private loopback server');
-    const identity = await app.evaluate(({ app }) => {
+    const identity = await bounded(app.evaluate(({ app }) => {
       // Electron's default Node inspector context need not expose CommonJS
       // require to callFunctionOn. The bundled modern Node provides this API.
       const fs = process.getBuiltinModule('node:fs');
@@ -201,7 +271,7 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
       const metadata = JSON.parse(fs.readFileSync(path.join(archive, 'build-info.json'), 'utf8'));
       return { packaged: app.isPackaged, archiveName: path.basename(archive),
         asar: /[/\\]app\.asar$/.test(archive), version: app.getVersion(), metadata };
-    });
+    }), 'packaged app.asar identity');
     check(identity.packaged && identity.asar && identity.archiveName === 'app.asar', 'application code executes from packaged app.asar');
     check(identity.version === buildInfo.version && identity.metadata.version === buildInfo.version
       && identity.metadata.sourceCommit === buildInfo.sourceCommit,
@@ -210,6 +280,7 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
       packaged: identity.packaged, version: identity.version, sourceCommit: buildInfo.sourceCommit,
       executableSha256: hash(executable), archiveSha256: hash(archive) };
     // Observe the complete ordinary page load, not only requests after attachment.
+    writeProgress('observing a complete packaged renderer reload');
     await page.reload({ waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForFunction(() => window.__MIRAGINE__?.getState().ready,
       null, { timeout: 60000 });
@@ -222,7 +293,7 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
     check(current.config.firstUnitCost === expected.cost && current.config.firstUnitHp === expected.hp
       && current.config.startingIncome === expected.income, 'effective packaged configuration matches requested profile', expected);
 
-    await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].maximize());
+    await bounded(app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].maximize()), 'native maximize request');
     await until(async () => (await nativeState()).maximized, 'native maximize');
     await until(async () => correctFit((await state()).viewport), 'maximized aspect-preserving viewport');
     current = await state();
@@ -263,6 +334,7 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
     check(!(await nativeState()).fullscreen, 'F11 restores the window without replacing the application');
 
     const startFrame = (await state()).frame;
+    writeProgress('waiting for 180 natural simulation frames and recruitment');
     await page.waitForFunction(({ frame, income }) => {
       const value = window.__MIRAGINE__.getState();
       return value.frame >= frame + 180 && value.income.left > income
@@ -302,18 +374,29 @@ export async function verifyDesktop({ dir, profile = 'default' }) {
   } catch (error) {
     report.status = 'failed';
     report.failure = { name: error.name, message: error.message };
+    writeProgress('verification failed; collecting bounded diagnostics');
     if (page && !page.isClosed()) {
-      try { await page.screenshot({ path: path.join(root, screenshot), scale: 'css' }); report.screenshot = screenshot; }
+      try {
+        await bounded(page.screenshot({ path: path.join(root, screenshot), scale: 'css', timeout: 5000 }),
+          'diagnostic screenshot', 6000);
+        report.screenshot = screenshot;
+      }
       catch { /* A launch or page crash may prevent a diagnostic screenshot. */ }
     }
   } finally {
     if (app) {
-      try { await app.close(); report.cleanup.ownedApplicationClosed = true; }
+      writeProgress('closing only the owned application');
+      const closing = app.close();
+      try { await bounded(closing, 'owned application graceful close', 8000); report.cleanup.ownedApplicationClosed = true; }
       catch (error) {
         report.cleanup.closeError = error.message;
-        // This handle belongs exclusively to the application launched above.
-        if (ownedProcess && ownedProcess.exitCode === null) {
-          report.cleanup.ownedProcessTerminated = ownedProcess.kill();
+        writeProgress('graceful close timed out; terminating only the owned launcher/application');
+        try {
+          report.cleanup.termination = await terminateOwnedApplication(ownedProcess, ownedApplicationPid);
+          try { await bounded(closing, 'owned application disconnect after termination', 1500); }
+          catch { /* The report already records forced cleanup and failure. */ }
+        } catch (terminationError) {
+          report.cleanup.terminationError = terminationError.message;
         }
         report.status = 'failed';
       }

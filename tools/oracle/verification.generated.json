@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "reportedOnClientDate": "2026-10-23",
+  "testedSourceCommit": "8f3ff81bcf364184bee1f4b4f026b8ff0a5ec0cc",
+  "referenceRuntime": {
+    "runtime": "Ruffle",
+    "version": "0.7.1",
+    "releasePublishedAt": "2026-10-07T18:55:42Z",
+    "officialRelease": "https://github.com/ruffle-rs/ruffle/releases/tag/v0.7.1",
+    "downloadUrl": "https://github.com/ruffle-rs/ruffle/releases/download/v0.7.1/ruffle-0.7.1-web-selfhosted.zip",
+    "bytes": 10527427,
+    "sha256": "ef12edbee135d581a9cd523837d746da30a07a64dbf1cf472d2e472c656f4b5e",
+    "purpose": "Local reference oracle only; never production game execution",
+    "limits": [
+      "Ruffle is an emulator, not Adobe Flash Player; successful emulation is not Adobe parity proof."
+    ]
+  },
+  "testConditions": {
+    "mode": "single-player",
+    "difficulty": 1,
+    "difficultyName": "Normal",
+    "randomInput": "constant 0.5 at all 23 DragonForce Math.random call sites",
+    "playerSelection": "Unchanged default recruit ID 0; dismiss tutorial, then no further gameplay controls",
+    "emulatorExecutionFrameRate": 240,
+    "originalNominalFrameRate": 30,
+    "statsModified": false,
+    "winnerForced": false,
+    "fixtureExplicitlyInstrumented": true
+  },
+  "result": {
+    "processedFrames": 6842,
+    "equalFrames": 6842,
+    "firstMismatch": null,
+    "framesContainingAttack": 5342,
+    "maxObservedChildren": 250,
+    "maxCoreChildren": 250,
+    "terminal": {
+      "frame": 6842,
+      "winner": "left",
+      "redHP": 3500,
+      "blueHP": 0
+    },
+    "matching": true,
+    "tolerance": 1e-07
+  },
+  "provenance": {
+    "fixture": {
+      "originalSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
+      "fixtureSha256": "744fffe83a89eec5da4eedb496b79b1dbc88adf50b25247ff10f978f77d1cc45",
+      "fixtureBytes": 4652198,
+      "tool": "JPEXS FFDec 26.4.0",
+      "changes": [
+        "DragonForce Math.random call sites replaced with constant 0.5",
+        "Post-step observer emits JSON state; max 20000 frames"
+      ],
+      "maxTraceFrames": 20000,
+      "randomCallSites": 23,
+      "modifiedClass": "DragonForce",
+      "originalPreserved": true,
+      "limits": [
+        "Instrumented test copy, not unmodified original execution",
+        "Ruffle execution is not Adobe Flash parity proof"
+      ],
+      "emulatorFrameRate": 240
+    },
+    "config": {
+      "path": "config/defaults.generated.json",
+      "sha256": "ce2609faee8a8e7292751ddd834a82cc9e47df2340e3d4b2652bc5e7c7d6273f"
+    },
+    "core": {
+      "files": {
+        "src/core/as3.mjs": "ca1366b546b3123a7f1f1c7aa25135183af8caa93c31e83c59266e3eb2ada37c",
+        "src/core/avm2-sort.mjs": "9a727bbe050c0ce3104ee0be2b13f3f618933c2766188b59a807de03853d1d2b",
+        "src/core/entity.mjs": "ed1860bb2b9b6b2df1803a3fcfe60c5b2f61034adb35afccec68bfbbae69e306",
+        "src/core/index.mjs": "79b1db8d80c8f4bffa05380ee7a32e69fc0698e73c9578d6e1b0ae343d056ccb",
+        "src/core/scene.mjs": "011eb801c10265bacc00a0b738b5cbd5c865ce86e49e7468c6755f928546bdb6",
+        "src/core/simulation.mjs": "db00cd1555544ca0a370e8adb8b8125c030911c045fb5877cdf475ea8b8bd410"
+      },
+      "combinedSha256": "ce4581535df3cd8874a15e167f08dc088ed45073d6d2eaba06ef2ab34cb0dd20"
+    }
+  },
+  "sourceTrace": {
+    "sha256": "8614744bc59827642052ea8a1828d3ae1f49380d2d049c0ef8893d885e267f5c",
+    "bytes": 110923193,
+    "encoding": "UTF-8 JSON.stringify(record) + LF, in accepted order",
+    "transportEqualsNormalizedJsonl": true,
+    "published": false
+  },
+  "referenceScreenshots": {
+    "unmodifiedMenuSha256": "afa7bb8b43f84c0a10e424bc1199a94a7f841b59d9e4131411db206ac4da2b74",
+    "instrumentedNaturalResultSha256": "05bccddb59b059a104e9f78538fe276060f686d7c990b55cf17f6cc59e67d29d",
+    "published": false
+  },
+  "initialRegression": {
+    "beforeFixSourceCommit": "f75cfcb4207d8c41afa0af9f0b3b5e5fc354749f",
+    "firstMismatchFrame": 1038,
+    "issue": "Stable JavaScript sorting did not reproduce AVM2 equal-depth QuickSort ordering.",
+    "originalPcodeFlags": "Array.NUMERIC | Array.DESCENDING, then reverse addChild traversal",
+    "afterProductionFixMatchedFrames": 2400,
+    "afterProductionFixAttackFrames": 640,
+    "afterProductionFixMaxSceneObjects": 79,
+    "fixtureSha256": "acf9e2b7abe22c72099bebc51b921f64fa36430e01f924f95b828366e4983d31"
+  },
+  "scope": [
+    "Frame-wise observed public simulation state, economy, ordered Scene children, health, animation progression, attack lifetime and camera.",
+    "AS3 nonfinite/undefined values are compared through the same JSON serialization representation.",
+    "Natural victory was observed from the source fixture; no health, money, unit statistics or reinforcement rules were altered to force it."
+  ],
+  "remainingLimits": [
+    "One controlled-random Normal-difficulty match does not cover all random sequences, player inputs, difficulties or modes.",
+    "Ruffle is an emulator, not a proof of end-to-end Adobe Flash Player identity.",
+    "The trace fixture recompiled DragonForce and explicitly changed its random inputs; it is not an unmodified original execution.",
+    "Accelerated emulator pacing does not validate real-time frame pacing, audio or UI timing.",
+    "This state trace does not establish bitmap rasterization, device-font rendering, Flag PerlinNoise/DisplacementMap pixel identity or UI tween identity.",
+    "Raw traces, screenshots, browser profiles and instrumented SWFs remain local and ignored."
+  ]
+}

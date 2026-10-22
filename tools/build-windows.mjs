@@ -109,6 +109,8 @@ export function writePortableExtras(projectRoot, output, buildInfo) {
     catch (error) { if (error.code !== 'EEXIST' || !fs.statSync(target).isFile()) throw error; }
   };
   for (const name of ['LICENSE', 'NOTICE.txt', 'README.md', 'README.en.md']) copy(name);
+  // Electron's distribution may already own the root LICENSE filename.
+  copy('LICENSE', 'LICENSE.project.txt');
   const licenseFiles = fs.readdirSync(path.join(project, 'docs', 'licenses'), { withFileTypes: true });
   if (!licenseFiles.length) throw new Error('Release license texts are missing');
   for (const file of licenseFiles) {

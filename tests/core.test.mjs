@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { MiragineSimulation, IsometricEntity, IsometricAttack, CoreScene, CoreSymbol, as3int, seededRandom, Vec2 } from '../src/core/index.mjs';
+import { MiragineSimulation, IsometricEntity, IsometricAttack, CoreScene, CoreSymbol, as3int, seededRandom, Vec2,
+  avm2QuickSort, compareDepthDescending } from '../src/core/index.mjs';
 
 const defaults = JSON.parse(readFileSync(new URL('../config/defaults.generated.json', import.meta.url), 'utf8'));
 const make = (options = {}) => new MiragineSimulation({ config: structuredClone(defaults), rng: () => 0.5, autoStart: false, ...options });
@@ -159,10 +160,41 @@ test('Scene live-list mutation skips shifted child and processes an appended chi
   assert.deepEqual(calls, ['a', 'b']);
 });
 
-test('original render order sorts py ascending by reversing a descending sort, including equal-py reversal', () => {
+test('original render order reverses AVM2 descending sort; three-element fast path keeps equal-key ties', () => {
   const scene = new CoreScene(); const a = { py: 2 }, b = { py: 1 }, c = { py: 2 };
   scene.addChild(a); scene.addChild(b); scene.addChild(c); scene.applyOriginalRenderOrder();
   assert.deepEqual(scene.children, [b, c, a]);
+});
+
+test('AVM2 four-equal-key pivot swap differs from JS stable sort then reverse', () => {
+  const input = ['a', 'b', 'c', 'd'].map(name => ({ name, py: 400 }));
+  const sorted = avm2QuickSort([...input], compareDepthDescending);
+  assert.deepEqual(sorted.map(value => value.name), ['c', 'b', 'a', 'd']);
+  assert.deepEqual(sorted.reverse().map(value => value.name), ['d', 'a', 'b', 'c']);
+  assert.notDeepEqual(sorted, [...input].reverse());
+});
+
+test('equal-py first-recruitment order matches the instrumented recovered-AS3 Ruffle frame-1038 observation', () => {
+  // Source observer evidence: frame 1037 appends left/right units after the two
+  // crystals; the next render sorts all four py=400 values, then reverses them.
+  const scene = new CoreScene();
+  for (const [kind, side] of [['base', 'right'], ['base', 'left'], ['unit', 'left'], ['unit', 'right']]) {
+    scene.addChild({ kind, side, py: 400 });
+  }
+  scene.applyOriginalRenderOrder();
+  assert.deepEqual(scene.children.map(child => `${child.kind}:${child.side}`),
+    ['unit:right', 'base:right', 'base:left', 'unit:left']);
+});
+
+test('AVM2 quicksort handles empty/one/two/three-element fast paths and mixed repeated depths', () => {
+  for (const depths of [[], [2], [2, 1], [1, 2, 0], [2, 2, 2],
+    [5, 3, 5, -1, 3, 7, 0, 5], [Infinity, 1, NaN, -Infinity, NaN]]) {
+    const values = depths.map((py, index) => ({ py, index }));
+    const result = avm2QuickSort(values, compareDepthDescending);
+    assert.equal(result, values);
+    for (let i = 1; i < result.length; i++) assert.ok(compareDepthDescending(result[i - 1], result[i]) <= 0);
+    assert.deepEqual(result.map(value => value.index).sort((a, b) => a - b), depths.map((_, index) => index));
+  }
 });
 
 test('separation moves only later same-team entity, exact overlap stays overlapped', () => {

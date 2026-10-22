@@ -96,7 +96,14 @@ async function startDesktop({ electron = require('electron'), appRoot = path.res
   } catch (error) {
     if (server) { server.close(); server.closeAllConnections?.(); }
     console.error(error);
-    dialog?.showErrorBox('无法启动游戏 / Unable to start', String(error.message || error));
+    // An asynchronous dialog keeps the event loop available for clean shutdown
+    // and diagnostics; showErrorBox blocks the main process on Windows.
+    if (dialog?.showMessageBox) await dialog.showMessageBox({
+      type: 'error', title: '无法启动游戏 / Unable to start',
+      message: '无法启动游戏 / Unable to start the game',
+      detail: `${String(error.message || error)}\n\n请尝试解压到较短的目录后重试。\nTry extracting the game to a shorter directory path.`,
+      buttons: ['确定 / OK'],
+    });
     app.quit();
     throw error;
   }

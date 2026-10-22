@@ -12,9 +12,11 @@ Download the Windows x64 preview from **[Releases](https://github.com/learner202
 
 Edit the external `config/custom.json` and restart to apply changes; back it up before upgrading. `ui-helper/` contains replaceable drawing source and instructions. `build-info.json` identifies the source commit. See the [verification record](docs/verification.json) and [known issues](docs/known-issues.md) for preview limitations.
 
+Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents.
+
 ## Run locally
 
-Install Git, **Node.js 22.12 or newer**, and npm. Python 3 is also needed to regenerate data and assets. Initial dependency and Electron downloads require internet access.
+Install Git, **Node.js 22.12 or newer**, and npm. Python 3.10+ is also needed to regenerate data and assets. Initial dependency and Electron downloads require internet access.
 
 ```sh
 git clone https://github.com/learner20230724/miragine-super-rebuild.git

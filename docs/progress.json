@@ -20,18 +20,19 @@
     "generate hashed original animation/image/audio/font assets",
     "implement native Matrix3D projection and UVT WebGL ground",
     "implement original menu, HUD, help, audio and local controls",
-    "pass 181 automated tests",
+    "pass 193 automated tests",
     "pass 36 real-browser UI checks including resized pointer accuracy",
     "privacy scan: 2932 files, zero findings/warnings",
     "create public remote repository",
     "verify device scale factors 1.25, 1.5 and 2 with real backing store and pointer checks",
-    "verify edited custom values and extension bytes survive actual regeneration, and affect natural recruitment"
+    "verify edited custom values and extension bytes survive actual regeneration, and affect natural recruitment",
+    "commit and push public native source and authorized assets",
+    "complete 6842-frame natural constant-RNG normal-match AS3/Ruffle oracle with production core",
+    "pass remote Linux and Windows source CI after canonical-path test correction"
   ],
   "inProgress": [
-    "original-runtime oracle trace and pixel comparison",
-    "source commit and push",
-    "portable Windows build and isolated validation",
-    "remaining UI visual fidelity gates"
+    "portable Windows archive and isolated launch/config verification",
+    "remaining visual fidelity checks"
   ],
   "notYetClaimed": [
     "full original-runtime frame-by-frame parity",

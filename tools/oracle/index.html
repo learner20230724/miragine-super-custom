@@ -1,0 +1,76 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super SWF — reference oracle only</title>
+<style>
+  html,body{margin:0;background:#111;color:#ddd;font:14px system-ui}
+  #player{width:640px;height:480px;margin:24px auto}
+  ruffle-player{width:640px;height:480px}
+  #status{text-align:center;white-space:pre-wrap}
+</style>
+<div id="player"></div><p id="status">Loading verified original SWF in Ruffle (reference only)…</p>
+<script src="/ruffle/ruffle.js"></script>
+<script>
+  window.originalTrace = [];
+  window.oracleMessages = [];
+  window.oracleState = {ready:false, error:null};
+  (async () => {
+    const player = window.RufflePlayer.newest().createPlayer();
+    window.oraclePlayer = player;
+    document.querySelector('#player').append(player);
+    const route = location.pathname.split('/');
+    const routeStreaming = route[1] === 'stream';
+    const instrumented = routeStreaming || new URLSearchParams(location.search).get('instrument') === '1';
+    const streaming = routeStreaming || new URLSearchParams(location.search).get('stream') === '1';
+    const accelerated = Number(routeStreaming ? route[3] : new URLSearchParams(location.search).get('rate')) || 30;
+    const runName = routeStreaming ? route[2] : (new URLSearchParams(location.search).get('run') || ('run_'+Date.now()));
+    const pending = [];
+    let sendChain = Promise.resolve();
+    window.oracleStreamState = {observed:0,sent:0,error:null,last:null};
+    const flush = () => {
+      if (!pending.length) return;
+      const batch = pending.splice(0);
+      sendChain = sendChain.then(async () => {
+        const response = await fetch('/frame-batch?session='+encodeURIComponent(runName)+'&rate='+accelerated, {method:'POST',
+          headers:{'Content-Type':'application/json'},body:JSON.stringify(batch)});
+        if (!response.ok) throw Error('Oracle stream HTTP '+response.status);
+        window.oracleStreamState.sent += batch.length;
+      }).catch(error => {window.oracleStreamState.error=String(error);});
+    };
+    const api = player.ruffle();
+    await api.load({
+      url: instrumented ? '/super-oracle.swf' : '/super-original.swf',
+      autoplay: 'on', unmuteOverlay: 'hidden', letterbox: 'on',
+      allowScriptAccess: true, allowNetworking: 'all',
+      logLevel: streaming ? 'error' : 'info', warnOnUnsupportedContent: false,
+      frameRate: streaming ? accelerated : null,
+      backgroundColor: '#0e0e0e',
+    });
+    api.traceObserver = message => {
+      window.oracleMessages.push(message);
+      if (streaming && window.oracleMessages.length > 20) window.oracleMessages.shift();
+      if (message.startsWith('ORACLE_FRAME ')) {
+        try {
+          const frame = JSON.parse(message.slice(13));
+          window.originalTrace.push(frame);
+          if (streaming) {
+            if(window.originalTrace.length>100)window.originalTrace.shift();
+            window.oracleStreamState.observed++;
+            window.oracleStreamState.last={frame:frame.frame,round:frame.round,terminal:frame.terminal};
+            pending.push(frame);
+            if(pending.length>=20 || frame.terminal)flush();
+          }
+        }
+        catch (error) { window.oracleState.error = String(error); }
+      }
+    };
+    window.oracleState.ready = true;
+    if(streaming)setInterval(flush,250);
+    document.querySelector('#status').textContent = instrumented
+      ? 'Instrumented TEST COPY · original logic + constant RNG 0.5 + state tracing'
+      : 'Unmodified baseline · Ruffle 0.7.1 · not Adobe Flash parity proof';
+  })().catch(error => {
+    window.oracleState.error = String(error);
+    document.querySelector('#status').textContent = String(error);
+  });
+</script>

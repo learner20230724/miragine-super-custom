@@ -75,7 +75,8 @@
       "id": "R11",
       "requirement": "建立公开仓库，上传可开发代码及授权素材，实际提交推送。",
       "acceptance": "公开远端可访问，最新交付提交与本地一致，权限与归属说明独立保存。",
-      "status": "in-progress"
+      "status": "verified-public",
+      "evidence": "https://github.com/learner20230724/miragine-super-rebuild"
     },
     {
       "id": "R12",

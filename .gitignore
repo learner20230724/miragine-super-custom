@@ -2,6 +2,7 @@
 .cache/
 .tmp/
 node_modules/
+userdata/
 dist/
 artifacts/
 output/

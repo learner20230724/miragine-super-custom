@@ -15,7 +15,7 @@
     "automatedTests": {
       "status": "passed-local",
       "command": "npm test",
-      "passed": 181,
+      "passed": 193,
       "failed": 0,
       "scope": "Native source, recovered data, assets, configuration, viewport, UI structure and privacy guard. Not original-runtime parity."
     },
@@ -71,11 +71,11 @@
     "publicPrivacyScan": {
       "status": "passed-local",
       "command": "npm run check:public -- --root .",
-      "scannedFiles": 2932,
+      "scannedFiles": 2953,
       "scannedBytes": 64581573,
       "findings": 0,
       "warnings": 0,
-      "scope": "Repository publication candidates at the recorded integration snapshot, excluding private logs and caches. Not a scan of a future release package."
+      "scope": "Latest source publication candidates before final release build; the release archive is checked separately."
     },
     "browserDpi": {
       "status": "passed-local",
@@ -98,10 +98,41 @@
         "cost": 7,
         "hp": 99
       }
+    },
+    "originalLogicOracle": {
+      "status": "passed-scoped",
+      "report": "tools/oracle/verification.generated.json",
+      "baselineUnmodifiedMenuVerified": true,
+      "instrumentedAS3": true,
+      "runtime": "Ruffle v0.7.1",
+      "difficulty": "normal",
+      "rng": "constant 0.5",
+      "executionFrameRate": 240,
+      "gameTimingParametersUnchanged": true,
+      "naturalWin": true,
+      "comparedFrames": 6842,
+      "matchingFrames": 6842,
+      "framesContainingAttack": 5342,
+      "maxObjects": 250,
+      "tolerance": 1e-07,
+      "scope": "One explicitly instrumented deterministic AS3 test match; not a claim of Adobe runtime or visual/audio parity."
+    },
+    "naturalBrowserMatch": {
+      "status": "passed-local",
+      "phase": "over",
+      "difficulty": 1,
+      "winner": "right",
+      "terminalFrame": 11067,
+      "baseHp": {
+        "left": 0,
+        "right": 3500
+      },
+      "replayButtonVerified": true,
+      "scope": "Initial browser integration using Math.random and real-time native UI; no forced victory."
     }
   },
   "continuousIntegration": {
-    "status": "first-run-failed-fix-awaiting-remote-verification",
+    "status": "passed-remote-after-fix",
     "workflow": ".github/workflows/verify.yml",
     "firstRun": {
       "runId": 39818672509,
@@ -120,8 +151,17 @@
           "python": "3.14",
           "conclusion": "failure",
           "failedStep": "Run automated source tests",
-          "automatedTests": { "total": 181, "passed": 180, "failed": 1, "skipped": 0 },
-          "skippedChecks": ["recovered configuration reproducibility", "retained asset checks", "public privacy scan"]
+          "automatedTests": {
+            "total": 181,
+            "passed": 180,
+            "failed": 1,
+            "skipped": 0
+          },
+          "skippedChecks": [
+            "recovered configuration reproducibility",
+            "retained asset checks",
+            "public privacy scan"
+          ]
         }
       ],
       "diagnosis": "A configuration test compared the helper's canonical output path with an unresolved Windows 8.3 temporary-directory alias. The production canonicalization and safety behavior were correct."
@@ -131,7 +171,11 @@
       "file": "tests/config.test.mjs",
       "change": "Canonicalize the expected root in the assertion and add an explicit filesystem-root-alias regression test.",
       "changesProductionSafetyBehavior": false,
-      "localConfigurationTests": { "passed": 14, "failed": 0, "skipped": 0 }
+      "localConfigurationTests": {
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0
+      }
     },
     "node": "24",
     "matrix": [
@@ -155,10 +199,20 @@
     "downloadsPlaywrightBrowser": false,
     "rerunsFfdecExport": false,
     "runsBrowserSmoke": false,
-    "buildsPortableRelease": false
+    "buildsPortableRelease": false,
+    "verifiedRun": {
+      "id": 39819489002,
+      "sourceCommit": "648302c32553ad731bacbeaacc3f0e9877afe5dc",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39819489002",
+      "os": [
+        "ubuntu-latest",
+        "windows-latest"
+      ],
+      "conclusion": "success"
+    }
   },
   "separateAcceptanceGates": {
-    "originalRuntimeFullMatchParity": "not-verified",
+    "originalRuntimeFullMatchParity": "scoped-AS3-Ruffle-deterministic-normal-match-passed; broader-Adobe-runtime-parity-not-verified",
     "pixelPerfectFlashRasterization": "not-verified",
     "highDpiBeyondDeviceScaleFactorOne": "passed-local",
     "portableWindowsIsolatedInstallation": "not-verified",

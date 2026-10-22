@@ -8,12 +8,16 @@ This is a runnable **preview**, not a claim of exact Flash parity.
 - The 16 units, four difficulty profiles, economy, movement, targeting, attacks,
   deaths and victories are ported from the recovered Super-version AS3, with
   source hashes and a port map. Four unmodified, seeded headless matches finish
-  naturally. These tests are not a substitute for original-runtime comparison.
+  naturally. A constant-RNG instrumented AS3 normal match also matches 6,842
+  frames in Ruffle; this does not prove all Adobe Flash runtime behavior.
 - 原数值与逻辑来自超级版恢复代码；四难度默认模拟均自然结束，未强制胜负。
-  原版完整对局逐帧对照仍未完成。
-- Flash Dictionary enumeration on tied AI counts, equal-depth Array.sortOn ties,
-  and Math.random sequences remain runtime-dependent verification gates.
-  Flash 字典并列枚举、同深度排序及随机流仍需单独核对。
+  固定 RNG 的普通难度插桩 AS3 对照已在 Ruffle 中完成 6,842 帧整局匹配；
+  这不是所有 Adobe Flash 对局一致性的证明。
+- The observed equal-depth ordering difference was fixed using AVM2 QuickSort.
+  Flash Dictionary ties and cross-runtime Math.random sequences remain broader
+  verification gates.
+  已按 AVM2 QuickSort 修复观察到的同深度排序差异；Flash 字典并列枚举
+  和跨运行时随机流仍需更广泛验证。
 
 ## Rendering and UI / 画面与界面
 
