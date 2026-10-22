@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "goalStatus": "active",
-  "stage": "native-preview-integration-and-release-verification",
+  "goalStatus": "complete",
+  "stage": "delivered-native-preview",
   "baseline": {
     "version": "Super Miragine War / 超级米拉奇战记",
     "sha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
@@ -22,7 +22,6 @@
     "implement original menu, HUD, help, audio and local controls",
     "pass 210 automated tests",
     "pass 36 real-browser UI checks including resized pointer accuracy",
-    "privacy scan: 2959 files, zero findings/warnings",
     "create public remote repository",
     "verify device scale factors 1.25, 1.5 and 2 with real backing store and pointer checks",
     "verify edited custom values and extension bytes survive actual regeneration, and affect natural recruitment",
@@ -30,16 +29,31 @@
     "complete 6842-frame natural constant-RNG normal-match AS3/Ruffle oracle with production core",
     "pass remote Linux and Windows source CI after canonical-path test correction",
     "implement portable tutorial preference persistence through a restricted main-frame IPC bridge",
-    "add pinned Electron runtime provenance and decoded-ASAR privacy review"
+    "add pinned Electron runtime provenance and decoded-ASAR privacy review",
+    "release-source privacy scan: 2961 files, zero findings/warnings",
+    "pass final 210-test Linux and Windows CI",
+    "verify actual extracted portable package: default 25 / custom 26 / cross-process preferences 25 checks",
+    "publish pinned-source Windows portable Release and all eight assets",
+    "download published ZIP and verify byte equality with the isolated tested package",
+    "review runtime provenance: raw five upstream constants, zero unresolved, 727 decoded ASAR files verified",
+    "publish final storage, acceptance and known-limitations records"
   ],
-  "inProgress": [
-    "portable Windows archive and isolated launch/config verification",
-    "remaining visual fidelity checks"
-  ],
+  "inProgress": [],
   "notYetClaimed": [
-    "full original-runtime frame-by-frame parity",
+    "universal Adobe Flash runtime identity",
     "pixel-perfect Flash rasterization",
-    "finished 14-requirement acceptance",
-    "independently validated Windows release uploaded"
+    "recovery of original FLA/editor project"
+  ],
+  "release": {
+    "tag": "v0.1.0-preview.1",
+    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1"
+  },
+  "knownNonblockingDifferences": [
+    "Result flag dynamic Perlin displacement layer is not restored; original static flag remains.",
+    "Flash filtering, font and edge-pixel identity is not established.",
+    "Original FLA/editor project was not recovered; this is editable reconstructed source.",
+    "No network multiplayer added.",
+    "Windows portable executable is not code-signed (NotSigned); short extraction paths are recommended."
   ]
 }

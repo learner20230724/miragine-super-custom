@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "reportedOnClientDate": "2026-10-23",
+  "delivery": "native-editable-game-with-documented-visual-limitations",
+  "release": {
+    "schemaVersion": 1,
+    "tag": "v0.1.0-preview.1",
+    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1",
+    "publishedAt": "2026-10-22T18:02:04Z",
+    "isPrerelease": true,
+    "isDraft": false,
+    "anonymousReleaseHttpStatus": 200,
+    "downloadedZipSha256": "14a7e49ac654881e9694812de608e995add505c8aea52b8a34efe01cd5df8ff7",
+    "downloadedZipEqualsTestedZip": true,
+    "allEightApiAssetDigestsMatchLocal": true,
+    "buildInfo": {
+      "version": "0.1.0-preview.1",
+      "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+      "platform": "win32",
+      "arch": "x64",
+      "electronVersion": "44.4.3"
+    },
+    "assets": [
+      {
+        "name": "MiragineSuper-0.1.0-preview.1-win32-x64.zip",
+        "bytes": 170373569,
+        "sha256": "14a7e49ac654881e9694812de608e995add505c8aea52b8a34efe01cd5df8ff7",
+        "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/MiragineSuper-0.1.0-preview.1-win32-x64.zip"
+      },
+      {
+        "name": "MiragineSuper-0.1.0-preview.1-win32-x64.zip.inventory.json",
+        "bytes": 16429,
+        "sha256": "bff8ce5fa9c2e87fbabeb6542d223d6f68599cb429cf293bbc8cd1b9fed22968",
+        "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/MiragineSuper-0.1.0-preview.1-win32-x64.zip.inventory.json"
+      },
+      {
+        "name": "privacy-review.json",
+        "bytes": 25787,
+        "sha256": "12a25e2ea022980c22067ab1e589a1e16f6538353a8bfdfc9e7dd3dc87418da2",
+        "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/privacy-review.json"
+      },
+      {
+        "name": "SHA256SUMS",
+        "bytes": 686,
+        "sha256": "b294d329aa8c5a725939b435a6abcf4a4632f74b2ce0a40eaac4e0ecaed70434",
+        "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/SHA256SUMS"
+      },
+      {
+        "name": "storage.json",
+        "bytes": 1840,
+        "sha256": "d0a673126c5eb4a608eb562d6140cfab2f5500b4bf898928476b445caf4c44f1",
+        "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/storage.json"
+      },
+      {
+        "name": "verification-custom.json",
+        "bytes": 50237,
+        "sha256": "c0a33f835f02f7bc43f09ae7326d545a06d0b58d5bf6123b043dc5574948aad3",
+        "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-custom.json"
+      },
+      {
+        "name": "verification-default.json",
+        "bytes": 50976,
+        "sha256": "12e32bac6ec089ba812b7d220d5d82248d7ffc33569dc788e01d732030a81d5f",
+        "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-default.json"
+      },
+      {
+        "name": "verification-preferences.json",
+        "bytes": 6049,
+        "sha256": "f0ca0af036378e45a4f8c5171d8dbd9ca6af055dfe0a58097f1980560c933103",
+        "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-preferences.json"
+      }
+    ]
+  },
+  "continuousIntegration": {
+    "id": 39827063683,
+    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39827063683",
+    "os": [
+      "ubuntu-latest",
+      "windows-latest"
+    ],
+    "conclusion": "success",
+    "automatedTestsPerOs": 210
+  },
+  "localVerification": {
+    "automatedSourceTests": 210,
+    "browserSmokeChecks": 36,
+    "fractionalDpiContexts": 3,
+    "portableDefaultChecks": 25,
+    "portableCustomChecks": 26,
+    "crossProcessPreferenceChecks": 25,
+    "independentPreferenceLaunches": 2,
+    "customValuesActuallyEffective": {
+      "unit0Cost": 7,
+      "unit0Hp": 99,
+      "startingIncome": 777
+    },
+    "customAndExtensionBytesSurviveRegeneration": true,
+    "fourSinglePlayerDifficultiesFinishNaturally": true,
+    "localTwoPlayerScope": "Real controls and shared result/replay logic tested; no claim of a separate natural full local-dual runtime match.",
+    "originalLogicOracle": {
+      "matchingFrames": 6842,
+      "totalFrames": 6842,
+      "runtime": "Ruffle v0.7.1",
+      "mode": "single-player Normal",
+      "randomInput": "Explicitly instrumented constant 0.5",
+      "coreAndConfigHashesStillMatchOracle": true,
+      "scope": "One natural instrumented AS3 test match, not universal Adobe Flash or pixel/audio parity."
+    }
+  },
+  "privacy": {
+    "releaseSourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+    "sourceFiles": 2961,
+    "sourceFindings": 0,
+    "sourceWarnings": 0,
+    "releaseRawFindings": 5,
+    "reviewedUpstreamConstants": 5,
+    "unresolved": 0,
+    "pinnedVendorFilesMatched": 71,
+    "nonResourcePeSectionsMatched": 14,
+    "decodedAsarFilesVerified": 727,
+    "report": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/privacy-review.json",
+    "limits": "PAK bytes match the pinned official runtime, but are not decoded; PE headers/overlay/full resource identity are not claimed. Not a forensic scan or purge of Git history."
+  },
+  "storage": {
+    "schemaVersion": 1,
+    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+    "units": "bytes; MB means 1000000 bytes",
+    "trackedCheckout": {
+      "files": 2961,
+      "bytes": 64809409
+    },
+    "gitBlobTreeBytes": 64807201,
+    "categories": {
+      "runtimeAssets": {
+        "files": 678,
+        "bytes": 11927432
+      },
+      "generatedRuntime": {
+        "files": 7,
+        "bytes": 2371606
+      },
+      "recoveryEvidence": {
+        "files": 2182,
+        "bytes": 49809788
+      },
+      "codeAndTooling": {
+        "files": 73,
+        "bytes": 584612
+      },
+      "documentationAndMetadata": {
+        "files": 21,
+        "bytes": 115971
+      }
+    },
+    "portable": {
+      "arch": "x64",
+      "archive": "MiragineSuper-0.1.0-preview.1-win32-x64.zip",
+      "archiveRoot": "MiragineSuper/",
+      "compression": "deflate-9",
+      "electronVersion": "44.4.3",
+      "excludedDirectories": [],
+      "exclusionPolicy": "Check encountered entry for symlink/reparse first; skip real userdata/.tmp directories without traversal; reject other private directories",
+      "fileCount": 94,
+      "metadataTimestamp": "1980-01-01T00:00:00",
+      "originalBytes": 401673009,
+      "platform": "win32",
+      "schemaVersion": 1,
+      "sha256": "14a7e49ac654881e9694812de608e995add505c8aea52b8a34efe01cd5df8ff7",
+      "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+      "version": "0.1.0-preview.1",
+      "zipBytes": 170373569
+    },
+    "notes": [
+      "Tracked checkout is a Windows working-tree measurement; text line endings can differ from Git blobs.",
+      "Runtime assets and recovery evidence are already included in trackedCheckout, not additional storage.",
+      "Git objects, dependencies, caches, local test copies and runtime userdata are excluded. Release ZIP adds separate storage; hosting accounting may differ."
+    ]
+  },
+  "knownLimitations": [
+    "Result flag dynamic Perlin displacement layer is not restored; original static flag remains.",
+    "Flash filtering, font and edge-pixel identity is not established.",
+    "Original FLA/editor project was not recovered; this is editable reconstructed source.",
+    "No network multiplayer added.",
+    "Windows portable executable is not code-signed (NotSigned); short extraction paths are recommended."
+  ],
+  "requirements": "../requirements.json"
+}

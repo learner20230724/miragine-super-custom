@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "reportDate": "2026-10-23",
-  "stage": "native-preview",
-  "overallAcceptance": "incomplete",
-  "reportScope": "Source integration, scoped original-AS3 oracle and completed pre-release portable checks. Final artifact version and published-byte verification are in Release receipts; no universal Adobe or pixel parity is claimed.",
+  "stage": "published-preview",
+  "overallAcceptance": "delivered-with-documented-visual-limitations",
+  "reportScope": "Final native game delivery, source/data/config tests, scoped original-AS3 oracle and actual published portable-byte verification. Not a claim of universal Adobe or pixel-perfect parity.",
   "baseline": {
     "name": "Super Miragine War / 超级米拉奇战记",
     "swfSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
@@ -72,10 +72,10 @@
       "status": "passed-local",
       "command": "npm run check:public -- --root .",
       "scannedFiles": 2961,
-      "scannedBytes": 64804034,
+      "scannedBytes": 64809409,
       "findings": 0,
       "warnings": 0,
-      "scope": "Latest source publication candidates before final release build; the release archive is checked separately."
+      "scope": "Release-source commit 19771a59075d046fa80d401fccf3d19f86e29181; delivery-record changes are additionally scanned before push."
     },
     "browserDpi": {
       "status": "passed-local",
@@ -131,13 +131,18 @@
       "scope": "Initial browser integration using Math.random and real-time native UI; no forced victory."
     },
     "portableWindows": {
-      "status": "passed-local",
-      "sourceCommit": "3fd5a06e144953209b1605804dcd76cd02b9f796",
+      "status": "passed-isolated-zip-extraction",
+      "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
       "defaultChecks": 25,
       "customChecks": 26,
       "crossProcessPreferenceChecks": 25,
-      "testedZipSha256": "1764caf293011a7516370958dfdf68c983fc95cb908af57c4c7387445fb5107f",
-      "scope": "Actual ZIP extracted twice without source/development dependencies. Real EXE launches, maximize, fullscreen, input, natural configured recruitment and two separate preference launches. A final documentation-only packaging correction will be revalidated before publication."
+      "testedZipSha256": "14a7e49ac654881e9694812de608e995add505c8aea52b8a34efe01cd5df8ff7",
+      "scope": "Actual ZIP extracted twice without source/development dependencies. Real EXE, maximize, fullscreen, pointer/keyboard, natural configured recruitment, two separate preference launches; same tested ZIP downloaded back after publication.",
+      "reports": [
+        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-default.json",
+        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-custom.json",
+        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-preferences.json"
+      ]
     }
   },
   "continuousIntegration": {
@@ -210,25 +215,35 @@
     "runsBrowserSmoke": false,
     "buildsPortableRelease": false,
     "verifiedRun": {
-      "id": 39825641870,
-      "sourceCommit": "3fd5a06e144953209b1605804dcd76cd02b9f796",
-      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39825641870",
+      "id": 39827063683,
+      "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39827063683",
       "os": [
         "ubuntu-latest",
         "windows-latest"
       ],
       "conclusion": "success",
-      "automatedTestsPerOs": 209
+      "automatedTestsPerOs": 210
     }
   },
   "separateAcceptanceGates": {
     "originalRuntimeFullMatchParity": "scoped-AS3-Ruffle-deterministic-normal-match-passed; broader-Adobe-runtime-parity-not-verified",
     "pixelPerfectFlashRasterization": "not-verified",
     "highDpiBeyondDeviceScaleFactorOne": "passed-local",
-    "portableWindowsIsolatedInstallation": "not-verified",
-    "releaseSourceVersionConsistency": "not-verified",
-    "publishedReleaseIndependentLaunch": "not-verified",
-    "allFourteenUserRequirements": "not-complete"
+    "portableWindowsIsolatedInstallation": "passed-local-isolated-extracted-package",
+    "releaseSourceVersionConsistency": "passed-build-info-ASAR-and-remote-tag-commit",
+    "publishedReleaseIndependentLaunch": "tested-isolated-package-bytes-equal-downloaded-published-ZIP",
+    "allFourteenUserRequirements": "delivered-with-disclosed-nonblocking-visual-limitations"
   },
-  "knownBoundariesDocument": "docs/known-issues.md"
+  "knownBoundariesDocument": "docs/known-issues.md",
+  "release": {
+    "tag": "v0.1.0-preview.1",
+    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1",
+    "zipSha256": "14a7e49ac654881e9694812de608e995add505c8aea52b8a34efe01cd5df8ff7",
+    "allApiAssetDigestsMatch": true,
+    "downloadedZipEqualsTestedZip": true,
+    "anonymousReleaseHttpStatus": 200,
+    "record": "releases/v0.1.0-preview.1.json"
+  }
 }

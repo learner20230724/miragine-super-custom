@@ -15,13 +15,15 @@
       "id": "R01",
       "requirement": "完整可运行，不只界面或演示；恢复主要功能、交互、游戏逻辑。",
       "acceptance": "完整单人和本地双人流程、难度、胜负、重开、声音及控制均可运行；不依赖 SWF 播放器执行游戏逻辑。",
-      "status": "in-progress"
+      "status": "verified-scoped",
+      "evidence": "docs/releases/v0.1.0-preview.1.json; original behavior and visual limits remain explicitly scoped."
     },
     {
       "id": "R02",
       "requirement": "尽量恢复原始逻辑和数值；不凭表现猜参，不为演示改规则。",
       "acceptance": "逻辑与数值可追溯至超级版 SWF；差异和未知项明确记录；有原版对照和回归测试。",
-      "status": "in-progress"
+      "status": "verified-scoped",
+      "evidence": "docs/releases/v0.1.0-preview.1.json; original behavior and visual limits remain explicitly scoped."
     },
     {
       "id": "R03",
@@ -82,19 +84,29 @@
       "id": "R12",
       "requirement": "Release 包与代码版本一致，优先解压启动，写清运行方式。",
       "acceptance": "Windows 发布包在不带开发目录/依赖的隔离目录独立运行，Release 附件实际上传可取。",
-      "status": "in-progress"
+      "status": "verified-published",
+      "evidence": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1"
     },
     {
       "id": "R13",
       "requirement": "发布前清理绝对路径、用户名、私人目录、令牌与密钥，增加复查。",
       "acceptance": "已跟踪源文件、文档、日志及发布包通过隐私/密钥检查，无 .local 或缓存泄漏。",
-      "status": "in-progress"
+      "status": "verified-current-source-and-reviewed-artifact",
+      "evidence": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/privacy-review.json",
+      "scope": "Release-source candidates clean; all raw release findings reviewed against pinned upstream bytes, not claimed as zero raw findings or a Git-history purge."
     },
     {
       "id": "R14",
       "requirement": "验证默认行为、配置生效、独立包运行；交代程度、问题及源码/素材/包体存储。",
       "acceptance": "有测试报告、已知问题清单、真实完成状态、各类大小统计与交付链接。",
-      "status": "in-progress"
+      "status": "verified-delivery",
+      "evidence": "docs/releases/v0.1.0-preview.1.json"
     }
-  ]
+  ],
+  "delivery": {
+    "tag": "v0.1.0-preview.1",
+    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1",
+    "scope": "All 14 delivery requirements addressed; known nonblocking visual differences disclosed, not pixel-perfect identity."
+  }
 }
