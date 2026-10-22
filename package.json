@@ -5,6 +5,8 @@
   "type": "module",
   "main": "desktop/main.cjs",
   "description": "Source-based Super Miragine War reconstruction with editable configuration",
+  "author": "learner20230724",
+  "license": "SEE LICENSE IN NOTICE.txt",
   "scripts": {
     "dev": "node tools/dev-server.mjs",
     "test": "node --test",
