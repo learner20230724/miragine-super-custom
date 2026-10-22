@@ -37,3 +37,10 @@ relicensed under MIT or confused with current GreenSock releases.
 
 Original compiled reference SWFs are retained as source evidence and are not
 loaded by the production game. See docs/provenance.json for recovery boundaries.
+
+Ruffle AVM2 sorting implementation
+----------------------------------
+src/core/avm2-sort.mjs ports the AVM2 QuickSort behavior documented by Ruffle
+v0.7.1 (itself based on the Adobe avmplus algorithm), under Ruffle's MIT option.
+Attribution and retained terms: docs/licenses/Ruffle-qsort-MIT.txt.
+This sorting routine is not a Ruffle/SWF-player runtime dependency.

@@ -71,6 +71,9 @@
       "DragonForce init/createUnit/AI/controls/step",
       "Camera clamping",
       "headless presentation-event separation"
+    ],
+    "avm2-sort.mjs": [
+      "Ruffle/avmplus non-stable QuickSort partition ordering; numeric depth comparison"
     ]
   },
   "presentationOnly": [
@@ -80,12 +83,31 @@
   "knownParityGates": [
     "No full-match frame-by-frame original Flash oracle trace comparison yet",
     "Flash Dictionary key enumeration for equal-count AI groups is runtime-specific; Map insertion order is default and dictionaryKeys can be injected",
-    "Flash sortOn equal-py ordering unspecified; JS stable descending sort reversed is used",
+    "Equal-py Scene ordering now follows the Ruffle/avmplus QuickSort partition scheme; original Adobe player end-to-end validation remains pending.",
     "Math.random sequences differ across virtual machines; injected seeded tests verify determinism, not original random sequence"
   ],
   "configurationCanonical": {
     "units": "Raw Grid fields are canonical. units.runtime and units.animation are generated documentation, not runtime override sources.",
     "animation": "units.ss selects real A/B symbol metadata in config.animations; rules.animationSpeeds and rules.animationLoops control all normal-unit actions; crystal/effects read flat symbol animation metadata.",
     "rules": "Actual recovered numeric rules drive simulation; absence of level/wave/building/skill systems must not be filled with invented rules."
+  },
+  "sortingImplementation": {
+    "component": "src/core/avm2-sort.mjs",
+    "upstream": "https://github.com/ruffle-rs/ruffle/blob/v0.7.1/core/src/avm2/globals/array.rs",
+    "algorithmHistory": "https://github.com/adobe/avmplus/blob/master/core/ArrayClass.cpp",
+    "license": "MIT option selected from upstream MIT OR Apache-2.0; full notice in docs/licenses/Ruffle-qsort-MIT.txt",
+    "adaptation": "JavaScript indexed ranges replace Rust slices; Scene uses numeric DESCENDING comparison followed by reverse display-list insertion order.",
+    "regression": "Stable JS Array.sort first diverged at observed frame 1038 in an instrumented recovered-AS3 Ruffle fixture when four py=400 objects were sorted.",
+    "boundedEvidence": {
+      "runtime": "Ruffle 0.7.1",
+      "fixture": "Source-recompiled DragonForce observer test copy with random calls replaced by constant 0.5",
+      "comparedFrames": 2400,
+      "equalFrames": 2400,
+      "framesContainingAttacks": 640,
+      "maximumSceneChildren": 79,
+      "numericTolerance": 1e-7,
+      "productionCore": true,
+      "scope": "Not unmodified-original SWF execution, complete-match proof, or Adobe runtime parity."
+    }
   }
 }

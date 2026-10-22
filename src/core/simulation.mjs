@@ -5,7 +5,7 @@ import { IsometricEntity } from './entity.mjs';
 export const CORE_PARITY_GATES = Object.freeze([
   'Full-match frame-by-frame comparison against original Flash has not yet been completed.',
   'Flash Dictionary enumeration order in tied AI unit counts is runtime-specific; default is insertion order, injectable with dictionaryKeys.',
-  'Flash Array.sortOn equal-py tie ordering is unspecified; this port uses the JS stable descending-sort then reverse sequence.',
+  'Scene equal-py ordering uses the Ruffle/avmplus QuickSort partition scheme; original Adobe player end-to-end validation remains pending.',
   'Math.random sequences are not portable between Flash and JavaScript; tests inject a deterministic RNG.',
 ]);
 

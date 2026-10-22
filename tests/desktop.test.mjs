@@ -5,11 +5,23 @@ import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import test from 'node:test';
-import { createBuildPlan, isProductionPath, sourceCommit, writePortableExtras } from '../tools/build-windows.mjs';
+import { buildMetadataHook, createBuildPlan, isProductionPath, sourceCommit, writePortableExtras } from '../tools/build-windows.mjs';
 
 const require = createRequire(import.meta.url);
 const { createStaticServer } = require('../desktop/static-server.cjs');
 const { portablePaths, seedEditableFile } = require('../desktop/main.cjs');
+
+test('packager 20 metadata hook accepts its options object and returns a promise', async (t) => {
+  const directory = fixture(t);
+  const source = path.join(directory, 'source');
+  const build = path.join(directory, 'build');
+  fs.mkdirSync(source); fs.mkdirSync(build);
+  const info = { version: '0.1.0-preview.1', sourceCommit: 'a'.repeat(40) };
+  const hook = buildMetadataHook(source, info);
+  await hook({ buildPath: build, electronVersion: '44.4.3', platform: 'win32', arch: 'x64' });
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(build, 'build-info.json'), 'utf8')), info);
+  await assert.rejects(hook({ buildPath: source }), /source tree/);
+});
 
 function fixture(t) {
   const prefix = path.join(os.tmpdir(), 'miragine-desktop-test-');

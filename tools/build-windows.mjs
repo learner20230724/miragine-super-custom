@@ -40,6 +40,16 @@ export function sourceCommit(projectRoot, runGit = execFileSync) {
   return commit;
 }
 
+/** Packager 20 hooks receive one options object and return a promise. */
+export function buildMetadataHook(projectRoot, buildInfo) {
+  return async ({ buildPath }) => {
+    if (path.resolve(buildPath) === path.resolve(projectRoot)) {
+      throw new Error('Refusing to write build metadata into the source tree');
+    }
+    fs.writeFileSync(path.join(buildPath, 'build-info.json'), JSON.stringify(buildInfo, null, 2) + '\n');
+  };
+}
+
 export function createBuildPlan(projectRoot, version, { now = new Date(), nonce = randomUUID(), electronVersion = '44.4.3' } = {}) {
   if (!/^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?(?:\+[a-z0-9.-]+)?$/i.test(version)) throw new TypeError('Invalid app version');
   if (!/^[a-z0-9-]+$/i.test(nonce)) throw new TypeError('Invalid build nonce');
@@ -140,13 +150,7 @@ export async function buildWindows() {
   delete process.env.ELECTRON_RUN_AS_NODE;
   const plan = createBuildPlan(root, pkg.version, { electronVersion: pkg.devDependencies.electron });
   const buildInfo = { version: pkg.version, sourceCommit: commit, platform: plan.platform, arch: plan.arch, electronVersion: plan.electronVersion };
-  plan.afterCopy = [(buildPath, _electronVersion, _platform, _arch, callback) => {
-    try {
-      if (path.resolve(buildPath) === path.resolve(root)) throw new Error('Refusing to write build metadata into the source tree');
-      fs.writeFileSync(path.join(buildPath, 'build-info.json'), JSON.stringify(buildInfo, null, 2) + '\n');
-      callback();
-    } catch (error) { callback(error); }
-  }];
+  plan.afterCopy = [buildMetadataHook(root, buildInfo)];
   const dist = path.join(root, 'dist');
   fs.mkdirSync(dist, { recursive: true });
   if (fs.realpathSync(dist) !== dist) throw new Error('Build destination must not be a symlink or junction');

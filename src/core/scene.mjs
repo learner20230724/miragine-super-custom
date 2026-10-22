@@ -1,4 +1,5 @@
 import { as3int } from './as3.mjs';
+import { avm2QuickSort, compareDepthDescending } from './avm2-sort.mjs';
 
 /** Port of dragonforce.core.Symbol's timeline state, independent of bitmap output. */
 export class CoreSymbol {
@@ -72,8 +73,8 @@ export class CoreScene {
   }
   applyOriginalRenderOrder() {
     // DragonForceRenderEngine sorts DESCENDING then addChilds in reverse order.
-    // Stable tie ordering is an explicit parity gate; Flash sortOn guarantees none.
-    const sorted = [...this.children].sort((a, b) => b.py - a.py);
+    // AVM2's non-stable QuickSort equal-key swaps affect subsequent Scene.step.
+    const sorted = avm2QuickSort([...this.children], compareDepthDescending);
     this.children = sorted.reverse();
   }
 }
