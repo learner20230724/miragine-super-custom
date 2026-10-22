@@ -4,7 +4,7 @@
 
 以 **Flash 超级版**为基准的可修改 JavaScript 工程，保留恢复源码、原始素材及数据来源。不是 JKS 重制版，也不是 C++ 网络对战版。
 
-**开发中（WIP）**：战斗逻辑手工移植到原生 JavaScript，使用 Canvas / WebGL 渲染；运行游戏不需要 Flash 插件或 SWF 播放器。完整对局逐帧一致性、Windows 成品包安装及发布验收仍需分别验证，不宣称已完成一比一复刻。
+**可运行预览版**：战斗逻辑从恢复的 AS3 手工移植到 JavaScript，使用 Canvas / WebGL 渲染，不需要 Flash 或 SWF 播放器。原版插桩对照的一局普通难度共 6,842 帧逻辑状态匹配；这不代表全部 Adobe Flash 场景或逐像素一致。具体交付状态见[验证记录](docs/verification.json)。
 
 ## Windows 启动包
 
@@ -12,7 +12,7 @@
 
 包外的 `config/custom.json` 可直接编辑，重启生效；升级前请备份此文件。`ui-helper/` 提供可替换的绘图源码及说明。`build-info.json` 标明对应源码提交。预览版的验证结果和尚存差异见 [验证记录](docs/verification.json) 与 [已知问题](docs/known-issues.md)。
 
-建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。
+建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 
 ## 本地运行
 
@@ -105,7 +105,7 @@ python -B tools/build_ui.py
 
 上述生成入口只更新约定的生成目录，不应覆盖 `config/custom.json` 或 `src/extensions/`。FFDec 的重新导出入口是 `tools/prepare_ffdec.py` 与 `tools/export_reference.py`，日常改数值和运行无需重新导出。
 
-Windows x64 本地打包命令为 `npm run build:windows`，输出到 `dist/` 下独立的构建目录。**命令存在不代表已发布或通过安装验收**；发布包与对应测试结果应以仓库后续记录为准。
+Windows x64 本地打包命令为 `npm run build:windows`，要求公开源码已提交，输出到 `dist/` 下独立的构建目录。公开包的对应提交、校验值和独立运行测试见 Release 附件及仓库验证记录；本地构建不自动上传。
 
 ## 归属与许可
 

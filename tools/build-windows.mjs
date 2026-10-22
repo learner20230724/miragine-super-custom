@@ -17,7 +17,8 @@ export function isProductionPath(input, { directory = false } = {}) {
   if (parts.some((part) => !part || part.startsWith('.') || ['recovered', 'reference', 'node_modules'].includes(part)) || relative.includes(':')) return false;
   if (parts.length === 1 && rootFiles.has(relative)) return !directory;
   if (parts[0] === 'desktop') {
-    return directory ? parts.length === 1 : ['desktop/main.cjs', 'desktop/static-server.cjs'].includes(relative);
+    return directory ? parts.length === 1 : ['desktop/entry.cjs', 'desktop/main.cjs', 'desktop/static-server.cjs',
+      'desktop/preload.cjs', 'desktop/preferences.cjs'].includes(relative);
   }
   if (parts[0] === 'docs') {
     if (directory) return relative === 'docs' || parts[1] === 'licenses';

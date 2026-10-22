@@ -3,7 +3,7 @@
   "reportDate": "2026-10-23",
   "stage": "native-preview",
   "overallAcceptance": "incomplete",
-  "reportScope": "Static snapshot of completed local integration checks and the first remote CI run, which failed on one Windows test. The local test fix awaits remote verification. Later release or original-runtime evidence must be recorded separately.",
+  "reportScope": "Completed local native integration and scoped original-AS3 oracle. Final portable release acceptance is recorded separately after artifact testing; no universal Adobe or pixel parity is claimed.",
   "baseline": {
     "name": "Super Miragine War / 超级米拉奇战记",
     "swfSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
@@ -15,7 +15,7 @@
     "automatedTests": {
       "status": "passed-local",
       "command": "npm test",
-      "passed": 193,
+      "passed": 209,
       "failed": 0,
       "scope": "Native source, recovered data, assets, configuration, viewport, UI structure and privacy guard. Not original-runtime parity."
     },
@@ -71,8 +71,8 @@
     "publicPrivacyScan": {
       "status": "passed-local",
       "command": "npm run check:public -- --root .",
-      "scannedFiles": 2953,
-      "scannedBytes": 64581573,
+      "scannedFiles": 2959,
+      "scannedBytes": 64786137,
       "findings": 0,
       "warnings": 0,
       "scope": "Latest source publication candidates before final release build; the release archive is checked separately."
@@ -167,7 +167,7 @@
       "diagnosis": "A configuration test compared the helper's canonical output path with an unresolved Windows 8.3 temporary-directory alias. The production canonicalization and safety behavior were correct."
     },
     "pendingFix": {
-      "status": "implemented-local-not-yet-verified-remotely",
+      "status": "verified-remote",
       "file": "tests/config.test.mjs",
       "change": "Canonicalize the expected root in the assertion and add an explicit filesystem-root-alias regression test.",
       "changesProductionSafetyBehavior": false,
@@ -201,14 +201,15 @@
     "runsBrowserSmoke": false,
     "buildsPortableRelease": false,
     "verifiedRun": {
-      "id": 39819489002,
-      "sourceCommit": "648302c32553ad731bacbeaacc3f0e9877afe5dc",
-      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39819489002",
+      "id": 39821887792,
+      "sourceCommit": "3348b6fab015cb2991d4858d2cc8cf69e71c9ac3",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39821887792",
       "os": [
         "ubuntu-latest",
         "windows-latest"
       ],
-      "conclusion": "success"
+      "conclusion": "success",
+      "scope": "193 tests plus recovered data, retained assets and public privacy check; new preference/audit additions await their own run."
     }
   },
   "separateAcceptanceGates": {

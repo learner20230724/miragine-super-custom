@@ -4,7 +4,7 @@
 
 An editable JavaScript project based on the **super Flash version**, with recovered sources, original assets, and traceable data. This is neither the JKS remake nor the C++ network reimplementation.
 
-**Work in progress:** combat logic is manually ported to native JavaScript and rendered with Canvas / WebGL. The game does not require a Flash plugin or SWF player. Full-match frame-by-frame parity, Windows package installation, and release acceptance remain separate validation tasks; this is not a claim of a finished one-to-one replica.
+**Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
 ## Windows portable build
 
@@ -12,7 +12,7 @@ Download the Windows x64 preview from **[Releases](https://github.com/learner202
 
 Edit the external `config/custom.json` and restart to apply changes; back it up before upgrading. `ui-helper/` contains replaceable drawing source and instructions. `build-info.json` identifies the source commit. See the [verification record](docs/verification.json) and [known issues](docs/known-issues.md) for preview limitations.
 
-Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents.
+Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents. The never-show-help preference persists across restarts in `userdata/preferences.json`; delete that file to restore the initial tutorial.
 
 ## Run locally
 
@@ -105,7 +105,7 @@ python -B tools/build_ui.py
 
 These generators update designated generated outputs, not `config/custom.json` or `src/extensions/`. `tools/prepare_ffdec.py` and `tools/export_reference.py` handle fresh FFDec exports; normal parameter editing and gameplay do not require re-exporting.
 
-Run `npm run build:windows` for a local Windows x64 package in a separate directory under `dist/`. **A build command is not evidence of a published or installation-tested release.** Consult subsequent repository records for downloadable builds and their verification results.
+Windows x64 packaging uses `npm run build:windows`, requires committed public source, and writes a fresh build directory under `dist/`. Release assets and verification records identify the corresponding commit, hashes and isolated launch tests; local builds do not upload automatically.
 
 ## Attribution and licensing
 

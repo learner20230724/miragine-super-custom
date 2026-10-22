@@ -5,11 +5,29 @@ import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import test from 'node:test';
+import vm from 'node:vm';
 import { buildMetadataHook, createBuildPlan, isProductionPath, sourceCommit, writePortableExtras } from '../tools/build-windows.mjs';
 
 const require = createRequire(import.meta.url);
 const { createStaticServer } = require('../desktop/static-server.cjs');
 const { portablePaths, seedEditableFile } = require('../desktop/main.cjs');
+
+test('package entry explicitly starts Electron even when its loader does not set require.main', async () => {
+  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  assert.equal(pkg.main, 'desktop/entry.cjs');
+  const code = fs.readFileSync(new URL('../desktop/entry.cjs', import.meta.url), 'utf8');
+  for (const reject of [false, true]) {
+    let calls = 0;
+    const state = {};
+    vm.runInNewContext(code, { process: state, require(specifier) {
+      assert.equal(specifier, './main.cjs');
+      return { startDesktop() { calls++; return reject ? Promise.reject(new Error('fixture')) : Promise.resolve(); } };
+    } });
+    await Promise.resolve();
+    assert.equal(calls, 1);
+    assert.equal(state.exitCode, reject ? 1 : undefined);
+  }
+});
 
 test('packager 20 metadata hook accepts its options object and returns a promise', async (t) => {
   const directory = fixture(t);
@@ -197,7 +215,8 @@ test('packaging whitelist excludes originals, references, private files and runt
     'index.html', 'package.json', 'LICENSE', 'NOTICE.txt', 'README.md', 'README.en.md',
     'src/app/main.mjs', 'assets/generated/scenery/terrain.png', 'generated/ui/original-graphics.js',
     'generated/ui/NOTICE.md', 'config/custom.json', 'config/defaults.generated.json',
-    'desktop/main.cjs', 'desktop/static-server.cjs', 'docs/licenses/GPL-3.0.txt', 'docs/parameters.zh-CN.md',
+    'desktop/entry.cjs', 'desktop/main.cjs', 'desktop/static-server.cjs', 'desktop/preload.cjs', 'desktop/preferences.cjs',
+    'docs/licenses/GPL-3.0.txt', 'docs/parameters.zh-CN.md',
   ]) assert.equal(isProductionPath(file), true, file);
   for (const file of [
     '.local/token.json', 'recovered/unit-sprites/frame.png', 'reference/super.swf', 'assets/game.swf',

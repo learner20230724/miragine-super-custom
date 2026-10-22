@@ -5,6 +5,7 @@ import { GameController } from '../src/app/controller.mjs';
 import { GameAudio } from '../src/app/audio.mjs';
 import { menuSlidePosition, stageTintProgress, OriginalGameView } from '../src/app/view.mjs';
 import { OriginalKeyboard } from '../src/app/input.mjs';
+import { createPreferenceStorage, NEVER_TUTORIAL_KEY } from '../src/app/preferences.mjs';
 import { fitViewport, gameToClient, clientToGame } from '../src/platform/viewport.mjs';
 
 const root = new URL('../', import.meta.url);
@@ -285,4 +286,50 @@ test('read-only bounded unit summaries expose naturally recruited configured hea
   assert.deepEqual(Object.keys(state.units.left[0]), ['id', 'side', 'nowHP']);
   state.units.left[0].nowHP = 1;
   assert.equal(c.snapshot().units.left[0].nowHP, 99);
+});
+
+test('desktop tutorial preferences survive a new origin and expose only the original preference key', async () => {
+  let persisted = false;
+  const saves = [];
+  const desktop = {
+    loadPreferences: async () => ({ neverTutorial: persisted }),
+    saveNeverTutorial: async value => { saves.push(value); persisted = value; return { neverTutorial: value }; },
+  };
+  const browserStorage = () => { throw new Error('Desktop must not read origin storage'); };
+  const first = await createPreferenceStorage({ desktop, browserStorage });
+  const c = new GameController(config, { storage: first });
+  c.action('dual');
+  assert.equal(c.overlay, 'tutorial');
+  c.action('tutorial-never');
+  assert.equal(first.getItem(NEVER_TUTORIAL_KEY), 'true');
+  assert.deepEqual(saves, [true]);
+  first.setItem('unrelated-key', 'true');
+  assert.equal(first.getItem('unrelated-key'), null);
+  assert.deepEqual(saves, [true]);
+  const restarted = await createPreferenceStorage({ desktop, browserStorage });
+  const second = new GameController(config, { storage: restarted });
+  second.action('dual');
+  assert.equal(second.overlay, null, 'new controller loads the desktop preference before its first match');
+  restarted.setItem(NEVER_TUTORIAL_KEY, 'false');
+  assert.equal(restarted.getItem(NEVER_TUTORIAL_KEY), 'false');
+  assert.deepEqual(saves, [true, false]);
+});
+
+test('desktop preference failures never log backend error contents; browsers retain localStorage fallback', async () => {
+  const warnings = [];
+  const desktop = {
+    loadPreferences: async () => ({ neverTutorial: false }),
+    saveNeverTutorial: () => Promise.reject(new Error('private backend details')),
+  };
+  const storage = await createPreferenceStorage({ desktop, warn: message => warnings.push(message) });
+  storage.setItem(NEVER_TUTORIAL_KEY, 'true');
+  assert.equal(storage.getItem(NEVER_TUTORIAL_KEY), 'true');
+  await Promise.resolve();
+  assert.deepEqual(warnings, ['Game tutorial preference could not be saved.']);
+  const fallback = { getItem() {}, setItem() {} };
+  assert.equal(await createPreferenceStorage({ desktop: null, browserStorage: () => fallback }), fallback);
+  assert.equal(await createPreferenceStorage({ desktop: null, browserStorage: () => { throw new Error('blocked'); } }), null);
+  await assert.rejects(createPreferenceStorage({ desktop: { ...desktop,
+    loadPreferences: () => Promise.reject(new Error('private backend details')) } }),
+  error => error.message === 'Desktop game preferences could not be loaded.');
 });

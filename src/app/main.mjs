@@ -6,6 +6,7 @@ import { GameController } from './controller.mjs';
 import { OriginalGameView } from './view.mjs';
 import { GameAudio } from './audio.mjs';
 import { OriginalKeyboard } from './input.mjs';
+import { createPreferenceStorage } from './preferences.mjs';
 
 const canvas = document.querySelector('#game');
 const stage = document.querySelector('#game-stage');
@@ -172,8 +173,7 @@ try {
   if (!globalThis.OriginalGraphics) throw new Error('Original graphics export did not load');
   await globalThis.OriginalGraphics.ready;
   await document.fonts.load('12px OriginalYahei');
-  let storage = null;
-  try { storage = window.localStorage; } catch { /* Sandboxed browsers can disable persistence. */ }
+  const storage = await createPreferenceStorage();
   controller = new GameController(config, { storage });
   keyboard = new OriginalKeyboard(controller);
   view = new OriginalGameView(logical, globalThis.OriginalGraphics, layout, config);

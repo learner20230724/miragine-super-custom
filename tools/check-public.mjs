@@ -21,6 +21,7 @@ const lineCount = (text) => (text.match(/\n/g) ?? []).length;
 
 function rulesFor(username) {
   const rules = [
+    ['private-chat-reference', /(?:thread:\/\/[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}|["']?(?:reference_?)?thread_?id["']?\s*[:=]\s*["'][a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}["'])/gi],
     ['absolute-user-path', /(?:[a-z]:[\\/]+(?:users|documents and settings)[\\/]+|\/(?:home|Users)\/)[^\s"'<>|]+/gi],
     ['root-home-path', /(?:^|[\s"'=:(])\/root\/[\w.\-\/]+/g],
     ['file-url-user-path', /file:\/{2,}[a-z]:\/(?:users|documents%20and%20settings)\/[^\s"'<>]+/gi],

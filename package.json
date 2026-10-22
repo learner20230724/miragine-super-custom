@@ -3,7 +3,7 @@
   "version": "0.1.0-preview.1",
   "private": true,
   "type": "module",
-  "main": "desktop/main.cjs",
+  "main": "desktop/entry.cjs",
   "description": "Source-based Super Miragine War reconstruction with editable configuration",
   "author": "learner20230724",
   "license": "SEE LICENSE IN NOTICE.txt",

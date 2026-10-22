@@ -35,6 +35,18 @@ async function fixture(t) {
 
 const check = (root, options = {}) => scanPublicFiles({ root, username: syntheticUsername, ...options });
 
+test('private conversation references are rejected without forbidding ordinary game UUIDs', async (t) => {
+  const root = await fixture(t);
+  const uuid = ['12345678', '1234', '4234', '8234', '123456789abc'].join('-');
+  await fs.writeFile(path.join(root, 'context.json'), JSON.stringify({ ['reference' + 'ThreadId']: uuid }));
+  await fs.writeFile(path.join(root, 'notes.md'), ['thread', '://', uuid].join(''));
+  await fs.writeFile(path.join(root, 'game.json'), JSON.stringify({ entityId: uuid }));
+  const report = await check(root);
+  const leaks = report.findings.filter(finding => finding.rule === 'private-chat-reference');
+  assert.deepEqual(leaks.map(finding => finding.path).sort(), ['context.json', 'notes.md']);
+  assert.ok(!formatPrivacyReport(report, { json: true }).includes(uuid));
+});
+
 test('benign relative paths and ordinary source are accepted, including tracked ignored files', async (t) => {
   const root = await fixture(t);
   await fs.writeFile(path.join(root, 'source.mjs'), 'const root = "./assets/game.swf";\nexport const count = 2;\n');

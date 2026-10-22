@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "confirmedAt": "2026-10-23",
   "authority": "User's explicit 14-point acceptance criteria in the current task",
-  "referenceThreadId": "01a15c08-c78b-7e13-bd36-27a9f4911256",
+  "referenceContext": "User-provided acceptance criteria, explicitly confirmed in the current task; private conversation identifiers are not publication material.",
   "referenceReadMethod": "Codex app-server thread/read, without resuming the referenced task",
   "publicationAuthorization": {
     "status": "user_confirmed",

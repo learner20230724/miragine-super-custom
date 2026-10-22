@@ -3,6 +3,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { createStaticServer } = require('./static-server.cjs');
+const { readPreferences, saveNeverTutorial, isTrustedPreferenceRequest } = require('./preferences.cjs');
 
 function portablePaths(appRoot, executable, isPackaged) {
   const root = path.resolve(appRoot);
@@ -28,7 +29,7 @@ function seedEditableFile(source, destination) {
 }
 
 async function startDesktop({ electron = require('electron'), appRoot = path.resolve(__dirname, '..') } = {}) {
-  const { app, BrowserWindow, Menu, dialog } = electron;
+  const { app, BrowserWindow, Menu, dialog, ipcMain } = electron;
   const locations = portablePaths(appRoot, process.execPath, app.isPackaged);
   let server;
   try {
@@ -70,7 +71,21 @@ async function startDesktop({ electron = require('electron'), appRoot = path.res
     const win = new BrowserWindow({
       width: 1280, height: 960, minWidth: 480, minHeight: 360, show: false,
       title: '超级米拉奇战记', backgroundColor: '#0e0e0e',
-      webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true, backgroundThrottling: false, webviewTag: false },
+      webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true, backgroundThrottling: false, webviewTag: false,
+        preload: path.join(__dirname, 'preload.cjs') },
+    });
+    ipcMain.handle('miragine:preferences:load', event => {
+      if (!isTrustedPreferenceRequest(event, win.webContents, origin)) throw new Error('Untrusted preferences request');
+      return readPreferences(locations.data);
+    });
+    ipcMain.handle('miragine:preferences:save-never', (event, value) => {
+      if (!isTrustedPreferenceRequest(event, win.webContents, origin)) throw new Error('Untrusted preferences request');
+      try { return saveNeverTutorial(locations.data, value); }
+      catch { throw new Error('Unable to save the game preference'); }
+    });
+    app.once('will-quit', () => {
+      ipcMain.removeHandler('miragine:preferences:load');
+      ipcMain.removeHandler('miragine:preferences:save-never');
     });
     win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     win.webContents.on('will-navigate', (event) => event.preventDefault());
