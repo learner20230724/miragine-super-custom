@@ -1,11 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { ViewCamera, projectViewPoint, projectViewSymbol, projectViewGround, inverseViewPoint } from '../src/render/view-camera.mjs';
 import { projectPoint, projectSymbol, groundCorners } from '../src/render/projection.mjs';
 
 const core = Object.freeze({ x: 2000, y: 150, width: 640, height: 400 });
 const close = (actual, expected, tolerance = .003) => assert.ok(Math.abs(actual - expected) <= tolerance,
   `${actual} differs from ${expected} by more than ${tolerance}`);
+const manifest = JSON.parse(await readFile(new URL('../generated/asset-manifest.json', import.meta.url), 'utf8'));
+const crystalSprites = { left: manifest.sprites.A_crystal.rasterized, right: manifest.sprites.B_crystal.rasterized };
+const crystalEdges = (camera, crystal, bitmap) => {
+  const point = projectViewSymbol(crystal, camera.getView(core));
+  const x = [bitmap.offX, bitmap.offX + bitmap.width].map(value => point.x + value * point.scaleX);
+  const y = [bitmap.offY, bitmap.offY + bitmap.height].map(value => point.y + value * point.scaleY);
+  return { left: Math.min(...x), right: Math.max(...x), top: Math.min(...y), bottom: Math.max(...y) };
+};
 
 test('default follow has no display override and does not write a frozen core camera', () => {
   const camera = new ViewCamera();
@@ -28,8 +37,8 @@ test('custom zoom 1 retains the original -70 degree projection and sprite height
   }
 });
 
-test('full map fit includes every ground corner, unit-height reserve, side margin and immutable JSON snapshot', () => {
-  const camera = new ViewCamera().fitAll([{ pz: 80 }]);
+test('explicit full map fit includes every ground corner, unit-height reserve, side margin and immutable JSON snapshot', () => {
+  const camera = new ViewCamera().fitMap([{ pz: 80 }]);
   const view = camera.getView(core), state = camera.snapshot(core);
   assert.equal(state.mode, 'overview');
   assert.ok(state.zoom < 1);
@@ -40,6 +49,52 @@ test('full map fit includes every ground corner, unit-height reserve, side margi
     assert.equal(point.drawable, true);
     assert.ok(point.x >= 16 - .001 && point.x <= 624 + .001, JSON.stringify(point));
     assert.ok(point.y >= 16 - .001 && point.y <= 384 + .001, JSON.stringify(point));
+  }
+});
+
+test('battle panorama fits complete manifest crystal bitmaps near both edges rather than empty map corners', () => {
+  const camera = new ViewCamera({ crystalSprites }).fitAll();
+  const red = crystalEdges(camera, { px: 300, py: 400 }, crystalSprites.left);
+  const blue = crystalEdges(camera, { px: 4200, py: 400 }, crystalSprites.right);
+  close(red.left, 16); close(blue.right, 624);
+  assert.ok(red.top > 16 && red.bottom < 384 && blue.top > 16 && blue.bottom < 384);
+  close(camera.zoom, .15253387, .000001);
+  assert.ok(camera.zoom / new ViewCamera().fitMap().zoom > 1.27);
+  assert.ok(camera.snapshot(core).mapCorners.some(point => !point.visible), 'Compact battle fit must not claim all ground corners visible');
+  const initialZoom = camera.zoom;
+  camera.zoomAt(.7, { x: 320, y: 200 }, core);
+  assert.ok(camera.zoom < initialZoom);
+  assert.ok(camera.snapshot(core).mapCorners.every(point => point.visible), 'Wheel zoom-out still exposes all map corners');
+});
+
+test('battle fit uses actual snapshot base positions and signed bitmap transforms without mutating evidence', () => {
+  const sprites = { left: { width: 160, height: 180, offX: -120, offY: -170 },
+    right: { width: 100, height: 150, offX: -35, offY: -140 } };
+  const snapshot = Object.freeze([
+    Object.freeze({ kind: 'base', side: 'left', px: 600, py: 400, pz: 0, sx: -1, sy: 1 }),
+    Object.freeze({ kind: 'base', side: 'right', px: 3700, py: 400, pz: 0, sx: 1, sy: 1 }),
+    Object.freeze({ kind: 'unit', px: 2250, py: 300, pz: 100 }),
+  ]);
+  const before = JSON.stringify(snapshot);
+  const camera = new ViewCamera({ crystalSprites: sprites }).fitAll(snapshot);
+  const red = crystalEdges(camera, snapshot[0], sprites.left), blue = crystalEdges(camera, snapshot[1], sprites.right);
+  close(red.left, 16); close(blue.right, 624);
+  assert.equal(camera.centerX, 2150);
+  assert.equal(JSON.stringify(snapshot), before);
+  assert.ok(Object.isFrozen(camera.crystalSprites.left));
+  for (const y of [0, 800]) for (const z of [-16, 340]) {
+    const point = camera.worldToScreen({ x: camera.centerX, y, z }, core);
+    assert.ok(point.drawable && point.y >= 16 - .001 && point.y <= 384 + .001);
+  }
+});
+
+test('airborne vertical reserve wins over edge-tight crystals when both constraints cannot fit', () => {
+  const camera = new ViewCamera().fitAll([{ pz: 6000 }]);
+  const red = crystalEdges(camera, { px: 300, py: 400 }, crystalSprites.left);
+  assert.ok(red.left > 16);
+  for (const y of [0, 800]) for (const z of [-16, 6240]) {
+    const point = camera.worldToScreen({ x: 2250, y, z }, core);
+    assert.ok(point.drawable && point.y >= 16 - .001 && point.y <= 384 + .001);
   }
 });
 
@@ -90,6 +145,43 @@ test('drag moves the anchored ground point with the pointer and clamps the displ
   camera.zoomAt(1e9, start, core); assert.equal(camera.zoom, camera.maxZoom);
   camera.zoomAt(1e-20, start, core); assert.equal(camera.zoom, camera.minZoom);
   assert.deepEqual(core, { x: 2000, y: 150, width: 640, height: 400 });
+});
+
+test('keyboard crosses from red to blue in four real seconds at every zoom and frame subdivision', () => {
+  for (const zoom of [.03, .1525, .5, 1, 4]) for (const slices of [1, 40, 240, 960]) {
+    const camera = new ViewCamera();
+    camera.centerOn(300, 400, core).zoomAt(zoom, { x: 320, y: 200 }, core);
+    for (let index = 0; index < slices; index++) camera.keyboardPan(1, 0, 4000 / slices, core);
+    close(camera.centerX, 4200, .000001); close(camera.centerY, 400, .000001);
+    assert.equal(camera.zoom, zoom);
+    camera.keyboardPan(-1, 0, 4000, core);
+    close(camera.centerX, 300, .000001);
+  }
+  assert.deepEqual(core, { x: 2000, y: 150, width: 640, height: 400 });
+});
+
+test('keyboard navigation normalizes diagonals, respects world boundaries and ignores zero-time/zero-direction input', () => {
+  const camera = new ViewCamera();
+  camera.keyboardPan(0, 0, 100, core).keyboardPan(1, 0, 0, core);
+  assert.equal(camera.mode, 'follow');
+  camera.centerOn(2250, 400, core).keyboardPan(1, -1, 100, core);
+  close(Math.hypot(camera.centerX - 2250, camera.centerY - 400), 97.5, .000001);
+  camera.keyboardPan(-1, -1, 1e9, core);
+  assert.equal(camera.centerX, 0); assert.equal(camera.centerY, 0);
+  camera.keyboardPan(1, 1, 1e9, core);
+  assert.equal(camera.centerX, 4500); assert.equal(camera.centerY, 800);
+  assert.throws(() => camera.keyboardPan(1, 0, -1, core), /not be negative/);
+  assert.throws(() => camera.keyboardPan(NaN, 0, 1, core), /finite/);
+  assert.throws(() => camera.keyboardPan(1, 0, Infinity, core), /finite/);
+});
+
+test('keyboard crossing duration and configured crystal separation are display settings, not core mutation', () => {
+  const camera = new ViewCamera({ mapWidth: 6000, baseSpawnInset: 500, keyboardCrossingMs: 2000 });
+  camera.centerOn(500, 400, core).keyboardPan(1, 0, 2000, core);
+  close(camera.centerX, 5500);
+  assert.throws(() => new ViewCamera({ keyboardCrossingMs: 0 }), /positive/);
+  assert.throws(() => new ViewCamera({ baseSpawnInset: 2250 }), /positive horizontal separation/);
+  assert.throws(() => new ViewCamera({ crystalSprites: { left: { width: 0 } } }), /positive/);
 });
 
 test('minimap centerOn reaches a distant world point directly, keeps zoom and never changes the logical camera', () => {

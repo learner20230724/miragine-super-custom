@@ -11,8 +11,11 @@
   <script type="module" src="./src/app/main.mjs"></script>
 </head>
 <body>
-  <main id="game-stage" aria-label="超级米拉奇战记">
+  <main id="app-shell" aria-label="超级米拉奇战记">
+  <div id="game-stage">
     <canvas id="game" width="640" height="480" tabindex="0" aria-label="超级米拉奇战记游戏画面，使用鼠标或键盘操作">此游戏需要支持 Canvas 的浏览器。</canvas>
+  </div>
+  <div id="settings-root" hidden></div>
   </main>
 </body>
 </html>

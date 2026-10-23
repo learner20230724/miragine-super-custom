@@ -1,4 +1,9 @@
 /** Browser media adapter. Original audio bytes are resolved solely through the manifest. */
+export const MAX_CONCURRENT_EFFECTS = 32;
+export const EFFECT_COALESCE_MS = 40;
+const STALE_EFFECT_MS = 30_000;
+const UI_SOUND = 'SD_btns';
+
 export class GameAudio {
   constructor(manifest, { audioFactory = url => new Audio(url),
     now = () => performance.now(), requestFrame = callback => requestAnimationFrame(callback) } = {}) {
@@ -9,6 +14,8 @@ export class GameAudio {
     this.unlocked = false;
     this.muted = false;
     this.effects = new Set();
+    this.effectDetails = new Map();
+    this.recentEffects = new Map();
     this.audioFactory = audioFactory;
     this.now = now;
     this.requestFrame = requestFrame;
@@ -68,18 +75,71 @@ export class GameAudio {
     if (old && fadeOutMs > 0) this.fade(old, 0, fadeOutMs, ticket, begin);
     else begin();
   }
+  /** Stop presentation effects only; the real-time music policy is unchanged. */
+  pauseEffects() {
+    for (const { release } of [...this.effectDetails.values()]) release(true);
+    this.recentEffects.clear();
+  }
+  reapEffects(now) {
+    for (const [sound, { started, release }] of this.effectDetails) {
+      // Failed media implementations do not always dispatch ended/error. Keep
+      // stalled players from occupying the bounded pool forever. A valid long
+      // clip gets its full declared duration plus one second, never a 30 s cut.
+      const duration = Number.isFinite(sound.duration) && sound.duration > 0 ? sound.duration * 1000 : 0;
+      if (sound.ended || now - started > Math.max(STALE_EFFECT_MS, duration + 1000)) release(true);
+    }
+  }
+  playEffect({ name, url, volume }, now) {
+    const last = this.recentEffects.get(name);
+    // UI interactions must remain audible even when accelerated combat fills
+    // the pool. Combat duplicates are presentation-only, not skipped logic.
+    if (name !== UI_SOUND && last !== undefined && now >= last && now - last < EFFECT_COALESCE_MS) return;
+    if (this.effects.size >= MAX_CONCURRENT_EFFECTS) {
+      if (name !== UI_SOUND) return;
+      const oldestBattle = [...this.effectDetails.values()].find(effect => effect.name !== UI_SOUND);
+      (oldestBattle ?? this.effectDetails.values().next().value)?.release(true);
+    }
+    const sound = this.audioFactory(url);
+    sound.volume = volume;
+    sound.muted = this.muted;
+    const release = (stop = false) => {
+      if (!this.effectDetails.delete(sound)) return;
+      this.effects.delete(sound);
+      sound.removeEventListener?.('ended', ended);
+      sound.removeEventListener?.('error', error);
+      if (stop) {
+        try { sound.pause(); } catch { /* Broken media must not interrupt combat. */ }
+      }
+    };
+    const ended = () => release();
+    const error = () => release(true);
+    this.effects.add(sound);
+    this.effectDetails.set(sound, { name, started: now, release });
+    this.recentEffects.set(name, now);
+    sound.addEventListener('ended', ended, { once: true });
+    sound.addEventListener('error', error, { once: true });
+    try {
+      Promise.resolve(sound.play()).catch(() => release(true));
+    } catch {
+      release(true);
+    }
+  }
   consume(events) {
+    const now = this.now();
+    this.reapEffects(now);
+    const pending = new Map();
     for (const event of events) {
       if (event.type === 'music') { this.playMusic(event.name, event.loop !== false, event); continue; }
       if (event.type !== 'sound' || !this.unlocked || this.muted) continue;
       const url = this.url(event.name);
       if (!url) throw new Error(`Missing original audio: ${event.name}`);
-      const sound = this.audioFactory(url);
-      sound.volume = Math.max(0, Math.min(1, event.volume ?? 1));
-      this.effects.add(sound);
-      sound.addEventListener('ended', () => this.effects.delete(sound), { once: true });
-      sound.addEventListener('error', () => this.effects.delete(sound), { once: true });
-      sound.play().catch(() => this.effects.delete(sound));
+      const volume = Math.max(0, Math.min(1, Number.isFinite(event.volume) ? event.volume : 1));
+      const existing = pending.get(event.name);
+      // A 20x catch-up batch may contain hundreds of identical effects. Keep
+      // the loudest occurrence without mutating incoming simulation events.
+      if (existing) existing.volume = Math.max(existing.volume, volume);
+      else pending.set(event.name, { name: event.name, url, volume });
     }
+    for (const effect of pending.values()) this.playEffect(effect, now);
   }
 }

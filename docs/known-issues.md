@@ -3,7 +3,68 @@
 This is a runnable **preview**, not a claim of exact Flash parity.
 当前是可运行预览版，不宣称已与 Flash 逐帧、逐像素完全一致。
 
-## Custom preview.1 / 自定义预览版 1
+## Settings preview — v0.3.0-preview.1 / 设置预览版
+
+These notes describe the new source boundaries. Package verification must be
+recorded for its actual commit and archive; old baseline/v0.2.0 reports are not
+proof that this version's new controls, persistence or portable build passed.
+以下描述新源码的边界；安装包须对实际提交及压缩包验证。旧基线／v0.2.0 报告
+不是本次新增设置、持久化或独立包已通过测试的证明。
+
+- **Speed is a target:** 0–20× retains 30 complete original steps per game
+  second. 20× requests 600 steps per real second; army size and CPU/scheduling
+  limits can reduce actual speed. It does not promise 600 FPS, 240 FPS or better
+  computational performance. The panel reports measured simulation/display rates.
+  **倍率是目标：**0～20 倍仍保留每游戏秒 30 个完整原步；20 倍目标为每真实秒
+  600 步。兵量、CPU 和调度限制可能降低实际倍速，不保证 600 FPS 或 240 FPS，
+  也不是增加机器算力。面板分别显示实测模拟和显示速率。
+- **Responsive catch-up, not unlimited debt:** above 1×, accelerated batches
+  stop after 24 complete steps or an 8 ms between-step work budget. Excess
+  whole-step time demand is discarded, not replayed later; game frames and RNG
+  only advance through actual complete steps. One slow step cannot be preempted.
+  Original 1× behavior is unchanged by this added guard.
+  **有限追赶，不无限积债：**大于 1 倍时，单批最多 24 完整步，或到步间检查的
+  8 ms 软预算后停止。过期整步时间需求丢弃，不留待补算；战斗帧与 RNG 只随实际
+  完整步推进，不跳到未来状态。单个慢逻辑步不能中断；1 倍不受新增预算改变。
+- **Explicit custom mode:** edits/load/import are drafts until explicitly
+  applied. Live application preserves current resources, countdown and existing
+  cooldowns; some fields take effect only on a new round/recruit/match. It also
+  sets subsequent-match rules for this run. Saved presets are not match saves.
+  **明确自定义：**修改／载入／导入先进入草稿，须主动应用。应用本局不重置当前
+  资源、倒计时和已有冷却；部分字段等到新轮次／招募／新局，同时设置本次运行的
+  后续新局规则。保存的预设不是战斗进度存档。
+- **Custom safety limit:** once custom rules or sandbox actions are enabled,
+  troop generation is capped at 500 entities including remaining death animations;
+  each manual spawn is limited to 100. This is an explicit customization, not a
+  recovered original army limit. Untouched original matches do not gain this cap.
+  **自定义安全限制：**主动应用自定义或执行沙盒操作后，生成上限为 500 个兵种
+  实体（含未移除的死亡动画），单次手动最多 100。这是改版保护，不是原版军队
+  上限；未启用自定义的原版对局不添加该限制。
+- **Draft persistence, not automatic activation:** desktop drafts/presets use
+  `userdata/custom-settings.json`; browser storage is origin-scoped. Restored
+  drafts never automatically become active rules. Speed, display cap, pause and
+  camera are not stored in rule presets; startup uses 1×. Save failures show a
+  warning, keep the in-memory draft exportable and must not be treated as success.
+  **保存草稿，不自动启用：**桌面使用 `userdata/custom-settings.json`，浏览器按
+  站点来源保存。重启载入草稿不自动应用；规则预设不包含速度、显示上限、暂停或
+  镜头，启动使用 1 倍。保存失败显示警告，内存草稿仍可导出，不能视为已落盘。
+- **Compact overview:** full crystal sprites are framed close to opposite
+  edges, retaining the original oblique view. Exterior decoration or near map
+  corners can fall outside this framing. Wheel zoom-out and the development
+  `fitMap()` API remain available; F11 fullscreen is a separate action.
+  **紧凑全景：**完整水晶图片靠近两端，保留原斜视角，外围装饰或近侧地图角点
+  可能在画外。可滚轮继续缩小，开发接口 `fitMap()` 仍保留；F11 全屏是另一操作。
+- **Sound is presentation:** music keeps wall-time playback. Dense effects can
+  be coalesced/dropped under the concurrency and deduplication bounds, never
+  queued for replay. Pausing stops current effects, not music. These choices do
+  not change combat events or RNG.
+  **音效属于呈现：**音乐按真实时间；密集音效会因并发／去重限制合并或丢弃，
+  不排队补播。暂停停止当前音效，不暂停音乐；不改变战斗事件或随机数。
+
+See the [settings guide](custom-settings.en.md) /
+[设置说明](custom-settings.zh-CN.md) for application timing and backup locations.
+
+## Historical custom preview — v0.2.0-preview.1 / 历史改版预览
 
 The following boundaries concern the custom source changes; the historical
 baseline verification notes below do not automatically validate new features.

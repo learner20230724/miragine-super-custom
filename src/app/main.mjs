@@ -4,6 +4,9 @@ import { fitViewport, clientToGame } from '../platform/viewport.mjs';
 import { MiraginePlayback } from './playback-session.mjs';
 import { ViewCamera } from '../render/view-camera.mjs';
 import { createCustomControls } from './custom-controls.mjs';
+import { createSettingsPanel } from './settings-panel.mjs';
+import { createCustomization } from '../customization/index.mjs';
+import { createCustomStorage } from './custom-storage.mjs';
 import { BattlefieldRenderer } from '../render/battlefield.mjs';
 import { GameController } from './controller.mjs';
 import { OriginalGameView } from './view.mjs';
@@ -13,6 +16,8 @@ import { createPreferenceStorage } from './preferences.mjs';
 
 const canvas = document.querySelector('#game');
 const stage = document.querySelector('#game-stage');
+const shell = document.querySelector('#app-shell');
+const settingsRoot = document.querySelector('#settings-root');
 const display = canvas.getContext('2d', { alpha: false });
 const logical = document.createElement('canvas');
 logical.width = 640;
@@ -30,6 +35,9 @@ let pressed = null;
 let frameClock = null;
 let observer = null;
 let controls = null;
+let settings = null;
+let customization = null;
+let customStorage = null;
 let cameraDrag = null;
 let presented = 0;
 let observedSimulation = null;
@@ -62,11 +70,54 @@ function updateControls(now = performance.now(), force = false) {
   if (!force && now - controlsUpdatedAt < 200) return;
   controlsUpdatedAt = now;
   controls.update({ enabled: ready && controller.phase === 'game' && !controller.overlay && !controller.simulation?.winner,
+    available: ready && !controller.overlay, paused: frameClock.paused, settingsOpen: settings?.isOpen ?? false,
     speed: frameClock.speed, mode: observer.mode, renderHz: frameClock.clock.renderHz,
     baseSimulationHz: controller.config.rules.frameRate,
     actualSimulationHz: measured.simulationHz, actualDisplayHz: measured.presentationHz,
-    position: { left: fit.left + 8, top: fit.top + fit.height * 110 / 480,
+    // CSS-sized buttons sit ABOVE the original minimap/help band even when the
+    // canvas shrinks beside the dock; a fixed logical y would overlap at 0.4x.
+    position: { left: fit.left + 8,
+      top: Math.max(fit.top, fit.top + fit.height * 350 / 480 - Math.max(32, controls.element.offsetHeight || 0) - 6),
       maxWidth: Math.max(0, fit.width - 16) } });
+  settings?.update({ paused: frameClock.paused, speed: frameClock.speed,
+    editorPaused: frameClock.pauseReasons.includes('editor'),
+    battle: controller.phase === 'game' && !controller.simulation?.winner });
+}
+
+// UI pause, editing pause and a selected 0x rate are separate states. Closing
+// settings releases only its own pause; all boundaries use the real clock.
+function clearGameInput() {
+  keyboard?.clear(); cameraKeys.clear(); mapDrag = false; pressed = null; cameraDrag = null;
+}
+
+function timingChange(change) {
+  clearGameInput();
+  change(performance.now());
+  // A timestamped rate change may settle a final old-rate tick. Consume its
+  // events before silencing effects so none start on the next paused RAF.
+  audio?.consume(controller?.drainEvents() ?? []);
+  if (frameClock.paused) audio?.pauseEffects?.();
+  resetMeasurements();
+  updateControls(performance.now(), true);
+}
+
+function setEditorOpen(open) {
+  timingChange(now => frameClock.setPaused(open, now, 'editor'));
+  settingsRoot.hidden = !open;
+  resize();
+  if (!open) canvas.focus({ preventScroll: true });
+}
+
+function customChanged({ kind } = {}) {
+  if (['draft', 'preset-saved', 'preset-deleted'].includes(kind)) return;
+  if (view && controller) {
+    view.config = controller.config;
+    view.cache.clear(); view.tooltipLayouts.clear();
+  }
+  frameClock?.refresh();
+  clearGameInput();
+  resetMeasurements();
+  updateControls(performance.now(), true);
 }
 
 function cloneFrozen(value) {
@@ -95,6 +146,9 @@ Object.defineProperty(globalThis, '__MIRAGINE__', {
       } : null,
       parityGates: CORE_PARITY_GATES,
       customization: frameClock ? { speed: frameClock.speed, renderHz: frameClock.clock.renderHz,
+        paused: frameClock.paused, pauseReasons: frameClock.pauseReasons, settingsOpen: settings?.isOpen ?? false,
+        storageWarning: customStorage?.warning ?? null,
+        rulesMode: customization?.getMode() ?? null,
         timing: frameClock.snapshot(), measured,
         displayCamera: controller.simulation ? observer.snapshot(presentation?.camera ?? controller.simulation.renderCamera)
           : { mode: 'follow', zoom: 1, centerX: null, centerY: null, mapCorners: [] } } : null,
@@ -217,7 +271,7 @@ canvas.addEventListener('pointerup', event => {
   if (event.button !== 0) return;
   const h = view.hit(point(event));
   if (!mapDrag && sameHotspot(h, pressed)) {
-    if (h.action === 'unit') controller.select(h.side, h.id);
+    if (h.action === 'unit') { if (!frameClock.paused) controller.select(h.side, h.id); }
     else controller.action(h.action, h.value);
     audio.setMuted(controller.muted);
     audio.consume(controller.drainEvents());
@@ -247,19 +301,33 @@ canvas.addEventListener('wheel', event => {
 const inputCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
   'Space', 'Enter', 'Escape', 'KeyI', 'KeyJ', 'KeyK', 'KeyL', 'Equal', 'Minus', 'NumpadAdd', 'NumpadSubtract']);
 window.addEventListener('keydown', event => {
-  if (event.target?.closest?.('[data-custom-controls]')) {
+  if (event.code === 'F2' && ready) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!event.repeat && !controller.overlay) settings?.toggle();
+    return;
+  }
+  if (event.code === 'F11') {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!event.repeat) {
+      const operation = document.fullscreenElement ? document.exitFullscreen() : shell.requestFullscreen();
+      operation.catch(() => {});
+    }
+    return;
+  }
+  if (event.code === 'Escape' && settings?.isOpen && !controller.overlay) {
+    event.preventDefault(); event.stopPropagation();
+    if (!event.repeat) settings.close();
+    return;
+  }
+  if (event.target?.closest?.('[data-custom-controls], [data-settings-panel]')) {
     toolbarKeys.add(event.code);
     return; // Native select/button keyboard interaction, not game input.
   }
   if (toolbarKeys.has(event.code)) {
     event.preventDefault();
     return; // Focus may return to canvas before this physical key is released.
-  }
-  if (event.code === 'F11') {
-    event.preventDefault();
-    const operation = document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen();
-    operation.catch(() => {});
-    return;
   }
   if (!ready || !inputCodes.has(event.code)) return;
   event.preventDefault();
@@ -269,11 +337,12 @@ window.addEventListener('keydown', event => {
     return;
   }
   if (event.code === 'Escape') { controller.key(event.code); frameClock?.invalidate(); }
-  else keyboard.keyDown(event.code);
-});
+  else if (controller.phase !== 'game' || !frameClock.paused) keyboard.keyDown(event.code);
+}, { capture: true });
 window.addEventListener('keyup', event => {
   toolbarKeys.delete(event.code); keyboard?.keyUp(event.code); cameraKeys.delete(event.code);
-});
+}, { capture: true });
+settingsRoot.addEventListener('focusin', clearGameInput);
 window.addEventListener('blur', () => {
   keyboard?.clear(); cameraKeys.clear(); toolbarKeys.clear(); mapDrag = false; pressed = null; cameraDrag = null;
 });
@@ -296,50 +365,74 @@ resize();
 message('超级米拉奇战记', '正在载入原版素材……');
 
 try {
-  const [config, manifest, layout] = await Promise.all([
+  const [config, manifest, layout, defaults] = await Promise.all([
     loadConfiguration({ defaultsUrl: './config/defaults.generated.json', customUrl: './config/custom.json', validateEffective: validateCoreConfiguration }),
     json('./generated/asset-manifest.json'),
     json('./generated/ui/layout.generated.json'),
+    json('./config/defaults.generated.json'),
   ]);
   if (!globalThis.OriginalGraphics) throw new Error('Original graphics export did not load');
   await globalThis.OriginalGraphics.ready;
   await document.fonts.load('12px OriginalYahei');
   const storage = await createPreferenceStorage();
+  customStorage = await createCustomStorage();
   controller = new GameController(config, { storage });
+  customization = createCustomization({ controller, defaults, initialConfig: config, storage: customStorage, onChange: customChanged });
   keyboard = new OriginalKeyboard(controller);
   view = new OriginalGameView(logical, globalThis.OriginalGraphics, layout, config);
   renderer = new BattlefieldRenderer(view.ctx, manifest);
   await renderer.load();
   audio = new GameAudio(manifest);
-  observer = new ViewCamera({ mapWidth: config.rules.mapWidth, mapHeight: config.rules.mapHeight });
+  observer = new ViewCamera({ mapWidth: config.rules.mapWidth, mapHeight: config.rules.mapHeight,
+    baseSpawnInset: config.rules.baseSpawnInset,
+    crystalSprites: { left: manifest.sprites.A_crystal.rasterized, right: manifest.sprites.B_crystal.rasterized } });
+  frameClock = new MiraginePlayback(controller, { now: performance.now(), inputStep: () => keyboard.step(), renderHz: 240,
+    maxWorkMs: 8, maxStepsPerAdvance: 24, workNow: () => performance.now() });
   controls = createCustomControls({ root: stage,
-    onSpeed(speed) { frameClock.setSpeed(speed); resetMeasurements(); updateControls(performance.now(), true); },
+    onSpeed(speed) { timingChange(now => frameClock.setSpeed(speed, now)); },
+    onPause() { timingChange(now => {
+      if (frameClock.paused) {
+        frameClock.setPaused(false, now, 'editor');
+        frameClock.setPaused(false, now, 'manual');
+        if (frameClock.speed === 0) frameClock.togglePause(now);
+      } else frameClock.togglePause(now);
+    }); },
+    onSettings() { settings.toggle(); },
     onOverview() { observer.fitAll(controller.simulation.renderSnapshot); frameClock.invalidate(); updateControls(performance.now(), true); },
     onFollow() { observer.follow(); frameClock.invalidate(); updateControls(performance.now(), true); },
     onRenderRate(rate) { frameClock.setRenderHz(rate); resetMeasurements(); updateControls(performance.now(), true); } });
+  settings = createSettingsPanel({ root: settingsRoot, customization, playbackElement: controls.playbackElement,
+    onOpenChange: setEditorOpen,
+    onPauseChange(paused) { timingChange(now => frameClock.setPaused(paused, now, 'editor')); } });
   audio.playMusic('mainLoop');
   ready = true;
   canvas.focus({ preventScroll: true });
-  frameClock = new MiraginePlayback(controller, { now: performance.now(), inputStep: () => keyboard.step(), renderHz: 240 });
   const presentationRenderer = { render() {
     return renderer.render(presentation.snapshot, presentation.camera, { displayView: observer.getView(presentation.camera) });
   } };
   function animate(now) {
     try {
-    const wallDelta = previousWallNow === null || document.hidden ? 0 : Math.min(250, now - previousWallNow);
+    const wallDelta = previousWallNow === null || document.hidden ? 0 : Math.max(0, Math.min(250, now - previousWallNow));
     previousWallNow = now;
     if (observedSimulation !== controller.simulation) {
       observedSimulation = controller.simulation;
+      view.config = controller.config;
+      view.cache.clear(); view.tooltipLayouts.clear();
+      const rules = controller.config.rules;
+      if (observer.mapWidth !== rules.mapWidth || observer.mapHeight !== rules.mapHeight || observer.baseSpawnInset !== rules.baseSpawnInset) {
+        observer = new ViewCamera({ mapWidth: rules.mapWidth, mapHeight: rules.mapHeight, baseSpawnInset: rules.baseSpawnInset,
+          crystalSprites: { left: manifest.sprites.A_crystal.rasterized, right: manifest.sprites.B_crystal.rasterized } });
+      }
       observer.follow();
       resetMeasurements(now);
     }
     const { render } = frameClock.advance(now, { hidden: document.hidden });
     audio.consume(controller.drainEvents());
-    // Observation controls use wall time even at 8x speed and low display caps.
+    // Cross the crystal-to-crystal span in four real seconds at every zoom/speed.
     if (controller.phase === 'game' && !controller.overlay && cameraKeys.size) {
       const x = Number(cameraKeys.has('KeyL')) - Number(cameraKeys.has('KeyJ'));
       const y = Number(cameraKeys.has('KeyK')) - Number(cameraKeys.has('KeyI'));
-      observer.panBy(-x * wallDelta * .15, -y * wallDelta * .15,
+      observer.keyboardPan(x, y, wallDelta,
         presentation?.camera ?? controller.simulation.renderCamera);
     }
     if (render) {

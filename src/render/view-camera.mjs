@@ -13,6 +13,15 @@ const positive = (value, name) => {
   if (value <= 0) throw new RangeError(`${name} must be positive`);
   return value;
 };
+// Defaults are the generated A_crystal/B_crystal fixed bitmap extents. Passing
+// the manifest's rasterized records keeps customized art framing data-driven.
+const CRYSTAL_BITMAP = Object.freeze({ width: 86, height: 134, offX: -43, offY: -129 });
+const crystalBitmap = (bitmap = CRYSTAL_BITMAP) => Object.freeze({
+  width: positive(bitmap.width, 'crystal bitmap width'),
+  height: positive(bitmap.height, 'crystal bitmap height'),
+  offX: finite(bitmap.offX, 'crystal bitmap offX'),
+  offY: finite(bitmap.offY, 'crystal bitmap offY'),
+});
 
 /**
  * Custom zoom scales world distances BEFORE the original -70-degree Matrix3D
@@ -82,14 +91,19 @@ export function projectViewGround(vectors, view, uvScale = { u: 1, v: 1 }) {
 export class ViewCamera {
   constructor({ mapWidth = 4500, mapHeight = 800, width = 640, height = 400,
     minZoom = .01, maxZoom = 4, nearPlane = 24, padding = 16,
-    heightPadding = 240, sidePadding = 96 } = {}) {
+    heightPadding = 240, sidePadding = 96, baseSpawnInset = 300,
+    keyboardCrossingMs = 4000, crystalSprites = {} } = {}) {
     for (const [key, value] of Object.entries({ mapWidth, mapHeight, width, height, minZoom, maxZoom, nearPlane })) positive(value, key);
-    for (const [key, value] of Object.entries({ padding, heightPadding, sidePadding })) {
+    for (const [key, value] of Object.entries({ padding, heightPadding, sidePadding, baseSpawnInset })) {
       finite(value, key); if (value < 0) throw new RangeError(`${key} must not be negative`);
     }
     if (minZoom > 1 || maxZoom < 1 || minZoom > maxZoom) throw new RangeError('Zoom range must include 1');
     if (nearPlane >= FOCAL_LENGTH || padding * 2 >= Math.min(width, height)) throw new RangeError('Invalid display near-plane or padding');
-    Object.assign(this, { mapWidth, mapHeight, width, height, minZoom, maxZoom, nearPlane, padding, heightPadding, sidePadding });
+    positive(keyboardCrossingMs, 'keyboard crossing milliseconds');
+    if (baseSpawnInset * 2 >= mapWidth) throw new RangeError('Crystal positions must have a positive horizontal separation');
+    Object.assign(this, { mapWidth, mapHeight, width, height, minZoom, maxZoom, nearPlane, padding, heightPadding, sidePadding,
+      baseSpawnInset, keyboardCrossingMs });
+    this.crystalSprites = Object.freeze({ left: crystalBitmap(crystalSprites.left), right: crystalBitmap(crystalSprites.right) });
     this.follow();
   }
 
@@ -165,6 +179,24 @@ export class ViewCamera {
     return this;
   }
 
+  /**
+   * Keyboard movement is in world units per real millisecond, not pixels or
+   * simulation steps: red-to-blue takes four seconds at every zoom/speed.
+   * The caller excludes hidden/tab-away time. Mouse drag stays screen-anchored.
+   */
+  keyboardPan(x, y, wallDeltaMs, coreCamera) {
+    finite(x, 'keyboard x'); finite(y, 'keyboard y'); finite(wallDeltaMs, 'keyboard elapsed time');
+    if (wallDeltaMs < 0) throw new RangeError('Keyboard elapsed time must not be negative');
+    const length = Math.hypot(x, y);
+    if (length === 0 || wallDeltaMs === 0) return this;
+    this.activate(coreCamera);
+    const distance = (this.mapWidth - 2 * this.baseSpawnInset) * wallDeltaMs / this.keyboardCrossingMs;
+    this.centerX = clamp(this.centerX + x / length * distance, 0, this.mapWidth);
+    this.centerY = clamp(this.centerY + y / length * distance, 0, this.mapHeight);
+    this.mode = 'manual';
+    return this;
+  }
+
   /** Minimap navigation addresses world coordinates, never the core camera. */
   centerOn(x, y, coreCamera) {
     finite(x, 'center x'); finite(y, 'center y');
@@ -176,7 +208,43 @@ export class ViewCamera {
     return this;
   }
 
+  /**
+   * Compact battle panorama: fit full crystal bitmaps, not empty ground beyond
+   * the bases. Keep vertical ground/airborne reserve and the original tilt.
+   * Outer decorative map corners may be outside the viewport; fitMap() retains
+   * the old complete-map fit, and wheel zoom can always move farther out.
+   */
   fitAll(snapshot = []) {
+    const crystals = ['left', 'right'].map(side => snapshot.find(item => item.kind === 'base' && item.side === side) ?? {
+      side, px: side === 'left' ? this.baseSpawnInset : this.mapWidth - this.baseSpawnInset,
+      py: this.mapHeight / 2, pz: 0, sx: 1, sy: 1,
+    });
+    this.mode = 'overview'; this.centerX = (crystals[0].px + crystals[1].px) / 2; this.centerY = this.mapHeight / 2;
+    this.offsetX = this.offsetY = 0;
+    const extraHeight = snapshot.reduce((max, item) => Math.max(max, Number.isFinite(item.pz) ? item.pz : 0), 0);
+    const boundsAt = zoom => {
+      const view = { ...this.descriptor(), zoom };
+      const edges = crystals.map(crystal => {
+        const point = projectViewSymbol(crystal, view), bitmap = this.crystalSprites[crystal.side];
+        if (!point.drawable) return null;
+        const x = [bitmap.offX, bitmap.offX + bitmap.width].map(value => point.x + value * point.scaleX);
+        const y = [bitmap.offY, bitmap.offY + bitmap.height].map(value => point.y + value * point.scaleY);
+        return { left: Math.min(...x), right: Math.max(...x), top: Math.min(...y), bottom: Math.max(...y) };
+      });
+      const vertical = [];
+      for (const y of [0, this.mapHeight]) for (const z of [-16, this.heightPadding + extraHeight]) {
+        vertical.push(projectViewPoint(this.centerX, y, view, z));
+      }
+      if (edges.some(edge => !edge) || vertical.some(point => !point.drawable)) return null;
+      return { left: Math.min(...edges.map(edge => edge.left)), right: Math.max(...edges.map(edge => edge.right)),
+        top: Math.min(...edges.map(edge => edge.top), ...vertical.map(point => point.y)),
+        bottom: Math.max(...edges.map(edge => edge.bottom), ...vertical.map(point => point.y)) };
+    };
+    return this.fitProjectedBounds(boundsAt, 'Battle');
+  }
+
+  /** Complete outer-map framing remains available independently of battle fit. */
+  fitMap(snapshot = []) {
     this.mode = 'overview'; this.centerX = this.mapWidth / 2; this.centerY = this.mapHeight / 2;
     this.offsetX = this.offsetY = 0;
     // Reserve all baseline bitmap height plus airborne/projectile motion. A
@@ -195,10 +263,14 @@ export class ViewCamera {
       return { left: Math.min(...points.map(p => p.x)), right: Math.max(...points.map(p => p.x)),
         top: Math.min(...points.map(p => p.y)), bottom: Math.max(...points.map(p => p.y)) };
     };
+    return this.fitProjectedBounds(boundsAt, 'Map');
+  }
+
+  fitProjectedBounds(boundsAt, label) {
     let low = this.minZoom, high = this.maxZoom;
     const fits = bounds => bounds && bounds.right - bounds.left <= this.width - 2 * this.padding
       && bounds.bottom - bounds.top <= this.height - 2 * this.padding;
-    if (!fits(boundsAt(low))) throw new RangeError('Map does not fit inside the configured minimum display zoom');
+    if (!fits(boundsAt(low))) throw new RangeError(`${label} does not fit inside the configured minimum display zoom`);
     for (let iteration = 0; iteration < 52; iteration++) {
       const middle = (low + high) / 2;
       if (fits(boundsAt(middle))) low = middle; else high = middle;

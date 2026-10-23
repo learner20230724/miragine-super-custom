@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createStaticServer } = require('./static-server.cjs');
 const { readPreferences, saveNeverTutorial, isTrustedPreferenceRequest } = require('./preferences.cjs');
+const { readCustomSettings, saveCustomSettings } = require('./custom-settings.cjs');
 
 function portablePaths(appRoot, executable, isPackaged) {
   const root = path.resolve(appRoot);
@@ -83,9 +84,21 @@ async function startDesktop({ electron = require('electron'), appRoot = path.res
       try { return saveNeverTutorial(locations.data, value); }
       catch { throw new Error('Unable to save the game preference'); }
     });
+    ipcMain.handle('miragine:custom-settings:load', event => {
+      if (!isTrustedPreferenceRequest(event, win.webContents, origin)) throw new Error('Untrusted custom settings request');
+      try { return readCustomSettings(locations.data); }
+      catch { throw new Error('Unable to load custom settings'); }
+    });
+    ipcMain.handle('miragine:custom-settings:save', (event, entries, expectedEntries) => {
+      if (!isTrustedPreferenceRequest(event, win.webContents, origin)) throw new Error('Untrusted custom settings request');
+      try { return saveCustomSettings(locations.data, entries, expectedEntries); }
+      catch { throw new Error('Unable to save custom settings'); }
+    });
     app.once('will-quit', () => {
       ipcMain.removeHandler('miragine:preferences:load');
       ipcMain.removeHandler('miragine:preferences:save-never');
+      ipcMain.removeHandler('miragine:custom-settings:load');
+      ipcMain.removeHandler('miragine:custom-settings:save');
     });
     win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     win.webContents.on('will-navigate', (event) => event.preventDefault());
