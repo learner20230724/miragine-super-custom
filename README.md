@@ -12,11 +12,13 @@
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-当前启动包为 **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.1)**，对应运行代码提交 `75e4c6f`。471 项源码测试、97 项实际 EXE 交互检查及额外 10 轮暂停／继续检查通过；跨重启预设保存和系统文件导出已验证。完整校验、测试范围、首次测试异常与重试记录见 [本版交付记录](docs/releases/v0.3.0-preview.1.json) 及 Release 附件。
+当前启动包为 **[v0.3.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2)**，对应运行代码提交 `c1dcb85`：只改进原始图片采样，保留 0.3 设置版功能。497 项源码测试、96 项浏览器交互及 96 项实际 EXE 检查通过；独立 ZIP 解压、两次启动、预设跨重启、文件导出和全部 594 帧裁切检查已验证。发布包源码逐字节核对与隐私审计通过，详见 [本版交付记录](docs/releases/v0.3.0-preview.2.json) 和 Release 附件；不承诺帧率提升或整套美术高清化。
+
+历史 **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.1)** 对应 `75e4c6f`，471 项源码测试、97 项 EXE 交互和额外 10 轮暂停／继续记录保留于 [该版交付记录](docs/releases/v0.3.0-preview.1.json)，不用于替代新版验证。
 
 包外的 `config/custom.json` 可直接编辑，重启生效，设置面板不会改写它。桌面草稿与预设保存在 `userdata/custom-settings.json`，恢复后仍须明确应用；升级前请备份这两个文件。`ui-helper/` 提供可替换绘图源码；`build-info.json` 标明对应源码提交。继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
-源码约 65.4 MB（含约 11.9 MB 运行素材），Windows ZIP 约 170.5 MB，解压约 402.0 MB；不含开发依赖、Git 历史和运行后生成的用户数据。历史便携版记录保留在 [v0.2.0-preview.1](docs/releases/v0.2.0-preview.1.json)。20 倍与 240 FPS 都是目标，不是性能保证；本次最大化原生窗口的 20 倍短测实际约 5.6 倍，兵量与窗口负载会影响结果。
+源码约 65.6 MB（含约 12.0 MB 运行素材），Windows ZIP 约 170.5 MB，解压约 402.1 MB；不含开发依赖、Git 历史和运行后生成的用户数据。历史便携版记录保留在 [v0.2.0-preview.1](docs/releases/v0.2.0-preview.1.json)。20 倍与 240 FPS 都是目标，不是性能保证；此前设置版最大化原生窗口的 20 倍短测实际约 5.6 倍，兵量与窗口负载会影响结果，不作为本次采样优化的性能对照。
 
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 

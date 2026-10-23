@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "version": "0.3.0-preview.2",
+  "sourceCommit": "c1dcb856cd31d28af5c6ded8ed6c63cb295613ec",
+  "sourceTests": {
+    "passed": 497,
+    "failed": 0
+  },
+  "ci": {
+    "status": "passed",
+    "run": "https://github.com/learner20230724/miragine-super-custom/actions/runs/39975877890",
+    "platforms": [
+      "ubuntu-latest / Python 3.13",
+      "windows-latest / Python 3.14"
+    ]
+  },
+  "sourceBrowser": {
+    "passed": 96,
+    "failed": 0,
+    "coreUnchanged": true
+  },
+  "portable": {
+    "passed": 96,
+    "failed": 0,
+    "actualExeLaunches": 2,
+    "closed": true,
+    "persistentPresetAcrossDifferentOrigins": true,
+    "editableFilesUnchanged": true,
+    "nativeExport": {
+      "status": "completed",
+      "filename": "miragine-preset-Verifier-cost-7-HP-99.json",
+      "totalBytes": 8511,
+      "receivedBytes": 8511,
+      "mimeType": "application/json"
+    },
+    "executableSha256": "b5b7ba056dcc5d8d36ba84deebdbc090dcbff280c6cd23e7fed7a1c23e0a1091",
+    "appAsarSha256": "bc9f8e2ad599b67f608dab8167ecb393de481897db71347f43623e9b10b447ab"
+  },
+  "renderer": {
+    "checkedFrames": 594,
+    "checkedMirrors": 1188,
+    "blankStorm10Retained": true,
+    "stageSize": [
+      640,
+      480
+    ],
+    "groundSize": [
+      640,
+      400
+    ],
+    "newEngine": false,
+    "ai": false,
+    "newSourceImages": 25,
+    "newSourceImageBytes": 46676,
+    "sourceSpriteRasterCanvases": 0,
+    "fixedCameraSubmissionsWithoutCacheGrowth": 240,
+    "comparisonImages": "Synthetic fixed renderer scene, not an actual match screenshot",
+    "microbenchmark": {
+      "legacy": {
+        "samples": 240,
+        "unit": "ms/render submission",
+        "median": 0.20000004768371582,
+        "p95": 0.40000009536743164,
+        "minimum": 0,
+        "maximum": 0.9000000953674316
+      },
+      "source": {
+        "samples": 240,
+        "unit": "ms/render submission",
+        "median": 0.20000004768371582,
+        "p95": 0.5,
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    "limits": "Submission microbenchmark only: not GPU completion, displayed FPS, sustained gameplay throughput or Flash pixel parity."
+  },
+  "integrity": {
+    "decodedAsarFiles": 774,
+    "exactGitSourceFiles": 772,
+    "sourceDifferencesUnresolved": 0,
+    "metadataExceptions": [
+      "generated build-info.json",
+      "package.json with three development metadata fields removed"
+    ],
+    "originalEffectCopiesByteIdentical": true
+  },
+  "privacy": {
+    "sourceFindings": 0,
+    "runtimeRawFindings": 5,
+    "reviewedUpstreamFindings": 5,
+    "rawArchiveWarnings": 59,
+    "unresolved": 0,
+    "matchedVendorFiles": 71,
+    "matchedNonResourcePeSections": 14,
+    "limits": "PE headers, resource section and overlay are not claimed byte-identical."
+  },
+  "archive": {
+    "status": "passed",
+    "archiveSha256": "7d9998d87cf8c99a08b1e0565a46ee3cec9d93daa8c0e1e910310394a212d9d9",
+    "sourceCommit": "c1dcb856cd31d28af5c6ded8ed6c63cb295613ec",
+    "filesVerified": 99,
+    "zipBytes": 170524712,
+    "unpackedBytes": 402069917,
+    "zipCrcPassed": true,
+    "inventoryAndExtractedHashesPassed": true,
+    "unpackedDirectory": "dist/native-v2-proof/MiragineSuper",
+    "scope": "Local clean archive extraction, not a remote redownload"
+  },
+  "storage": {
+    "sourceBytesAtRuntimeCommit": 65621223,
+    "runtimeAssetBytes": 11974108,
+    "zipBytes": 170524712,
+    "unpackedBytes": 402069917,
+    "excludes": "Development dependencies, Git history and generated user data"
+  },
+  "unchanged": {
+    "baselineCommit": "4729eae1fb431485bf03b28b32c62dc9af9f7ef4",
+    "scope": "Core, clocks, settings, customization, configuration, original generated assets and camera projection unchanged; main only loads/enables source sampling.",
+    "originalRepositoryCommit": "8554d89713456368378738744bfeb32ec41c2689",
+    "originalRepositoryClean": true
+  },
+  "remainingLimits": [
+    "Scenery and 640x480 final logical buffer unchanged; no full HD art remaster.",
+    "No guaranteed FPS or total memory reduction. Original effect bitmaps add about 2.37 MiB for one RGBA copy.",
+    "20x and 240 FPS are targets, not performance guarantees. Executable is unsigned.",
+    "Bundle README files describe the release state at the runtime source commit; later delivery documentation does not change the built code.",
+    "Local ZIP extraction verified; a complete remote redownload was not performed."
+  ],
+  "remoteRelease": {
+    "url": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2",
+    "published": true,
+    "targetCommit": "c1dcb856cd31d28af5c6ded8ed6c63cb295613ec",
+    "assetCount": 14,
+    "allRemoteAssetSizesAndSha256MatchLocal": true,
+    "fullRemoteRedownloadPerformed": false
+  }
+}
