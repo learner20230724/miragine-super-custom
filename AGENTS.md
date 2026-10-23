@@ -1,5 +1,13 @@
 # Super Miragine War reconstruction
 
+## Independent customization workspace
+
+- This repository is `miragine-super-custom`, copied from the published reconstruction at source commit `8554d89713456368378738744bfeb32ec41c2689`.
+- Keep the original `miragine-super-rebuild` repository and its Releases untouched. The local `upstream` remote is fetch-only; publish customization work only to this repository's `origin`.
+- Default to read-only inspection and discussion. Do not implement, build, launch games or publish feature changes unless the user explicitly requests the corresponding action.
+- The inherited verification and release records describe the original baseline, not validation of future custom features. Preserve those historical records.
+- Treat future user-approved enhancements as explicit custom behavior; keep the original baseline identifiable and do not silently present altered rules as original behavior.
+
 - The binding acceptance criteria are the user's 14 requirements, recorded in `docs/requirements.json`.
 - This project targets the **super** Flash version, not JKS or the C++ reimplementation.
 - Baseline game SWF SHA-256: `6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149`.

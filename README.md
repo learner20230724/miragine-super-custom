@@ -1,6 +1,8 @@
-# 超级米拉奇战记 · 源码重建
+# 超级米拉奇战记 · 自定义改版工程
 
 [English](README.en.md)
+
+这是独立的改版仓库，基于 [原版重建工程](https://github.com/learner20230724/miragine-super-rebuild) 的 `8554d89713456368378738744bfeb32ec41c2689` 提交建立。原仓库及其 Release 保持不变。本仓库目前只增加仓库说明，游戏代码、数值、配置和素材尚未修改；后续功能需明确确认后再实施。下方验证记录与启动包均属于继承的 preview.2 基线，不代表已经完成改版功能。
 
 以 **Flash 超级版**为基准的可修改 JavaScript 工程，保留恢复源码、原始素材及数据来源。不是 JKS 重制版，也不是 C++ 网络对战版。
 
@@ -8,7 +10,7 @@
 
 ## Windows 启动包
 
-在 **[Releases](https://github.com/learner20230724/miragine-super-rebuild/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash。
+在 **[原版基线 Releases](https://github.com/learner20230724/miragine-super-rebuild/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash。本改版仓库尚未发布独立启动包。
 
 包外的 `config/custom.json` 可直接编辑，重启生效；升级前请备份此文件。`ui-helper/` 提供可替换的绘图源码及说明。`build-info.json` 标明对应源码提交。预览版的验证结果和尚存差异见 [验证记录](docs/verification.json) 与 [已知问题](docs/known-issues.md)。
 
@@ -19,8 +21,8 @@
 需要 Git、**Node.js 22.12 或更新版本**及 npm；重新生成数据与素材还需要 Python 3.10 或更新版本。首次安装依赖和 Electron 需要联网。
 
 ```sh
-git clone https://github.com/learner20230724/miragine-super-rebuild.git
-cd miragine-super-rebuild
+git clone https://github.com/learner20230724/miragine-super-custom.git
+cd miragine-super-custom
 npm ci --ignore-scripts
 npm run setup:electron
 npm start

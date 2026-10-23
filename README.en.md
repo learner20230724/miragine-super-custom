@@ -1,6 +1,8 @@
-# Super Miragine War · Source Reconstruction
+# Super Miragine War · Customization Project
 
 [中文](README.md)
+
+This independent customization repository starts from commit `8554d89713456368378738744bfeb32ec41c2689` of the [faithful reconstruction](https://github.com/learner20230724/miragine-super-rebuild). The original repository and Releases remain untouched. Only repository documentation has changed here; game code, values, configuration and assets are unchanged. Further features require an explicit implementation request. The verification records and portable downloads below describe the inherited preview.2 baseline, not implemented custom features.
 
 An editable JavaScript project based on the **super Flash version**, with recovered sources, original assets, and traceable data. This is neither the JKS remake nor the C++ network reimplementation.
 
@@ -8,7 +10,7 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 ## Windows portable build
 
-Download the Windows x64 preview from **[Releases](https://github.com/learner20230724/miragine-super-rebuild/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required.
+Download the Windows x64 preview from the **[original baseline Releases](https://github.com/learner20230724/miragine-super-rebuild/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. This customization repository has not published a separate portable build.
 
 Edit the external `config/custom.json` and restart to apply changes; back it up before upgrading. `ui-helper/` contains replaceable drawing source and instructions. `build-info.json` identifies the source commit. See the [verification record](docs/verification.json) and [known issues](docs/known-issues.md) for preview limitations.
 
@@ -19,8 +21,8 @@ Extract to a reasonably short directory path: deeply nested Windows paths can pr
 Install Git, **Node.js 22.12 or newer**, and npm. Python 3.10+ is also needed to regenerate data and assets. Initial dependency and Electron downloads require internet access.
 
 ```sh
-git clone https://github.com/learner20230724/miragine-super-rebuild.git
-cd miragine-super-rebuild
+git clone https://github.com/learner20230724/miragine-super-custom.git
+cd miragine-super-custom
 npm ci --ignore-scripts
 npm run setup:electron
 npm start
