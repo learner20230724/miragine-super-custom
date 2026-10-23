@@ -151,7 +151,7 @@ test('preload exposes fixed customization channels without arbitrary filesystem 
     return { contextBridge: { exposeInMainWorld(name, value) { assert.equal(name, 'miragineDesktop'); exposed = value; } },
       ipcRenderer: { invoke(...args) { calls.push(args); return Promise.resolve({}); } } };
   } });
-  assert.deepEqual(Object.keys(exposed).sort(), ['loadCustomSettings', 'loadPreferences', 'saveCustomSettings', 'saveNeverTutorial']);
+  assert.deepEqual(Object.keys(exposed).sort(), ['getFullscreen', 'loadCustomSettings', 'loadPreferences', 'onFullscreenChanged', 'saveCustomSettings', 'saveNeverTutorial', 'toggleFullscreen']);
   await exposed.loadCustomSettings();
   const entries = { [DRAFT]: '{}' };
   await exposed.saveCustomSettings(entries, {});
@@ -169,6 +169,7 @@ test('customization IPC uses the existing exact main-frame trust boundary and ge
         session: { setPermissionRequestHandler() {}, setPermissionCheckHandler() {}, webRequest: { onBeforeRequest() {} } } };
     }
     once() {}
+    on() {}
     async loadURL(url) { this.webContents.mainFrame.url = url; }
   }
   const app = { isPackaged: false, setPath() {}, setAppLogsPath() {}, commandLine: { appendSwitch() {} },

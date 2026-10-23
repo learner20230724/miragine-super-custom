@@ -1,5 +1,7 @@
 import { clone, freeze, checkedJSON, parseJSON, validateProfile, profileFromConfiguration, configurationFromProfile,
-  metadata, setProfileField, at, DRAFT_KEY, PRESETS_KEY, MAX_LIBRARY_BYTES, MAX_PRESETS, MAX_SANDBOX_UNITS } from './schema.mjs';
+  metadata, setProfileField, fieldSpecification, at, DRAFT_KEY, PRESETS_KEY, MAX_LIBRARY_BYTES, MAX_PRESETS, MAX_SANDBOX_UNITS, MAX_INTEGER } from './schema.mjs';
+import { installCustomRuntime, hasCustomRuntime, customSideConfiguration } from './runtime.mjs';
+import { clampInteger, clampFinite } from './numeric.mjs';
 
 export { DRAFT_KEY, PRESETS_KEY, MAX_SANDBOX_UNITS, validateProfile, profileFromConfiguration,
   configurationFromProfile } from './schema.mjs';
@@ -21,46 +23,18 @@ function refresh(sim) {
   sim.renderSnapshot = sim.scene.children.map(child => child.visualState());
   sim.renderCamera = { ...sim.camera };
 }
-function updateHealth(entity, maximum, policy) {
-  const previous = entity.spawnHP || entity.maxHP;
-  if (entity.nowHP > 0 && policy === 'ratio' && previous !== maximum) entity.nowHP = entity.nowHP / previous * maximum;
-  // Preserve over-healing: the original allows negative net damage to heal
-  // above spawn HP. Dead troops are not resurrected by changing their stats.
-  entity.spawnHP = maximum;
-  if (entity.kind === 'base') entity.maxHP = maximum;
-}
-function applyToSimulation(sim, configuration, behavior, health) {
-  sim.config = configuration; sim.rules = configuration.rules;
-  sim.incomeLimit = configuration.rules.incomeLimit; sim.populationLimit = configuration.rules.populationLimit;
-  const rules = configuration.rules, difficulty = configuration.difficulties[sim.difficulty];
-  for (const entity of sim.entities) {
-    if (entity.kind === 'base') {
-      updateHealth(entity, rules.baseHp, health);
-      entity.range = rules.baseRange;
-      entity.damage = entity.side === 'left' ? rules.baseDamage : difficulty.blueBaseDamage;
-      entity.weaponSpeed = entity.side === 'left' ? rules.baseWeaponSpeedFrames : difficulty.blueBaseWeaponSpeedFrames;
-    } else {
-      const unit = configuration.units[entity.id];
-      updateHealth(entity, unit.hp, health);
-      entity.armorTypeID = unit.armorTypeID; entity.armor = unit.armor;
-      entity.damage = unit.damage; entity.moveSpeed = unit.moveSpeed * rules.movementMultiplier;
-      entity.range = unit.range * rules.rangeMultiplier;
-      entity.weaponSpeed = unit.weaponSpeed * rules.weaponSpeedMultiplier; entity.delayAttack = unit.delayAttack;
-    }
-  }
-  sim.p1[2] = Number(behavior.leftRecruitment); sim.p2[2] = Number(behavior.rightRecruitment);
-  refresh(sim);
-}
-
 /**
  * Explicit, opt-in editor adapter. No recovered module/prototype is patched.
  * Loading/importing/saving a draft never applies it to a battle or next match.
  * Runtime options are supplied only through actual recovered fields.
  */
 export function createCustomization({ controller, defaults, initialConfig = controller?.config,
-  storage = null, onChange = () => {} } = {}) {
+  storage = null, onChange = () => {}, schedule = callback => setTimeout(callback, 0), cancelSchedule = handle => clearTimeout(handle),
+  workNow = () => performance.now(), spawnBatchSize = 32, spawnWorkMs = 4 } = {}) {
   if (!controller || typeof controller.createSimulation !== 'function') throw new TypeError('A GameController is required');
   if (typeof onChange !== 'function') throw new TypeError('onChange must be a function');
+  if (typeof schedule !== 'function' || typeof cancelSchedule !== 'function' || typeof workNow !== 'function') throw new TypeError('Spawn scheduling functions required');
+  if (!Number.isSafeInteger(spawnBatchSize) || spawnBatchSize < 1 || spawnBatchSize > 256 || !Number.isFinite(spawnWorkMs) || spawnWorkMs <= 0) throw new RangeError('Invalid spawn batch budget');
   const original = profileFromConfiguration(defaults), initial = profileFromConfiguration(initialConfig);
   if (defaults.rules.frameRate !== 30 || initialConfig.rules.frameRate !== 30) throw new RangeError('Logic must remain 30 Hz');
   const baseline = clone(defaults);
@@ -69,7 +43,9 @@ export function createCustomization({ controller, defaults, initialConfig = cont
   let draftBaseline = clone(initial), undo = [], presets = [], warnings = [], nextIsCustom = false;
   let currentMode = same(defaults, initialConfig) ? 'original' : 'custom', nextMode = currentMode, lastReport = null;
   let presetSequence = 0, lastWriteSucceeded = Boolean(storage);
-  const behaviorBySimulation = new WeakMap(), customized = new WeakSet();
+  const behaviorBySimulation = new WeakMap(), aiWrapperBySimulation = new WeakMap(), battleIds = new WeakMap();
+  let battleSequence = 0;
+  let spawnJob = null, spawnTimer = null, spawnSequence = 0;
   const warn = message => { if (!warnings.includes(message)) warnings.push(message); };
   function notify(kind, report = null) {
     lastReport = report;
@@ -93,7 +69,7 @@ export function createCustomization({ controller, defaults, initialConfig = cont
     for (const record of value.presets) {
       strictKeys(record, ['id', 'name', 'profile'], 'preset');
       if (typeof record.id !== 'string' || !/^preset-[0-9a-z-]{1,80}$/.test(record.id) || ids.has(record.id)) throw new TypeError('Invalid preset id');
-      ids.add(record.id); record.name = nameOf(record.name); record.profile = validateProfile(record.profile);
+      ids.add(record.id); record.name = nameOf(record.name); record.profile = validateProfile(record.profile, { configuration: initialConfig });
     }
     return value.presets;
   }
@@ -101,30 +77,71 @@ export function createCustomization({ controller, defaults, initialConfig = cont
   if (draftText !== null) try {
     const saved = parseJSON(draftText); strictKeys(saved, ['schemaVersion', 'profile'], 'draft');
     if (saved.schemaVersion !== 1) throw new TypeError('Invalid draft schema');
-    draft = validateProfile(saved.profile); draftBaseline = clone(draft);
+    draft = validateProfile(saved.profile, { configuration: initialConfig }); draftBaseline = clone(draft);
   } catch { warn('本机草稿损坏，未载入或应用；原记录未覆盖。'); }
   if (presetsText !== null) try { presets = validateLibrary(parseJSON(presetsText, MAX_LIBRARY_BYTES)); }
   catch { warn('本机预设库损坏，未载入或应用；原记录未覆盖。'); }
 
-  function install(sim, behavior, custom) {
-    if (behaviorBySimulation.has(sim)) { behaviorBySimulation.set(sim, clone(behavior)); if (custom) customized.add(sim); return; }
-    behaviorBySimulation.set(sim, clone(behavior)); if (custom) customized.add(sim);
-    const originalAi = sim.ai, originalCreate = sim.createUnit;
-    sim.ai = function (...args) {
-      return behaviorBySimulation.get(this).enemyAi ? originalAi.apply(this, args) : this.p2[0] + this.p2[1] * 8;
-    };
-    sim.createUnit = function (...args) {
-      if (customized.has(this) && this.scene.children.filter(child => child.kind === 'unit').length >= MAX_SANDBOX_UNITS) return null;
-      return originalCreate.apply(this, args);
-    };
+  function install(sim, behavior, custom, { initialize = false } = {}) {
+    behaviorBySimulation.set(sim, clone(behavior));
+    if (custom && (initialize || !hasCustomRuntime(sim))) installCustomRuntime(sim, sim.config, { initialize });
+    if (sim.ai !== aiWrapperBySimulation.get(sim)) {
+      const originalAi = sim.ai;
+      const wrapped = function (...args) {
+        return behaviorBySimulation.get(this).enemyAi ? originalAi.apply(this, args) : this.p2[0] + this.p2[1] * 8;
+      };
+      sim.ai = wrapped; aiWrapperBySimulation.set(sim, wrapped);
+    }
+  }
+  function applyRuntime(sim, configuration, behavior, health) {
+    installCustomRuntime(sim, configuration, { health });
+    install(sim, behavior, true);
+    sim.p1[2] = Number(behavior.leftRecruitment); sim.p2[2] = Number(behavior.rightRecruitment);
+    refresh(sim);
+  }
+  function cancelSpawn(reason = 'cancelled') {
+    if (spawnTimer !== null) { cancelSchedule(spawnTimer); spawnTimer = null; }
+    if (!spawnJob || spawnJob.status !== 'running') return false;
+    spawnJob.status = 'cancelled'; spawnJob.reason = reason; notify('spawn-cancelled', publicSpawnJob()); return true;
+  }
+  function publicSpawnJob() {
+    if (!spawnJob) return null;
+    const { simulation, ...info } = spawnJob; return { ...info, remaining: info.requested - info.completed };
+  }
+  function spawnOne(sim, side, unitId) {
+    const keys = [`${side}Money`, `${side}Income`, `${side}Population`], saved = keys.map(key => sim[key]);
+    const unit = customSideConfiguration(sim, side).units[unitId];
+    try { sim[keys[0]] = unit.cost; sim[keys[2]] = unit.population; return sim.createUnit(side, unitId); }
+    finally { keys.forEach((key, i) => { sim[key] = saved[i]; }); }
+  }
+  function advanceSpawn() {
+    spawnTimer = null;
+    if (!spawnJob || spawnJob.status !== 'running') return;
+    const job = spawnJob, sim = job.simulation;
+    if (!isBattle() || controller.simulation !== sim) { cancelSpawn('battle-changed'); return; }
+    const base = job.side === 'left' ? sim.redBoss : sim.blueBoss;
+    if (base.nowHP <= 0) { cancelSpawn('crystal-destroyed'); return; }
+    const started = workNow(); let batch = 0;
+    try {
+      while (job.completed < job.requested && batch < spawnBatchSize && (batch === 0 || workNow() - started < spawnWorkMs)) {
+        if (!spawnOne(sim, job.side, job.unitId)) throw new Error('当前条件无法生成士兵');
+        job.completed++; batch++;
+      }
+      refresh(sim);
+      if (job.completed === job.requested) job.status = 'completed';
+      notify('spawn-progress', publicSpawnJob());
+      if (job.status === 'running') spawnTimer = schedule(advanceSpawn);
+    } catch { job.status = 'failed'; job.error = '生成中断；已生成的士兵保留，可减少数量后重试。'; refresh(sim); notify('spawn-failed', publicSpawnJob()); }
   }
   // Calling the original factory with autoStart:false lets optional behavior be
   // installed before its first frame, preserving the original immediate step.
   const originalFactory = controller.createSimulation;
-  controller.createSimulation = function (options) {
+  controller.createSimulation = function (options = {}) {
+    cancelSpawn('battle-changed');
     const configuration = nextIsCustom ? configurationFromProfile(configurationTemplate, next) : faithfulConfig;
     const sim = originalFactory.call(this, { ...options, config: configuration, autoStart: false });
-    install(sim, next.rules, nextIsCustom);
+    const needsCustomRuntime = nextIsCustom || nextMode === 'custom';
+    install(sim, next.rules, needsCustomRuntime, { initialize: needsCustomRuntime });
     sim.p1[2] = Number(next.rules.leftRecruitment); sim.p2[2] = Number(next.rules.rightRecruitment);
     controller.config = configuration; applied = clone(next); currentMode = nextMode;
     if (options.autoStart !== false) sim.step();
@@ -137,7 +154,7 @@ export function createCustomization({ controller, defaults, initialConfig = cont
     install(sim, behaviorBySimulation.get(sim) ?? applied.rules, true); currentMode = 'custom';
   }
   function replaceDraft(value, remember = true) {
-    const valid = validateProfile(value);
+    const valid = validateProfile(value, { configuration: configurationTemplate });
     if (remember) { undo.push(clone(draft)); if (undo.length > 30) undo.shift(); }
     draft = valid; persistDraft(); notify('draft'); return clone(draft);
   }
@@ -146,15 +163,42 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       .filter(field => !same(at(before, field.path), at(after, field.path)));
   }
   function currentResources(sim) {
-    const side = side => ({ money: sim[`${side}Money`], income: sim[`${side}Income`], population: sim[`${side}Population`],
-      baseHp: (side === 'left' ? sim.redBoss : sim.blueBoss).nowHP,
-      units: (side === 'left' ? sim.friendList : sim.enemyList).filter(entity => entity.kind === 'unit').length,
-      recruitment: (side === 'left' ? sim.p1 : sim.p2)[2] === 1 });
+    if (!battleIds.has(sim)) battleIds.set(sim, ++battleSequence);
+    const side = side => {
+      const base = side === 'left' ? sim.redBoss : sim.blueBoss, selection = side === 'left' ? sim.p1 : sim.p2;
+      return { money: sim[`${side}Money`], income: sim[`${side}Income`], population: sim[`${side}Population`],
+        baseHp: base.nowHP, baseMaxHp: base.spawnHP, baseDamage: [...base.damage], baseRange: base.range,
+        baseWeaponSpeedFrames: base.weaponSpeed, selectedUnit: selection[0] + selection[1] * 8,
+        units: (side === 'left' ? sim.friendList : sim.enemyList).filter(entity => entity.kind === 'unit').length,
+        recruitment: selection[2] === 1 };
+    };
     return { left: side('left'), right: side('right'), enemyAi: behaviorBySimulation.get(sim)?.enemyAi ?? true,
-      difficulty: sim.difficulty, frame: sim.frame, round: sim.round, canSpawn: true };
+      battleId: battleIds.get(sim), difficulty: sim.difficulty, frame: sim.frame, round: sim.round, canSpawn: true };
+  }
+  function currentBehavior(sim) {
+    return { leftRecruitment: sim.p1[2] === 1, rightRecruitment: sim.p2[2] === 1,
+      enemyAi: behaviorBySimulation.get(sim)?.enemyAi ?? true };
+  }
+  function liveFields(edits, { health = 'ratio' } = {}) {
+    if (!['ratio', 'absolute'].includes(health)) throw new TypeError('health must be ratio or absolute');
+    const sim = battle(); let current = clone(applied), future = clone(next), editedDraft = clone(draft);
+    for (const [path, value] of edits) {
+      if (fieldSpecification(path, baseline).apply === '下局') throw new Error('开局字段只能应用到下局');
+      current = setProfileField(current, path, value, baseline);
+      future = setProfileField(future, path, value, baseline);
+      editedDraft = setProfileField(editedDraft, path, value, baseline);
+    }
+    current.rules = currentBehavior(sim);
+    const configuration = configurationFromProfile(configurationTemplate, current);
+    enableCustom(sim); applyRuntime(sim, configuration, current.rules, health);
+    controller.config = configuration; controller.revision++;
+    applied = current; next = future; draft = editedDraft; nextIsCustom = true; nextMode = 'custom'; persistDraft();
+    const report = { applied: edits.map(([path]) => path), deferred: [], health };
+    notify('apply-live-field', report); return report;
   }
   const api = {
     getMode() { return { current: currentMode, next: nextMode }; },
+    getBattleState() { return isBattle() ? currentResources(controller.simulation) : null; },
     async flush() {
       if (!lastWriteSucceeded) return false;
       try { return typeof storage?.flush === 'function' ? await storage.flush() : Boolean(storage); }
@@ -170,7 +214,8 @@ export function createCustomization({ controller, defaults, initialConfig = cont
         storageStatus: storage?.status ?? (storage ? 'ready' : 'memory'),
         isBattle: Boolean(isBattle()), battle: isBattle() ? currentResources(controller.simulation) : null,
         mode: currentMode, nextMode, lastReport: lastReport ? clone(lastReport) : null,
-        limits: { presets: MAX_PRESETS, units: MAX_SANDBOX_UNITS, manualSpawnPerAction: 100 },
+        limits: { presets: MAX_PRESETS, units: null, manualSpawnPerAction: MAX_INTEGER, safeInteger: MAX_INTEGER },
+        spawnJob: publicSpawnJob(),
         unsupported: ['建筑建造', '主动技能', '固定波次 / 关卡增援'] };
     },
     setDraft(profile) { return replaceDraft(profile); },
@@ -180,17 +225,23 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       if (!undo.length) return false;
       draft = undo.pop(); persistDraft(); notify('draft'); return true;
     },
+    applyLiveField(path, value, options = {}) { return liveFields([[path, value]], options); },
     applyCurrent({ health = 'ratio' } = {}) {
       if (!['ratio', 'absolute'].includes(health)) throw new TypeError('health must be ratio or absolute');
-      const sim = battle(), valid = validateProfile(draft), configuration = configurationFromProfile(configurationTemplate, valid);
-      const changes = changedFields(applied, valid);
+      const sim = battle(), valid = validateProfile(draft), current = clone(valid);
+      // Start-page drafts are never enacted by the unit/rule apply button.
+      // Keep both the current configuration receipt and actual switches honest.
+      for (const key of ['initialMoney','startingIncome','leftStartingPopulation','initialRoundFrames']) current.config.rules[key] = applied.config.rules[key];
+      for (const side of ['left','right']) current.config.sides[side].initial = clone(applied.config.sides[side].initial);
+      for (let i=0;i<4;i++) for (const key of ['rightStartingIncome','rightStartingPopulation']) current.config.difficulties[i][key] = applied.config.difficulties[i][key];
+      current.rules = currentBehavior(sim);
+      const configuration = configurationFromProfile(configurationTemplate, current), changes = changedFields(applied, valid);
       const report = { applied: changes.filter(field => field.apply !== '下局').map(field => field.path),
         deferred: changes.filter(field => field.apply === '下局').map(field => field.path),
-        note: '当前倒计时、已有攻击冷却、现有金币与剩余人口不重置；初始值仅下局使用。', health };
-      enableCustom(sim); behaviorBySimulation.set(sim, clone(valid.rules));
-      applyToSimulation(sim, configuration, valid.rules, health);
+        note: '当前倒计时、已有攻击冷却、现有金币与剩余人口、当前招募和 AI 开关不重置；开局设置仅下局使用。', health };
+      enableCustom(sim); applyRuntime(sim, configuration, current.rules, health);
       controller.config = configuration; controller.revision++;
-      applied = clone(valid); next = clone(valid); nextMode = 'custom'; nextIsCustom = true;
+      applied = current; next = clone(valid); nextMode = 'custom'; nextIsCustom = true;
       notify('apply-current', report); return report;
     },
     applyNext() {
@@ -207,7 +258,7 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       notify('start-battle'); return api.getState();
     },
     returnToOriginal() {
-      controller.home(); faithfulConfig = freeze(clone(baseline)); configurationTemplate = faithfulConfig; controller.config = faithfulConfig;
+      cancelSpawn('return-original'); controller.home(); faithfulConfig = freeze(clone(baseline)); configurationTemplate = faithfulConfig; controller.config = faithfulConfig;
       next = clone(original); applied = clone(original); nextIsCustom = false;
       currentMode = nextMode = 'original';
       notify('return-original'); return api.getState();
@@ -238,32 +289,36 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       const document = parseJSON(text);
       strictKeys(document, ['schemaVersion', 'name', 'profile'], 'export');
       if (document.schemaVersion !== 1) throw new TypeError('Unsupported customization export');
-      nameOf(document.name); return replaceDraft(validateProfile(document.profile));
+      nameOf(document.name); return replaceDraft(validateProfile(document.profile, { configuration: configurationTemplate }));
     },
     exportJSON(name = '我的米拉奇规则') {
       return JSON.stringify({ schemaVersion: 1, name: nameOf(name), profile: validateProfile(draft) }, null, 2) + '\n';
     },
-    spawn({ side, unitId, count = 1 } = {}) {
-      sideOf(side); integer(unitId, 0, 15, 'unitId'); integer(count, 1, 100, 'count');
-      const sim = battle(), total = sim.scene.children.filter(child => child.kind === 'unit').length;
-      if (total + count > MAX_SANDBOX_UNITS) throw new RangeError(`自定义模式最多 ${MAX_SANDBOX_UNITS} 个单位（含死亡动画）`);
+    getSpawnJob() { return publicSpawnJob(); },
+    cancelSpawn() { return cancelSpawn('user'); },
+    startSpawn({ side, unitId, count = 1 } = {}) {
+      sideOf(side); integer(unitId, 0, 15, 'unitId'); count = clampInteger(count, { min: 1 });
+      const sim = battle();
       if ((side === 'left' ? sim.redBoss : sim.blueBoss).nowHP <= 0) throw new Error('水晶已毁，不能再刷兵');
-      enableCustom(sim);
-      const keys = [`${side}Money`, `${side}Income`, `${side}Population`], saved = keys.map(key => sim[key]);
-      const unit = sim.config.units[unitId], units = [];
-      try {
-        for (let i = 0; i < count; i++) {
-          sim[keys[0]] = unit.cost; sim[keys[2]] = unit.population;
-          const entity = sim.createUnit(side, unitId);
-          if (!entity) throw new Error('已达到安全单位上限');
-          units.push(entity.uid);
-        }
-      } finally { keys.forEach((key, i) => { sim[key] = saved[i]; }); refresh(sim); }
-      notify('spawn', { side, unitId, count: units.length }); return units;
+      cancelSpawn('replaced'); enableCustom(sim);
+      spawnJob = { id: ++spawnSequence, status: 'running', side, unitId, requested: count, completed: 0, error: null, simulation: sim };
+      notify('spawn-started', publicSpawnJob()); spawnTimer = schedule(advanceSpawn); return publicSpawnJob();
+    },
+    // Small legacy calls remain synchronous. Larger requests always yield;
+    // only the dedicated startSpawn API is used by the new editor.
+    spawn({ side, unitId, count = 1 } = {}) {
+      sideOf(side); integer(unitId, 0, 15, 'unitId'); count = clampInteger(count, { min: 1 });
+      if (count > 64) return api.startSpawn({ side, unitId, count });
+      const sim = battle();
+      if ((side === 'left' ? sim.redBoss : sim.blueBoss).nowHP <= 0) throw new Error('水晶已毁，不能再刷兵');
+      enableCustom(sim); const units = [];
+      for (let i = 0; i < count; i++) { const entity = spawnOne(sim, side, unitId); if (!entity) throw new Error('当前条件无法生成士兵'); units.push(entity.uid); }
+      refresh(sim); notify('spawn', { side, unitId, count: units.length }); return units;
     },
     clearTroops(side = 'both') {
       if (side !== 'both') sideOf(side);
       const sim = battle(); enableCustom(sim);
+      if (spawnJob?.status === 'running' && (side === 'both' || spawnJob.side === side)) cancelSpawn('troops-cleared');
       const remove = new Set(sim.scene.children.filter(child => child.kind === 'unit' && (side === 'both' || child.side === side)));
       // Both sides' attacks referencing removed actors must be removed too.
       // The engine otherwise dereferences father/target on the next frame.
@@ -275,12 +330,36 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       refresh(sim); notify('clear-troops', { side, count }); return count;
     },
     setResources(input = {}) {
-      checkedJSON(input); const { side } = input; sideOf(side);
-      if (Object.keys(input).some(key => !['side', 'money', 'income', 'population'].includes(key)) || Object.keys(input).length < 2) throw new TypeError('Unknown or empty resource edit');
-      for (const key of ['money', 'income', 'population']) if (Object.hasOwn(input, key)) integer(input[key], 0, key === 'population' ? 10000 : 100000000, key);
-      const sim = battle(); enableCustom(sim);
-      for (const key of ['money', 'income', 'population']) if (Object.hasOwn(input, key)) sim[`${side}${key[0].toUpperCase()}${key.slice(1)}`] = input[key];
+      const { side } = input; sideOf(side);
+      if (Object.keys(input).some(key => !['side', 'money', 'income', 'population', 'baseHp'].includes(key)) || Object.keys(input).length < 2) throw new TypeError('Unknown or empty resource edit');
+      const values = {};
+      for (const key of ['money', 'income', 'population']) if (Object.hasOwn(input,key)) values[key] = clampInteger(input[key]);
+      if (Object.hasOwn(input,'baseHp')) values.baseHp = clampFinite(input.baseHp);
+      checkedJSON(values);
+      const sim = battle();
+      const editedBase = side === 'left' ? sim.redBoss : sim.blueBoss;
+      if (Object.hasOwn(values,'baseHp') && editedBase.nowHP <= 0 && values.baseHp > 0) throw new Error('已毁水晶不能通过当前生命编辑复活；请开始新局');
+      enableCustom(sim);
+      for (const key of ['money','income','population']) if(Object.hasOwn(values,key))sim[`${side}${key[0].toUpperCase()}${key.slice(1)}`]=values[key];
+      if (Object.hasOwn(values,'baseHp')) {
+        const base = side === 'left' ? sim.redBoss : sim.blueBoss;
+        base.nowHP = values.baseHp;
+      }
       refresh(sim); notify('resources'); return currentResources(sim);
+    },
+    setBase(input = {}, options = {}) {
+      const { side } = input; sideOf(side); const sim = battle();
+      if(Object.keys(input).some(key=>!['side','hp','maxHp','damage','range','weaponSpeedFrames'].includes(key)) || Object.keys(input).length<2)throw new TypeError('Unknown or empty crystal edit');
+      if(Object.hasOwn(input,'hp')) { const hp=clampFinite(input.hp),base=side==='left'?sim.redBoss:sim.blueBoss; if(base.nowHP<=0 && hp>0)throw new Error('已毁水晶不能通过当前生命编辑复活；请开始新局'); }
+      const edits = [];
+      if(Object.hasOwn(input,'maxHp'))edits.push([`config.sides.${side}.base.hp`,input.maxHp]);
+      if(Object.hasOwn(input,'range'))edits.push([`config.sides.${side}.base.range`,input.range]);
+      const attackPrefix=side==='left'?'config.rules':`config.difficulties.${sim.difficulty}`;
+      if(Object.hasOwn(input,'damage')) { if(!Array.isArray(input.damage)||input.damage.length!==2)throw new TypeError('Two damage values required'); for(let i=0;i<2;i++)edits.push([`${attackPrefix}.${side==='left'?'baseDamage':'blueBaseDamage'}.${i}`,input.damage[i]]); }
+      if(Object.hasOwn(input,'weaponSpeedFrames'))edits.push([`${attackPrefix}.${side==='left'?'baseWeaponSpeedFrames':'blueBaseWeaponSpeedFrames'}`,input.weaponSpeedFrames]);
+      if(edits.length)liveFields(edits,options);
+      if(Object.hasOwn(input,'hp'))api.setResources({side,baseHp:input.hp});
+      return currentResources(sim);
     },
     selectUnit({ side, unitId } = {}) {
       sideOf(side); integer(unitId, 0, 15, 'unitId'); const sim = battle(); enableCustom(sim);

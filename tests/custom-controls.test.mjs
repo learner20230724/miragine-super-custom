@@ -76,12 +76,13 @@ function fixture(callbacks = {}, document = null) {
   return { document, root, canvas, controls, find };
 }
 
-test('only the compact settings and pause launcher enters the game stage; playback belongs to dock', () => {
+test('game stage has only an empty hidden compatibility node; all controls belong to dock', () => {
   const f = fixture();
   assert.equal(f.controls.element.parentNode, f.root);
   assert.equal(f.controls.element.hidden, true);
   assert.equal(f.controls.playbackElement.parentNode, null);
-  assert.equal(f.controls.element.querySelectorAll('button').length, 2);
+  assert.equal(f.controls.element.querySelectorAll('button').length, 0);
+  assert.equal(f.find('[data-action="settings"]'), null);
   assert.equal(f.controls.element.querySelector('[data-speed]'), null);
   assert.deepEqual(f.controls.playbackElement.querySelectorAll('[data-speed]').map(button => button.getAttribute('data-speed')), ['0', '1', '2', '4', '8', '12', '20']);
   assert.equal(f.find('[data-action="render-rate"]').value, '240');
@@ -92,33 +93,35 @@ test('only the compact settings and pause launcher enters the game stage; playba
   f.controls.destroy();
 });
 
-test('settings stays available in menus while battle controls are disabled', () => {
+test('settings state does not pause; fullscreen remains available in menus while battle controls are disabled', () => {
   const calls = []; const f = fixture({ onSettings: () => calls.push('settings'), onPause: () => calls.push('pause') });
   f.controls.update({ enabled: false, available: true });
-  assert.equal(f.controls.element.hidden, false);
-  assert.equal(f.find('[data-action="pause"]').hidden, true);
-  assert.equal(f.find('[data-action="settings"]').disabled, false);
-  f.find('[data-action="settings"]').fire('click'); f.find('[data-action="pause"]').fire('click');
-  assert.deepEqual(calls, ['settings']);
-  f.controls.update({ enabled: true, available: true, paused: true, settingsOpen: true });
-  assert.equal(f.find('[data-action="pause"]').textContent, '继续');
-  assert.equal(f.find('[data-action="settings"]').getAttribute('aria-expanded'), 'true');
+  assert.equal(f.controls.element.hidden, true);
+  assert.equal(f.controls.playbackElement.hidden, false);
+  assert.equal(f.find('[data-action="pause"]').disabled, true);
+  assert.equal(f.find('[data-action="fullscreen"]').disabled, false);
+  assert.equal(f.find('[data-action="settings"]'), null);
   f.find('[data-action="pause"]').fire('click');
-  assert.deepEqual(calls, ['settings', 'pause']); assert.equal(f.document.activeElement, f.canvas);
+  assert.deepEqual(calls, []);
+  f.controls.update({ enabled: true, available: true, paused: true, settingsOpen: true });
+  assert.equal(f.find('[data-action="pause"]').textContent, '继续游戏');
+  assert.deepEqual(calls, []);
+  f.find('[data-action="pause"]').focus(); f.find('[data-action="pause"]').fire('click');
+  assert.deepEqual(calls, ['pause']); assert.equal(f.document.activeElement, f.find('[data-action="pause"]'));
   f.controls.destroy();
 });
 
 test('authoritative updates distinguish target speed, pause, measured simulation and measured display', () => {
   const f = fixture();
   f.controls.update({ enabled: true, speed: 4, mode: 'overview', renderHz: 120, actualSimulationHz: 95, actualDisplayHz: 58.5 });
-  assert.equal(f.controls.element.hidden, false);
+  assert.equal(f.controls.element.hidden, true);
   for (const speed of CUSTOM_SPEEDS) assert.equal(f.find(`[data-speed="${speed}"]`).getAttribute('aria-pressed'), String(speed === 4));
   assert.equal(f.find('[data-action="overview"]').getAttribute('aria-pressed'), 'true');
   assert.equal(f.find('[data-action="follow"]').getAttribute('aria-pressed'), 'false');
   assert.equal(f.find('[data-action="render-rate"]').value, '120');
   assert.equal(f.find('[data-custom-status]').textContent, '目标 4× · 实际模拟 95.0 步/秒（3.17×） · 实际显示 58.5 帧/秒');
   f.controls.update({ speed: 0, mode: 'manual' });
-  assert.equal(f.find('[data-action="pause"]').textContent, '继续');
+  assert.equal(f.find('[data-action="pause"]').textContent, '继续游戏');
   assert.match(f.find('[data-custom-status]').textContent, /目标 0×（暂停）/);
   assert.equal(f.find('[data-action="overview"]').getAttribute('aria-pressed'), 'false');
   f.controls.destroy();
@@ -137,7 +140,7 @@ test('all speed presets request exact multipliers without optimistic state or ga
   f.controls.destroy();
 });
 
-test('slider and numeric speed accept 0..20 by tenths and restore unacknowledged requests', () => {
+test('slider and numeric speed clamp to 0..20 by tenths and restore unacknowledged requests', () => {
   const requests = []; let acknowledge = false;
   const f = fixture({ onSpeed: value => { requests.push(value); if (acknowledge) f.controls.update({ speed: value }); } });
   f.controls.update({ enabled: true });
@@ -145,8 +148,8 @@ test('slider and numeric speed accept 0..20 by tenths and restore unacknowledged
   range.value = '3.7'; range.fire('input'); assert.equal(range.value, '1');
   acknowledge = true; number.value = '17.9'; number.fire('change'); assert.equal(range.value, '17.9'); assert.equal(number.value, '17.9');
   number.value = '0'; number.fire('change'); assert.equal(number.value, '0');
-  for (const invalid of ['', '20.1', '-1', '0.15', 'NaN', 'Infinity']) { number.value = invalid; number.fire('change'); }
-  assert.deepEqual(requests, [3.7, 17.9, 0]); assert.equal(number.value, '0');
+  for (const input of ['', '20.1', '-1', '0.15', 'NaN', 'Infinity']) { number.value = input; number.fire('change'); }
+  assert.deepEqual(requests, [3.7, 17.9, 0, 20, 0, 0.2]); assert.equal(number.value, '0.2');
   number.focus(); number.value = '1.'; f.controls.update({ actualDisplayHz: 45 }); assert.equal(number.value, '1.');
   for (const value of [0, 0.1, 1, 19.9, 20]) assert.equal(validSpeed(value), true);
   for (const value of [-1, 20.1, .01, NaN, Infinity, '1']) assert.equal(validSpeed(value), false);
@@ -169,13 +172,13 @@ test('camera and frame-cap remain authoritative; dock keyboard edits do not stee
 });
 
 test('disabled controls reject synthetic requests', () => {
-  const calls = []; const f = fixture({ onSpeed: value => calls.push(value), onOverview: () => calls.push('overview'), onSettings: () => calls.push('settings') });
-  f.find('[data-speed="20"]').fire('click'); f.find('[data-action="overview"]').fire('click'); f.find('[data-action="settings"]').fire('click');
+  const calls = []; const f = fixture({ onSpeed: value => calls.push(value), onOverview: () => calls.push('overview'), onFullscreen: () => calls.push('fullscreen') });
+  f.find('[data-speed="20"]').fire('click'); f.find('[data-action="overview"]').fire('click'); f.find('[data-action="fullscreen"]').fire('click');
   const input = f.find('[data-action="speed-number"]'); input.value = '12'; input.fire('change');
   assert.deepEqual(calls, []); f.controls.destroy();
 });
 
-test('caller owns launcher geometry and invalid positions are atomic', () => {
+test('legacy compatibility geometry remains valid and invalid positions are atomic', () => {
   const f = fixture();
   f.controls.update({ position: { left: 246.5, top: 137.25, maxWidth: 500 } });
   const expected = { left: '246.5px', top: '137.25px', maxWidth: '500px', bottom: 'auto' };

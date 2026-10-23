@@ -15,11 +15,12 @@ const NUMBER_FIELDS = Object.freeze(['time', 'leftMoney', 'leftIncome', 'leftPop
 
 /** The original stage display list, drawn with exported native Canvas graphics. */
 export class OriginalGameView {
-  constructor(canvas, graphics, layout, config, { canvasFactory = () => document.createElement('canvas') } = {}) {
+  constructor(canvas, graphics, layout, config, { canvasFactory = () => document.createElement('canvas'), crispTextControls = false } = {}) {
     this.canvas = canvas;
     this.graphics = graphics;
     this.layout = layout;
     this.config = config;
+    this.crispTextControls = crispTextControls;
     this.ctx = graphics.attach(canvas);
     this.cache = new Map();
     this.canvasFactory = canvasFactory;
@@ -191,7 +192,10 @@ export class OriginalGameView {
     });
     for (const [name, hp] of [['leftBar', sim.redBoss], ['rightBar', sim.blueBoss]]) {
       const instance = this.instance(210, name), m = instance.localMatrix;
-      const ratio = Math.max(0, hp.nowHP / hp.maxHP);
+      const rawRatio = hp.nowHP / hp.maxHP;
+      const finiteRatio = Number.isFinite(rawRatio) ? Math.max(0, rawRatio) : rawRatio > 0 ? 1 : 0;
+      // Display a bounded bar for expanded custom values without altering HP.
+      const ratio = this.config?.customization ? Math.min(1, finiteRatio) : finiteRatio;
       const layer = this.barLayer(name, ratio, ctx => {
         this.draw(instance.symbol, { x: m[4], y: m[5], scaleX: m[0], scaleY: m[3], filter: ({ symbol, matrix }) => {
           if (symbol === 'sprite131') {
@@ -224,10 +228,10 @@ export class OriginalGameView {
     // Their filters read only their own transparent child canvases, not the
     // battlefield. Flatten at the original stage coordinates, then composite
     // here (after the minimap) to preserve layer order and filter extents.
-    this.cached('game-controls', ctx => {
+    if (!this.crispTextControls) this.cached('game-controls', ctx => {
       for (const name of ['tipopen', 'bnquit']) this.drawInstance(this.root('game', name), {}, ctx);
     });
-    for (const name of ['tipopen', 'bnquit']) {
+    for (const name of this.crispTextControls ? [] : ['tipopen', 'bnquit']) {
       const instance = this.root('game', name);
       this.hotspot(name === 'tipopen' ? 'tutorial' : 'quit', instance);
     }
@@ -272,8 +276,13 @@ export class OriginalGameView {
     const x = align === 'center' ? (b.xMin + b.xMax) / 2 : align === 'right' ? b.xMax - 2 : b.xMin + 2;
     const y = instance.localMatrix[5] + instance.text.exportedBaseline;
     const text = String(value);
+    // Safe-integer balances can have sixteen digits. Preserve the original
+    // glyphs at normal values; fit long values within their own HUD field.
+    const availableWidth = Math.max(1, b.xMax - b.xMin - 4);
+    const estimatedWidth = text.length * instance.text.fontSize * .62;
+    const textScale = Math.min(1, availableWidth / Math.max(1, estimatedWidth));
     const revision = JSON.stringify([text, instance.text.font, instance.text.fontSize, align, x, y,
-      '#fff', '#000', 3, 1, 1]);
+      '#fff', '#000', 3, 1, 1, textScale]);
     const layer = this.numberLayer(name, revision, ctx => {
       ctx.save();
       try {
@@ -281,6 +290,7 @@ export class OriginalGameView {
         // exact fractional stage-space baseline. Do not substitute a font or
         // regroup a whole HUD/overlay into this counter layer.
         ctx.shadowColor = '#000'; ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1;
+        if (textScale < 1) { ctx.translate(x, 0); ctx.scale(textScale, 1); ctx.translate(-x, 0); }
         this.graphics.drawText(text, ctx, { font: instance.text.font, size: instance.text.fontSize,
           color: '#fff', x, y, align });
       } finally { ctx.restore(); }
@@ -373,7 +383,7 @@ export class OriginalGameView {
     for (const name of ['replay', 'home']) this.hotspot(name, this.instance(258, name), { offsetX: p.x, offsetY: p.y });
   }
 
-  tooltipLayout(id, unit, ctx) {
+  tooltipLayout(id, unit, ctx, side = null) {
     if (!Number.isInteger(id) || id < 0 || id > 15) throw new RangeError('Unknown tooltip unit');
     // Text and styles match DragonForce.initUI and WowTips.draw. The original
     // tooltip displays the raw weaponSpeed parameter, NOT a fixed attacks/sec.
@@ -383,7 +393,8 @@ export class OriginalGameView {
       `攻击力对轻甲:${unit.damage[0]}`, `攻击力对重甲:${unit.damage[1]}`, `攻击距离:${unit.range}`,
       `攻击速度:${unit.weaponSpeed}`];
     const signature = JSON.stringify([ctx.font, ...source]);
-    const previous = this.tooltipLayouts.get(id);
+    const cacheKey = side ? `${side}:${id}` : id;
+    const previous = this.tooltipLayouts.get(cacheKey);
     if (previous?.signature === signature) return previous.layout;
     const lines = [];
     for (let i = 0; i < source.length; i++) {
@@ -400,17 +411,18 @@ export class OriginalGameView {
     const textWidth = Math.max(...lines.map(line => ctx.measureText(line.text).width));
     const textHeight = lines.length * 17, width = textWidth + 20, height = textHeight + 20;
     const layout = { lines, textWidth, textHeight, width, height };
-    this.tooltipLayouts.set(id, { signature, layout });
+    this.tooltipLayouts.set(cacheKey, { signature, layout });
     return layout;
   }
 
   tooltip(controller) {
     const h = this.hit(this.pointer);
     if (h?.action !== 'unit') return;
-    const unit = this.config.units[h.id];
+    const sideUnits = this.config.customization?.sides?.[h.side]?.units;
+    const unit = sideUnits?.[h.id] ?? this.config.units[h.id];
     const ctx = this.ctx;
     ctx.save(); ctx.font = '12px Verdana, OriginalYahei, sans-serif';
-    const { lines, textWidth, textHeight, width, height } = this.tooltipLayout(h.id, unit, ctx);
+    const { lines, textWidth, textHeight, width, height } = this.tooltipLayout(h.id, unit, ctx, sideUnits ? h.side : null);
     const x = this.pointer.x + textWidth + 20 < 640 ? this.pointer.x + 35 : this.pointer.x - (35 + textWidth + 20);
     const y = Math.min(this.pointer.y - 10, 480 - textHeight - 25);
     ctx.fillStyle = 'rgba(14,14,14,.85)'; ctx.strokeStyle = 'rgba(239,239,239,.8)'; ctx.lineWidth = 1;

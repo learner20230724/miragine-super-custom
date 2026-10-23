@@ -1,3 +1,5 @@
+import { clampInteger } from '../customization/numeric.mjs';
+
 /** Opt-in rules editor. Draft editing, persistence and battle mutations are distinct actions. */
 export const SETTINGS_PANEL_CSS = `
 [data-settings-panel] {box-sizing:border-box;display:flex;flex-direction:column;width:100%;height:100%;min-height:0;color:#edf1e8;background:#131b18;border-left:1px solid #465247;font:13px/1.5 OriginalYahei,'Microsoft YaHei',Arial,sans-serif;font-variant-numeric:tabular-nums}
@@ -47,6 +49,19 @@ export const SETTINGS_PANEL_CSS = `
 [data-settings-panel] .ms-footer .ms-row:last-child {margin-bottom:0}
 [data-settings-panel] .ms-dirty {font-size:11px;color:#e4c97f;margin-left:auto}
 [data-settings-panel] .ms-check {display:flex;align-items:center;gap:7px;font-size:12px}
+[data-settings-panel] .ms-sides {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;container-type:inline-size}
+[data-settings-panel] .ms-side {min-width:0;border-top:3px solid #b96160}
+[data-settings-panel] .ms-side[data-side=right] {border-top-color:#668ed6}
+[data-settings-panel] .ms-side .ms-field {min-width:0;margin-bottom:9px}
+[data-settings-panel] .ms-side input:not([type=checkbox]),[data-settings-panel] .ms-side select {width:100%;min-width:0}
+[data-settings-panel] .ms-field-help {font-size:10px;color:#abbba5;overflow-wrap:anywhere}
+[data-settings-panel] .ms-choice {display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+[data-settings-panel] .ms-choice button[aria-pressed=true] {background:#665d30;border-color:#ccb868}
+[data-settings-panel] .ms-candidates {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 8px}
+[data-settings-panel] .ms-candidates .ms-check {font-size:11px;min-width:0;overflow-wrap:anywhere}
+[data-settings-panel] .ms-live-note {margin-bottom:9px;color:#d5c28a;font-size:11px}
+[data-settings-panel] [data-spawn-progress] {font-size:12px;overflow-wrap:anywhere}
+@media(max-width:480px) {[data-settings-panel] .ms-sides {grid-template-columns:1fr}}
 [data-settings-panel] [hidden] {display:none!important}
 `;
 
@@ -64,11 +79,14 @@ export function parseFieldValue(field, value, checked = false) {
   if (field.type === 'boolean') return Boolean(checked);
   if (field.type === 'string' || field.type === 'text') return String(value);
   if (String(value).trim() === '') throw new Error('数值不能为空');
-  const number = Number(value);
+  const raw = String(value).trim();
+  if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(raw)) throw new Error('请输入有效数值');
+  let number = Number(raw);
+  const minimum = field.min ?? (field.integer ? Number.MIN_SAFE_INTEGER : -Number.MAX_VALUE);
+  const maximum = field.max ?? (field.integer ? Number.MAX_SAFE_INTEGER : Number.MAX_VALUE);
+  if (field.integer) return clampInteger(raw, { min: minimum, max: maximum });
+  number = Math.min(maximum, Math.max(minimum, number));
   if (!Number.isFinite(number)) throw new Error('请输入有限数值');
-  if (field.integer && !Number.isInteger(number)) throw new Error('请输入整数');
-  if (field.min !== undefined && number < field.min) throw new Error(`不能小于 ${field.min}`);
-  if (field.max !== undefined && number > field.max) throw new Error(`不能大于 ${field.max}`);
   return number;
 }
 function formatted(value) { return value === undefined ? '—' : typeof value === 'boolean' ? value ? '开启' : '关闭' : String(value); }
@@ -76,7 +94,7 @@ function setText(node, text) { if (node.textContent !== text) node.textContent =
 
 /**
  * root is a caller-owned dock whose layout reserves canvas space. It is not an overlay.
- * onOpenChange owns the editor pause token; onPauseChange requests pause / continue.
+ * onOpenChange is a layout/focus notification, never a request to pause.
  * update refreshes status only: it must never replace in-progress field edits.
  */
 export function createSettingsPanel({ root, customization, playbackElement = null,
@@ -94,7 +112,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   const state = () => customization.getState();
   let opened = false, destroyed = false, busy = false, activeTab = 'sandbox', selectedPreset = '', lastPresetSignature = '';
   let presentation = { paused: false, speed: 1 }, beforeFocus = null, presetNameDraft = '';
-  let currentTabCleanup = [];
+  let currentTabCleanup = [], liveBindings = [], metadataCache = null, sandboxContext = null, startDifficulty = 1, startSinglePlay = true;
   function on(element, type, listener, transient = false) {
     element.addEventListener(type, listener);
     (transient ? currentTabCleanup : cleanups).push(() => element.removeEventListener(type, listener)); return element;
@@ -113,7 +131,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     on(control, 'click', event => { event.stopPropagation(); if (!destroyed && !control.disabled) callback(event); }, transient);
     parent.appendChild(control); return control;
   }
-  const pauseButton = button(headerActions, '继续战斗', 'pause', () => { onPauseChange(!presentation.paused); });
   const closeButton = button(headerActions, '收起 ×', 'close', () => close()); closeButton.setAttribute('aria-label', '收起设置（F2 或 Escape）');
   const scroll = node('div', 'ms-scroll'); element.appendChild(scroll);
   if (playbackElement) scroll.appendChild(playbackElement);
@@ -167,8 +184,14 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       throw new Error('未能确认写入本机存储；本次内容可能只在内存中，请立即导出 JSON 保存。');
     }
   }
-  function metadata() { const result = customization.getMetadata(); return Array.isArray(result) ? result : result?.groups ?? []; }
-  function tabs() { return [{ id: 'sandbox', label: '沙盒 / 刷兵' }, ...metadata(), { id: 'presets', label: '预设 / 文件' }]; }
+  function metadata() {
+    // Metadata describes immutable original defaults. Do not repeatedly clone the
+    // entire schema while building the many AI candidate controls.
+    if (!metadataCache) { const result = customization.getMetadata(); metadataCache = Array.isArray(result) ? result : result?.groups ?? []; }
+    return metadataCache;
+  }
+  function tabs() { return [{ id: 'sandbox', label: '当前战局 / 基础' }, { id: 'units', label: '兵种' },
+    { id: 'starting', label: '开局设置' }, { id: 'difficulties', label: '难度 / AI' }, { id: 'presets', label: '预设 / 文件' }]; }
   for (const tab of tabs()) {
     const control = button(nav, tab.label, `tab-${tab.id}`, () => {
       activeTab = tab.id; renderContent();
@@ -185,7 +208,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   });
   function clearContent() {
     if (presetName?.parentNode) presetNameDraft = presetName.value;
-    for (const cleanup of currentTabCleanup) cleanup(); currentTabCleanup = [];
+    for (const cleanup of currentTabCleanup) cleanup(); currentTabCleanup = []; liveBindings = [];
     while (content.firstChild) content.removeChild(content.firstChild);
   }
   function renderContent() {
@@ -194,57 +217,78 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     content.setAttribute('aria-labelledby', `miragine-tab-${activeTab}`);
     if (activeTab === 'sandbox') renderSandbox();
     else if (activeTab === 'presets') renderPresets();
-    else renderFields(metadata().find(group => group.id === activeTab));
+    else if (activeTab === 'units') renderUnits();
+    else if (activeTab === 'starting') renderStarting();
+    else if (activeTab === 'difficulties') renderDifficulties();
+    apply.hidden = activeTab === 'starting' || activeTab === 'sandbox'; hpPolicy.hidden = activeTab === 'starting';
     update();
   }
-  function renderFields(group) {
-    if (!group) return;
-    const entries = group.entries ?? [];
-    let selected = selection.get(group.id) ?? String(entries[0]?.id ?? '');
-    if (!entries.some(entry => String(entry.id) === selected)) selected = String(entries[0]?.id ?? '');
-    selection.set(group.id, selected);
-    if (entries.length > 1) {
-      const selector = node('select'); selector.setAttribute('data-entry-select', group.id); selector.setAttribute('aria-label', `选择${group.label}`);
-      for (const entry of entries) option(selector, entry.id, entry.label);
-      selector.value = selected;
-      on(selector, 'change', () => { selection.set(group.id, selector.value); renderContent(); }, true);
-      const row = node('div', 'ms-row'); label(row, `选择${group.label}`, selector); content.appendChild(row);
-    } else content.appendChild(node('h3', '', entries[0]?.label ?? group.label));
-    if (group.description) content.appendChild(node('p', 'ms-summary', group.description));
-    const entry = entries.find(item => String(item.id) === selected);
-    if (entry?.description) content.appendChild(node('p', 'ms-summary', entry.description));
-    const tableWrap = node('div', 'ms-table-wrap'), table = node('table'), thead = node('thead'), heading = node('tr'), tbody = node('tbody');
-    for (const text of ['参数 / 单位', '原版默认', '草稿值', '生效时机']) heading.appendChild(node('th', '', text));
-    thead.appendChild(heading); table.appendChild(thead); table.appendChild(tbody); tableWrap.appendChild(table); content.appendChild(tableWrap);
+  function group(id) { return metadata().find(item => item.id === id); }
+  function battleContext(current) { return current.isBattle && current.battle ? `${current.battle.battleId ?? 'battle'}:${current.battle.difficulty}` : 'menu'; }
+  function groupFields(id) { const entry = group(id); return entry?.entries?.flatMap(item => item.fields ?? []) ?? entry?.fields ?? []; }
+  function card(parent, title, side = null) {
+    const result = node('section', `ms-card${side ? ' ms-side' : ''}`);
+    if (side) result.setAttribute('data-side', side);
+    result.appendChild(node('h3', '', title)); parent.appendChild(result); return result;
+  }
+  function fieldSide(field) { return field.side ?? /config\.sides\.(left|right)\./.exec(field.path)?.[1]; }
+  function sortedFields(fields) { return [...fields].sort((a, b) => Number(a.path.endsWith('.description')) - Number(b.path.endsWith('.description'))); }
+  function fieldsInto(parent, fields, { live = false, prefix = '' } = {}) {
     const current = state();
-    // Keep balance numbers visible before the long optional description row.
-    const fields = [...(entry?.fields ?? group.fields ?? [])].sort((a, b) =>
-      Number(a.path.endsWith('.description')) - Number(b.path.endsWith('.description')));
-    for (const field of fields) {
-      const row = node('tr'), name = node('th', '', field.label); name.scope = 'row';
-      if (field.unit) name.appendChild(node('span', 'ms-unit', field.unit)); row.appendChild(name);
-      row.appendChild(node('td', 'ms-default', formatted(readPath(current.defaults, field.path))));
-      const editCell = node('td'), input = fieldInput(field, readPath(current.draft, field.path)); editCell.appendChild(input); row.appendChild(editCell);
-      row.appendChild(node('td', 'ms-timing', field.apply ?? '按规则生效')); tbody.appendChild(row);
+    for (const field of sortedFields(fields)) {
+      const sideName = fieldSide(field) === 'left' ? '红方' : fieldSide(field) === 'right' ? '蓝方' : '';
+      const input = fieldInput(field, readPath(live ? current.applied : current.draft, field.path), { live, prefix: prefix || sideName });
+      const wrap = node('div', 'ms-field'), name = node('label', '', !prefix && sideName ? `${sideName} · ${field.label}` : field.label);
+      // A label cannot contain a group of candidate checkboxes; its name is supplied to the fieldset instead.
+      if (field.type !== 'unit-list') { const id = `miragine-field-${field.path.replace(/[^a-zA-Z0-9_-]/g, '-')}`; input.id = id; name.setAttribute('for', id); }
+      wrap.appendChild(name); wrap.appendChild(input);
+      const defaultValue = readPath(current.defaults, field.path);
+      wrap.appendChild(node('span', 'ms-field-help', `${field.unit ? `${field.unit} · ` : ''}原版默认：${Array.isArray(defaultValue) ? defaultValue.join(', ') : formatted(defaultValue)} · ${live ? 'Enter / 离开输入框直接生效' : field.apply ?? '应用后生效'}`));
+      parent.appendChild(wrap);
     }
   }
-  function fieldInput(field, value) {
+  function renderUnits() {
+    const entries = group('units')?.entries ?? [];
+    let selected = selection.get('units') ?? String(entries[0]?.id ?? '0');
+    if (!entries.some(entry => String(entry.id) === selected)) selected = String(entries[0]?.id ?? '0');
+    const selector = selectInput(entries.map(entry => [entry.id, entry.label]), '选择兵种');
+    selector.setAttribute('data-entry-select', 'units'); selector.value = selected;
+    on(selector, 'change', () => { selection.set('units', selector.value); renderContent(); }, true);
+    label(content, '选择兵种', selector);
+    content.appendChild(node('p', 'ms-live-note', '红蓝独立编辑，不会自动同时修改双方。这里修改的是草稿；应用本局后影响对应阵营。'));
+    const columns = node('div', 'ms-sides'); content.appendChild(columns);
+    const entry = entries.find(item => String(item.id) === selected);
+    for (const [side, title] of [['left', '红方兵种'], ['right', '蓝方兵种']]) {
+      const section = card(columns, title, side); section.setAttribute('data-unit-side', side);
+      fieldsInto(section, (entry?.fields ?? []).filter(field => fieldSide(field) === side), { prefix: title });
+    }
+  }
+  function fieldInput(field, value, { live = false, prefix = '' } = {}) {
     const type = field.type ?? typeof value;
+    if (type === 'unit-list') return candidateInput(field, value);
     const isText = type === 'string' || type === 'text', isBool = type === 'boolean';
     const multiline = isText && field.path.endsWith('description');
     const input = node(multiline ? 'textarea' : 'input');
-    // HTMLTextAreaElement.type is a read-only getter in real browsers.
-    if (!multiline) input.type = isBool ? 'checkbox' : isText ? 'text' : 'number';
+    // Text + numeric inputMode preserves overflowing numeric text so it can be clamped;
+    // type=number silently empties values such as 1e999 before input handlers can read them.
+    if (!multiline) input.type = isBool ? 'checkbox' : 'text';
     if (isBool) input.checked = Boolean(value); else input.value = String(value ?? '');
-    input.setAttribute('data-field-path', field.path); input.setAttribute('aria-label', field.label);
+    input.setAttribute('data-field-path', field.path); input.setAttribute('aria-label', `${prefix ? `${prefix}：` : ''}${field.label}`);
     if (!isText && !isBool) {
       input.step = field.integer ? '1' : 'any'; input.inputMode = field.integer ? 'numeric' : 'decimal';
       if (field.min !== undefined) input.min = String(field.min); if (field.max !== undefined) input.max = String(field.max);
     } else if (isText) input.maxLength = field.maxLength ?? (field.path.endsWith('description') ? 2000 : 120);
-    if (invalid.has(field.path)) { input.value = invalid.get(field.path).raw; input.setAttribute('aria-invalid', 'true'); }
+    if (!live && invalid.has(field.path)) { input.value = invalid.get(field.path).raw; input.setAttribute('aria-invalid', 'true'); }
+    if (!isText && !isBool) clampOnInput(input, field);
+    if (live) {
+      input.setAttribute('data-live-field-path', field.path);
+      bindLive(input, field, s => readPath(s.applied, field.path), next => customization.applyLiveField(field.path, next, { health: hpPolicy.value }));
+      return input;
+    }
     on(input, 'change', () => {
       try {
         const next = parseFieldValue({ ...field, type }, input.value, input.checked);
+        if (!isBool) input.value = String(next);
         customization.updateDraft(field.path, next); invalid.delete(field.path); input.setAttribute('aria-invalid', 'false');
         notice('草稿已修改，尚未自动应用或保存。'); update();
       } catch (error) {
@@ -254,13 +298,62 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     }, true);
     return input;
   }
+  function candidateInput(field, value) {
+    const box = node('div', 'ms-candidates'); box.setAttribute('data-field-path', field.path); box.setAttribute('role', 'group'); box.setAttribute('aria-label', field.label);
+    const selected = new Set(value ?? []), inputs = [];
+    for (const unit of group('units')?.entries ?? []) {
+      const input = node('input'); input.type = 'checkbox'; input.checked = selected.has(Number(unit.id));
+      input.setAttribute('data-candidate-unit', unit.id); input.setAttribute('aria-label', `${field.label}：${unit.label}`); inputs.push([Number(unit.id), input]);
+      const line = node('label', 'ms-check'); line.appendChild(input); line.appendChild(node('span', '', unit.label)); box.appendChild(line);
+      on(input, 'change', () => {
+        const next = inputs.filter(([, item]) => item.checked).map(([id]) => id);
+        try { customization.updateDraft(field.path, next); invalid.delete(field.path); box.setAttribute('aria-invalid', 'false'); notice('候选兵种草稿已修改，尚未应用。'); }
+        catch (error) { input.checked = !input.checked; notice(`${field.label}：${error.message}`, true); }
+        update();
+      }, true);
+    }
+    return box;
+  }
+  function clampOnInput(input, field) {
+    on(input, 'input', () => {
+      const raw = input.value.trim();
+      if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(raw)) return;
+      const value = Number(raw), minimum = field.min ?? (field.integer ? Number.MIN_SAFE_INTEGER : -Number.MAX_VALUE), maximum = field.max ?? (field.integer ? Number.MAX_SAFE_INTEGER : Number.MAX_VALUE);
+      // Clamp an upper overflow immediately. A lower-bound clamp waits for commit,
+      // otherwise typing the leading 0 of a valid fraction (e.g. 0.5) is impossible.
+      if (value >= maximum && field.integer) input.value = String(clampInteger(raw, { min: minimum, max: maximum }));
+      else if (value > maximum) input.value = String(maximum);
+    }, true);
+  }
+  function bindLive(input, field, read, commit) {
+    const binding = { input, field, read, edited: false, pending: false, revision: 0, context: sandboxContext }; liveBindings.push(binding);
+    input.setAttribute('data-needs-battle', '');
+    on(input, 'input', () => { binding.edited = true; binding.revision++; }, true);
+    const write = async () => {
+      const current = state();
+      if (!binding.edited || binding.pending || !current.isBattle) return;
+      if (binding.context !== battleContext(current)) {
+        binding.edited = false; update(); notice('战局已切换，旧战局未确认的输入已丢弃。'); return;
+      }
+      try {
+        const next = parseFieldValue(field, input.value, input.checked);
+        if (field.type !== 'boolean') input.value = String(next);
+        const revision = binding.revision;
+        binding.pending = true; await commit(next); binding.edited = binding.revision !== revision; input.setAttribute('aria-invalid', 'false'); notice('已立即修改本局对应字段，其他草稿未自动应用。');
+      } catch (error) { input.setAttribute('aria-invalid', 'true'); notice(`${field.label}：${error.message}`, true); }
+      finally { binding.pending = false; update(); }
+    };
+    if (field.type === 'boolean') on(input, 'change', () => { binding.edited = true; void write(); }, true);
+    on(input, 'blur', () => { void write(); }, true);
+    on(input, 'keydown', event => { if (event.code === 'Enter') { event.preventDefault(); if (!event.repeat) void write(); } }, true);
+  }
   function selectInput(values, aria) {
     const input = node('select'); input.setAttribute('aria-label', aria);
     for (const [value, text] of values) option(input, value, text); input.value = String(values[0]?.[0] ?? ''); return input;
   }
-  function numberInput(value, aria, min = 0, max = 1000000) {
-    const input = node('input'); input.type = 'number'; input.value = String(value); input.min = String(min); input.max = String(max); input.step = '1';
-    input.setAttribute('aria-label', aria); return input;
+  function numberInput(value, aria, min = 0, max = Number.MAX_SAFE_INTEGER) {
+    const input = node('input'); input.type = 'text'; input.inputMode = 'numeric'; input.value = String(value ?? ''); input.min = String(min); input.max = String(max); input.step = '1';
+    input.setAttribute('aria-label', aria); clampOnInput(input, { integer: true, min, max }); return input;
   }
   function number(input) { return parseFieldValue({ type: 'number', integer: true, min: Number(input.min), max: Number(input.max) }, input.value); }
   function battleButton(parent, text, actionName, callback, className = '') {
@@ -268,74 +361,127 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   }
   function renderSandbox() {
     const summary = node('p', 'ms-summary'); summary.setAttribute('data-battle-summary', ''); content.appendChild(summary);
-    const startCard = node('section', 'ms-card'); startCard.appendChild(node('h3', '', '新建自定义战局'));
-    const startRow = node('div', 'ms-row');
-    const difficulties = metadata().find(item => item.id === 'difficulties')?.entries ?? [];
-    const difficulty = selectInput(difficulties.length ? difficulties.map(entry => [entry.id, entry.label]) : [[0, '普通']], '新战局难度');
-    const mode = selectInput([['single', '单人对战电脑'], ['two', '双人对战']], '新战局模式');
-    label(startRow, '难度', difficulty); label(startRow, '模式', mode); startCard.appendChild(startRow);
+    content.appendChild(node('p', 'ms-live-note', '本页直接修改当前战局：输入后按 Enter 或离开输入框即生效。打开设置不会暂停游戏。'));
+    const columns = node('div', 'ms-sides'); content.appendChild(columns);
+    const s = state(), baseFields = groupFields('bases'); sandboxContext = battleContext(s);
+    const difficulty = s.battle?.difficulty ?? startDifficulty;
+    baseFields.push(...(group('difficulties')?.entries?.find(entry => Number(entry.id) === difficulty)?.fields ?? []).filter(field => /\.blueBase/.test(field.path)));
+    for (const [side, sideLabel] of [['left', '红方'], ['right', '蓝方']]) {
+      const sideCard = card(columns, sideLabel + '当前状态', side); sideCard.setAttribute('data-live-side', side);
+      for (const [key, text, integer] of [['money', '当前金币', true], ['income', '当前每轮收入', true], ['population', '本轮剩余人口', true], ['baseHp', '水晶当前生命', false]]) {
+        const field = { label: sideLabel + text, type: 'number', integer, min: 0, max: integer ? Number.MAX_SAFE_INTEGER : Number.MAX_VALUE };
+        const input = numberInput(s.battle?.[side]?.[key], field.label, field.min, field.max); if (!integer) { input.step = 'any'; input.inputMode = 'decimal'; }
+        input.setAttribute('data-live-resource', side + '.' + key);
+        bindLive(input, field, current => current.battle?.[side]?.[key], next => customization.setResources({ side, [key]: next }));
+        label(sideCard, text, input);
+      }
+      const sideFields = baseFields.filter(field => {
+        const explicit = fieldSide(field); if (explicit) return explicit === side;
+        if (field.path.startsWith('config.difficulties.')) return side === 'right' && field.path.startsWith('config.difficulties.' + difficulty + '.');
+        return side === 'left';
+      });
+      fieldsInto(sideCard, sideFields, { live: true, prefix: sideLabel });
+      const selectedUnit = selectInput((group('units')?.entries ?? []).map(entry => [entry.id, entry.label]), sideLabel + '当前招募兵种');
+      selectedUnit.setAttribute('data-live-selected-unit', side); selectedUnit.setAttribute('data-needs-battle', '');
+      selectedUnit.value = String(s.battle?.[side]?.selectedUnit ?? 0); label(sideCard, '当前招募兵种', selectedUnit);
+      on(selectedUnit, 'change', () => {
+        // action() publishes busy status first. Capture the user value before
+        // that refresh can restore an unfocused control from simulation state.
+        const unitId = Number(selectedUnit.value);
+        return action(async () => { await customization.selectUnit({ side, unitId }); notice('已切换' + sideLabel + '招募兵种。'); });
+      }, true);
+      const check = node('input'); check.type = 'checkbox'; check.checked = s.battle?.[side]?.recruitment ?? true;
+      check.setAttribute('data-live-recruitment', side); check.setAttribute('data-needs-battle', '');
+      const line = node('label', 'ms-check'); line.appendChild(check); line.appendChild(node('span', '', sideLabel + '自动招募')); sideCard.appendChild(line);
+      on(check, 'change', () => {
+        const enabled = check.checked;
+        return action(async () => { await customization.setRecruitment(side, enabled); notice('已更新' + sideLabel + '本局自动招募。'); });
+      }, true);
+    }
+    const basics = card(content, '通用基础规则');
+    fieldsInto(basics, groupFields('basic').length ? groupFields('basic') : groupFields('economy').filter(field => field.apply !== '下局'), { live: true });
+    const ai = node('input'); ai.type = 'checkbox'; ai.checked = s.battle?.enemyAi ?? true; ai.setAttribute('data-live-ai', ''); ai.setAttribute('data-needs-battle', '');
+    const aiLabel = node('label', 'ms-check'); aiLabel.appendChild(ai); aiLabel.appendChild(node('span', '', '蓝方电脑自动选择兵种（单人局）')); basics.appendChild(aiLabel);
+    on(ai, 'change', () => {
+      const enabled = ai.checked;
+      return action(async () => { await customization.setEnemyAi(enabled); notice('已更新本局电脑选兵开关。'); });
+    }, true);
+    const spawnCard = card(content, '生成士兵 / 清场'), row = node('div', 'ms-row');
+    const unit = selectInput((group('units')?.entries ?? []).map(entry => [entry.id, entry.label]), '刷兵兵种'); unit.setAttribute('data-sandbox-unit', '');
+    const count = numberInput(1, '刷兵数量', 1); count.setAttribute('data-sandbox-count', '');
+    label(row, '兵种', unit); label(row, '生成数量（不是人口消耗）', count); spawnCard.appendChild(row);
+    const spawnActions = node('div', 'ms-row'); spawnCard.appendChild(spawnActions);
+    for (const [side, sideLabel] of [['left', '红方'], ['right', '蓝方']]) {
+      battleButton(spawnActions, '生成' + sideLabel + '士兵', 'spawn-' + side, async () => {
+        const amount = number(count); count.value = String(amount);
+        await customization.startSpawn({ side, unitId: Number(unit.value), count: amount });
+        notice('已开始分批生成' + sideLabel + '士兵。可以取消尚未生成的部分；大量士兵仍会增加运行负担。');
+      }, 'ms-primary').setAttribute('data-spawn-start', '');
+    }
+    const progressRow = node('div', 'ms-row'), progress = node('span'); progress.setAttribute('data-spawn-progress', '');
+    progress.setAttribute('role', 'status'); progressRow.appendChild(progress);
+    button(progressRow, '取消剩余生成', 'cancel-spawn', () => {
+      try { customization.cancelSpawn(); notice('已取消剩余生成，已经生成的士兵保留。'); update(); }
+      catch (error) { notice(error.message, true); }
+    }, '', true);
+    spawnCard.appendChild(progressRow);
+    const clearActions = node('div', 'ms-row'); spawnCard.appendChild(clearActions);
+    for (const [side, sideLabel, actionId] of [['left', '红方', 'clear-left'], ['right', '蓝方', 'clear-right'], ['both', '双方', 'clear-all']]) {
+      battleButton(clearActions, '清除' + sideLabel + '士兵', actionId, async () => {
+        if (!confirmAction('清除' + sideLabel + '士兵与相关投射物？水晶保留，不能撤销。')) return;
+        await customization.clearTroops(side); notice('已清除' + sideLabel + '士兵。');
+      }, 'ms-danger');
+    }
+    spawnCard.appendChild(node('p', 'ms-muted', '生成数量没有额外的沙盒上限，分批执行、可取消；大量士兵依然可能耗尽内存或拖慢战斗。'));
+    const navigation = card(content, '新局与原版');
+    button(navigation, '调整开局参数 / 开始新局', 'goto-starting', () => { activeTab = 'starting'; renderContent(); }, '', true);
+    if (typeof customization.returnToOriginal === 'function') button(navigation, '回到原版菜单', 'return-original', () => action(async () => {
+      if (state().isBattle && !confirmAction('结束当前战局并回到原版菜单？草稿和已保存预设保留。')) return;
+      await customization.returnToOriginal(); notice('已回到原版菜单；下局使用原版规则。草稿和预设仍保留。');
+    }), '', true);
+  }
+  function inlineChoices(parent, values, selected, attribute, choose) {
+    const row = node('div', 'ms-choice'); row.setAttribute('role', 'group'); parent.appendChild(row);
+    const controls = [];
+    for (const [value, text] of values) {
+      const control = button(row, text, null, () => {
+        choose(value); for (const [key, item] of controls) item.setAttribute('aria-pressed', String(String(key) === String(value)));
+      }, '', true);
+      control.setAttribute(attribute, value); control.setAttribute('aria-pressed', String(String(value) === String(selected))); controls.push([value, control]);
+    }
+  }
+  function renderStarting() {
+    content.appendChild(node('p', 'ms-summary', '本页全部是开局设置，只影响新战局，不会改变当前金币、收入、人口或当前倒计时。'));
+    const startCard = card(content, '开始新战局');
+    const difficulties = group('difficulties')?.entries ?? [];
+    startCard.appendChild(node('p', 'ms-muted', '选择新局难度'));
+    inlineChoices(startCard, difficulties.map(entry => [Number(entry.id), entry.label]), startDifficulty, 'data-start-difficulty', value => { startDifficulty = value; });
+    inlineChoices(startCard, [[true, '单人对战电脑'], [false, '双人对战']], startSinglePlay, 'data-start-mode', value => { startSinglePlay = value; });
     button(startCard, '按草稿开始新战局', 'start-battle', () => action(async () => {
       assertValid();
       if (state().isBattle && !confirmAction('重新开始将结束当前战局。按当前草稿开始新局？')) return;
-      const options = { difficulty: Number(difficulty.value), singlePlay: mode.value === 'single' };
+      const options = { difficulty: startDifficulty, singlePlay: startSinglePlay };
       if (onStartBattle) await onStartBattle(options); else await customization.startBattle(options);
-      notice('已按草稿开始自定义战局；如设置仍持有暂停，请点击“继续战斗”。');
+      notice('已按草稿开始自定义战局；打开设置不会暂停游戏。');
     }), 'ms-primary', true);
-    if (typeof customization.returnToOriginal === 'function') {
-      button(startCard, '回到原版菜单', 'return-original', () => action(async () => {
-        if (state().isBattle && !confirmAction('结束当前战局并回到原版菜单？草稿和已保存预设保留。')) return;
-        await customization.returnToOriginal(); notice('已回到原版菜单；下局使用原版规则。草稿和预设仍保留。');
-      }), '', true);
+    const entries = group('starting')?.entries ?? group('start')?.entries ?? [];
+    for (const entry of entries) {
+      const section = card(content, entry.label); fieldsInto(section, entry.fields ?? []);
     }
-    content.appendChild(startCard);
-    const spawnCard = node('section', 'ms-card'); spawnCard.appendChild(node('h3', '', '刷兵 / 清场'));
-    const row = node('div', 'ms-row');
-    const side = selectInput([['left', '红方（左）'], ['right', '蓝方（右）']], '刷兵阵营'); side.setAttribute('data-sandbox-side', '');
-    const units = metadata().find(group => group.id === 'units')?.entries ?? [];
-    const unit = selectInput(units.map(entry => [entry.id, entry.label]), '刷兵兵种'); unit.setAttribute('data-sandbox-unit', '');
-    const count = numberInput(1, '刷兵数量', 1, 100); count.setAttribute('data-sandbox-count', '');
-    label(row, '阵营', side); label(row, '兵种', unit); label(row, '数量（单次 1–100）', count); spawnCard.appendChild(row);
-    const actions = node('div', 'ms-row');
-    battleButton(actions, '生成士兵', 'spawn', async () => {
-      await customization.spawn({ side: side.value, unitId: Number(unit.value), count: number(count) }); notice('已生成士兵。使用当前已应用规则，不会自动应用草稿。');
-    }, 'ms-primary');
-    battleButton(actions, '选为招募兵种', 'select-unit', async () => {
-      await customization.selectUnit({ side: side.value, unitId: Number(unit.value) }); notice('已切换该阵营当前招募兵种。');
-    });
-    battleButton(actions, '清除所选阵营', 'clear-side', async () => {
-      if (!confirmAction('清除所选阵营的士兵与其相关投射物？基地保留，不能撤销。')) return;
-      await customization.clearTroops(side.value); notice('已清除所选阵营士兵。');
-    }, 'ms-danger');
-    battleButton(actions, '清除双方士兵', 'clear-all', async () => {
-      if (!confirmAction('清除双方士兵与投射物？基地保留，不能撤销。')) return;
-      await customization.clearTroops('both'); notice('已清除双方士兵。');
-    }, 'ms-danger');
-    spawnCard.appendChild(actions); content.appendChild(spawnCard);
-    const resourceCard = node('section', 'ms-card'); resourceCard.appendChild(node('h3', '', '本局资源（直接生效）'));
-    const resourceRow = node('div', 'ms-row');
-    const resourceSide = selectInput([['left', '红方（左）'], ['right', '蓝方（右）']], '资源阵营'); resourceSide.setAttribute('data-resource-side', '');
-    label(resourceRow, '阵营', resourceSide);
-    const money = numberInput(1000, '设定金币', 0, 100000000), income = numberInput(100, '设定每轮收入', 0, 100000000), population = numberInput(50, '设定本轮剩余人口', 0, 10000);
-    for (const [key, control] of [['money', money], ['income', income], ['population', population]]) control.setAttribute('data-resource-value', key);
-    label(resourceRow, '金币', money); label(resourceRow, '每轮收入', income); label(resourceRow, '本轮剩余人口', population); resourceCard.appendChild(resourceRow);
-    battleButton(resourceCard, '设置这些资源', 'set-resources', async () => {
-      await customization.setResources({ side: resourceSide.value, money: number(money), income: number(income), population: number(population) }); notice('已设置所选阵营本局资源。');
-    });
-    content.appendChild(resourceCard);
-    const behaviorCard = node('section', 'ms-card'); behaviorCard.appendChild(node('h3', '', '本局招募与电脑控制'));
-    const s = state();
-    for (const [sideName, text] of [['left', '红方自动招募'], ['right', '蓝方自动招募']]) {
-      const check = node('input'); check.type = 'checkbox'; check.checked = s.battle?.[sideName]?.recruitment ?? true;
-      check.setAttribute('data-live-recruitment', sideName); check.setAttribute('data-needs-battle', '');
-      const line = node('label', 'ms-check'); line.appendChild(check); line.appendChild(node('span', '', text)); behaviorCard.appendChild(line);
-      on(check, 'change', () => action(async () => { await customization.setRecruitment(sideName, check.checked); notice('已更新本局自动招募。'); }), true);
+    const behavior = group('behavior');
+    if (behavior) {
+      const section = card(content, '开局自动行为');
+      fieldsInto(section, (behavior.entries?.flatMap(entry => entry.fields ?? []) ?? []).map(field => ({ ...field, apply: '下局（本页开局自动行为）' })));
     }
-    const ai = node('input'); ai.type = 'checkbox'; ai.checked = s.battle?.enemyAi ?? true; ai.setAttribute('data-live-ai', ''); ai.setAttribute('data-needs-battle', '');
-    const aiLabel = node('label', 'ms-check'); aiLabel.appendChild(ai); aiLabel.appendChild(node('span', '', '电脑自动选择兵种（单人局）')); behaviorCard.appendChild(aiLabel);
-    on(ai, 'change', () => action(async () => { await customization.setEnemyAi(ai.checked); notice('已更新本局电脑选兵开关。'); }), true);
-    behaviorCard.appendChild(node('p', 'ms-muted', '这些操作直接作用于本局；需要长期使用时，请在“行为”页编辑草稿并保存预设。'));
-    content.appendChild(behaviorCard);
-    content.appendChild(node('p', 'ms-muted', '本作没有建筑建造、可释放技能、固定关卡波次或条件增援编辑项，不会虚构这些系统。'));
+  }
+  function renderDifficulties() {
+    content.appendChild(node('p', 'ms-summary', '四个难度直接展开。只会影响本局对应难度；其他难度留待选用。AI 使用阈值和候选表，不会根据修改后的兵种数值自动学习克制关系。开局金币、收入与人口在“开局设置”。'));
+    for (const entry of group('difficulties')?.entries ?? []) {
+      const section = card(content, entry.label); section.setAttribute('data-ai-difficulty', entry.id);
+      if (entry.description) section.appendChild(node('p', 'ms-muted', entry.description));
+      const fields = (entry.fields ?? []).filter(field => field.apply !== '下局');
+      fieldsInto(section, fields);
+    }
   }
   let presetSelect = null, presetName = null;
   function renderPresets() {
@@ -414,15 +560,35 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     // The collapsed editor performs no profile cloning / DOM traversal in the game loop.
     if (!opened) return;
     const current = state();
+    if (activeTab === 'sandbox' && sandboxContext !== battleContext(current)) {
+      // Native menu navigation can replace a match without closing this dock.
+      // clearContent removes listeners before detaching focused fields, so a
+      // resulting blur cannot accidentally apply old text to the new match.
+      renderContent(); notice('战局已切换，当前状态已刷新；旧战局未确认的输入未应用。'); return;
+    }
     const stopped = Boolean(presentation.paused);
     const zeroSpeed = presentation.speed === 0;
-    setText(pauseButton, zeroSpeed ? '0 倍已暂停' : stopped ? '继续战斗' : '暂停战斗'); pauseButton.setAttribute('aria-pressed', String(stopped || zeroSpeed));
-    pauseButton.disabled = !current.isBattle || zeroSpeed;
-    setText(pauseStatus, !current.isBattle ? '打开设置不自动开始对局' : zeroSpeed ? '0 倍暂停中 · 恢复战斗需先选择正倍速' : stopped ? '战斗已暂停 · 可编辑与观察' : '战斗进行中 · 可边玩边调');
+    setText(pauseStatus, !current.isBattle ? '打开设置不自动开始对局' : zeroSpeed ? '0 倍暂停中 · 使用时间控制继续' : stopped ? '战斗已暂停 · 可编辑与观察' : '战斗进行中 · 打开设置不暂停');
     setText(dirtyLabel, invalid.size ? `${invalid.size} 项输入无效` : current.dirty ? '草稿尚未保存' : '草稿就绪');
     undo.disabled = busy || !current.canUndo;
     apply.disabled = busy || !current.isBattle || invalid.size > 0;
     for (const control of content.querySelectorAll('[data-needs-battle]')) control.disabled = busy || !current.isBattle;
+    for (const binding of liveBindings) {
+      const { input, field, read } = binding;
+      if (doc.activeElement === input || binding.edited || binding.pending) continue;
+      const value = read(current);
+      if (field.type === 'boolean') input.checked = Boolean(value);
+      else if (input.value !== String(value ?? '')) input.value = String(value ?? '');
+    }
+    const job = current.spawnJob ?? customization.getSpawnJob?.();
+    const spawning = job?.status === 'running' || job?.status === 'queued';
+    for (const control of content.querySelectorAll('[data-spawn-start]')) control.disabled = busy || !current.isBattle || spawning;
+    const cancel = content.querySelector('[data-settings-action="cancel-spawn"]'); if (cancel) cancel.disabled = !spawning;
+    const progress = content.querySelector('[data-spawn-progress]');
+    if (progress) {
+      const status = { running: '生成中', queued: '等待生成', completed: '生成完成', cancelled: '已取消剩余', failed: '生成停止' }[job?.status] ?? job?.status;
+      setText(progress, job ? `${status}：${formatted(job.completed)} / ${formatted(job.requested)}${job.error ? ` · ${job.error}` : ''}` : '无生成任务');
+    }
     const summary = content.querySelector('[data-battle-summary]');
     if (summary) {
       if (!current.isBattle || !current.battle) setText(summary, '尚无进行中的战局。可以从原游戏菜单开始，或按草稿新建自定义战局。');
@@ -435,6 +601,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     for (const side of ['left', 'right']) {
       const input = content.querySelector(`[data-live-recruitment="${side}"]`);
       if (input && doc.activeElement !== input) input.checked = current.battle?.[side]?.recruitment ?? true;
+      const selectedUnit = content.querySelector(`[data-live-selected-unit="${side}"]`);
+      if (selectedUnit && doc.activeElement !== selectedUnit) selectedUnit.value = String(current.battle?.[side]?.selectedUnit ?? 0);
     }
     const ai = content.querySelector('[data-live-ai]'); if (ai && doc.activeElement !== ai) ai.checked = current.battle?.enemyAi ?? true;
     refreshPresets();
@@ -445,7 +613,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   function open() {
     if (destroyed || opened) return; opened = true; beforeFocus = doc.activeElement;
     element.hidden = false; renderContent(); onOpenChange(true); closeButton.focus({ preventScroll: true });
-    notice('打开设置默认暂停战斗。修改草稿后，请明确选择应用或保存。');
+    notice('打开设置不自动暂停。首页状态可直接修改；其他草稿请明确选择应用或保存。');
   }
   function close() {
     if (destroyed || !opened) return; opened = false; element.hidden = true; onOpenChange(false);

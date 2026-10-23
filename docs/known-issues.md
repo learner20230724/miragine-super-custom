@@ -3,6 +3,43 @@
 This is a runnable **preview**, not a claim of exact Flash parity.
 当前是可运行预览版，不宣称已与 Flash 逐帧、逐像素完全一致。
 
+## Settings reorganization — v0.4 source / 设置重组源码
+
+- **No automatic editor pause:** F2 is the only settings entry; opening/closing
+  does not pause/resume. Pause lives beside speed, with view/fullscreen below;
+  crisp clickable HUD text replaces the lower-left bitmap controls.
+  **不自动暂停：**F2 是唯一设置入口，开关面板不改变暂停；倍速与暂停同区，
+  视角／全屏在下方，左下角改用清晰可点击文字。
+- **Live versus draft:** home-page resources are current-state edits; home-page
+  rule edits apply only that field. Unit/AI pages remain explicit drafts. Starting
+  values and automatic behaviors on the starting page affect only new matches.
+  **实时与草稿分开：**首页资源改当前状态，规则只应用对应字段；兵种／AI 仍需
+  明确应用，开局页数值和自动行为只对新局生效。
+- **Numeric boundaries, not balancing caps:** custom integer resources use
+  0–9,007,199,254,740,991 with saturated arithmetic. Excess complete numeric input
+  clamps before confirmation; JSON import stays strict. Probability, valid IDs,
+  positive timers and finite floating-point bounds remain meaningful constraints.
+  Extreme floats are finite but not infinitely precise or guaranteed useful.
+  **数值边界而非平衡额度：**整数资源扩至安全整数上限，运算饱和不回绕；输入
+  超上限即时收束，JSON 仍严格验证。概率、合法 ID、正计时与有限浮点边界保留；
+  极端浮点值不代表无限精度或有意义玩法。每轮收入上限不是持有金币余额上限。
+- **No 100/500 troop cap:** batched spawning is cancellable, but original combat
+  includes roughly quadratic scans. Huge armies can still stall or exhaust memory;
+  neither a batch scheduler nor an 8 ms between-step budget can preempt one slow
+  complete simulation step. This is not unlimited-capacity or 20× performance proof.
+  **取消单次 100／总量 500 限制：**分批生成可取消，但战斗含近似二次增长扫描，
+  巨量军队仍可能卡顿／耗尽内存；分批与 8 ms 步间预算无法打断一个慢逻辑步。
+- **AI is a configurable table, not learning:** each difficulty has independent
+  thresholds/candidates. Changing stats does not relearn counters. Original strict
+  comparisons and counter-only elite counting remain defaults, not fixed limits.
+  **AI 是可调规则表：**每档阈值与候选独立，改数值不会自动学克制；原严格比较
+  和仅反制分支统计精英保留为默认，不再是不可修改限制。
+- **Compatibility and evidence:** v1 presets migrate to v2 side-specific profiles
+  without auto-activation; the original core/evidence remain separate. Old reports
+  below verify their named historical versions, not this source or a future archive.
+  **兼容与证据：**旧 v1 预设迁移为 v2 双方配置但不自动启用，原核心／证据分离；
+  下方旧报告仅证明各自版本，不替代本源码及新包验证。
+
 ## Original-pixel sampling — v0.3.0-preview.2 / 原始素材轻量采样
 
 - One-pass sprite sampling and the original larger effect bitmaps improve how
@@ -24,12 +61,12 @@ This is a runnable **preview**, not a claim of exact Flash parity.
   副本；不再建立角色栅格画布，但不承诺总内存一定下降、帧率提高或零额外开销。
   绘制命令提交微测不是整局、GPU 或屏幕性能证明。
 
-## Settings preview — v0.3.0-preview.1 / 设置预览版
+## Historical settings preview — v0.3.0-preview.1 / 历史设置预览版
 
-These notes describe the new source boundaries. Package verification must be
+These notes describe that historical source, including its now-removed troop caps. Package verification must be
 recorded for its actual commit and archive; old baseline/v0.2.0 reports are not
 proof that this version's new controls, persistence or portable build passed.
-以下描述新源码的边界；安装包须对实际提交及压缩包验证。旧基线／v0.2.0 报告
+以下描述历史源码的边界，含现已取消的兵量限制；安装包须对实际提交及压缩包验证。旧基线／v0.2.0 报告
 不是本次新增设置、持久化或独立包已通过测试的证明。
 
 - **Speed is a target:** 0–20× retains 30 complete original steps per game

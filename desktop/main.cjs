@@ -94,11 +94,29 @@ async function startDesktop({ electron = require('electron'), appRoot = path.res
       try { return saveCustomSettings(locations.data, entries, expectedEntries); }
       catch { throw new Error('Unable to save custom settings'); }
     });
+    ipcMain.handle('miragine:fullscreen:get', event => {
+      if (!isTrustedPreferenceRequest(event, win.webContents, origin)) throw new Error('Untrusted fullscreen request');
+      return win.isFullScreen();
+    });
+    ipcMain.handle('miragine:fullscreen:toggle', event => {
+      if (!isTrustedPreferenceRequest(event, win.webContents, origin)) throw new Error('Untrusted fullscreen request');
+      win.setFullScreen(!win.isFullScreen());
+      return win.isFullScreen();
+    });
+    // Native F11 and the in-game button share this window state. DOM
+    // document.fullscreenElement does not describe native Electron fullscreen.
+    const publishFullscreen = () => {
+      if (!win.webContents.isDestroyed()) win.webContents.send('miragine:fullscreen:changed', win.isFullScreen());
+    };
+    win.on('enter-full-screen', publishFullscreen);
+    win.on('leave-full-screen', publishFullscreen);
     app.once('will-quit', () => {
       ipcMain.removeHandler('miragine:preferences:load');
       ipcMain.removeHandler('miragine:preferences:save-never');
       ipcMain.removeHandler('miragine:custom-settings:load');
       ipcMain.removeHandler('miragine:custom-settings:save');
+      ipcMain.removeHandler('miragine:fullscreen:get');
+      ipcMain.removeHandler('miragine:fullscreen:toggle');
     });
     win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     win.webContents.on('will-navigate', (event) => event.preventDefault());
@@ -115,7 +133,7 @@ async function startDesktop({ electron = require('electron'), appRoot = path.res
     win.webContents.on('before-input-event', (event, input) => {
       if (input.type === 'keyDown' && input.key === 'F11') {
         event.preventDefault();
-        win.setFullScreen(!win.isFullScreen());
+        if (!input.isAutoRepeat) win.setFullScreen(!win.isFullScreen());
       }
     });
     win.once('ready-to-show', () => win.show());

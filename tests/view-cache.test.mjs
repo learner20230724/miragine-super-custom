@@ -8,7 +8,7 @@ const root = new URL('../', import.meta.url);
 const defaults = JSON.parse(await readFile(new URL('config/defaults.generated.json', root), 'utf8'));
 const layout = JSON.parse(await readFile(new URL('generated/ui/layout.generated.json', root), 'utf8'));
 
-function harness() {
+function harness(options = {}) {
   const calls = [], canvases = [];
   function canvas(id) {
     const result = { id, width: 640, height: 480 };
@@ -17,6 +17,8 @@ function harness() {
       save() { stack.push({ globalAlpha: this.globalAlpha, globalCompositeOperation: this.globalCompositeOperation }); },
       restore() { Object.assign(this, stack.pop()); },
       setTransform(...args) { calls.push({ type: 'transform', canvas: id, args }); },
+      translate(...args) { calls.push({ type: 'translate', canvas: id, args }); },
+      scale(...args) { calls.push({ type: 'scale', canvas: id, args }); },
       clearRect(...args) { calls.push({ type: 'clear', canvas: id, args }); },
       drawImage(source, ...args) { calls.push({ type: 'composite', canvas: id, source: source.id, args }); },
       fillText(text, ...args) { calls.push({ type: 'native-text', canvas: id, text, args }); },
@@ -52,7 +54,7 @@ function harness() {
     const target = canvas(`cache-${canvases.length}`);
     canvases.push(target);
     return target;
-  } });
+  }, ...options });
   const renderer = { render() { calls.push({ type: 'world' }); return {}; } };
   function paint() { view.hotspots = []; view.hud(controller, renderer); }
   const count = predicate => calls.filter(predicate).length;
@@ -110,6 +112,45 @@ test('health bars use two bounded canvases and redraw only when the displayed ra
   assert.deepEqual(Object.keys(h.view.barLayers).sort(), ['leftBar', 'rightBar']);
   assert.deepEqual([...h.view.cache.keys()].sort(), ['game-controls', 'hud']);
   assert.throws(() => h.view.barLayer('another-bar', 1, () => {}), /Unknown health-bar/);
+});
+
+test('crisp text mode omits only the original help and quit sprites and their canvas hit areas', () => {
+  const h = harness({ crispTextControls: true });
+  h.controller.action('dual'); h.controller.action('tutorial-okay');
+  for (let frame = 0; frame < 20; frame++) h.paint();
+  assert.equal(h.view.cache.has('game-controls'), false);
+  assert.equal(h.count(call => call.type === 'symbol' && ['button215', 'button230'].includes(call.symbol)), 0);
+  assert.equal(h.view.hotspots.filter(hotspot => ['tutorial', 'quit'].includes(hotspot.action)).length, 0);
+  assert.equal(h.view.hotspots.filter(hotspot => hotspot.action === 'unit').length, 32);
+  for (const action of ['minimap', 'music']) assert.equal(h.view.hotspots.filter(hotspot => hotspot.action === action).length, 1);
+  assert.ok(h.count(call => call.type === 'symbol' && call.symbol === 'sprite25') > 0);
+  assert.equal(h.view.tooltipLayouts.size, 0);
+  assert.ok(h.canvases.every(canvas => canvas.width === 640 && canvas.height === 480), 'crisp controls must not enlarge bitmap render targets');
+});
+
+test('custom health displays stay finite and bounded at extreme values without changing underlying HP', () => {
+  const h = harness();
+  h.controller.action('dual'); h.controller.action('tutorial-okay');
+  h.config.customization = {};
+  const boss = h.controller.simulation.redBoss;
+  for (const [current, maximum, expected] of [
+    [Number.MAX_VALUE, Number.MIN_VALUE, 1],
+    [Number.MAX_VALUE, Number.MAX_VALUE, 1],
+    [Number.MAX_VALUE / 2, Number.MAX_VALUE, .5],
+    [Number.MIN_VALUE, Number.MAX_VALUE, 0],
+    [20, 10, 1], [-1, 10, 0], [0, 0, 0],
+  ]) {
+    boss.nowHP = current; boss.maxHP = maximum;
+    h.paint();
+    assert.equal(h.view.barLayers.leftBar.ratio, expected);
+    assert.equal(boss.nowHP, current); assert.equal(boss.maxHP, maximum);
+    const bar = h.calls.findLast(call => call.type === 'bar-filter' && call.canvas === h.view.barLayers.leftBar.canvas.id);
+    assert.ok(bar.matrix.every(Number.isFinite));
+    assert.ok(bar.matrix[0] >= 0 && bar.matrix[0] <= 1);
+  }
+  delete h.config.customization;
+  boss.nowHP = 20; boss.maxHP = 10; h.paint();
+  assert.equal(h.view.barLayers.leftBar.ratio, 2, 'the noncustom baseline retains its original finite overheal display');
 });
 
 test('dynamic numbers and cursor animation remain live while surrounding graphics are cached', () => {
@@ -175,6 +216,46 @@ test('numeric revisions include original typography, alignment and fractional ba
   assert.equal(last.options.y, 28.7);
   assert.equal(h.view.numberLayers.time.canvas, canvas);
   assert.equal(h.count(call => call.type === 'clear' && call.canvas === canvas.id), 3);
+});
+
+test('maximum safe integer HUD values fit each recovered field using finite horizontal-only scaling', () => {
+  const h = harness();
+  const text = String(Number.MAX_SAFE_INTEGER);
+  let scaledFields = 0;
+  for (const name of ['time', 'leftMoney', 'leftIncome', 'leftPopulation', 'rightMoney', 'rightIncome', 'rightPopulation']) {
+    const align = name === 'time' ? 'center' : name.startsWith('right') ? 'right' : 'left';
+    h.view.numeric(name, Number.MAX_SAFE_INTEGER, 11, align);
+    const target = h.view.numberLayers[name].canvas.id;
+    const scale = h.calls.findLast(call => call.type === 'scale' && call.canvas === target);
+    const moves = h.calls.filter(call => call.type === 'translate' && call.canvas === target);
+    const number = h.calls.findLast(call => call.type === 'number' && call.canvas === target);
+    const field = h.view.instance(210, name), width = field.bounds.xMax - field.bounds.xMin - 4;
+    const estimatedWidth = text.length * field.text.fontSize * .62;
+    const expectedScale = Math.min(1, width / estimatedWidth);
+    assert.equal(number.text, text, 'large balances must not silently switch to inaccurate or truncated notation');
+    assert.ok(estimatedWidth * expectedScale <= width + 1e-10);
+    if (expectedScale < 1) {
+      scaledFields++;
+      assert.ok(scale.args.every(Number.isFinite));
+      assert.equal(scale.args[0], expectedScale);
+      assert.equal(scale.args[1], 1, 'only width changes, not glyph height or recovered baseline');
+      assert.deepEqual(moves.map(call => call.args), [[number.options.x, 0], [-number.options.x, 0]]);
+    } else {
+      assert.equal(scale, undefined, 'wide original fields keep their native glyph width when the full integer already fits');
+      assert.deepEqual(moves, []);
+    }
+    assert.equal(number.options.y, field.localMatrix[5] + field.text.exportedBaseline);
+    assert.equal(number.options.font, field.text.font);
+    assert.equal(number.options.size, field.text.fontSize);
+    assert.deepEqual([h.view.numberLayers[name].canvas.width, h.view.numberLayers[name].canvas.height], [640, 480]);
+  }
+  const renders = h.count(call => call.type === 'number');
+  h.view.numeric('leftMoney', Number.MAX_SAFE_INTEGER, 11, 'left');
+  assert.equal(h.count(call => call.type === 'number'), renders, 'large balances still reuse the fixed numeric cache');
+  h.view.numeric('leftMoney', 1, 11, 'left');
+  assert.equal(h.count(call => call.type === 'number'), renders + 1);
+  assert.ok(scaledFields > 0, 'the recovered timer field exercises the long-value fit path');
+  assert.equal(h.count(call => call.type === 'scale'), scaledFields, 'normal-sized values retain unscaled original glyphs');
 });
 
 test('numeric cached layers composite at the original position between health bars and animated cursors', () => {
@@ -262,6 +343,36 @@ test('tooltip layout is reused while pointer placement stays live and config edi
   for (let hp = 100; hp < 200; hp++) { h.config.units[0].hp = hp; h.view.tooltipLayout(0, h.config.units[0], h.main.ctx); }
   assert.equal(h.view.tooltipLayouts.size, 16);
   assert.throws(() => h.view.tooltipLayout(16, h.config.units[0], h.main.ctx), /Unknown tooltip unit/);
+});
+
+test('side-specific tooltips read independent definitions and reuse at most 32 side/unit slots', () => {
+  const h = harness();
+  h.config.customization = { sides: { left: { units: structuredClone(h.config.units) }, right: { units: structuredClone(h.config.units) } } };
+  h.config.customization.sides.left.units[0].hp = 123;
+  h.config.customization.sides.right.units[0].hp = 456;
+  for (const [side, prefix, expected] of [['left', 'a', 'HP:123'], ['right', 'b', 'HP:456']]) {
+    const card = layout.sprites['210'].instances[`${prefix}0`];
+    h.view.hotspots = []; h.view.hotspot('unit', card, { side, id: 0 });
+    h.view.pointer = { x: (card.bounds.xMin + card.bounds.xMax) / 2, y: (card.bounds.yMin + card.bounds.yMax) / 2 };
+    const start = h.calls.length;
+    h.view.tooltip(h.controller);
+    assert.ok(h.calls.slice(start).some(call => call.type === 'native-text' && call.text === expected));
+  }
+  assert.deepEqual([...h.view.tooltipLayouts.keys()], ['left:0', 'right:0']);
+  for (let iteration = 0; iteration < 20; iteration++) for (const side of ['left', 'right']) for (let id = 0; id < 16; id++) {
+    const unit = h.config.customization.sides[side].units[id];
+    unit.hp += 1;
+    h.view.tooltipLayout(id, unit, h.main.ctx, side);
+  }
+  assert.equal(h.view.tooltipLayouts.size, 32);
+  assert.equal(h.config.units[0].hp, defaults.units[0].hp, 'per-side tooltip edits must not mutate the shared default unit');
+  for (const side of ['left', 'right']) for (let id = 0; id < 16; id++) {
+    const unit = h.config.customization.sides[side].units[id];
+    h.view.tooltipLayout(id, unit, h.main.ctx, side);
+    const measured = h.count(call => call.type === 'measure');
+    h.view.tooltipLayout(id, unit, h.main.ctx, side);
+    assert.equal(h.count(call => call.type === 'measure'), measured);
+  }
 });
 
 test('original button shadows draw on transparent intermediate canvases, never read the existing battlefield', async () => {

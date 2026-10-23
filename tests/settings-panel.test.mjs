@@ -53,6 +53,10 @@ function makeDocument() {
   doc.documentElement.appendChild(doc.head); doc.documentElement.appendChild(doc.body); return doc;
 }
 const settle = async () => { await new Promise(resolve => setImmediate(resolve)); await new Promise(resolve => setImmediate(resolve)); };
+async function settleSpawn(custom) {
+  for (let i = 0; custom.getSpawnJob()?.status === 'running' && i < 100; i++) await new Promise(resolve => setTimeout(resolve, 5));
+  assert.notEqual(custom.getSpawnJob()?.status, 'running', 'The small spawn task must complete');
+}
 function fixture({ battle = true, accept = true, flush = async () => true } = {}) {
   const values = new Map(), storage = { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), flush };
   const controller = new GameController(defaults, { storage: { getItem: () => 'true' },
@@ -62,7 +66,7 @@ function fixture({ battle = true, accept = true, flush = async () => true } = {}
   document.body.appendChild(focus); document.body.appendChild(root); focus.focus();
   const events = [], confirms = [], downloads = [];
   const panel = createSettingsPanel({ root, customization: custom, playbackElement: playback,
-    onOpenChange: value => { events.push(['open', value]); panel.update({ paused: value }); },
+    onOpenChange: value => { events.push(['open', value]); },
     onPauseChange: value => { events.push(['pause', value]); panel.update({ paused: value }); },
     confirm: message => { confirms.push(message); return accept; }, download: (text, name) => downloads.push({ text, name }) });
   const find = selector => panel.element.querySelector(selector);
@@ -72,33 +76,34 @@ function fixture({ battle = true, accept = true, flush = async () => true } = {}
   return { panel, custom, controller, storage, values, root, document, focus, playback, find, button, tab, edit, events, confirms, downloads };
 }
 
-test('dock is collapsed by default; open/close pauses via host and restores focus without discarding draft', () => {
+test('dock is collapsed by default; open/close restores focus without pausing or discarding draft', () => {
   const f = fixture(); assert.equal(f.panel.isOpen, false); assert.equal(f.panel.element.hidden, true);
   f.panel.open(); assert.equal(f.panel.isOpen, true); assert.equal(f.panel.element.hidden, false);
   assert.equal(f.playback.parentNode.parentNode, f.panel.element);
   assert.equal(f.document.activeElement, f.button('close')); assert.deepEqual(f.events, [['open', true]]);
-  f.tab('units'); f.edit('config.units.0.hp', 99); f.panel.close();
-  assert.equal(f.document.activeElement, f.focus); f.panel.open(); assert.equal(f.find('[data-field-path="config.units.0.hp"]').value, '99');
+  f.tab('units'); f.edit('config.sides.left.units.0.hp', 99); f.panel.close();
+  assert.equal(f.document.activeElement, f.focus); f.panel.open(); assert.equal(f.find('[data-field-path="config.sides.left.units.0.hp"]').value, '99');
   assert.equal(f.controller.simulation.config.units[0].hp, 45); f.panel.destroy();
 });
 
 test('metadata supplies real editable sections with defaults and no invented building/skill/wave tabs', () => {
   const f = fixture(); f.panel.open();
-  for (const id of ['sandbox', 'units', 'economy', 'bases', 'difficulties', 'behavior', 'presets']) assert.ok(f.button(`tab-${id}`));
+  for (const id of ['sandbox', 'units', 'starting', 'difficulties', 'presets']) assert.ok(f.button(`tab-${id}`));
   assert.equal(f.button('tab-buildings'), null); assert.equal(f.button('tab-waves'), null);
   f.tab('units'); assert.equal(f.find('[data-entry-select="units"]').children.length, 16);
-  assert.equal(f.find('[data-field-path="config.units.0.weaponSpeed"]').value, '0.83');
+  assert.equal(f.find('[data-field-path="config.sides.left.units.0.weaponSpeed"]').value, '0.83');
   assert.match(f.panel.element.textContent, /原版默认/); assert.match(f.panel.element.textContent, /向零取整/);
-  f.tab('difficulties'); assert.equal(f.find('[data-entry-select="difficulties"]').children.length, 4);
+  f.tab('difficulties'); assert.equal(f.find('[data-entry-select="difficulties"]'), null);
+  for (let id = 0; id < 4; id++) assert.ok(f.find(`[data-field-path="config.difficulties.${id}.counterSelectionProbability"]`));
   f.panel.destroy();
 });
 
 test('status updates do not rebuild focused fields or reset in-progress numeric edits', () => {
   const f = fixture(); f.panel.open(); f.tab('units');
-  const input = f.find('[data-field-path="config.units.0.hp"]'); input.focus(); input.value = '123.';
+  const input = f.find('[data-field-path="config.sides.left.units.0.hp"]'); input.focus(); input.value = '123.';
   for (let i = 0; i < 10; i++) f.panel.update({ paused: false });
-  assert.equal(f.find('[data-field-path="config.units.0.hp"]'), input); assert.equal(input.value, '123.');
-  assert.equal(f.document.activeElement, input); assert.equal(f.custom.getState().draft.config.units[0].hp, 45);
+  assert.equal(f.find('[data-field-path="config.sides.left.units.0.hp"]'), input); assert.equal(input.value, '123.');
+  assert.equal(f.document.activeElement, input); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 45);
   f.panel.destroy();
 });
 
@@ -111,35 +116,36 @@ test('collapsed status updates perform no profile clone or draft query', () => {
 });
 
 test('invalid numeric draft is blocked, survives status/tabs and never alters simulation', async () => {
-  const f = fixture(); f.panel.open(); f.tab('units'); const bad = f.edit('config.units.0.cost', -1);
-  assert.equal(bad.getAttribute('aria-invalid'), 'true'); assert.equal(f.custom.getState().draft.config.units[0].cost, 20);
-  assert.equal(f.button('apply-current').disabled, true); f.tab('bases'); f.tab('units');
-  assert.equal(f.find('[data-field-path="config.units.0.cost"]').value, '-1');
+  const f = fixture(); f.panel.open(); f.tab('units'); const bad = f.edit('config.sides.left.units.0.cost', 'NaN');
+  assert.equal(bad.getAttribute('aria-invalid'), 'true'); assert.equal(f.custom.getState().draft.config.sides.left.units[0].cost, 20);
+  assert.equal(f.button('apply-current').disabled, true); f.tab('sandbox'); f.tab('units');
+  assert.equal(f.find('[data-field-path="config.sides.left.units.0.cost"]').value, 'NaN');
   f.button('apply-next').click(); await settle(); assert.match(f.find('[data-settings-message]').textContent, /输入无效/);
-  f.edit('config.units.0.cost', 7); assert.equal(f.button('apply-current').disabled, false); assert.equal(f.controller.simulation.config.units[0].cost, 20);
-  f.button('apply-current').click(); await settle(); assert.equal(f.controller.simulation.config.units[0].cost, 7); f.panel.destroy();
+  f.edit('config.sides.left.units.0.cost', 7); assert.equal(f.button('apply-current').disabled, false); assert.equal(f.controller.simulation.config.units[0].cost, 20);
+  f.button('apply-current').click(); await settle(); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7); f.panel.destroy();
 });
 
 test('apply-current reports deferred initial values and applies chosen health policy explicitly', async () => {
-  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.units.0.hp', 500);
-  f.tab('economy'); f.edit('config.rules.initialMoney', 777); f.find('[data-health-policy]').value = 'absolute';
+  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 500);
+  f.tab('starting'); f.edit('config.sides.left.initial.money', 777); f.find('[data-health-policy]').value = 'absolute';
+  f.tab('units');
   const frame = f.controller.simulation.frame; f.button('apply-current').click(); await settle();
-  assert.equal(f.controller.simulation.frame, frame); assert.equal(f.controller.simulation.config.units[0].hp, 500);
+  assert.equal(f.controller.simulation.frame, frame); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].hp, 500);
   assert.notEqual(f.controller.simulation.leftMoney, 777);
   assert.match(f.find('[data-settings-message]').textContent, /1 项下局生效/);
   assert.match(f.find('[data-settings-message]').textContent, /倒计时/); f.panel.destroy();
 });
 
 test('preset save/load is explicit, confirmed overwrite and JSON export retain drafts without auto apply', async () => {
-  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.units.0.hp', 99); f.tab('presets');
+  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 99); f.tab('presets');
   const name = f.find('[data-preset-name]'); name.value = '<b>我的规则</b>'; f.button('save-preset').click(); await settle();
   assert.equal(f.custom.getState().presets.length, 1); assert.match(f.find('[data-settings-message]').textContent, /已保存到本机/);
   assert.equal(f.controller.simulation.config.units[0].hp, 45);
   const id = f.custom.getState().presets[0].id; f.find('[data-preset-select]').value = id;
   f.button('overwrite-preset').click(); await settle(); assert.equal(f.confirms.length, 1); assert.equal(f.custom.getState().presets.length, 1);
   f.button('export').click(); await settle(); assert.equal(f.downloads.length, 1);
-  assert.equal(JSON.parse(f.downloads[0].text).profile.config.units[0].hp, 99); assert.doesNotMatch(f.downloads[0].name, /[<>/]/);
-  f.custom.resetDraft(); f.button('load-preset').click(); await settle(); assert.equal(f.custom.getState().draft.config.units[0].hp, 99);
+  assert.equal(JSON.parse(f.downloads[0].text).profile.config.sides.left.units[0].hp, 99); assert.doesNotMatch(f.downloads[0].name, /[<>/]/);
+  f.custom.resetDraft(); f.button('load-preset').click(); await settle(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 99);
   assert.equal(f.controller.simulation.config.units[0].hp, 45); f.panel.destroy();
 });
 
@@ -159,11 +165,11 @@ test('false flush never reports durable save and warnings remain visible separat
 
 test('failed asynchronous save surfaces controller warnings without overwriting the draft', async () => {
   const f = fixture({ flush: async () => { throw new Error('private path must not be surfaced'); } });
-  f.panel.open(); f.tab('units'); f.edit('config.units.0.hp', 222); f.tab('presets'); f.find('[data-preset-name]').value = '失败';
+  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 222); f.tab('presets'); f.find('[data-preset-name]').value = '失败';
   f.button('save-preset').click(); await settle();
   assert.match(f.find('[data-storage-warning]').textContent, /存储写入失败/);
   assert.doesNotMatch(f.find('[data-settings-message]').textContent, /private path/);
-  assert.equal(f.custom.getState().draft.config.units[0].hp, 222); f.panel.destroy();
+  assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 222); f.panel.destroy();
 });
 
 test('import validates size before reading and invalid JSON never replaces a valid draft', async () => {
@@ -172,70 +178,75 @@ test('import validates size before reading and invalid JSON never replaces a val
   assert.equal(reads, 0); assert.match(f.find('[data-settings-message]').textContent, /256 KB/);
   file.files = [{ size: 3, text: async () => '{xx' }]; file.fire('change'); await settle();
   assert.equal(f.find('[data-settings-message]').getAttribute('data-error'), 'true');
-  assert.equal(f.custom.getState().draft.config.units[0].hp, 45); f.panel.destroy();
+  assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 45); f.panel.destroy();
 });
 
 test('JSON import is draft-only and reset/undo preserve saved presets', async () => {
-  const f = fixture(); f.custom.updateDraft('config.units.0.hp', 333); const exported = f.custom.exportJSON('导入');
+  const f = fixture(); f.custom.updateDraft('config.sides.left.units.0.hp', 333); const exported = f.custom.exportJSON('导入');
   f.custom.resetDraft(); f.panel.open(); f.tab('presets');
   const file = f.find('[data-preset-file]'); file.files = [{ size: exported.length, text: async () => exported }]; file.fire('change'); await settle();
-  assert.equal(f.custom.getState().draft.config.units[0].hp, 333); assert.equal(f.controller.simulation.config.units[0].hp, 45);
+  assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 333); assert.equal(f.controller.simulation.config.units[0].hp, 45);
   f.find('[data-preset-name]').value = '导入'; f.button('save-preset').click(); await settle();
-  f.button('reset').click(); await settle(); assert.equal(f.custom.getState().draft.config.units[0].hp, 45);
+  f.button('reset').click(); await settle(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 45);
   assert.equal(f.custom.getState().presets.length, 1); f.button('undo').click(); await settle();
-  assert.equal(f.custom.getState().draft.config.units[0].hp, 333); f.panel.destroy();
+  assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 333); f.panel.destroy();
 });
 
 test('sandbox spawn, clear and remaining resources are explicit real controller operations', async () => {
   const f = fixture(); f.panel.open(); const sim = f.controller.simulation;
-  f.find('[data-sandbox-count]').value = '3'; f.button('spawn').click(); await settle();
+  f.find('[data-sandbox-count]').value = '3'; f.button('spawn-left').click(); await settle(); await settleSpawn(f.custom);
   assert.equal(sim.friendList.filter(unit => unit.kind === 'unit').length, 3);
-  f.find('[data-resource-value="money"]').value = '900'; f.find('[data-resource-value="income"]').value = '77'; f.find('[data-resource-value="population"]').value = '12';
-  f.button('set-resources').click(); await settle(); assert.equal(sim.leftMoney, 900); assert.equal(sim.leftIncome, 77); assert.equal(sim.leftPopulation, 12);
+  for (const [field, value] of [['money', '900'], ['income', '77'], ['population', '12']]) {
+    const input = f.find(`[data-live-resource="left.${field}"]`); input.value = value; input.fire('input'); input.fire('blur'); await settle();
+  }
+  assert.equal(sim.leftMoney, 900); assert.equal(sim.leftIncome, 77); assert.equal(sim.leftPopulation, 12);
   assert.equal(sim.populationLimit, defaults.rules.populationLimit); assert.match(f.panel.element.textContent, /本轮剩余人口/);
   f.button('clear-all').click(); await settle(); assert.equal(sim.friendList.filter(unit => unit.kind === 'unit').length, 0);
   assert.equal(sim.redBoss.nowHP, defaults.rules.baseHp); assert.ok(f.confirms.length); f.panel.destroy();
 });
 
 test('cancelled confirmation prevents destructive clearing and draft reset', async () => {
-  const f = fixture({ accept: false }); f.custom.spawn({ side: 'left', unitId: 0, count: 1 }); f.custom.updateDraft('config.units.0.hp', 111);
+  const f = fixture({ accept: false }); f.custom.spawn({ side: 'left', unitId: 0, count: 1 }); f.custom.updateDraft('config.sides.left.units.0.hp', 111);
   f.panel.open(); f.button('clear-all').click(); await settle(); assert.equal(f.controller.simulation.friendList.filter(unit => unit.kind === 'unit').length, 1);
-  f.button('reset').click(); await settle(); assert.equal(f.custom.getState().draft.config.units[0].hp, 111); f.panel.destroy();
+  f.button('reset').click(); await settle(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 111); f.panel.destroy();
 });
 
 test('menu settings can start a new custom battle and return to original without losing draft', async () => {
-  const f = fixture({ battle: false }); f.panel.open(); assert.equal(f.button('spawn').disabled, true);
-  f.custom.updateDraft('config.units.0.cost', 7); f.button('start-battle').click(); await settle();
-  assert.equal(f.controller.phase, 'game'); assert.equal(f.controller.simulation.config.units[0].cost, 7); assert.equal(f.button('spawn').disabled, false);
+  const f = fixture({ battle: false }); f.panel.open(); assert.equal(f.button('spawn-left').disabled, true);
+  f.custom.updateDraft('config.sides.left.units.0.cost', 7); f.tab('starting'); f.button('start-battle').click(); await settle();
+  assert.equal(f.controller.phase, 'game'); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7);
+  f.tab('sandbox'); assert.equal(f.button('spawn-left').disabled, false);
   f.button('return-original').click(); await settle(); assert.equal(f.controller.phase, 'title');
-  assert.equal(f.custom.getState().draft.config.units[0].cost, 7); assert.equal(f.controller.config.units[0].cost, 20); f.panel.destroy();
+  assert.equal(f.custom.getState().draft.config.sides.left.units[0].cost, 7); assert.equal(f.controller.config.units[0].cost, 20); f.panel.destroy();
 });
 
-test('pause controls keep editor open and zero-speed copy does not promise an ineffective resume', () => {
-  const f = fixture(); f.panel.open(); f.button('pause').click(); assert.deepEqual(f.events.at(-1), ['pause', false]); assert.equal(f.panel.isOpen, true);
-  f.panel.update({ paused: true, speed: 0 }); assert.equal(f.button('pause').disabled, true);
-  assert.match(f.find('[data-editor-pause-status]').textContent, /恢复战斗需先选择正倍速/); f.panel.destroy();
+test('editor observes pause status without a duplicated header control or changing the host pause state', () => {
+  const f = fixture(); f.panel.open(); assert.equal(f.button('pause'), null); assert.equal(f.panel.isOpen, true);
+  f.panel.update({ paused: true, speed: 0 }); assert.equal(f.button('pause'), null);
+  assert.match(f.find('[data-editor-pause-status]').textContent, /0 倍暂停.*时间控制/);
+  assert.deepEqual(f.events, [['open', true]]); f.panel.destroy();
 });
 
 test('keyboard fields retain native editing but stop game keys; F2/Escape close and F11 is host-owned', () => {
-  const f = fixture(); f.panel.open(); f.tab('units'); const input = f.find('[data-field-path="config.units.0.hp"]');
+  const f = fixture(); f.panel.open(); f.tab('units'); const input = f.find('[data-field-path="config.sides.left.units.0.hp"]');
   const arrow = input.fire('keydown', { code: 'ArrowUp' }); assert.equal(arrow.propagationStopped, true); assert.equal(arrow.defaultPrevented, false);
   assert.equal(input.fire('keydown', { code: 'F11' }).propagationStopped, false);
   input.fire('keydown', { code: 'Escape' }); assert.equal(f.panel.isOpen, false); f.panel.open();
   f.button('close').fire('keydown', { code: 'F2' }); assert.equal(f.panel.isOpen, false); f.panel.destroy();
 });
 
-test('safe helpers reject prototype traversal and nonfinite/out-of-range field values', () => {
+test('safe helpers reject prototype traversal and invalid literals while clamping numeric field values', () => {
   assert.equal(readPath({ a: [5] }, 'a.0'), 5); assert.equal(readPath({}, 'missing.x'), undefined);
   for (const path of ['__proto__.x', 'a.constructor.x', 'prototype']) assert.throws(() => readPath({}, path));
   const field = { type: 'number', min: 1, max: 100, integer: true };
-  for (const value of ['', 'Infinity', 'NaN', '0', '101', '1.2']) assert.throws(() => parseFieldValue(field, value));
+  for (const value of ['', 'Infinity', 'NaN']) assert.throws(() => parseFieldValue(field, value));
+  assert.equal(parseFieldValue(field, '0'), 1); assert.equal(parseFieldValue(field, '101'), 100); assert.equal(parseFieldValue(field, '1.2'), 1);
   assert.equal(parseFieldValue(field, '25'), 25); assert.equal(parseFieldValue({ type: 'text' }, '<script>literal</script>'), '<script>literal</script>');
   assert.equal(parseFieldValue({ type: 'boolean' }, '', true), true); assert.equal(presetFilename('../../'), 'miragine-preset-custom.json');
 });
 
 test('destroy releases all listeners and styles without accepting stale UI actions', async () => {
-  const f = fixture(); f.panel.open(); const old = f.button('spawn'); f.panel.destroy(); f.panel.destroy(); old.click(); await settle();
+  const f = fixture(); f.panel.open(); const old = f.button('spawn-left'); f.panel.destroy(); f.panel.destroy(); old.click(); await settle();
   assert.equal(f.controller.simulation.friendList.filter(unit => unit.kind === 'unit').length, 0);
   assert.equal(f.panel.element.parentNode, null); assert.equal(f.document.head.querySelector('[data-settings-panel-style]'), null);
   f.panel.open(); assert.equal(f.panel.isOpen, false); f.panel.update();

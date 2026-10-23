@@ -2,7 +2,7 @@
 
 [中文](README.md)
 
-This independent customization repository starts from commit `8554d89713456368378738744bfeb32ec41c2689` of the [faithful reconstruction](https://github.com/learner20230724/miragine-super-rebuild), which remains untouched. Added features include **0–20× speed, pause, collapsible settings, unit/economy editing, sandbox spawning, named presets and JSON import/export**, plus an independent 240 FPS display target and compact oblique battlefield overview. Original rules, default values and assets are retained; custom rules require explicit application. Historical records cover only their corresponding versions.
+This independent customization repository starts from commit `8554d89713456368378738744bfeb32ec41c2689` of the [faithful reconstruction](https://github.com/learner20230724/miragine-super-rebuild), which remains untouched. Features include **0–20× speed, manual pause, F2 settings, independent red/blue units and crystals, live resources, cancellable batched spawning, four editable AI profiles and presets**, plus an independent 240 FPS display target and compact oblique battlefield overview. Original rules, default values and assets are retained; explicit actions enable custom behavior. Historical records cover only their corresponding versions.
 
 An editable JavaScript project based on the **super Flash version**, with recovered sources, original assets, and traceable data. This is neither the JKS remake nor the C++ network reimplementation.
 
@@ -12,13 +12,13 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 Download the Windows x64 preview from the **[custom Releases](https://github.com/learner20230724/miragine-super-custom/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. Keep this customization in a separate directory from the baseline game.
 
-The current portable build is **[v0.3.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2)**, built from runtime commit `c1dcb85`. It improves original-pixel sampling without changing the v0.3 settings features. All 497 source tests, 96 browser interactions and 96 actual-EXE checks passed, including clean ZIP extraction, two launches, persistent presets, native export and clipping checks for all 594 frames. Package/source byte comparisons and privacy review passed. See the [delivery record](docs/releases/v0.3.0-preview.2.json) and Release attachments; this does not promise increased FPS or a complete HD art remaster.
+These instructions describe the **v0.4 settings-reorganization source**; its delivery and verification require the corresponding Release record, not old package results. The previously verified **[v0.3.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2)** used runtime commit `c1dcb85`, improving original-pixel sampling while retaining the older settings interface. Its 497 source tests, 96 browser interactions and 96 EXE checks belong to its [historical delivery record](docs/releases/v0.3.0-preview.2.json).
 
 Historical **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.1)** used runtime commit `75e4c6f`; its 471 source tests, 97 EXE interactions and 10 additional pause/resume cycles remain in its [own record](docs/releases/v0.3.0-preview.1.json), not as evidence for the new build.
 
 Edit the external `config/custom.json` and restart to apply changes; the panel never rewrites it. Desktop drafts/presets live in `userdata/custom-settings.json`; restoring them still requires explicit application. Back up both files before upgrading. `ui-helper/` contains replaceable drawing code; `build-info.json` identifies the source commit. See inherited [baseline verification](docs/verification.json) and [known issues](docs/known-issues.md).
 
-Tracked source is approximately 65.6 MB, including 12.0 MB of runtime assets; the Windows ZIP is 170.5 MB and unpacks to 402.1 MB. These exclude development dependencies, Git history and generated user data. The [v0.2.0-preview.1 record](docs/releases/v0.2.0-preview.1.json) remains available. Both 20x and 240 FPS are targets, not guarantees: the earlier settings-release maximized native-window 20x sample achieved approximately 5.6x, depending on army size and display load. It is not a controlled performance comparison for this sampling change.
+Historical v0.3.0-preview.2 tracked source was approximately 65.6 MB, including 12.0 MB of runtime assets; its Windows ZIP was 170.5 MB and unpacked to 402.1 MB. These exclude dependencies, Git history and generated user data. Refer to each new release record for updated sizes. Both 20× and 240 FPS are targets, not guarantees; army size and display load affect actual results.
 
 Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents. The never-show-help preference persists across restarts in `userdata/preferences.json`; delete that file to restore the initial tutorial.
 
@@ -56,13 +56,14 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 | I / J / K / L | World-coordinate pan: approximately four real seconds between default crystals, independent of zoom/speed |
 | Wheel over the battlefield | Pointer-anchored zoom; map boundaries take priority at limits |
 | Right / middle mouse drag | Pan the observation camera without changing combat |
-| F2 / lower-left settings | Expand/collapse settings; editing pauses by default. Side-by-side in wide windows, stacked in narrow windows |
-| Lower-left pause/resume | Pause or resume combat |
+| F2 | The only settings entry: opening/closing never changes pause state. Side-by-side in wide windows, stacked in narrow windows |
+| Lower-left pause/resume text | Manual pause/resume; crisp clickable text above matching help/quit controls |
 | Settings speed slider / numeric input | 0–20× in 0.1 increments: 0 pauses, 1 is normal, 0.1–0.9 is slow motion |
-| Settings overview / follow | Compact battlefield framing / original follow camera |
+| Settings time section | Speed and the full-width pause/resume button together |
+| View section below: free / overview / follow | Manual observation / compact battlefield framing / original follow camera |
 | Settings display ceiling | Select 30/60/120/240 FPS targets without changing the game step |
 | Esc | Close the open settings panel first; otherwise show leave-match confirmation |
-| F11 | Toggle fullscreen, distinct from camera overview |
+| F11 / view-section fullscreen | Toggle fullscreen, distinct from camera overview |
 
 The menu offers four single-player difficulties and local two-player play. Network multiplayer is not implemented.
 
@@ -70,7 +71,7 @@ The menu offers four single-player difficulties and local two-player play. Netwo
 
 **Lightweight original-pixel sampling:** sprites project directly from the preserved PNGs, skipping the intermediate 0.9-scale rasterization while retaining logical dimensions, foot anchors, clipping and animation timing. Thunderball and storm reuse larger bitmaps already embedded in the SWF: 25 byte-identical image copies total 46,676 bytes, with the final transparent storm frame preserved. No AI, real-time super-resolution, new engine or larger stage/ground buffers are introduced. Scenery, existing character frames and custom configuration are not overwritten. This is not a complete art remaster or a claim of Flash pixel parity; the renderer retains `spriteRasterMode: 'legacy'` for comparison. Regenerate/check with `python -B tools/build_source_effects.py` / `--check`; run the independent browser comparison with `node tools/verify-source-rendering.mjs`.
 
-Settings start collapsed, leaving compact lower-left buttons rather than a large overlay. Opening the panel pauses editing by default; use its resume button to watch the battle while editing. Closing it releases only the editor pause, not a manual pause or selected 0×. Overview frames the complete crystal sprites near opposite view edges, reducing exterior space; it does not guarantee every map corner is visible. Wheel zoom still allows a wider view.
+Settings start collapsed with no persistent F2 launcher. Press F2 to edit while the battle runs; opening/closing never pauses or resumes it. Pause is explicitly controlled by the player. Overview frames the full red/blue crystal sprites near the viewport edges, reducing empty outer scenery without promising all map corners. Wheel zoom still allows a wider view.
 
 One game second still contains **30 complete original logic steps**. 20× requests **600 steps per real second**, not 600 FPS or guaranteed throughput for every army size/machine. Independent rendering interpolates positions/cameras without adding original animation poses. The panel separates target speed, actual simulation rate and actual presentation rate; 240 FPS is a ceiling. Menus, observation and music use real time. Dense combat sounds are bounded/coalesced, never queued for later playback.
 
@@ -88,9 +89,21 @@ The tool enters a real match through the menus and measures both ordinary gamepl
 
 ## Change game parameters
 
-**Use F2 for interactive editing:** all 16 units, economy/rounds, crystals, four difficulties and automatic behavior. Explicitly apply to the current or next match. Sandbox actions edit current resources, spawn/clear troops, or start a match from the draft. Undo, default-draft restoration, named presets and JSON import/export are available. Loading, saving and importing do not automatically apply rules.
+**Use F2 for interactive editing:**
 
-Live application can preserve health ratios or absolute health. Existing cooldowns, the current countdown and resources are not reset; starting values affect only a new match. See the **[custom settings guide](docs/custom-settings.en.md)** for timing, persistence and limits. Building construction, active skills, fixed waves and scripted reinforcements are absent from this game, so no invented controls are provided.
+- **Current match / basics:** red and blue status appear together. Edit money, round income, remaining population, current/max crystal HP, attacks and common limits; Enter or leaving the input applies that field. Clear red, blue or both directly.
+- **Units:** independent red/blue columns for the same unit; explicitly apply the draft afterward. Editing one side does not automatically change the other.
+- **Starting settings:** initial money, income, first-round population and wait time together; current resources are not reset.
+- **Difficulty / AI:** all four cards are expanded, with counter probability, income/money/count thresholds, candidate sets, counter tables and forced-selection rules.
+- **Presets / files:** named presets, undo, default drafts and JSON import/export; load/save/import do not activate rules.
+
+Integer resources support **9,007,199,254,740,991**, JavaScript's safe-integer maximum. Excess input clamps immediately instead of failing only after confirmation. The **round-income cap** governs income gained through recruitment, not the held-money balance. The old 100-per-action / 500-total spawn caps are removed: generation runs in cancellable batches with progress. This does not mean arbitrary army sizes fit in memory or run smoothly. See the **[custom settings guide](docs/custom-settings.en.md)** for limits and application timing.
+
+Live application can preserve health ratios or absolute health. Existing cooldowns, the current countdown and resources are not reset; starting values affect only a new match. Building construction, active skills, fixed waves and scripted reinforcements are absent from this game, so no invented controls are provided.
+
+### Why does the computer choose these troops?
+
+After each single-player round's income payout, blue enters either the counter or ordinary-random branch according to its difficulty probability. Counter selection counts red's dominant troop type and samples a fixed response table; the other branch picks a candidate set by income. Money/elite thresholds can then override the result. Defaults force unit 15 when blue money is **>15030**, or red units 14/15 counted in that counter branch total **>2**—not twenty thousand. Thresholds, candidate tables and switches are now editable per difficulty. This AI does not automatically relearn counters after unit damage/armor edits; see the [full algorithm and boundaries](docs/custom-settings.en.md#ai-selection-and-editable-parameters).
 
 Panel exports use a different format from startup overrides: **do not overwrite `config/custom.json` with an exported draft**. The existing handwritten override workflow remains available:
 
@@ -117,8 +130,8 @@ Unit keys are menu IDs `"0"`–`"15"`, not animation indices (`ss`). Objects mer
 | `src/core/` | Headless simulation, units, attack objects, scene, and AS3 numeric semantics |
 | `src/app/` | Menus, input, match flow, audio, and interface |
 | `src/runtime/` | Fixed-step clock, presentation scheduling and interpolation; this game's pause/speed adapter is `src/app/playback-session.mjs` |
-| `src/customization/` | Editable fields, validation, drafts/presets, explicit application and sandbox adapter |
-| `src/app/settings-panel.mjs`, `custom-storage.mjs` | Settings UI and browser/desktop persistence |
+| `src/customization/` | Fields/drafts/presets; `runtime.mjs` is the separate custom adapter, `numeric.mjs` handles safe integers and finite arithmetic without editing recovered core |
+| `src/app/settings-panel.mjs`, `custom-storage.mjs`, `game-text-controls.mjs` | Settings UI, persistence and native crisp-text controls |
 | `src/render/` | Battlefield, perspective projection, ground, and character rendering |
 | `src/platform/`, `desktop/` | Viewport/input-coordinate transforms and Electron integration |
 | `src/config/` | Configuration loading, validation, and override merging |

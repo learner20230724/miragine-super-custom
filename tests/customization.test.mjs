@@ -23,11 +23,11 @@ function memory() {
   const values = new Map();
   return { values, getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) };
 }
-function setup({ storage = memory(), initial = defaults } = {}) {
+function setup({ storage = memory(), initial = defaults, customization = {} } = {}) {
   const events = [];
   const controller = new GameController(initial, { storage: { getItem: () => 'true' },
     createSimulation: options => new MiragineSimulation({ ...options, rng: seededRandom(199) }) });
-  const custom = createCustomization({ controller, defaults, initialConfig: initial, storage, onChange: event => events.push(event) });
+  const custom = createCustomization({ controller, defaults, initialConfig: initial, storage, onChange: event => events.push(event), ...customization });
   return { controller, custom, storage, events };
 }
 function start(options) { const result = setup(options); result.controller.startMatch(true, 1); return { ...result, sim: result.controller.simulation }; }
@@ -95,7 +95,10 @@ test('current apply defers initial resources and countdown; subsequent match tak
   custom.updateDraft('config.rules.roundFrames', 600);
   custom.updateDraft('config.rules.populationLimit', 90);
   const report = custom.applyCurrent();
-  assert.ok(report.deferred.includes('config.rules.initialMoney'));
+  assert.ok(report.deferred.includes('config.sides.left.initial.money'));
+  assert.ok(report.deferred.includes('config.sides.right.initial.money'));
+  assert.ok(report.deferred.includes('config.rules.startingIncome'));
+  assert.ok(report.deferred.includes('config.rules.initialRoundFrames'));
   assert.equal(sim.leftMoney, 0); assert.equal(sim.leftIncome, 500); assert.equal(sim.leftPopulation, 80); assert.equal(sim.round, 179);
   sim.p1[2] = sim.p2[2] = 0; sim.round = 1; sim.step();
   assert.equal(sim.round, 600); assert.equal(sim.leftPopulation, 90);
@@ -134,13 +137,30 @@ test('sandbox spawning creates real either-side units without paying/giving reso
   assert.deepEqual([sim.leftMoney, sim.leftIncome, sim.leftPopulation, sim.rightMoney, sim.rightIncome, sim.rightPopulation], before);
   assert.equal(sim.frame, 1);
 });
-test('sandbox cap is preflight atomic and automatic custom recruitment has the same safety ceiling', () => {
-  const { custom, sim } = start();
-  for (let i = 0; i < MAX_SANDBOX_UNITS / 100; i++) custom.spawn({ side: 'left', unitId: 0, count: 100 });
+test('large sandbox requests yield in batches without the old 100/action or 500/army caps', () => {
+  const pending = new Map(); let sequence = 0;
+  const { custom, sim } = start({ customization: {
+    schedule(callback) { pending.set(++sequence, callback); return sequence; },
+    cancelSchedule(handle) { pending.delete(handle); }, workNow: () => 0,
+  } });
+  assert.equal(MAX_SANDBOX_UNITS, null);
+  const job = custom.spawn({ side: 'left', unitId: 0, count: 501 });
+  assert.equal(job.status, 'running'); assert.equal(job.requested, 501);
+  assert.equal(job.completed, 0); assert.equal(sim.friendList.length, 1, 'request itself must not block creating the army');
+  let batches = 0;
+  while (pending.size) {
+    assert.ok(++batches < 100, 'finite request must finish');
+    const [handle, callback] = pending.entries().next().value; pending.delete(handle);
+    const before = custom.getSpawnJob().completed; callback();
+    assert.ok(custom.getSpawnJob().completed - before <= 32, 'batch size is a yielding budget, not an army cap');
+  }
+  assert.ok(batches > 1); assert.equal(custom.getSpawnJob().status, 'completed');
+  assert.equal(custom.getSpawnJob().completed, 501); assert.equal(sim.friendList.length, 502);
   const nextUid = sim.nextUid;
-  assert.throws(() => custom.spawn({ side: 'right', unitId: 1, count: 1 }), /500/);
+  assert.throws(() => custom.spawn({ side: 'right', unitId: 16, count: 1 }));
   assert.equal(sim.nextUid, nextUid);
-  sim.rightMoney = 1000; assert.equal(sim.createUnit('right', 1), null);
+  assert.equal(custom.spawn({ side: 'right', unitId: 1, count: 1 }).length, 1);
+  sim.rightMoney = 1000; assert.ok(sim.createUnit('right', 1), 'ordinary recruitment also continues beyond 500 troops');
 });
 test('clear troops preserves both bases and target-list identities, removes dangling attacks without RNG', () => {
   const { custom, sim } = start();
@@ -156,9 +176,11 @@ test('clear troops preserves both bases and target-list identities, removes dang
   assert.deepEqual(sim.projectiles, [keep]); assert.equal(sim.enemyList.length, 3);
   assert.equal(custom.clearTroops(), 2); assert.equal(sim.scene.children.length, 2);
 });
-test('resource edits validate all fields before applying and never change default config', () => {
+test('resource edits validate all fields atomically, clamp numeric boundaries, and never change default config', () => {
   const { custom, sim } = start();
-  assert.throws(() => custom.setResources({ side: 'left', money: 777, population: -1 })); assert.equal(sim.leftMoney, 0);
+  assert.throws(() => custom.setResources({ side: 'left', money: 777, population: NaN })); assert.equal(sim.leftMoney, 0);
+  custom.setResources({ side: 'left', money: Number.MAX_VALUE, income: Infinity, population: -1 });
+  assert.equal(sim.leftMoney, Number.MAX_SAFE_INTEGER); assert.equal(sim.leftIncome, Number.MAX_SAFE_INTEGER); assert.equal(sim.leftPopulation, 0);
   custom.setResources({ side: 'right', money: 777, income: 888, population: 99 });
   assert.equal(sim.rightMoney, 777); assert.equal(sim.rightIncome, 888); assert.equal(sim.rightPopulation, 99);
   assert.equal(sim.rules.initialMoney, 0); assert.throws(() => custom.setResources({ side: 'left', money: 1, unknown: 2 }));
@@ -180,8 +202,28 @@ test('unknown fields, immutable topology/30 Hz, pollution, getters and oversize 
   const getter = {}; Object.defineProperty(getter, 'schemaVersion', { enumerable: true, get() { throw new Error('Getter evaluated'); } });
   assert.throws(() => custom.setDraft(getter), /enumerable data property/);
   assert.deepEqual(custom.getState().draft, before);
-  assert.throws(() => custom.updateDraft('config.units.0.hp', Infinity));
-  assert.throws(() => custom.updateDraft('config.units.0.armorTypeID', 2));
+  assert.throws(() => custom.updateDraft('config.units.0.hp', NaN));
+  assert.throws(() => custom.updateDraft('config.units.0.armorTypeID', 'not a number'));
+  assert.deepEqual(custom.getState().draft, before);
+});
+
+test('numeric draft edits clamp immediately but JSON/profile imports retain strict validation', () => {
+  const { custom } = setup();
+  custom.updateDraft('config.units.0.hp', Infinity);
+  custom.updateDraft('config.units.0.armorTypeID', 2);
+  custom.updateDraft('config.rules.incomeLimit', '1e999');
+  const draft = custom.getState().draft;
+  assert.equal(draft.config.units[0].hp, Number.MAX_VALUE);
+  assert.equal(draft.config.units[0].armorTypeID, 1);
+  assert.equal(draft.config.rules.incomeLimit, Number.MAX_SAFE_INTEGER);
+  for (const side of ['left', 'right']) {
+    assert.equal(draft.config.sides[side].units[0].hp, Number.MAX_VALUE);
+    assert.equal(draft.config.sides[side].units[0].armorTypeID, 1);
+  }
+  const invalid = structuredClone(draft); invalid.config.units[0].armorTypeID = 2;
+  assert.throws(() => custom.setDraft(invalid));
+  assert.throws(() => custom.importJSON(JSON.stringify(invalid)));
+  assert.deepEqual(custom.getState().draft, draft, 'invalid imports must not replace the existing draft');
 });
 test('profile validation rejects sparse arrays and damaged nested collections', () => {
   const profile = profileFromConfiguration(defaults); delete profile.config.units[0].damage[0]; assert.throws(() => validateProfile(profile));
