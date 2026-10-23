@@ -53,6 +53,8 @@ The menu offers four single-player difficulties and local two-player play. Netwo
 
 ### Performance
 
+**preview.2** fixes the sustained slowdown after entering combat. With the same maximized window at DPI 1.5, final canvas submissions improved from **4.77 to 28.74 FPS** in the battlefield and **5.05 to 28.44 FPS** with a unit tooltip. Some late frames remain; this is not a locked-30-FPS guarantee for all hardware. See the [measurement conditions](https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json).
+
 Combat retains the original **30 Hz** simulation. Static button shadows, unchanged health bars and results panels are cached instead of recalculating full-stage filters at every display refresh. Numbers, pointer tooltips, selection pulses and transitions still update; asset resolution is not reduced. Profile an independently extracted test copy with:
 
 ```sh

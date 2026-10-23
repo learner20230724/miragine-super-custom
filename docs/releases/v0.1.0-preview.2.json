@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "reportedOnClientDate": "2026-10-23",
+  "delivery": "rendering-performance-fix",
+  "release": {
+    "tag": "v0.1.0-preview.2",
+    "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.2",
+    "publishedAt": "2026-10-23T02:26:18Z",
+    "isPrerelease": true,
+    "isDraft": false,
+    "zipSha256": "ac8813d3477ae6019cf182e1b090778c951ce13dcc6ae923245e82d18463541e",
+    "allApiAssetDigestsMatch": true,
+    "downloadedZipEqualsTestedZip": true,
+    "anonymousReleaseHttpStatus": 200,
+    "record": "releases/v0.1.0-preview.2.json"
+  },
+  "assets": [
+    {
+      "name": "MiragineSuper-0.1.0-preview.2-win32-x64.zip",
+      "bytes": 170376411,
+      "sha256": "ac8813d3477ae6019cf182e1b090778c951ce13dcc6ae923245e82d18463541e",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/MiragineSuper-0.1.0-preview.2-win32-x64.zip"
+    },
+    {
+      "name": "MiragineSuper-0.1.0-preview.2-win32-x64.zip.inventory.json",
+      "bytes": 16429,
+      "sha256": "860b3ee9bbec0556a9fa0fa4af792d554e0e1547a0357d42497a64755ce4cfec",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/MiragineSuper-0.1.0-preview.2-win32-x64.zip.inventory.json"
+    },
+    {
+      "name": "performance-comparison.json",
+      "bytes": 11018,
+      "sha256": "5b4907e7f7ffc2f2eb5c4eed4643c4af7ed72ae590674e479ef9804aeb58b3ce",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json"
+    },
+    {
+      "name": "privacy-review.json",
+      "bytes": 25787,
+      "sha256": "748407bea632cf9f387ee19f624b3218303267164ae54d3ff12254dd7a634e6a",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/privacy-review.json"
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 866,
+      "sha256": "dcdbd84ecc87cef9d3c7b1b31772a2b3611d92000e5d286de7aa73577e0b2f8e",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/SHA256SUMS"
+    },
+    {
+      "name": "storage.json",
+      "bytes": 1802,
+      "sha256": "3c3016aa933e502471d0d8a74d3362607e4a1456e816726ba9b59c42c46dea66",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/storage.json"
+    },
+    {
+      "name": "verification-custom.json",
+      "bytes": 49511,
+      "sha256": "67057ad83d67e12161e4522488b976cdffe10b8648df8b3b5e0f0febc5a8760c",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/verification-custom.json"
+    },
+    {
+      "name": "verification-default.json",
+      "bytes": 50390,
+      "sha256": "cf28dc97b2fa00834970cfeb034665747003624b2325e2f06667ebdeab02dcd5",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/verification-default.json"
+    },
+    {
+      "name": "verification-preferences.json",
+      "bytes": 5831,
+      "sha256": "61ede3aa27729b8755ab643a08bed016f37e2d1048124211a279701c86876091",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/verification-preferences.json"
+    },
+    {
+      "name": "verification-ui-cache.json",
+      "bytes": 53290,
+      "sha256": "a799c94943a4d5b4e5918e6148a4f499da021e1cd4dd2b38f55183a726fbb9c1",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/verification-ui-cache.json"
+    }
+  ],
+  "verification": {
+    "automatedTests": 245,
+    "failed": 0,
+    "defaultPortableChecks": 25,
+    "customPortableChecks": 26,
+    "crossProcessPreferenceChecks": 25,
+    "independentFreshExtractions": 3,
+    "archiveFilesVerifiedPerExtraction": 94,
+    "sourceCiRuns": [
+      39888563134,
+      39889037313
+    ],
+    "ciOs": [
+      "ubuntu-latest",
+      "windows-latest"
+    ],
+    "ciConclusion": "success",
+    "coreAndDefaultConfigUnchanged": true,
+    "uiCache": {
+      "status": "passed-explicit-bounded-rounding",
+      "cases": 23,
+      "allowedMaxRgbDifference": 1,
+      "alphaExact": true,
+      "hotspotsAndFixtureSimulationFramePreserved": true,
+      "strictRgbaEquality": false,
+      "scope": "Cache-enabled vs cache-bypassed fixed-state native UI fixture, not old/new full-match Adobe pixel parity."
+    },
+    "privacy": {
+      "rawFindings": 5,
+      "reviewedUpstreamConstants": 5,
+      "unresolved": 0,
+      "matchedNonResourcePeSections": 14,
+      "matchedVendorFiles": 71,
+      "decodedAsarFiles": 728,
+      "decodedAsarScanClean": true,
+      "upstreamPakFiles": 58,
+      "scope": "Pinned Electron constants reviewed; PE headers/overlay not asserted identical, upstream PAK files matched without decoding."
+    }
+  },
+  "performance": {
+    "report": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json",
+    "measured": [
+      {
+        "name": "game-no-tooltip",
+        "beforeFinalCanvasSubmissionsFps": 4.77245,
+        "afterFinalCanvasSubmissionsFps": 28.7362,
+        "beforePresentationIntervals": {
+          "count": 49,
+          "p50Ms": 206.8,
+          "p95Ms": 295.7,
+          "maxMs": 313,
+          "meanMs": 209.867347,
+          "over100MsCount": 49
+        },
+        "afterPresentationIntervals": {
+          "count": 290,
+          "p50Ms": 31.4,
+          "p95Ms": 60.1,
+          "maxMs": 95.8,
+          "meanMs": 34.591034,
+          "over100MsCount": 0
+        }
+      },
+      {
+        "name": "unit0-tooltip",
+        "beforeFinalCanvasSubmissionsFps": 5.05089,
+        "afterFinalCanvasSubmissionsFps": 28.435738,
+        "beforePresentationIntervals": {
+          "count": 52,
+          "p50Ms": 187.2,
+          "p95Ms": 268.4,
+          "maxMs": 296.3,
+          "meanMs": 198.576923,
+          "over100MsCount": 52
+        },
+        "afterPresentationIntervals": {
+          "count": 287,
+          "p50Ms": 31.8,
+          "p95Ms": 66.6,
+          "maxMs": 94.8,
+          "meanMs": 35.099652,
+          "over100MsCount": 0
+        }
+      }
+    ],
+    "scope": "Same maximized Windows setup at devicePixelRatio 1.5. Actual canvas submissions, not physical scan-out. Natural RNG/army counts need not be identical; profiling adds overhead; some late frames remain and no hardware-wide locked-30 guarantee is made."
+  },
+  "storage": {
+    "schemaVersion": 1,
+    "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
+    "units": "bytes; MB means 1000000 bytes",
+    "trackedCheckout": {
+      "files": 2969,
+      "bytes": 64898341
+    },
+    "gitBlobTreeBytes": 64894783,
+    "categories": {
+      "documentationAndMetadata": {
+        "files": 29,
+        "bytes": 6527134
+      },
+      "runtimeAssets": {
+        "files": 678,
+        "bytes": 11927432
+      },
+      "codeAndTooling": {
+        "files": 76,
+        "bytes": 594288
+      },
+      "generatedRuntime": {
+        "files": 7,
+        "bytes": 2371606
+      },
+      "recoveryEvidence": {
+        "files": 2179,
+        "bytes": 43477881
+      }
+    },
+    "portable": {
+      "arch": "x64",
+      "archive": "MiragineSuper-0.1.0-preview.2-win32-x64.zip",
+      "archiveRoot": "MiragineSuper/",
+      "compression": "deflate-9",
+      "electronVersion": "44.4.3",
+      "excludedDirectories": [],
+      "exclusionPolicy": "Check encountered entry for symlink/reparse first; skip real userdata/.tmp directories without traversal; reject other private directories",
+      "fileCount": 94,
+      "metadataTimestamp": "1980-01-01T00:00:00",
+      "originalBytes": 401682553,
+      "platform": "win32",
+      "schemaVersion": 1,
+      "sha256": "ac8813d3477ae6019cf182e1b090778c951ce13dcc6ae923245e82d18463541e",
+      "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
+      "version": "0.1.0-preview.2",
+      "zipBytes": 170376411
+    },
+    "notes": [
+      "Tracked checkout is a Windows working-tree measurement at sourceCommit; text line endings can differ from Git blobs.",
+      "Runtime assets and recovery evidence are already included in trackedCheckout, not additional storage.",
+      "Git objects, dependencies, caches, local test copies and runtime userdata are excluded. Release ZIP adds separate storage; hosting accounting may differ."
+    ]
+  },
+  "knownBoundariesDocument": "../known-issues.md",
+  "previousReleaseRecord": "v0.1.0-preview.1.json"
+}

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "reportDate": "2026-10-23",
-  "stage": "published-preview",
+  "stage": "published-performance-preview",
   "overallAcceptance": "delivered-with-documented-visual-limitations",
-  "reportScope": "Final native game delivery, source/data/config tests, scoped original-AS3 oracle and actual published portable-byte verification. Not a claim of universal Adobe or pixel-perfect parity.",
+  "reportScope": "Native game delivery plus preview.2 rendering optimization, scoped original-AS3 oracle retained unchanged, and actual published portable-byte verification. Not universal Adobe or pixel-perfect parity.",
   "baseline": {
     "name": "Super Miragine War / 超级米拉奇战记",
     "swfSha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
@@ -15,9 +15,10 @@
     "automatedTests": {
       "status": "passed-local",
       "command": "npm test",
-      "passed": 210,
+      "passed": 245,
       "failed": 0,
-      "scope": "Native source, recovered data, assets, configuration, viewport, UI structure and privacy guard. Not original-runtime parity."
+      "scope": "Native source, recovered data, assets, configuration, viewport, UI structure and privacy guard. Not original-runtime parity.",
+      "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7"
     },
     "browserSmoke": {
       "status": "passed-local",
@@ -69,13 +70,13 @@
       "scope": "Unmodified native default simulation. Natural completion does not establish an identical original Flash match."
     },
     "publicPrivacyScan": {
-      "status": "passed-local",
+      "status": "passed-source-and-sidecars",
       "command": "npm run check:public -- --root .",
-      "scannedFiles": 2961,
-      "scannedBytes": 64809409,
+      "scannedSourceFilesAtBuild": 2969,
+      "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
       "findings": 0,
       "warnings": 0,
-      "scope": "Release-source commit 19771a59075d046fa80d401fccf3d19f86e29181; delivery-record changes are additionally scanned before push."
+      "scope": "Built source and all nine non-ZIP Release attachments scanned clean; exploded runtime separately reviewed against pinned upstream provenance."
     },
     "browserDpi": {
       "status": "passed-local",
@@ -114,7 +115,7 @@
       "matchingFrames": 6842,
       "framesContainingAttack": 5342,
       "maxObjects": 250,
-      "tolerance": 1e-07,
+      "tolerance": 1e-7,
       "scope": "One explicitly instrumented deterministic AS3 test match; not a claim of Adobe runtime or visual/audio parity."
     },
     "naturalBrowserMatch": {
@@ -132,17 +133,91 @@
     },
     "portableWindows": {
       "status": "passed-isolated-zip-extraction",
-      "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
+      "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
       "defaultChecks": 25,
       "customChecks": 26,
       "crossProcessPreferenceChecks": 25,
-      "testedZipSha256": "14a7e49ac654881e9694812de608e995add505c8aea52b8a34efe01cd5df8ff7",
-      "scope": "Actual ZIP extracted twice without source/development dependencies. Real EXE, maximize, fullscreen, pointer/keyboard, natural configured recruitment, two separate preference launches; same tested ZIP downloaded back after publication.",
+      "testedZipSha256": "ac8813d3477ae6019cf182e1b090778c951ce13dcc6ae923245e82d18463541e",
+      "scope": "Three independent inventory-verified ZIP extractions for default, custom and performance tests. Real EXE maximize/fullscreen, mapped input, natural configured recruitment and two separate preference launches; published downloaded ZIP is byte-identical.",
       "reports": [
-        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-default.json",
-        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-custom.json",
-        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/verification-preferences.json"
+        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/verification-default.json",
+        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/verification-custom.json",
+        "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/verification-preferences.json"
       ]
+    },
+    "performance": {
+      "status": "measured-portable",
+      "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
+      "report": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json",
+      "measured": [
+        {
+          "name": "game-no-tooltip",
+          "beforeFinalCanvasSubmissionsFps": 4.77245,
+          "afterFinalCanvasSubmissionsFps": 28.7362,
+          "beforePresentationIntervals": {
+            "count": 49,
+            "p50Ms": 206.8,
+            "p95Ms": 295.7,
+            "maxMs": 313,
+            "meanMs": 209.867347,
+            "over100MsCount": 49
+          },
+          "afterPresentationIntervals": {
+            "count": 290,
+            "p50Ms": 31.4,
+            "p95Ms": 60.1,
+            "maxMs": 95.8,
+            "meanMs": 34.591034,
+            "over100MsCount": 0
+          }
+        },
+        {
+          "name": "unit0-tooltip",
+          "beforeFinalCanvasSubmissionsFps": 5.05089,
+          "afterFinalCanvasSubmissionsFps": 28.435738,
+          "beforePresentationIntervals": {
+            "count": 52,
+            "p50Ms": 187.2,
+            "p95Ms": 268.4,
+            "maxMs": 296.3,
+            "meanMs": 198.576923,
+            "over100MsCount": 52
+          },
+          "afterPresentationIntervals": {
+            "count": 287,
+            "p50Ms": 31.8,
+            "p95Ms": 66.6,
+            "maxMs": 94.8,
+            "meanMs": 35.099652,
+            "over100MsCount": 0
+          }
+        }
+      ],
+      "originalNominalSimulationHz": 30,
+      "coreAndDefaultConfigUnchanged": true,
+      "scope": "Same maximized Windows setup at devicePixelRatio 1.5. Actual canvas submissions, not physical scan-out. Natural RNG/army counts need not be identical; profiling adds overhead; some late frames remain and no hardware-wide locked-30 guarantee is made."
+    },
+    "uiCachePixels": {
+      "status": "passed-explicit-bounded-rounding",
+      "cases": 23,
+      "allowedMaxRgbDifference": 1,
+      "alphaExact": true,
+      "hotspotsAndFixtureSimulationFramePreserved": true,
+      "strictRgbaEquality": false,
+      "scope": "Cache-enabled vs cache-bypassed fixed-state native UI fixture, not old/new full-match Adobe pixel parity.",
+      "report": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/verification-ui-cache.json"
+    },
+    "releasePrivacyReview": {
+      "rawFindings": 5,
+      "reviewedUpstreamConstants": 5,
+      "unresolved": 0,
+      "matchedNonResourcePeSections": 14,
+      "matchedVendorFiles": 71,
+      "decodedAsarFiles": 728,
+      "decodedAsarScanClean": true,
+      "upstreamPakFiles": 58,
+      "scope": "Pinned Electron constants reviewed; PE headers/overlay not asserted identical, upstream PAK files matched without decoding.",
+      "report": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/privacy-review.json"
     }
   },
   "continuousIntegration": {
@@ -215,15 +290,15 @@
     "runsBrowserSmoke": false,
     "buildsPortableRelease": false,
     "verifiedRun": {
-      "id": 39827063683,
-      "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
-      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39827063683",
+      "id": 39889037313,
+      "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
+      "url": "https://github.com/learner20230724/miragine-super-rebuild/actions/runs/39889037313",
       "os": [
         "ubuntu-latest",
         "windows-latest"
       ],
       "conclusion": "success",
-      "automatedTestsPerOs": 210
+      "automatedTestsPerOs": 245
     }
   },
   "separateAcceptanceGates": {
@@ -237,13 +312,17 @@
   },
   "knownBoundariesDocument": "docs/known-issues.md",
   "release": {
-    "tag": "v0.1.0-preview.1",
-    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
-    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1",
-    "zipSha256": "14a7e49ac654881e9694812de608e995add505c8aea52b8a34efe01cd5df8ff7",
+    "tag": "v0.1.0-preview.2",
+    "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.2",
+    "publishedAt": "2026-10-23T02:26:18Z",
+    "isPrerelease": true,
+    "isDraft": false,
+    "zipSha256": "ac8813d3477ae6019cf182e1b090778c951ce13dcc6ae923245e82d18463541e",
     "allApiAssetDigestsMatch": true,
     "downloadedZipEqualsTestedZip": true,
     "anonymousReleaseHttpStatus": 200,
-    "record": "releases/v0.1.0-preview.1.json"
-  }
+    "record": "releases/v0.1.0-preview.2.json"
+  },
+  "previousReleaseRecord": "releases/v0.1.0-preview.1.json"
 }

@@ -53,6 +53,8 @@ npm run dev
 
 ### 性能
 
+**preview.2** 修复进入对局后的持续卡顿。同机最大化、DPI 1.5 实测：普通战场 **4.77 → 28.74 FPS**，兵种提示 **5.05 → 28.44 FPS**（最终画布提交频率）。仍有少量迟帧，不保证所有硬件锁定 30 帧；完整条件见 [性能报告](https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json)。
+
 战斗逻辑保持原版 **30 Hz**；静态按钮阴影、未变化的血条与结果页按需缓存，不再每次屏幕刷新都重新做整屏滤镜。数字、鼠标提示、选兵脉冲和过渡动画仍更新，不降低素材分辨率。性能剖析可在独立解压的测试副本上运行：
 
 ```sh

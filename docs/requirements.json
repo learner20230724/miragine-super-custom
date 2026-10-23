@@ -85,14 +85,14 @@
       "requirement": "Release 包与代码版本一致，优先解压启动，写清运行方式。",
       "acceptance": "Windows 发布包在不带开发目录/依赖的隔离目录独立运行，Release 附件实际上传可取。",
       "status": "verified-published",
-      "evidence": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1"
+      "evidence": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.2"
     },
     {
       "id": "R13",
       "requirement": "发布前清理绝对路径、用户名、私人目录、令牌与密钥，增加复查。",
       "acceptance": "已跟踪源文件、文档、日志及发布包通过隐私/密钥检查，无 .local 或缓存泄漏。",
       "status": "verified-current-source-and-reviewed-artifact",
-      "evidence": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.1/privacy-review.json",
+      "evidence": "https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/privacy-review.json",
       "scope": "Release-source candidates clean; all raw release findings reviewed against pinned upstream bytes, not claimed as zero raw findings or a Git-history purge."
     },
     {
@@ -100,13 +100,14 @@
       "requirement": "验证默认行为、配置生效、独立包运行；交代程度、问题及源码/素材/包体存储。",
       "acceptance": "有测试报告、已知问题清单、真实完成状态、各类大小统计与交付链接。",
       "status": "verified-delivery",
-      "evidence": "docs/releases/v0.1.0-preview.1.json"
+      "evidence": "docs/releases/v0.1.0-preview.2.json"
     }
   ],
   "delivery": {
-    "tag": "v0.1.0-preview.1",
-    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
-    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1",
-    "scope": "All 14 delivery requirements addressed; known nonblocking visual differences disclosed, not pixel-perfect identity."
+    "tag": "v0.1.0-preview.2",
+    "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.2",
+    "scope": "All 14 delivery requirements addressed; known nonblocking visual differences disclosed, not pixel-perfect identity.",
+    "latestRecord": "docs/releases/v0.1.0-preview.2.json"
   }
 }

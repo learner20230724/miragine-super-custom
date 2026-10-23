@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "goalStatus": "complete",
-  "stage": "delivered-native-preview",
+  "stage": "delivered-optimized-native-preview",
   "baseline": {
     "version": "Super Miragine War / 超级米拉奇战记",
     "sha256": "6cd4a86045d828517c5eaabacfa04ae16719733778f8b20b3c855e5f03df7149",
@@ -36,7 +36,13 @@
     "publish pinned-source Windows portable Release and all eight assets",
     "download published ZIP and verify byte equality with the isolated tested package",
     "review runtime provenance: raw five upstream constants, zero unresolved, 727 decoded ASAR files verified",
-    "publish final storage, acceptance and known-limitations records"
+    "publish final storage, acceptance and known-limitations records",
+    "preview.2: remove repeated static control filters and reuse two bounded health-bar layers without changing core/default values",
+    "preview.2: pass 245 source tests and Linux/Windows CI; preserve exact legacy fixed-step order",
+    "preview.2: verify 23 native UI cases with explicit RGB 1/255 allowance, exact alpha/hotspots and unchanged fixture frame",
+    "preview.2: measure actual portable canvas submissions from about 5 to 28-29 FPS in two same-window scenarios; some late frames remain",
+    "preview.2: pass fresh default 25 / custom 26 / cross-process preferences 25 checks",
+    "preview.2: publish ten assets, verify all API digests and downloaded ZIP, review 728 ASAR files with zero unresolved privacy items"
   ],
   "inProgress": [],
   "notYetClaimed": [
@@ -45,9 +51,9 @@
     "recovery of original FLA/editor project"
   ],
   "release": {
-    "tag": "v0.1.0-preview.1",
-    "sourceCommit": "19771a59075d046fa80d401fccf3d19f86e29181",
-    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.1"
+    "tag": "v0.1.0-preview.2",
+    "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",
+    "url": "https://github.com/learner20230724/miragine-super-rebuild/releases/tag/v0.1.0-preview.2"
   },
   "knownNonblockingDifferences": [
     "Result flag dynamic Perlin displacement layer is not restored; original static flag remains.",
