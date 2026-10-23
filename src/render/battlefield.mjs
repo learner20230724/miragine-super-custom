@@ -2,6 +2,9 @@ import { GroundWebGLRenderer } from './ground-webgl.mjs';
 import { GroundLayerCache } from './ground-layer-cache.mjs';
 import { projectViewGround, projectViewSymbol } from './view-camera.mjs';
 import { overviewGroundGeometry } from './overview-ground.mjs';
+import { spriteRasterPlacement, spriteSourcePlacement } from './sprite-source.mjs';
+import { drawSourceEffect } from './source-effects.mjs';
+export { spriteRasterPlacement, spriteSourcePlacement } from './sprite-source.mjs';
 import {
   backgroundLayers,
   groundCorners,
@@ -82,26 +85,6 @@ export function resolveSpriteFrame(entity, manifest) {
 }
 
 /**
- * A preserved PNG already has its exported frame bounds translated to (0,0).
- * Put it back into the original sheet's fixed 0.9-scale BitmapData rectangle.
- * Width, height, offX and offY are the source's AS3-int truncations. Extents
- * come from the manifest and remain an explicitly unvalidated getRect proxy.
- */
-export function spriteRasterPlacement(sprite, frame) {
-  const scale = sprite.rasterized.scale;
-  return {
-    width: sprite.rasterized.width,
-    height: sprite.rasterized.height,
-    offX: sprite.rasterized.offX,
-    offY: sprite.rasterized.offY,
-    x: (frame.bounds.xMin - sprite.bounds.xMin) * scale,
-    y: (frame.bounds.yMin - sprite.bounds.yMin) * scale,
-    imageWidth: frame.width * scale,
-    imageHeight: frame.height * scale,
-  };
-}
-
-/**
  * Native battlefield renderer. The caller owns the HUD, menus and viewport.
  * Draw in a logical 640x400 area inside the original 640x480 stage; preserve
  * the caller's Canvas2D transform. No SWF player or replacement art is used.
@@ -117,6 +100,8 @@ export class BattlefieldRenderer {
     canvasFactory = browserCanvas,
     groundRenderer = null,
     groundTiles = ORIGINAL_GROUND_TILES,
+    spriteRasterMode = 'legacy',
+    sourceFrames = null,
   } = {}) {
     this.context = typeof canvasOrContext?.getContext === 'function'
       ? canvasOrContext.getContext('2d') : canvasOrContext;
@@ -126,14 +111,22 @@ export class BattlefieldRenderer {
     if (!manifest?.sprites || !manifest?.images?.terrain) {
       throw new TypeError('BattlefieldRenderer requires the generated asset manifest');
     }
+    if (!['legacy', 'source'].includes(spriteRasterMode)) {
+      throw new TypeError('spriteRasterMode must be legacy or source');
+    }
     this.manifest = manifest;
     this.baseUrl = baseUrl;
     this.imageLoader = imageLoader;
     this.canvasFactory = canvasFactory;
     this.groundRenderer = groundRenderer;
     this.groundTiles = groundTiles;
+    this.spriteRasterMode = spriteRasterMode;
+    // Optional verified bitmap-to-symbol mappings for original-density effects.
+    // Ordinary source mode needs no extra images, generated art or canvases.
+    this.sourceFrames = sourceFrames;
     this.images = new Map();
     this.surfaces = new Map();
+    this.sourcePlacements = new Map();
     this.patterns = new Map();
     this.loaded = false;
     this.lastRenderStats = null;
@@ -158,6 +151,13 @@ export class BattlefieldRenderer {
     }
     for (const sprite of Object.values(this.manifest.sprites)) {
       for (const frame of sprite.frames) records.set(frame.file, frame);
+    }
+    if (this.spriteRasterMode === 'source' && this.sourceFrames) {
+      for (const sprite of Object.values(this.sourceFrames)) {
+        for (const frame of Object.values(sprite)) {
+          if (frame.file) records.set(frame.file, frame);
+        }
+      }
     }
     const queue = [...records.values()];
     let cursor = 0;
@@ -199,6 +199,15 @@ export class BattlefieldRenderer {
     const result = { surface, offX: placement.offX, offY: placement.offY };
     this.surfaces.set(cacheKey, result);
     return result;
+  }
+
+  spriteSource(selection) {
+    const { key, sprite, frame } = selection;
+    const cacheKey = `${key}:${frame.index}`;
+    if (!this.sourcePlacements.has(cacheKey)) {
+      this.sourcePlacements.set(cacheKey, spriteSourcePlacement(sprite, frame));
+    }
+    return this.sourcePlacements.get(cacheKey);
   }
 
   drawBackground(layer) {
@@ -273,7 +282,9 @@ export class BattlefieldRenderer {
     }
     const context = this.context;
     const stats = { spritesDrawn: 0, hidden: 0, emptySymbols: 0,
-      missingSprites: [], zeroScale: 0, unsupportedCoordinates: 0 };
+      missingSprites: [], zeroScale: 0, unsupportedCoordinates: 0,
+      spriteRasterMode: this.spriteRasterMode, sourceSpritesDrawn: 0,
+      sourceEffectsDrawn: 0, emptySourceEffects: 0 };
     context.save();
     try {
       context.beginPath();
@@ -326,13 +337,30 @@ export class BattlefieldRenderer {
           continue;
         }
         if (projected.scaleX === 0 || projected.scaleY === 0) { stats.zeroScale += 1; continue; }
-        const bitmap = this.spriteSurface(selection);
+        const sourceEffect = this.spriteRasterMode === 'source'
+          ? this.sourceFrames?.[selection.key]?.[selection.index] ?? null : null;
+        const source = this.spriteRasterMode === 'source' && !sourceEffect ? this.spriteSource(selection) : null;
+        if (this.spriteRasterMode === 'source' && !sourceEffect && !source) { stats.emptySymbols += 1; continue; }
+        const bitmap = this.spriteRasterMode === 'legacy' ? this.spriteSurface(selection) : null;
         context.save();
         try {
           context.translate(projected.x, projected.y);
           context.scale(projected.scaleX, projected.scaleY);
-          context.imageSmoothingEnabled = false; // Symbol.canvas is a default Bitmap.
-          context.drawImage(bitmap.surface, bitmap.offX, bitmap.offY);
+          if (sourceEffect) {
+            context.imageSmoothingEnabled = true;
+            if (drawSourceEffect(context, this.images.get(sourceEffect.file), selection.sprite, sourceEffect)) {
+              stats.sourceEffectsDrawn += 1;
+            } else stats.emptySourceEffects += 1;
+          } else if (source) {
+            context.imageSmoothingEnabled = true;
+            context.drawImage(this.images.get(selection.frame.file),
+              source.sourceX, source.sourceY, source.sourceWidth, source.sourceHeight,
+              source.x, source.y, source.width, source.height);
+            stats.sourceSpritesDrawn += 1;
+          } else {
+            context.imageSmoothingEnabled = false; // Symbol.canvas is a default Bitmap.
+            context.drawImage(bitmap.surface, bitmap.offX, bitmap.offY);
+          }
         } finally {
           context.restore();
         }
@@ -341,6 +369,8 @@ export class BattlefieldRenderer {
     } finally {
       context.restore();
     }
+    stats.spriteSurfaces = this.surfaces.size;
+    stats.sourcePlacements = this.sourcePlacements.size;
     this.lastRenderStats = stats;
     return stats;
   }
@@ -351,6 +381,7 @@ export class BattlefieldRenderer {
     this.displayGroundCache = null;
     this.images.clear();
     this.surfaces.clear();
+    this.sourcePlacements.clear();
     this.patterns.clear();
     this.loaded = false;
     this.loadPromise = null;

@@ -3,6 +3,27 @@
 This is a runnable **preview**, not a claim of exact Flash parity.
 当前是可运行预览版，不宣称已与 Flash 逐帧、逐像素完全一致。
 
+## Original-pixel sampling — v0.3.0-preview.2 / 原始素材轻量采样
+
+- One-pass sprite sampling and the original larger effect bitmaps improve how
+  retained pixels are used, not their original artistic detail. Sampling differs
+  from the legacy intermediate-raster path; no Flash pixel equivalence is claimed.
+  单次角色采样及原始较大特效位图只改善已有像素的利用，不恢复不存在的美术细节；
+  与原中间栅格路径采样不同，不宣称 Flash 逐像素一致。
+- Stage/ground buffers remain 640×480 / 640×400. Mountains, trees and grass are
+  unchanged; their source resolution and fullscreen scaling remain limitations.
+  No AI, new renderer, model runtime or 2×/4× texture pack is introduced.
+  舞台／地面缓冲仍为 640×480／640×400，山、树、草地未更换；原图分辨率及全屏
+  拉伸仍有限制。未引入 AI、新引擎、模型运行时或 2×／4×贴图包。
+- Twenty-five byte-identical source images add 46,676 compressed bytes and
+  about 2.37 MiB for one decoded RGBA copy, excluding browser/GPU duplication.
+  Source mode removes sprite raster canvases, but does not promise lower total
+  memory, increased FPS or a zero-cost improvement. Submission microbenchmarks
+  are not end-to-end game or GPU/display performance measurements.
+  新增原样图片压缩共 46,676 字节，单份 RGBA 解码约 2.37 MiB，未计浏览器／GPU
+  副本；不再建立角色栅格画布，但不承诺总内存一定下降、帧率提高或零额外开销。
+  绘制命令提交微测不是整局、GPU 或屏幕性能证明。
+
 ## Settings preview — v0.3.0-preview.1 / 设置预览版
 
 These notes describe the new source boundaries. Package verification must be

@@ -214,7 +214,10 @@ test('all production files have safe paths and verified hashes, sizes, and sourc
   }
   assert.equal(bytes, manifest.counts.bytes);
   assert.equal(paths.size, manifest.counts.files);
-  assert.deepEqual([...paths].sort(), walk('assets/generated'));
+  // The independent original-density effect pack has its own complete hash
+  // inventory in source-effects.test.mjs; the baseline manifest stays intact.
+  assert.deepEqual([...paths].sort(), walk('assets/generated')
+    .filter(file => !file.startsWith('assets/generated/source-effects/')));
 });
 
 test('production assets do not require a SWF player or a SWF file', () => {

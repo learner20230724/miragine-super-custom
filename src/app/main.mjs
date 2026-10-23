@@ -365,11 +365,12 @@ resize();
 message('超级米拉奇战记', '正在载入原版素材……');
 
 try {
-  const [config, manifest, layout, defaults] = await Promise.all([
+  const [config, manifest, layout, defaults, sourceEffects] = await Promise.all([
     loadConfiguration({ defaultsUrl: './config/defaults.generated.json', customUrl: './config/custom.json', validateEffective: validateCoreConfiguration }),
     json('./generated/asset-manifest.json'),
     json('./generated/ui/layout.generated.json'),
     json('./config/defaults.generated.json'),
+    json('./generated/source-effects.json'),
   ]);
   if (!globalThis.OriginalGraphics) throw new Error('Original graphics export did not load');
   await globalThis.OriginalGraphics.ready;
@@ -380,7 +381,11 @@ try {
   customization = createCustomization({ controller, defaults, initialConfig: config, storage: customStorage, onChange: customChanged });
   keyboard = new OriginalKeyboard(controller);
   view = new OriginalGameView(logical, globalThis.OriginalGraphics, layout, config);
-  renderer = new BattlefieldRenderer(view.ctx, manifest);
+  // Reuse original bitmap pixels directly; no AI, enlarged textures or larger
+  // stage buffers. Fixed source-era sprite rectangles and input stay unchanged.
+  renderer = new BattlefieldRenderer(view.ctx, manifest, {
+    spriteRasterMode: 'source', sourceFrames: sourceEffects.sprites,
+  });
   await renderer.load();
   audio = new GameAudio(manifest);
   observer = new ViewCamera({ mapWidth: config.rules.mapWidth, mapHeight: config.rules.mapHeight,

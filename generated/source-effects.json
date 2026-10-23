@@ -1,0 +1,1348 @@
+{
+  "counts": {
+    "emptyFrames": 1,
+    "frames": 26,
+    "imageBytes": 46676,
+    "images": 25
+  },
+  "generation": {
+    "coordinateUnits": "bitmap matrix: source PNG pixels to original sprite pixels; clip: original sprite pixels",
+    "emptyFrameNote": "storm frame 10 is empty in the source timeline and in the existing transparent frame PNG; do not repeat frame 9.",
+    "emptyFrames": [
+      "storm:10"
+    ],
+    "operation": "byte-identical-source-copy-no-resampling",
+    "runtime": "no recovered XML, SWF, SVG or Python is loaded by the game",
+    "sourceSwf": {
+      "bytes": 1679140,
+      "file": "reference/super-assets-original.swf",
+      "sha256": "31f0fc1a147bac308d794fcecb087ff47260ee830ea6b9287bad98c93e7b5a2e"
+    },
+    "sources": [
+      {
+        "bytes": 5570743,
+        "file": "recovered/assets.xml",
+        "sha256": "0acb37424085ec719f82322b21b2e2f892fd292d0239fbbef2d28579568fb689"
+      },
+      {
+        "bytes": 2323,
+        "file": "recovered/unit-media/symbolClass/symbols.csv",
+        "sha256": "aaaac0c700f3ebba28948826bb88f7f382550f1b5d37fb6fa65625a8ee8467bc"
+      },
+      {
+        "bytes": 655687,
+        "file": "generated/asset-manifest.json",
+        "sha256": "4684513e5466b5d508d2ee11212a1258a224e72a36949eb988fa53c4f356e268"
+      }
+    ],
+    "tool": "tools/build_source_effects.py"
+  },
+  "schemaVersion": 1,
+  "sprites": {
+    "storm": {
+      "1": {
+        "bytes": 2836,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-050.png",
+        "height": 261,
+        "index": 1,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "ca78abd418a3e2c29202f5a52624e4a60869b316548c70fbaf1be2c7a0048c99",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 50,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/50.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 51,
+          "spriteId": 68,
+          "zlibBitmapSha256": "5523dc02bfb47865d5e6c8adb3789fdb5770c4248cd3f1f2934d6dbfaa0787e4"
+        },
+        "width": 153
+      },
+      "10": {
+        "empty": true,
+        "index": 10,
+        "source": {
+          "spriteId": 68,
+          "timeline": "empty-after-RemoveObject2"
+        }
+      },
+      "2": {
+        "bytes": 3878,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-052.png",
+        "height": 261,
+        "index": 2,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "4982747c686b26fa0b4af0fe459e7db1b6becc671d21849a0812077bce3d6b31",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 52,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/52.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 53,
+          "spriteId": 68,
+          "zlibBitmapSha256": "2dd5614310f2ab7e3f152b8b109693ddc6af005a7e13472170094ec4db2be77e"
+        },
+        "width": 153
+      },
+      "3": {
+        "bytes": 3201,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-054.png",
+        "height": 261,
+        "index": 3,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "e56ff1be1eefc597b17b323f19d4afa5074d1dd8e1debffd34a7e7018a2652d4",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 54,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/54.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 55,
+          "spriteId": 68,
+          "zlibBitmapSha256": "6c6fa82bc96e9f07ba7414e3bd20a4d51bab3c1a8aab5a058f525ef50ebc91e1"
+        },
+        "width": 153
+      },
+      "4": {
+        "bytes": 4115,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-056.png",
+        "height": 261,
+        "index": 4,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "10fb6e6d5e948c8bbde900eec741b413843a402d10e7ad5ff4d02ca07a006cdd",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 56,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/56.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 57,
+          "spriteId": 68,
+          "zlibBitmapSha256": "45cb28e0dd92169bfd18ef790c147e29caf5c6117d245c036f09ba9db3023801"
+        },
+        "width": 153
+      },
+      "5": {
+        "bytes": 3031,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-058.png",
+        "height": 261,
+        "index": 5,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "ef7f6deb6e7a55470f3b6063c1eea3303299b8510cb4aedc7d77511960176d48",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 58,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/58.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 59,
+          "spriteId": 68,
+          "zlibBitmapSha256": "36b6884873fef5c16a9a0b2592bead88afa3a006f8a706e0eb826a8210795106"
+        },
+        "width": 153
+      },
+      "6": {
+        "bytes": 3252,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-060.png",
+        "height": 261,
+        "index": 6,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "a0f994f4599307529be2a6616f7cbc35db037c54c3bedc861f98603dc3e7a47f",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 60,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/60.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 61,
+          "spriteId": 68,
+          "zlibBitmapSha256": "9936930831649f6b32bde941bfdaecd996768c5cae95effa2631e67ff9bf41a6"
+        },
+        "width": 153
+      },
+      "7": {
+        "bytes": 2257,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-062.png",
+        "height": 261,
+        "index": 7,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "63d9079df1e80498494d824e833edc7c87de2de40740e344c877014f9007c343",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 62,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/62.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 63,
+          "spriteId": 68,
+          "zlibBitmapSha256": "243bf8a7ca94e7f6f15587edaf3c5eff66ea8bf5c38bc748419060a0f952c932"
+        },
+        "width": 153
+      },
+      "8": {
+        "bytes": 1731,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-064.png",
+        "height": 261,
+        "index": 8,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "4e47176a627408355abdfe515d96a6b10899ac4a512bcd0464507902455f6d5c",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 64,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/64.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 65,
+          "spriteId": 68,
+          "zlibBitmapSha256": "c014bd7652dc8451d683076a7c884c5e9e04a0249be01ad765a77cea5a090a5a"
+        },
+        "width": 153
+      },
+      "9": {
+        "bytes": 1100,
+        "clip": {
+          "xMax": 76.3,
+          "xMin": -7.55,
+          "yMax": 44.7,
+          "yMin": -4.45
+        },
+        "file": "assets/generated/source-effects/storm/bitmap-066.png",
+        "height": 261,
+        "index": 9,
+        "matrix": [
+          0,
+          -0.32118225,
+          0.32118225,
+          0,
+          -7.55,
+          44.7
+        ],
+        "sha256": "9da7d0ec65ad53870271ab0f2ffa80d43183d679f3f294e69d883a293f107c03",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 66,
+          "bitmapMatrixTwips": {
+            "hasRotate": "true",
+            "hasScale": "true",
+            "nRotateBits": "20",
+            "nScaleBits": "1",
+            "nTranslateBits": "11",
+            "rotateSkew0": "-6.423645",
+            "rotateSkew1": "6.423645",
+            "scaleX": "0.0",
+            "scaleY": "0.0",
+            "translateX": "-151",
+            "translateY": "894",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/66.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 67,
+          "spriteId": 68,
+          "zlibBitmapSha256": "e552c89097bb3080061bc1dedd02af1d9f7236ebb476ffdbb07c9fdb439511e6"
+        },
+        "width": 153
+      }
+    },
+    "thunderball": {
+      "1": {
+        "bytes": 1218,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-017.png",
+        "height": 128,
+        "index": 1,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "e484f08efe0f06852d9a4abbf6667cd32a59d370e8d4914a58f6ff4e32063066",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 17,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/17.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 18,
+          "spriteId": 49,
+          "zlibBitmapSha256": "89dc42e9e3f8ade53b3cbd6fd8b365575fd9f91474a57aa0b6ec823af0a6c736"
+        },
+        "width": 128
+      },
+      "10": {
+        "bytes": 1227,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-035.png",
+        "height": 128,
+        "index": 10,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "65e1ee476705971ffd45507719a49b0a3357902dee00669da11ffdb6667b5f26",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 35,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/35.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 36,
+          "spriteId": 49,
+          "zlibBitmapSha256": "75aa76b9fc929477a9750e54c053423a944a2e3e4fd2914769c1306f2f6e6998"
+        },
+        "width": 128
+      },
+      "11": {
+        "bytes": 1297,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-037.png",
+        "height": 128,
+        "index": 11,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "86f602c4b0a760c79dde82a2895d70768459f45b9ba2dae029e364409f71cd9a",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 37,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/37.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 38,
+          "spriteId": 49,
+          "zlibBitmapSha256": "c41a3175b6aa2aa6a7df539453c3395f37a3afe9de228ab16d8621aa4baf82c8"
+        },
+        "width": 128
+      },
+      "12": {
+        "bytes": 991,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-039.png",
+        "height": 128,
+        "index": 12,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "dcac0db2d53381d0934fe0456042af55761fd3036e6965626f0c8812f2d69672",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 39,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/39.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 40,
+          "spriteId": 49,
+          "zlibBitmapSha256": "8f2b375de7f14e3b337ca3e5844bb7653b467d9653f11f523512e9ab5b3284d3"
+        },
+        "width": 128
+      },
+      "13": {
+        "bytes": 1126,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-041.png",
+        "height": 128,
+        "index": 13,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "75141d1280ca8e55c6c0885c78c91dbf2af63d54ed4825195c8679ad138ea5fa",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 41,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/41.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 42,
+          "spriteId": 49,
+          "zlibBitmapSha256": "b812471558226b5530a437969428cb3de97a8d3cf796f2cfb62113e90393977f"
+        },
+        "width": 128
+      },
+      "14": {
+        "bytes": 994,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-043.png",
+        "height": 128,
+        "index": 14,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "92679cd7db3f965624987180ca7e25c61dec7b7b26fd635a3cee5ce542b0ad87",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 43,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/43.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 44,
+          "spriteId": 49,
+          "zlibBitmapSha256": "9c78ff92649b31b78466fa687c23bad4e502d1aebb346172f7cb183c58729c6f"
+        },
+        "width": 128
+      },
+      "15": {
+        "bytes": 1700,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-045.png",
+        "height": 128,
+        "index": 15,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "b5aeaeb90e163d2f39bc6d951d629ce34286f6acec621fb32788bfd4149a2c71",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 45,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/45.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 46,
+          "spriteId": 49,
+          "zlibBitmapSha256": "af5c406f120d80b4fbecb3fa84b51601cdb210fd384227518b1c1465e82d75f9"
+        },
+        "width": 128
+      },
+      "16": {
+        "bytes": 2085,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-047.png",
+        "height": 128,
+        "index": 16,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "bdf0e004f02e273dde085e565d24f9c90e5adc372392a8ba74b0f91139f1848e",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 47,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/47.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 48,
+          "spriteId": 49,
+          "zlibBitmapSha256": "e25815631be2da5fa655bc6adcd451d74ba70d6435bd53e6d28d2e171bbe7374"
+        },
+        "width": 128
+      },
+      "2": {
+        "bytes": 1227,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-019.png",
+        "height": 128,
+        "index": 2,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "271b9b376a761c2b3bc3d04f01d90c25307975b7c47a0713b007bbdadf93720e",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 19,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/19.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 20,
+          "spriteId": 49,
+          "zlibBitmapSha256": "7108b5e0858aea38837c81a48f63d4860d1f5520f79e7f2a5bfc7dc4df6c757c"
+        },
+        "width": 128
+      },
+      "3": {
+        "bytes": 1297,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-021.png",
+        "height": 128,
+        "index": 3,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "9d3682f5639433bc4cb2b514d496c7c0ee47db495268a615d1172d48a9ce41fb",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 21,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/21.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 22,
+          "spriteId": 49,
+          "zlibBitmapSha256": "4d4f03b18a9d979bb106520e9b62d2b3ecd352a42c998323d0845e6893104ceb"
+        },
+        "width": 128
+      },
+      "4": {
+        "bytes": 991,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-023.png",
+        "height": 128,
+        "index": 4,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "cb4a7c6cde88f51c4956601c01474c9d5fffac70659fd586ab09efdae3af6d64",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 23,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/23.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 24,
+          "spriteId": 49,
+          "zlibBitmapSha256": "9d01e463fc183f417b0c240a8f5892404c395ddb678522130c513a4b68df7ffb"
+        },
+        "width": 128
+      },
+      "5": {
+        "bytes": 993,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-025.png",
+        "height": 128,
+        "index": 5,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "6779b1d871d22db3285fc16eb490b60e1dc16a4b797950935e59d680ebd5d9d1",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 25,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/25.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 26,
+          "spriteId": 49,
+          "zlibBitmapSha256": "c54250e28fc24783d13b09b013cbc7a47305ae073870966e94f95de2b59993d3"
+        },
+        "width": 128
+      },
+      "6": {
+        "bytes": 1126,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-027.png",
+        "height": 128,
+        "index": 6,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "90f66fab859029406db1ce47110333f69c8f9c321cee97406392e0c8d501cbe0",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 27,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/27.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 28,
+          "spriteId": 49,
+          "zlibBitmapSha256": "b8b55fd1dc1be8b425c0efa2166799c43a37cd35daafe7d6182456025a4a81f6"
+        },
+        "width": 128
+      },
+      "7": {
+        "bytes": 1700,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-029.png",
+        "height": 128,
+        "index": 7,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "137b27a6092643c6f55d024bee9409e7b0d13d34f65d90df862697f9917c67c7",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 29,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/29.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 30,
+          "spriteId": 49,
+          "zlibBitmapSha256": "c4aa3b241f0730752d3dd805442b751a64d11bab736210063ec5afc882870ac2"
+        },
+        "width": 128
+      },
+      "8": {
+        "bytes": 2085,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-031.png",
+        "height": 128,
+        "index": 8,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "bdf0e004f02e273dde085e565d24f9c90e5adc372392a8ba74b0f91139f1848e",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 31,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/31.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 32,
+          "spriteId": 49,
+          "zlibBitmapSha256": "e25815631be2da5fa655bc6adcd451d74ba70d6435bd53e6d28d2e171bbe7374"
+        },
+        "width": 128
+      },
+      "9": {
+        "bytes": 1218,
+        "clip": {
+          "xMax": 32,
+          "xMin": 0,
+          "yMax": 32,
+          "yMin": 0
+        },
+        "file": "assets/generated/source-effects/thunderball/bitmap-033.png",
+        "height": 128,
+        "index": 9,
+        "matrix": [
+          0.25,
+          0,
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "sha256": "8fa34a3fc17b39d1339ee13ad2ab37b84c21af562e4e8e705ab2082d65d2a7f9",
+        "smoothing": false,
+        "source": {
+          "bitmapId": 33,
+          "bitmapMatrixTwips": {
+            "hasRotate": "false",
+            "hasScale": "true",
+            "nRotateBits": "0",
+            "nScaleBits": "20",
+            "nTranslateBits": "0",
+            "scaleX": "5.0",
+            "scaleY": "5.0",
+            "translateX": "0",
+            "translateY": "0",
+            "type": "MATRIX"
+          },
+          "file": "recovered/unit-media/images/33.png",
+          "fillStyleType": 67,
+          "placementMatrix": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "shapeId": 34,
+          "spriteId": 49,
+          "zlibBitmapSha256": "aebf8bf870cc4e4cc71ed2be0403c11f7eb08ae6505d2c3b6150684d8221feaf"
+        },
+        "width": 128
+      }
+    }
+  }
+}
