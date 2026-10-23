@@ -7,6 +7,8 @@
  * and read-only DOM inspection. Never calls game/private preload APIs, changes
  * localStorage, rewrites configuration, or injects simulation/pause state.
  * Portable mode includes a second actual EXE launch to verify durable presets.
+ * Native foreground focus and Save As destination selection are test setup,
+ * not game-state injection. No native save dialog is left awaiting input.
  */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -54,6 +56,35 @@ export function reportPath(relative) {
     && ['.local', '.tmp', 'output', 'artifacts'].includes(inside.split(path.sep)[0]) && /\.json$/i.test(output),
   '--out must be a JSON file under an ignored output directory');
   return output;
+}
+
+/** Serializable Electron callback: only the window owned by this app handle. */
+export function foregroundOwnedWindow({ BrowserWindow }) {
+  const win = BrowserWindow.getAllWindows()[0];
+  if (!win) throw new Error('Owned verification window is unavailable');
+  const before = { visible: win.isVisible(), minimized: win.isMinimized(),
+    focused: win.isFocused(), bounds: win.getBounds() };
+  win.show(); win.focus(); win.webContents.focus();
+  return before;
+}
+
+/** Automate choosing Save As, but require an actual UI-triggered download. */
+export function registerNativeExport({ BrowserWindow }, target) {
+  const win = BrowserWindow.getAllWindows()[0];
+  if (!win) throw new Error('Owned verification window is unavailable');
+  globalThis.__SETTINGS_VERIFY_DOWNLOAD__ = new Promise(resolve => {
+    win.webContents.session.once('will-download', (_event, item) => {
+      item.setSavePath(target);
+      item.once('done', (_event, status) => resolve({ status, filename: item.getFilename(),
+        totalBytes: item.getTotalBytes(), receivedBytes: item.getReceivedBytes(), mimeType: item.getMimeType() }));
+    });
+  });
+}
+
+/** The completed native event must agree with the actual file on disk. */
+export function completedNativeExport(info, fileBytes) {
+  return Boolean(info && info.status === 'completed' && Number.isSafeInteger(fileBytes)
+    && fileBytes > 0 && info.receivedBytes === fileBytes && info.totalBytes === fileBytes);
 }
 
 /** Reconstruct presentation offsets from read-only projected map corners. */
@@ -121,6 +152,7 @@ export async function verifySettings(options) {
     limits: ['Requested multipliers are targets; actual throughput is measured without requiring 20x hardware performance.',
       'Render ceiling and submitted frames do not prove physical 240 Hz display scan-out.',
       'Logic parity and source-level configuration validation are separate test gates.',
+      'Portable timing foregrounds the owned window and waits 120 ms before sampling; that settle interval is not measured.',
       'This tool changes settings/presets by UI in its fresh isolated fixture only. It never edits published configuration files.'],
     cleanup: { ownedApplicationClosed: false } };
   let app, browser, server, context, page, launcher, verifiedPid, currentRun, editable, beforeCore;
@@ -177,18 +209,24 @@ export async function verifySettings(options) {
     report.screenshots.push(relative); save(`captured ${name}`);
   }
   async function sample(requestedSpeed, milliseconds = sampleSeconds * 1000) {
+    const foregroundSetup = app ? {
+      before: await bounded(app.evaluate(foregroundOwnedWindow), 'owned native foreground setup'),
+      settleMs: 120,
+    } : null;
+    if (foregroundSetup) await delay(foregroundSetup.settleMs);
     const samples = [], start = performance.now();
     do {
       const value = await bounded(page.evaluate(() => {
         const game = window.__MIRAGINE__.getState();
-        return { atMs: performance.now(), frame: game.frame, phase: game.phase, winner: game.winner };
+        return { atMs: performance.now(), frame: game.frame, phase: game.phase, winner: game.winner,
+          hidden: document.hidden, visibility: document.visibilityState, focused: document.hasFocus() };
       }), 'natural timing sample');
       expect(value.phase === 'game' && !value.winner, 'Match ended during timing measurement');
-      samples.push({ atMs: value.atMs, frame: value.frame });
+      samples.push(value);
       if (performance.now() - start >= milliseconds) break;
       await delay(90);
     } while (true);
-    const result = { ...summarizeSettingsTiming(samples, requestedSpeed), samples,
+    const result = { ...summarizeSettingsTiming(samples, requestedSpeed), samples, foregroundSetup,
       display: (await state()).customization.measured };
     report.timing.push(result); save(`measured ${requestedSpeed}x`); return result;
   }
@@ -427,9 +465,21 @@ export async function verifySettings(options) {
       && (await element('[data-preset-select] option').allTextContents()).includes('Verifier cost 7 HP 99'),
       'deleting a selected preset leaves the other named preset intact');
     await element('[data-preset-select]').selectOption(presetId); await element('[data-preset-name]').fill('Verifier cost 7 HP 99');
-    const downloadPromise = page.waitForEvent('download', { timeout: 10000 }); await act('export').click();
-    const download = await downloadPromise, exportFile = path.join(root, '.local', `${screenshotPrefix}-export.json`);
-    await download.saveAs(exportFile); exported = JSON.parse(fs.readFileSync(exportFile, 'utf8'));
+    const exportFile = path.join(root, '.local', `${screenshotPrefix}-export.json`);
+    if (app) {
+      await bounded(app.evaluate(registerNativeExport, exportFile), 'owned native Save As destination setup');
+      await act('export').click();
+      report.nativeExport = await bounded(app.evaluate(async () => {
+        try { return await globalThis.__SETTINGS_VERIFY_DOWNLOAD__; }
+        finally { delete globalThis.__SETTINGS_VERIFY_DOWNLOAD__; }
+      }), 'actual native export completed', 20000);
+      check(completedNativeExport(report.nativeExport, fs.statSync(exportFile).size),
+        'native actual export completes with received bytes matching the saved file', report.nativeExport);
+    } else {
+      const downloadPromise = page.waitForEvent('download', { timeout: 10000 }); await act('export').click();
+      await (await downloadPromise).saveAs(exportFile);
+    }
+    exported = JSON.parse(fs.readFileSync(exportFile, 'utf8'));
     check(exported.schemaVersion === 1 && exported.profile.config.units[0].cost === 7 && exported.profile.config.units[0].hp === 99,
       'actual downloaded JSON includes edited cost and HP');
     report.export = { sha256: hash(exportFile), bytes: fs.statSync(exportFile).size, schemaVersion: exported.schemaVersion };

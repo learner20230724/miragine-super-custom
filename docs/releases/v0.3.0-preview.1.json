@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "reportedOnClientDate": "2026-10-23",
+  "delivery": "docked-custom-settings-sandbox-persistence-and-0-20x-playback",
+  "release": {
+    "tag": "v0.3.0-preview.1",
+    "sourceCommit": "75e4c6f341d2818a6a5dd01560d1193775c0f36e",
+    "url": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.1",
+    "publishedAt": "2026-10-23T14:17:29Z",
+    "isPrerelease": true,
+    "isDraft": false,
+    "zipSha256": "de908fcd78030d68d6c7d88a11d2723a25799da204fb640a79f92d11ea6b9d6c",
+    "allApiAssetDigestsMatch": true,
+    "anonymousReleaseHttpStatus": 200,
+    "roundTripDownload": {
+      "status": "not-attempted",
+      "downloadedZipEqualsTestedZip": null,
+      "note": "The local archive was CRC/inventory/extraction verified and its actual EXE tested; all 14 GitHub API asset sizes/digests match. No full remote round-trip ZIP download is claimed."
+    }
+  },
+  "assets": [
+    {
+      "name": "compact-panorama.png",
+      "bytes": 2988545,
+      "sha256": "30924865ad8776ee1d1a9f959b9cae1d0351466b572b34bf6768588a2e308457",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/compact-panorama.png"
+    },
+    {
+      "name": "MiragineSuper-0.3.0-preview.1-win32-x64.zip",
+      "bytes": 170474697,
+      "sha256": "de908fcd78030d68d6c7d88a11d2723a25799da204fb640a79f92d11ea6b9d6c",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/MiragineSuper-0.3.0-preview.1-win32-x64.zip"
+    },
+    {
+      "name": "MiragineSuper-0.3.0-preview.1-win32-x64.zip.inventory.json",
+      "bytes": 17312,
+      "sha256": "909372e8f02c0e5cbaf3fa60d9f35f336855ab01208b75907f067d38850abd54",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/MiragineSuper-0.3.0-preview.1-win32-x64.zip.inventory.json"
+    },
+    {
+      "name": "privacy-review.json",
+      "bytes": 37301,
+      "sha256": "a6707d2bf36df8ae6fb7a70819b261f94b4617f88b423b9b37f1fd3ac2cc5c16",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/privacy-review.json"
+    },
+    {
+      "name": "settings-units.png",
+      "bytes": 2132947,
+      "sha256": "4f88386431c4853bc5b51bceb2ffa6ef5502264201dafbfe6ffe85a2bf2b4553",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/settings-units.png"
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 1255,
+      "sha256": "fd944cbbe8f4fa8b1841d9b3ab187c50ea73a80e486f68642e7d779e1b8ac11d",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/SHA256SUMS"
+    },
+    {
+      "name": "storage.json",
+      "bytes": 788,
+      "sha256": "3ae5bc11b5077faa94f0dccac430be1596a0c5feafcf74f83d3240ac1b03d2d0",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/storage.json"
+    },
+    {
+      "name": "verification-first-attempt.json",
+      "bytes": 39864,
+      "sha256": "922a1359b87a3305afde1b09b6ec64a10a50cbe233d53cf46f124af439224383",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/verification-first-attempt.json"
+    },
+    {
+      "name": "verification-harness.diff",
+      "bytes": 9998,
+      "sha256": "81b2484bba6027352ad5031f49668fd93e51c8097b4c202621a70faec6c88d98",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/verification-harness.diff"
+    },
+    {
+      "name": "verification-native-dialog-attempt.json",
+      "bytes": 222370,
+      "sha256": "280f0e82f8b937289543d4ee05f901e912331e6265360bcd8a22a37a72ca6a49",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/verification-native-dialog-attempt.json"
+    },
+    {
+      "name": "verification-portable.json",
+      "bytes": 286596,
+      "sha256": "83aac94a88989c0fab60e3f94b7107facbd5c71e47397b7b9d000d73d5c6359e",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/verification-portable.json"
+    },
+    {
+      "name": "verification-resume-stress.json",
+      "bytes": 30201,
+      "sha256": "e9ff55a6262b5fd56d52d1009d030b5111bcfbd1f78b81343d774fe3d2f8985e",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/verification-resume-stress.json"
+    },
+    {
+      "name": "verification-source.json",
+      "bytes": 60934,
+      "sha256": "51a8978fd672acc9f371dee2affa05641d423f70db96391da5d99953f90ebf97",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/verification-source.json"
+    },
+    {
+      "name": "verification-summary.json",
+      "bytes": 5614,
+      "sha256": "2ea6e3a5ebd8399760fe1b0a9a84633fe0c05253668bba0e45c5f962911527d6",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.3.0-preview.1/verification-summary.json"
+    }
+  ],
+  "releaseAssetBytes": 176308422,
+  "verification": {
+    "schemaVersion": 1,
+    "version": "0.3.0-preview.1",
+    "sourceCommit": "75e4c6f341d2818a6a5dd01560d1193775c0f36e",
+    "sourceTests": {
+      "passed": 471,
+      "failed": 0
+    },
+    "ci": {
+      "run": "https://github.com/learner20230724/miragine-super-custom/actions/runs/39964987354",
+      "platforms": [
+        "ubuntu-latest / Python 3.13",
+        "windows-latest / Python 3.14"
+      ],
+      "status": "passed"
+    },
+    "portable": {
+      "passed": 97,
+      "failed": 0,
+      "actualExeRestarts": 2,
+      "persistentPresetAcrossDifferentOrigins": true,
+      "ownedApplicationsClosed": true,
+      "appAsarSha256": "0d972d949dd38cdd030e8f516f7c13d78a995f9c865c682492c21cb093337069",
+      "runtimeErrors": 0,
+      "nativeExport": {
+        "status": "completed",
+        "filename": "miragine-preset-Verifier-cost-7-HP-99.json",
+        "totalBytes": 8511,
+        "receivedBytes": 8511,
+        "mimeType": "application/json"
+      },
+      "coreUnchanged": true,
+      "externalEditableFilesUnchanged": true
+    },
+    "resumeStress": {
+      "passed": 10,
+      "failed": 0,
+      "postResumeSettlingDelayMs": 0,
+      "setup": "Native focus once before the sequence; real UI pause/resume and read-only frame inspection."
+    },
+    "sourceBrowser": {
+      "passed": 94,
+      "scope": "Supplementary browser run before the final rule-profile identity-label correction. Exact committed runtime is covered by the portable run; this earlier receipt does not claim to test that final label change."
+    },
+    "harness": {
+      "baseSourceCommit": "75e4c6f341d2818a6a5dd01560d1193775c0f36e",
+      "baseFile": "tools/verify-settings.mjs",
+      "diagnosticSha256": "58635c89bd928eb30e714ebe11c8c7c406113ddd81ce0624316b311543ed429b",
+      "patchFile": "verification-harness.diff",
+      "patchSha256": "81b2484bba6027352ad5031f49668fd93e51c8097b4c202621a70faec6c88d98",
+      "changes": "Native foreground setup and 120 ms settling BEFORE timing windows; read-only visibility/window diagnostics; native will-download destination selection equivalent to Save As plus completed-byte validation; supplemental pause/resume stress uses no post-resume settling. No game, RNG, clock or preload state injection."
+    },
+    "attemptHistory": [
+      {
+        "receipt": "verification-first-attempt.json",
+        "status": "failed",
+        "note": "One native resume sample stayed frozen for about 535 ms although paused=false. No visibility evidence was captured then; cause is unconfirmed, not established as a hidden-window issue. It did not recur in the final acceptance or ten zero-settle stress cycles. No runtime fix is claimed."
+      },
+      {
+        "receipt": "verification-native-dialog-attempt.json",
+        "status": "failed",
+        "note": "Browser-style download waiting did not handle Electron native Save As. The final harness selects an output destination through the owned native session download event and verifies completed exported bytes; application export code was unchanged."
+      }
+    ],
+    "timingSamples": [
+      {
+        "requestedSpeed": 1,
+        "simulationHz": 28.677150786308975,
+        "actualSpeed": 0.9559050262102992,
+        "elapsedMs": 1081,
+        "frameDelta": 31
+      },
+      {
+        "requestedSpeed": 0.5,
+        "simulationHz": 14.476269256466914,
+        "actualSpeed": 0.4825423085488971,
+        "elapsedMs": 967.1000001430511,
+        "frameDelta": 14
+      },
+      {
+        "requestedSpeed": 1.5,
+        "simulationHz": 44.751830754542375,
+        "actualSpeed": 1.491727691818079,
+        "elapsedMs": 983.2000000476837,
+        "frameDelta": 44
+      },
+      {
+        "requestedSpeed": 2,
+        "simulationHz": 60.311284046692606,
+        "actualSpeed": 2.0103761348897535,
+        "elapsedMs": 1028,
+        "frameDelta": 62
+      },
+      {
+        "requestedSpeed": 4,
+        "simulationHz": 117.24621704461221,
+        "actualSpeed": 3.908207234820407,
+        "elapsedMs": 997.9000000953674,
+        "frameDelta": 117
+      },
+      {
+        "requestedSpeed": 8,
+        "simulationHz": 180.12946807933926,
+        "actualSpeed": 6.004315602644642,
+        "elapsedMs": 1065.8999998569489,
+        "frameDelta": 192
+      },
+      {
+        "requestedSpeed": 12,
+        "simulationHz": 161.87050361447524,
+        "actualSpeed": 5.395683453815841,
+        "elapsedMs": 889.5999999046326,
+        "frameDelta": 144
+      },
+      {
+        "requestedSpeed": 20,
+        "simulationHz": 169.08787807580703,
+        "actualSpeed": 5.636262602526901,
+        "elapsedMs": 839.7999999523163,
+        "frameDelta": 142
+      },
+      {
+        "requestedSpeed": 1,
+        "simulationHz": 29.915692155849783,
+        "actualSpeed": 0.997189738528326,
+        "elapsedMs": 367.69999980926514,
+        "frameDelta": 11
+      }
+    ],
+    "performanceLimit": "Sequential growing-army samples are not a controlled multiplier benchmark. 20x/600 logic steps per wall second and 240 FPS are targets, not guarantees. Native maximized 20x sample achieved about 5.64x; source browser sample about 13.38x. High-speed work budgets preserve complete steps and reduce achieved speed under load.",
+    "privacy": {
+      "sourceFindings": 0,
+      "rawRuntimeFindings": 5,
+      "rawArchiveWarnings": 59,
+      "unresolved": 0,
+      "details": "privacy-review.json"
+    },
+    "originalRepositoryUntouched": {
+      "commit": "8554d89713456368378738744bfeb32ec41c2689",
+      "clean": true
+    },
+    "roundTripDownload": {
+      "status": "not-attempted",
+      "note": "Local archive CRC/inventory/extraction and actual EXE verified. GitHub size/digest verification is recorded separately after upload; no full remote download verification is claimed."
+    }
+  },
+  "storage": {
+    "schemaVersion": 1,
+    "sourceCommit": "75e4c6f341d2818a6a5dd01560d1193775c0f36e",
+    "trackedSource": {
+      "files": 3008,
+      "bytes": 65406395
+    },
+    "runtimeAssetsIncludedInSource": {
+      "files": 678,
+      "bytes": 11927432
+    },
+    "portableArchive": {
+      "sourceCommit": "75e4c6f341d2818a6a5dd01560d1193775c0f36e",
+      "archive": "MiragineSuper-0.3.0-preview.1-win32-x64.zip",
+      "sha256": "de908fcd78030d68d6c7d88a11d2723a25799da204fb640a79f92d11ea6b9d6c",
+      "archiveCrcChecked": true,
+      "inventoryFileCount": 99,
+      "allArchiveEntriesHashMatchedInventory": true,
+      "allFreshlyExtractedFilesHashMatchedInventory": true,
+      "extractedDirectory": "dist/run-settings-v3/MiragineSuper",
+      "zipBytes": 170474697,
+      "unpackedBytes": 401966900
+    }
+  },
+  "followupScope": "README and this receipt describe the published runtime tag. Subsequent native verification-tool fixes automate foreground focus and the native Save As destination without changing the packaged game. The exact diagnostic harness used for acceptance is attached as a diff and hash, rather than being retroactively claimed identical to the tagged verifier.",
+  "localDelivery": {
+    "freshArchiveExtractionOpenedForUser": true,
+    "freshCopyHadNoTestPresets": true,
+    "previousUserWindowUntouched": true
+  },
+  "knownUnresolvedObservation": "One initial native timing sample remained frozen for approximately 535 ms after resume; its cause was not captured and is not established as hidden-window behavior. Final acceptance and ten immediate-sample pause/resume cycles did not reproduce it. Initial failed evidence is retained with the release.",
+  "followupVerifierTests": {
+    "passed": 474,
+    "failed": 0,
+    "scope": "Local full suite after adding three native verification-harness unit tests; runtime release tests remain 471 at the tagged commit."
+  }
+}

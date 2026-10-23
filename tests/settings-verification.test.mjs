@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { parseSettingsOptions, summarizeSettingsTiming, reportPath, compactCrystalBounds } from '../tools/verify-settings.mjs';
+import { EventEmitter } from 'node:events';
+import { parseSettingsOptions, summarizeSettingsTiming, reportPath, compactCrystalBounds,
+  foregroundOwnedWindow, registerNativeExport, completedNativeExport } from '../tools/verify-settings.mjs';
 import { ViewCamera } from '../src/render/view-camera.mjs';
 
 test('settings verifier has independent report names and defaults', () => {
@@ -96,4 +98,57 @@ test('read-only crystal projection reconstructs offsets and complete image margi
   assert.ok(Math.abs(bounds[1].right - 624) < .01);
   assert.ok(bounds.every(b => b.drawable && b.top > 0 && b.bottom < 400));
   assert.deepEqual(view, before);
+});
+
+test('native foreground callback is serializable and uses only its owned window', () => {
+  const calls = [], bounds = { x: 10, y: 20, width: 900, height: 700 };
+  const win = { isVisible: () => false, isMinimized: () => true, isFocused: () => false,
+    getBounds: () => bounds, show: () => calls.push('show'), focus: () => calls.push('window-focus'),
+    webContents: { focus: () => calls.push('web-contents-focus') } };
+  const callback = Function(`return (${foregroundOwnedWindow.toString()})`)();
+  assert.deepEqual(callback({ BrowserWindow: { getAllWindows: () => [win] } }),
+    { visible: false, minimized: true, focused: false, bounds });
+  assert.deepEqual(calls, ['show', 'window-focus', 'web-contents-focus']);
+  assert.throws(() => callback({ BrowserWindow: { getAllWindows: () => [] } }), /unavailable/);
+});
+
+test('native export only sets a destination after a real download event, then records completion', async () => {
+  const session = new EventEmitter(), item = new EventEmitter(), calls = [];
+  const previous = globalThis.__SETTINGS_VERIFY_DOWNLOAD__;
+  try {
+    Object.assign(item, { setSavePath: target => calls.push(['save-as', target]),
+      getFilename: () => 'preset.json', getTotalBytes: () => 123, getReceivedBytes: () => 123,
+      getMimeType: () => 'application/json' });
+    const callback = Function(`return (${registerNativeExport.toString()})`)();
+    callback({ BrowserWindow: { getAllWindows: () => [{ webContents: { session } }] } }, 'isolated-export.json');
+    assert.deepEqual(calls, [], 'registration must not write or fabricate a downloaded file');
+    assert.equal(session.listenerCount('will-download'), 1);
+    let completed = false;
+    globalThis.__SETTINGS_VERIFY_DOWNLOAD__.then(() => { completed = true; });
+    session.emit('will-download', {}, item);
+    assert.deepEqual(calls, [['save-as', 'isolated-export.json']]);
+    assert.equal(session.listenerCount('will-download'), 0, 'listener is scoped to one actual export');
+    await Promise.resolve(); assert.equal(completed, false, 'destination selection is not download completion');
+    item.emit('done', {}, 'completed');
+    assert.deepEqual(await globalThis.__SETTINGS_VERIFY_DOWNLOAD__, { status: 'completed', filename: 'preset.json',
+      totalBytes: 123, receivedBytes: 123, mimeType: 'application/json' });
+    assert.equal(item.listenerCount('done'), 0);
+    assert.throws(() => callback({ BrowserWindow: { getAllWindows: () => [] } }, 'unused.json'), /unavailable/);
+  } finally {
+    if (previous === undefined) delete globalThis.__SETTINGS_VERIFY_DOWNLOAD__;
+    else globalThis.__SETTINGS_VERIFY_DOWNLOAD__ = previous;
+  }
+});
+
+test('native download proof requires completed status and exact positive on-disk byte count', () => {
+  const info = { status: 'completed', totalBytes: 8511, receivedBytes: 8511 };
+  assert.equal(completedNativeExport(info, 8511), true);
+  for (const bytes of [undefined, null, '8511', 0, -1, 1.5, 8510, Infinity, NaN]) {
+    assert.equal(completedNativeExport(info, bytes), false);
+  }
+  for (const invalid of [null, {}, { ...info, status: 'cancelled' }, { ...info, status: 'interrupted' },
+    { ...info, totalBytes: -1 }, { ...info, receivedBytes: 8510 }, { ...info, receivedBytes: '8511' }]) {
+    assert.equal(completedNativeExport(invalid, 8511), false);
+  }
+  assert.deepEqual(info, { status: 'completed', totalBytes: 8511, receivedBytes: 8511 });
 });

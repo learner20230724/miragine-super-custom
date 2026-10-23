@@ -12,11 +12,11 @@
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-当前源码版本为 **v0.3.0-preview.1**；新包的验证与发布以 Releases 实际附件为准，不能用旧版本报告代替。
+当前启动包为 **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.1)**，对应运行代码提交 `75e4c6f`。471 项源码测试、97 项实际 EXE 交互检查及额外 10 轮暂停／继续检查通过；跨重启预设保存和系统文件导出已验证。完整校验、测试范围、首次测试异常与重试记录见 [本版交付记录](docs/releases/v0.3.0-preview.1.json) 及 Release 附件。
 
 包外的 `config/custom.json` 可直接编辑，重启生效，设置面板不会改写它。桌面草稿与预设保存在 `userdata/custom-settings.json`，恢复后仍须明确应用；升级前请备份这两个文件。`ui-helper/` 提供可替换绘图源码；`build-info.json` 标明对应源码提交。继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
-历史便携版的实际 EXE 验证、公开附件校验值与存储占用见 [v0.2.0-preview.1 交付记录](docs/releases/v0.2.0-preview.1.json)；它不自动覆盖本次设置功能。240 FPS 是显示上限目标，不是已达到的实测帧率。
+源码约 65.4 MB（含约 11.9 MB 运行素材），Windows ZIP 约 170.5 MB，解压约 402.0 MB；不含开发依赖、Git 历史和运行后生成的用户数据。历史便携版记录保留在 [v0.2.0-preview.1](docs/releases/v0.2.0-preview.1.json)。20 倍与 240 FPS 都是目标，不是性能保证；本次最大化原生窗口的 20 倍短测实际约 5.6 倍，兵量与窗口负载会影响结果。
 
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 

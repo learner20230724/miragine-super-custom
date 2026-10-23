@@ -12,11 +12,11 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 Download the Windows x64 preview from the **[custom Releases](https://github.com/learner20230724/miragine-super-custom/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. Keep this customization in a separate directory from the baseline game.
 
-The current source version is **v0.3.0-preview.1**. New package verification/publication depends on actual Release assets, not older reports.
+The current portable build is **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.1)**, built from runtime commit `75e4c6f`. It passed 471 source tests, 97 actual-EXE interaction checks and 10 additional pause/resume cycles, including restart persistence and native file export. Checksums, test scope and initial failed-attempt/retry records are in the [delivery record](docs/releases/v0.3.0-preview.1.json) and Release attachments.
 
 Edit the external `config/custom.json` and restart to apply changes; the panel never rewrites it. Desktop drafts/presets live in `userdata/custom-settings.json`; restoring them still requires explicit application. Back up both files before upgrading. `ui-helper/` contains replaceable drawing code; `build-info.json` identifies the source commit. See inherited [baseline verification](docs/verification.json) and [known issues](docs/known-issues.md).
 
-Historical portable-EXE checks, public asset checksums and storage sizes are in the [v0.2.0-preview.1 delivery record](docs/releases/v0.2.0-preview.1.json); that record does not validate the new settings features. The 240 FPS setting is a display target/cap, not an achieved frame-rate claim.
+Tracked source is approximately 65.4 MB, including 11.9 MB of runtime assets; the Windows ZIP is 170.5 MB and unpacks to 402.0 MB. These exclude development dependencies, Git history and generated user data. The [v0.2.0-preview.1 record](docs/releases/v0.2.0-preview.1.json) remains available. Both 20x and 240 FPS are targets, not guarantees: the maximized native-window 20x sample achieved approximately 5.6x, depending on army size and display load.
 
 Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents. The never-show-help preference persists across restarts in `userdata/preferences.json`; delete that file to restore the initial tutorial.
 
