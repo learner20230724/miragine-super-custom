@@ -10,6 +10,9 @@ export function stageTintProgress(elapsedMs) {
   return (1 - Math.cos(ratio * Math.PI)) / 2;
 }
 
+const NUMBER_FIELDS = Object.freeze(['time', 'leftMoney', 'leftIncome', 'leftPopulation',
+  'rightMoney', 'rightIncome', 'rightPopulation']);
+
 /** The original stage display list, drawn with exported native Canvas graphics. */
 export class OriginalGameView {
   constructor(canvas, graphics, layout, config, { canvasFactory = () => document.createElement('canvas') } = {}) {
@@ -21,6 +24,7 @@ export class OriginalGameView {
     this.cache = new Map();
     this.canvasFactory = canvasFactory;
     this.barLayers = Object.create(null);
+    this.numberLayers = Object.create(null);
     this.tooltipLayouts = new Map();
     this.hotspots = [];
     this.hovered = null;
@@ -85,6 +89,28 @@ export class OriginalGameView {
         draw(slot.ctx);
       } finally { slot.ctx.restore(); }
       slot.ratio = ratio;
+      slot.valid = true;
+    }
+    return slot.canvas;
+  }
+
+  /** Seven fixed value/style slots, never a new canvas for each counter value. */
+  numberLayer(name, revision, draw) {
+    if (!NUMBER_FIELDS.includes(name)) throw new RangeError('Unknown numeric HUD field');
+    let slot = this.numberLayers[name];
+    if (!slot) {
+      const canvas = this.createLayer();
+      slot = this.numberLayers[name] = { canvas, ctx: this.graphics.attach(canvas), valid: false, revision: undefined };
+    }
+    if (!slot.valid || slot.revision !== revision) {
+      slot.valid = false;
+      slot.ctx.save();
+      try {
+        slot.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        slot.ctx.clearRect(0, 0, 640, 480);
+        draw(slot.ctx);
+      } finally { slot.ctx.restore(); }
+      slot.revision = revision;
       slot.valid = true;
     }
     return slot.canvas;
@@ -212,7 +238,14 @@ export class OriginalGameView {
     }
     if (controller.singlePlay) {
       const text = ['简单的难度', '普通的难度', '困难的难度', '不可战胜的难度'][controller.difficulty];
-      this.label(text, 467.1, 93, 12, '#fff', 'left', true);
+      const field = this.root('game', 'tt');
+      // tt is a root TextField, not a sprite210 child. Its placement matrix
+      // gives the registration point; the RECT and glyph baseline add their
+      // own offsets. Flash's 2px text gutter is inside the right-aligned RECT
+      // (FFDec's static text export instead places this edge 4px too far right).
+      const x = field.bounds.xMax - 2;
+      const y = field.localMatrix[5] + field.text.exportedBaseline;
+      this.label(text, x, y, field.text.fontSize, '#fff', 'right', true);
     }
     if (sim.winner) {
       const result = this.root('game', 'gameover');
@@ -233,16 +266,26 @@ export class OriginalGameView {
   }
 
   numeric(name, value, size, align) {
+    if (!NUMBER_FIELDS.includes(name)) throw new RangeError('Unknown numeric HUD field');
     const instance = this.instance(210, name);
     const b = instance.bounds;
     const x = align === 'center' ? (b.xMin + b.xMax) / 2 : align === 'right' ? b.xMax - 2 : b.xMin + 2;
     const y = instance.localMatrix[5] + instance.text.exportedBaseline;
-    const ctx = this.ctx;
-    ctx.save();
-    ctx.shadowColor = '#000'; ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1;
-    this.graphics.drawText(String(value), ctx, { font: instance.text.font, size: instance.text.fontSize,
-      color: '#fff', x, y, align });
-    ctx.restore();
+    const text = String(value);
+    const revision = JSON.stringify([text, instance.text.font, instance.text.fontSize, align, x, y,
+      '#fff', '#000', 3, 1, 1]);
+    const layer = this.numberLayer(name, revision, ctx => {
+      ctx.save();
+      try {
+        // Preserve original vector glyphs, individual glyph shadows and the
+        // exact fractional stage-space baseline. Do not substitute a font or
+        // regroup a whole HUD/overlay into this counter layer.
+        ctx.shadowColor = '#000'; ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1;
+        this.graphics.drawText(text, ctx, { font: instance.text.font, size: instance.text.fontSize,
+          color: '#fff', x, y, align });
+      } finally { ctx.restore(); }
+    });
+    this.ctx.drawImage(layer, 0, 0);
   }
 
   label(text, x, y, size = 12, color = '#fff', align = 'left', shadow = false) {
@@ -270,8 +313,25 @@ export class OriginalGameView {
     }
     const camera = sim.renderCamera;
     ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1;
-    ctx.strokeRect(p.x + (camera.x - camera.width / 2) * scale, p.y + (camera.y - camera.height / 2) * scale,
-      camera.width * scale, camera.height * scale);
+    if (this.observation && this.observation.mode !== 'follow') {
+      // Only the observation frustum changes. Do not steer the simulation's
+      // source camera merely to draw the observer's minimap footprint.
+      ctx.beginPath(); ctx.rect(p.x, p.y, width, height); ctx.clip();
+      const polygon = this.observation.visibleWorldPolygon;
+      if (polygon?.length) {
+        ctx.beginPath();
+        polygon.forEach((point, i) => {
+          if (i === 0) ctx.moveTo(p.x + point.x * scale, p.y + point.y * scale);
+          else ctx.lineTo(p.x + point.x * scale, p.y + point.y * scale);
+        });
+        ctx.closePath(); ctx.stroke();
+      } else if (this.observation.mapCorners?.every(point => point.visible)) {
+        ctx.strokeRect(p.x, p.y, width, height);
+      }
+    } else {
+      ctx.strokeRect(p.x + (camera.x - camera.width / 2) * scale, p.y + (camera.y - camera.height / 2) * scale,
+        camera.width * scale, camera.height * scale);
+    }
     ctx.restore();
     this.hotspots.push({ action: 'minimap', left: p.x, top: p.y, right: p.x + width, bottom: p.y + height, scale });
   }

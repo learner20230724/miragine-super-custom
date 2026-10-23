@@ -1,18 +1,29 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseOptions } from '../tools/verify-ui-cache.mjs';
+import { comparisonDescription, parseOptions } from '../tools/verify-ui-cache.mjs';
 
 test('UI cache CLI defaults to strict RGBA equality', () => {
   assert.deepEqual(parseOptions([]), { channel: 'msedge', maxChannelDifference: 0 });
   assert.equal(parseOptions(['--help']).help, true);
 });
 
-test('UI cache CLI requires explicit 0 or 1 channel allowance', () => {
+test('UI cache CLI requires an explicit integer 0, 1 or 2 channel allowance', () => {
   assert.equal(parseOptions(['--max-channel-difference', '0']).maxChannelDifference, 0);
   assert.equal(parseOptions(['--max-channel-difference', '1']).maxChannelDifference, 1);
-  for (const value of ['2', '85', '-1', '0.5', '1.0', '01', 'NaN', 'Infinity']) {
-    assert.throws(() => parseOptions(['--max-channel-difference', value]), /exactly 0 or 1/);
+  assert.equal(parseOptions(['--max-channel-difference', '2']).maxChannelDifference, 2);
+  for (const value of ['3', '85', '-1', '0.5', '1.0', '2.0', '01', '02', 'NaN', 'Infinity']) {
+    assert.throws(() => parseOptions(['--max-channel-difference', value]), /exactly 0, 1 or 2/);
   }
+});
+
+test('UI cache report describes custom allowance 2 separately from strict0 and bounded1', () => {
+  assert.equal(comparisonDescription(0), 'Strict RGBA equality');
+  assert.match(comparisonDescription(1), /at most 1\/255/);
+  assert.doesNotMatch(comparisonDescription(1), /custom numeric/);
+  assert.match(comparisonDescription(2), /custom numeric compositing tolerance/);
+  assert.match(comparisonDescription(2), /not strict RGBA identity or <=1 bounded rounding/);
+  assert.match(comparisonDescription(2), /exact alpha, hotspots and simulation frame required/);
+  assert.throws(() => comparisonDescription(3), /must be 0, 1 or 2/);
 });
 
 test('UI cache CLI accepts only unauthenticated HTTP loopback origins', () => {

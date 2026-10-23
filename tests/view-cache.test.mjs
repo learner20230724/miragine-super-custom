@@ -43,7 +43,8 @@ function harness() {
         calls.push({ type: 'result-filter', symbol, matrix: options.filter({ symbol, matrix: [1, 0, 0, 1, 0, 0] }).matrix });
       }
     },
-    drawText(text, ctx, options) { calls.push({ type: 'number', text, canvas: ctx.canvas.id, options }); },
+    drawText(text, ctx, options) { calls.push({ type: 'number', text, canvas: ctx.canvas.id, options,
+      shadow: { color: ctx.shadowColor, blur: ctx.shadowBlur, x: ctx.shadowOffsetX, y: ctx.shadowOffsetY } }); },
   };
   const config = structuredClone(defaults);
   const controller = new GameController(config);
@@ -125,6 +126,70 @@ test('dynamic numbers and cursor animation remain live while surrounding graphic
   assert.equal(cursor[2].time, 17);
   assert.equal(cursor[2].alpha, .95);
   assert.equal(cursor[2].matrix[0], .05 * 1.3);
+});
+
+test('seven numeric HUD slots reuse unchanged glyphs and apply changed values without adding canvases', () => {
+  const h = harness();
+  h.controller.action('dual'); h.controller.action('tutorial-okay');
+  h.paint();
+  const names = ['time', 'leftMoney', 'leftIncome', 'leftPopulation', 'rightMoney', 'rightIncome', 'rightPopulation'];
+  const count = h.canvases.length;
+  const moneyCanvas = h.view.numberLayers.leftMoney.canvas;
+  assert.deepEqual(Object.keys(h.view.numberLayers), names);
+  assert.equal(h.count(call => call.type === 'number'), 7);
+  for (let frame = 0; frame < 100; frame++) h.paint();
+  assert.equal(h.count(call => call.type === 'number'), 7);
+  h.controller.simulation.leftMoney = 999;
+  h.paint();
+  assert.equal(h.count(call => call.type === 'number'), 8);
+  assert.equal(h.calls.findLast(call => call.type === 'number').text, '999');
+  assert.equal(h.view.numberLayers.leftMoney.canvas, moneyCanvas);
+  assert.equal(h.count(call => call.type === 'clear' && call.canvas === moneyCanvas.id), 2);
+  for (let value = 1000; value < 1200; value++) { h.controller.simulation.leftMoney = value; h.paint(); }
+  assert.equal(h.canvases.length, count);
+  assert.deepEqual(Object.keys(h.view.numberLayers), names);
+  assert.deepEqual([...h.view.cache.keys()].sort(), ['game-controls', 'hud']);
+  assert.throws(() => h.view.numeric('unknown', 1, 11, 'left'), /Unknown numeric HUD field/);
+  assert.throws(() => h.view.numberLayer('unknown', '1', () => {}), /Unknown numeric HUD field/);
+});
+
+test('numeric revisions include original typography, alignment and fractional baseline', () => {
+  const h = harness();
+  h.view.layout = structuredClone(layout);
+  h.view.numeric('time', 12, 22, 'center');
+  const canvas = h.view.numberLayers.time.canvas;
+  const first = h.calls.findLast(call => call.type === 'number');
+  assert.equal(first.options.size, 21, 'keep the recovered font size, not the historical unused argument');
+  assert.equal(first.options.font, 'font17');
+  assert.equal(first.options.y, 28.45);
+  assert.deepEqual(first.shadow, { color: '#000', blur: 3, x: 1, y: 1 });
+  h.view.numeric('time', 12, 22, 'center');
+  assert.equal(h.count(call => call.type === 'number'), 1);
+  h.view.numeric('time', 12, 22, 'right');
+  assert.equal(h.count(call => call.type === 'number'), 2);
+  h.view.instance(210, 'time').text.fontSize = 20;
+  h.view.instance(210, 'time').localMatrix[5] += .25;
+  h.view.numeric('time', 12, 22, 'right');
+  const last = h.calls.findLast(call => call.type === 'number');
+  assert.equal(last.options.size, 20);
+  assert.equal(last.options.y, 28.7);
+  assert.equal(h.view.numberLayers.time.canvas, canvas);
+  assert.equal(h.count(call => call.type === 'clear' && call.canvas === canvas.id), 3);
+});
+
+test('numeric cached layers composite at the original position between health bars and animated cursors', () => {
+  const h = harness();
+  h.controller.action('dual'); h.controller.action('tutorial-okay');
+  h.paint();
+  const numbers = Object.values(h.view.numberLayers).map(slot => slot.canvas.id);
+  const mainNumbers = h.calls.filter(call => call.type === 'composite' && call.canvas === 'main' && numbers.includes(call.source));
+  assert.deepEqual(mainNumbers.map(call => call.source), numbers);
+  assert.ok(mainNumbers.every(call => call.args.length === 2 && call.args[0] === 0 && call.args[1] === 0));
+  const bar = h.calls.findIndex(call => call.type === 'composite' && call.source === h.view.barLayers.rightBar.canvas.id);
+  const first = h.calls.indexOf(mainNumbers[0]), last = h.calls.indexOf(mainNumbers.at(-1));
+  const cursor = h.calls.findIndex(call => call.type === 'symbol' && call.symbol === 'sprite209');
+  assert.ok(bar < first && last < cursor);
+  for (const slot of Object.values(h.view.numberLayers)) assert.deepEqual([slot.canvas.width, slot.canvas.height], [640, 480]);
 });
 
 test('tutorial/quit overlays keep original direct-context stacking and pointer interception', () => {

@@ -2,7 +2,7 @@
 
 [中文](README.md)
 
-This independent customization repository starts from commit `8554d89713456368378738744bfeb32ec41c2689` of the [faithful reconstruction](https://github.com/learner20230724/miragine-super-rebuild). The original repository and Releases remain untouched. Only repository documentation has changed here; game code, values, configuration and assets are unchanged. Further features require an explicit implementation request. The verification records and portable downloads below describe the inherited preview.2 baseline, not implemented custom features.
+This independent customization repository starts from commit `8554d89713456368378738744bfeb32ec41c2689` of the [faithful reconstruction](https://github.com/learner20230724/miragine-super-rebuild), which remains untouched. Added features are **1/2/4/8x game speed, independent presentation up to a 240 FPS target, oblique-view wheel zoom, drag, full-map overview and restored follow mode**. Original core logic, values and assets are retained. Historical preview.2 records describe the inherited baseline; custom verification is recorded separately.
 
 An editable JavaScript project based on the **super Flash version**, with recovered sources, original assets, and traceable data. This is neither the JKS remake nor the C++ network reimplementation.
 
@@ -10,9 +10,9 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 ## Windows portable build
 
-Download the Windows x64 preview from the **[original baseline Releases](https://github.com/learner20230724/miragine-super-rebuild/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. This customization repository has not published a separate portable build.
+Download the Windows x64 preview from the **[custom Releases](https://github.com/learner20230724/miragine-super-custom/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. Keep this customization in a separate directory from the baseline game.
 
-Edit the external `config/custom.json` and restart to apply changes; back it up before upgrading. `ui-helper/` contains replaceable drawing source and instructions. `build-info.json` identifies the source commit. See the [verification record](docs/verification.json) and [known issues](docs/known-issues.md) for preview limitations.
+Edit the external `config/custom.json` and restart to apply changes; back it up before upgrading. `ui-helper/` contains replaceable drawing source and instructions. `build-info.json` identifies the source commit. See the [custom verification record](docs/custom-verification.json), inherited [baseline verification](docs/verification.json), and [known issues](docs/known-issues.md).
 
 Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents. The never-show-help preference persists across restarts in `userdata/preferences.json`; delete that file to restore the initial tutorial.
 
@@ -48,12 +48,21 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 | Arrow keys, Enter | Right player's selection and recruitment in local two-player mode |
 | Drag the minimap | Move the camera |
 | I / J / K / L | Move the camera |
+| Wheel over the battlefield | Pointer-anchored zoom; map boundaries take priority at limits |
+| Right / middle mouse drag | Pan the observation camera without changing combat |
+| In-game 1x / 2x / 4x / 8x | Speed up game time equally for both sides |
+| In-game overview / follow | Fit the whole battlefield / restore the original follow view |
+| In-game display ceiling | Select 30/60/120/240 FPS targets without changing the game step |
 | Esc | Open the leave-match confirmation |
 | F11 | Toggle fullscreen |
 
 The menu offers four single-player difficulties and local two-player play. Network multiplayer is not implemented.
 
 ### Performance
+
+**Customization:** one game second still contains 30 original logic steps. At 2/4/8x, the adapter attempts 60/120/240 steps per real second. Rendering is independent and interpolates positions/camera; the original finite animation poses remain unchanged. The toolbar distinguishes requested speed from measured simulation steps and canvas submissions. 240 FPS is a ceiling, not a hardware- or army-independent guarantee. Menus, observation input and music use real time.
+
+See the [reusable time-control toolkit](docs/time-control.en.md) for adapting other games. It is a source-level SDK plus adapters, not an automatic accelerator for arbitrary executables. The preview.2 measurements below belong only to the original reconstruction baseline.
 
 **preview.2** fixes the sustained slowdown after entering combat. With the same maximized window at DPI 1.5, final canvas submissions improved from **4.77 to 28.74 FPS** in the battlefield and **5.05 to 28.44 FPS** with a unit tooltip. Some late frames remain; this is not a locked-30-FPS guarantee for all hardware. See the [measurement conditions](https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json).
 
@@ -89,6 +98,7 @@ Unit keys are menu IDs `"0"`–`"15"`, not animation indices (`ss`). Objects mer
 |---|---|
 | `src/core/` | Headless simulation, units, attack objects, scene, and AS3 numeric semantics |
 | `src/app/` | Menus, input, match flow, audio, and interface |
+| `src/runtime/` | Reusable fixed-step clock, presentation scheduling and interpolation; game wiring lives in `src/app/playback-session.mjs` |
 | `src/render/` | Battlefield, perspective projection, ground, and character rendering |
 | `src/platform/`, `desktop/` | Viewport/input-coordinate transforms and Electron integration |
 | `src/config/` | Configuration loading, validation, and override merging |

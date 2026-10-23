@@ -1,0 +1,464 @@
+{
+  "schemaVersion": 1,
+  "reportedOnClientDate": "2026-10-23",
+  "delivery": "independent-custom-game-clock-and-oblique-overview",
+  "version": "0.2.0-preview.1",
+  "repository": "https://github.com/learner20230724/miragine-super-custom",
+  "baseline": {
+    "sourceCommit": "8554d89713456368378738744bfeb32ec41c2689",
+    "unchangedPaths": [
+      "src/core",
+      "config/defaults.generated.json",
+      "config/custom.json",
+      "assets",
+      "generated",
+      "recovered",
+      "reference"
+    ],
+    "originalRepositoryAndReleasesNotModified": true,
+    "originalOracleRecord": "../tools/oracle/verification.generated.json",
+    "historicalVerification": "verification.json"
+  },
+  "features": {
+    "logicHzPerGameSecond": 30,
+    "speeds": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "displayTargetsHz": [
+      30,
+      60,
+      120,
+      240
+    ],
+    "presentation": "Independent scheduling; position/camera interpolation; original finite animation poses",
+    "camera": "Original -70 degree oblique perspective; wheel anchored zoom, right/middle drag, full map and follow; display-only camera",
+    "difficultyLabel": {
+      "source": "Original root text213 tt bounds and embedded baseline",
+      "alignment": "right",
+      "rightX": 628,
+      "baselineY": 105.7
+    },
+    "reusableModule": "../src/runtime/README.md",
+    "gameAdapter": "../src/app/playback-session.mjs"
+  },
+  "sourceVerification": {
+    "nodeTests": {
+      "passed": 358,
+      "failed": 0
+    },
+    "configReproducible": true,
+    "assetsReproducible": {
+      "files": 678,
+      "bytes": 11927432,
+      "changedFiles": 0
+    },
+    "publicSourceScan": {
+      "findings": 0,
+      "warnings": 0
+    },
+    "browser": {
+      "status": "passed",
+      "checks": 71,
+      "errors": 0,
+      "coreUnchanged": true,
+      "documentTitle": "超级米拉奇战记 · 自定义改版 / Custom",
+      "simulation": [
+        {
+          "speed": 1,
+          "simulationHz": 30.022389581582697,
+          "elapsedMs": 1965.1999998092651,
+          "frameDelta": 59,
+          "presentationHz": 24.42499491382999
+        },
+        {
+          "speed": 2,
+          "simulationHz": 58.73715125241907,
+          "elapsedMs": 1974.8999998569489,
+          "frameDelta": 116,
+          "presentationHz": 16.709706821808872
+        },
+        {
+          "speed": 4,
+          "simulationHz": 119.83164149541966,
+          "elapsedMs": 2019.5,
+          "frameDelta": 242,
+          "presentationHz": 16.835850458034166
+        },
+        {
+          "speed": 8,
+          "simulationHz": 240.3035413274226,
+          "elapsedMs": 1897.5999999046326,
+          "frameDelta": 456,
+          "presentationHz": 15.282462058103631
+        }
+      ],
+      "displayRates": [
+        {
+          "requestedHz": 30,
+          "measured": {
+            "simulationHz": 32.19512195121951,
+            "presentationHz": 18.536585365853657,
+            "actualSpeed": 1.0731707317073171
+          },
+          "independentPresentations": {
+            "count": 20,
+            "framesPerSecond": 19.99200319681469,
+            "intervals": {
+              "count": 19,
+              "medianMs": 56.200000047683716,
+              "p95Ms": 72.89999985694885,
+              "maxMs": 72.89999985694885
+            }
+          },
+          "ceilingPassed": true,
+          "simulation": {
+            "speed": 1,
+            "requestedSeconds": 1,
+            "samples": [
+              {
+                "atMs": 20743.700000047684,
+                "frame": 1478
+              },
+              {
+                "atMs": 20907.799999952316,
+                "frame": 1483
+              },
+              {
+                "atMs": 21030.60000014305,
+                "frame": 1487
+              },
+              {
+                "atMs": 21206.400000095367,
+                "frame": 1492
+              },
+              {
+                "atMs": 21318.799999952316,
+                "frame": 1496
+              },
+              {
+                "atMs": 21462.900000095367,
+                "frame": 1500
+              },
+              {
+                "atMs": 21584.60000014305,
+                "frame": 1503
+              },
+              {
+                "atMs": 21744.10000014305,
+                "frame": 1508
+              }
+            ],
+            "sampleCount": 8,
+            "elapsedMs": 1000.4000000953674,
+            "frameDelta": 30,
+            "simulationHz": 29.988004795222032,
+            "framesPerGameSecond": 29.988004795222032,
+            "expectedSimulationHz": 30,
+            "relativeError": 0.00039984015926558905,
+            "passed": true,
+            "presentations": {
+              "count": 20,
+              "framesPerSecond": 19.99200319681469,
+              "intervals": {
+                "count": 19,
+                "medianMs": 56.200000047683716,
+                "p95Ms": 72.89999985694885,
+                "maxMs": 72.89999985694885
+              }
+            }
+          }
+        },
+        {
+          "requestedHz": 60,
+          "measured": {
+            "simulationHz": 31.755196306306928,
+            "presentationHz": 18.2832948430252,
+            "actualSpeed": 1.0585065435435643
+          },
+          "independentPresentations": {
+            "count": 18,
+            "framesPerSecond": 18.38235294028131,
+            "intervals": {
+              "count": 17,
+              "medianMs": 51.90000009536743,
+              "p95Ms": 92.20000004768372,
+              "maxMs": 92.20000004768372
+            }
+          },
+          "ceilingPassed": true,
+          "simulation": {
+            "speed": 1,
+            "requestedSeconds": 1,
+            "samples": [
+              {
+                "atMs": 22413,
+                "frame": 1528
+              },
+              {
+                "atMs": 22551.400000095367,
+                "frame": 1533
+              },
+              {
+                "atMs": 22748.200000047684,
+                "frame": 1538
+              },
+              {
+                "atMs": 22949.5,
+                "frame": 1544
+              },
+              {
+                "atMs": 23082.60000014305,
+                "frame": 1548
+              },
+              {
+                "atMs": 23279.299999952316,
+                "frame": 1553
+              },
+              {
+                "atMs": 23392.200000047684,
+                "frame": 1558
+              }
+            ],
+            "sampleCount": 7,
+            "elapsedMs": 979.2000000476837,
+            "frameDelta": 30,
+            "simulationHz": 30.637254900468854,
+            "framesPerGameSecond": 30.637254900468854,
+            "expectedSimulationHz": 30,
+            "relativeError": 0.021241830015628457,
+            "passed": true,
+            "presentations": {
+              "count": 18,
+              "framesPerSecond": 18.38235294028131,
+              "intervals": {
+                "count": 17,
+                "medianMs": 51.90000009536743,
+                "p95Ms": 92.20000004768372,
+                "maxMs": 92.20000004768372
+              }
+            }
+          }
+        },
+        {
+          "requestedHz": 120,
+          "measured": {
+            "simulationHz": 31.783869690650253,
+            "presentationHz": 16.885180773157945,
+            "actualSpeed": 1.059462323021675
+          },
+          "independentPresentations": {
+            "count": 17,
+            "framesPerSecond": 17.375306625598483,
+            "intervals": {
+              "count": 16,
+              "medianMs": 61.39999997615814,
+              "p95Ms": 98.40000009536743,
+              "maxMs": 98.40000009536743
+            }
+          },
+          "ceilingPassed": true,
+          "simulation": {
+            "speed": 1,
+            "requestedSeconds": 1,
+            "samples": [
+              {
+                "atMs": 24038.400000095367,
+                "frame": 1577
+              },
+              {
+                "atMs": 24212,
+                "frame": 1582
+              },
+              {
+                "atMs": 24354.900000095367,
+                "frame": 1587
+              },
+              {
+                "atMs": 24474,
+                "frame": 1590
+              },
+              {
+                "atMs": 24643,
+                "frame": 1594
+              },
+              {
+                "atMs": 24772.299999952316,
+                "frame": 1599
+              },
+              {
+                "atMs": 24892.5,
+                "frame": 1603
+              },
+              {
+                "atMs": 25016.799999952316,
+                "frame": 1606
+              }
+            ],
+            "sampleCount": 8,
+            "elapsedMs": 978.3999998569489,
+            "frameDelta": 29,
+            "simulationHz": 29.640228949550355,
+            "framesPerGameSecond": 29.640228949550355,
+            "expectedSimulationHz": 30,
+            "relativeError": 0.011992368348321491,
+            "passed": true,
+            "presentations": {
+              "count": 17,
+              "framesPerSecond": 17.375306625598483,
+              "intervals": {
+                "count": 16,
+                "medianMs": 61.39999997615814,
+                "p95Ms": 98.40000009536743,
+                "maxMs": 98.40000009536743
+              }
+            }
+          }
+        },
+        {
+          "requestedHz": 240,
+          "measured": {
+            "simulationHz": 31.896385074887895,
+            "presentationHz": 15.464913975703222,
+            "actualSpeed": 1.0632128358295965
+          },
+          "independentPresentations": {
+            "count": 16,
+            "framesPerSecond": 15.960099750623442,
+            "intervals": {
+              "count": 15,
+              "medianMs": 68.19999980926514,
+              "p95Ms": 93.5,
+              "maxMs": 93.5
+            }
+          },
+          "ceilingPassed": true,
+          "simulation": {
+            "speed": 1,
+            "requestedSeconds": 1,
+            "samples": [
+              {
+                "atMs": 25762.10000014305,
+                "frame": 1628
+              },
+              {
+                "atMs": 25926.299999952316,
+                "frame": 1633
+              },
+              {
+                "atMs": 26085.10000014305,
+                "frame": 1638
+              },
+              {
+                "atMs": 26224,
+                "frame": 1642
+              },
+              {
+                "atMs": 26364.200000047684,
+                "frame": 1646
+              },
+              {
+                "atMs": 26490,
+                "frame": 1651
+              },
+              {
+                "atMs": 26623.900000095367,
+                "frame": 1654
+              },
+              {
+                "atMs": 26764.60000014305,
+                "frame": 1658
+              }
+            ],
+            "sampleCount": 8,
+            "elapsedMs": 1002.5,
+            "frameDelta": 30,
+            "simulationHz": 29.925187032418954,
+            "framesPerGameSecond": 29.925187032418954,
+            "expectedSimulationHz": 30,
+            "relativeError": 0.0024937655860348684,
+            "passed": true,
+            "presentations": {
+              "count": 16,
+              "framesPerSecond": 15.960099750623442,
+              "intervals": {
+                "count": 15,
+                "medianMs": 68.19999980926514,
+                "p95Ms": 93.5,
+                "maxMs": 93.5
+              }
+            }
+          }
+        }
+      ],
+      "ownedApplicationClosed": true,
+      "proofAsset": "verification-source.json"
+    },
+    "visual": {
+      "overviewGhostsAndBlackGapsFixed": true,
+      "difficultyRightAlignmentConfirmed": true,
+      "coverageProofAsset": "overview-coverage-proof.json",
+      "pixelProofAsset": "ui-cache-pixels.json",
+      "pixelComparison": {
+        "cases": 23,
+        "configuredMaxRgbDifference": 2,
+        "countsByMaxRgbDifference": {
+          "0": 7,
+          "1": 2,
+          "2": 14
+        },
+        "strictRgbaIdentity": false,
+        "withinPreviousOneChannelTolerance": false,
+        "exactAlphaHotspotsAndSimulationFrame": true,
+        "note": "Explicit custom numeric compositing tolerance, not a strict/previous-gate pass. Difference is consistent with 8-bit compositing rounding; cause not proven."
+      }
+    }
+  },
+  "sourceSha256": {
+    "config/defaults.generated.json": "ce2609faee8a8e7292751ddd834a82cc9e47df2340e3d4b2652bc5e7c7d6273f",
+    "index.html": "f244cbc874a2190e5602e7c4898bd652327666109bb57585dcc34acd5b400bfc",
+    "package-lock.json": "32e7ec71b0487896f82cc8d0289f6f2b86e10df5f839a764480aa8dc2adb176b",
+    "package.json": "aa49e01145e15ac4a106bff038dac08601d3721b6a4b8800f5bc5d3c34fb1247",
+    "src/app/audio.mjs": "17adb11b93e7532b558cff155d3892ff27462993e3fd3092050a3ced3899be8d",
+    "src/app/controller.mjs": "bd2ea6f61f9843778f3f245cfbadf5ffd2f06b8a667252a88c540260f0c5ccb6",
+    "src/app/custom-controls.mjs": "e56a8552f4684a7b73c3761688c65f607299609979b52c915c836638b1272ed8",
+    "src/app/input.mjs": "e4aaae38a47d2e7eb1b2732e54c77995f04ef416e0ab4c225450986f86971673",
+    "src/app/main.mjs": "c972afb0e811297a264d523f0fd907f5b8645d8f8a25de6bab682260f3ae9eb2",
+    "src/app/playback-session.mjs": "930cca09c59ee18d3e7a5fba2e75b4499f5f790c26ebe2e289cc6cb5a8589556",
+    "src/app/preferences.mjs": "b8bbfe95fd0f403d2aad1941c7b007184feca1e54fe15cc91b33b150d706c55b",
+    "src/app/view.mjs": "baa5f5af84b0731d24702de9fad9c4913074185bdfb32238813266be11500d0a",
+    "src/config/index.mjs": "cc4c74acf3eec5c29e278504162c4f75fa05be76976a847670954aef40d89019",
+    "src/config/json.mjs": "4ea2badf564f24d41909d38849c7a3194b6d38ac43f55cb31e1948fde380fa30",
+    "src/core/as3.mjs": "ca1366b546b3123a7f1f1c7aa25135183af8caa93c31e83c59266e3eb2ada37c",
+    "src/core/avm2-sort.mjs": "9a727bbe050c0ce3104ee0be2b13f3f618933c2766188b59a807de03853d1d2b",
+    "src/core/entity.mjs": "ed1860bb2b9b6b2df1803a3fcfe60c5b2f61034adb35afccec68bfbbae69e306",
+    "src/core/index.mjs": "79b1db8d80c8f4bffa05380ee7a32e69fc0698e73c9578d6e1b0ae343d056ccb",
+    "src/core/port-map.json": "59621e522c49a4a8279a2aaa25a65a7e0cf194c7f32cfb981d30d7b716b039c8",
+    "src/core/scene.mjs": "011eb801c10265bacc00a0b738b5cbd5c865ce86e49e7468c6755f928546bdb6",
+    "src/core/simulation.mjs": "db00cd1555544ca0a370e8adb8b8125c030911c045fb5877cdf475ea8b8bd410",
+    "src/extensions/custom.mjs": "6dae199e8b731aeab3be8b9a63cb207f4c7a5e572cfdb0eca84f92bd2e1fe489",
+    "src/platform/frame-clock.mjs": "6e2a191fe12ca48c23f1f459aadccfa4a11315ebf2f1acc4a58a5b21bd01a93e",
+    "src/platform/viewport.mjs": "9e8b71c2fa7842a644181f7277f1cf47f0a10eb2c87a7a6acda3f08864c805de",
+    "src/render/battlefield.mjs": "0a9dd9d1e6a05cea41a97906fa3683b3138498abb819cef3250493979f859faa",
+    "src/render/ground-layer-cache.mjs": "42b88e2071c37ef2ef02e0eef11085ad62a118c4ab222a4949a4aafc3c54b043",
+    "src/render/ground-webgl.mjs": "b1a24e80c112df63c2283030cc735cd89e4297eb592671046953a0a63b4512d8",
+    "src/render/overview-ground.mjs": "40a1b91ed4491719f0f37ba71bc3fddf7d5a8720b896bb09c023c92ece324a15",
+    "src/render/projection.mjs": "7b8f73b9c3a14db262ddf8f0e34bd4eceb91b1bc0a6f9e18414955d7c1870cd5",
+    "src/render/view-camera.mjs": "9c5df1f0c13ebdaa5097fffcbc5f23b5a6ef03ba05f61527af0b202c76803204",
+    "src/runtime/README.md": "9c5989e2183357929c6f85326d9536cba8d858e12f33cc482ac88268ca4a2250",
+    "src/runtime/game-clock.mjs": "adc3149ce6e17a84270abaa4a7cd5d47b5a2a03548ae42b3eb3efb2068f9c6dc",
+    "src/runtime/index.mjs": "95572d1e4361fe2e8828d655aeefa3aedc4e680442f717a5ef1de1bac654e612",
+    "src/runtime/render-interpolation.mjs": "9419c5a70ff0326ad658d98117f37087bf5f43aee31f16e2d87dfa3351c7c56a",
+    "src/style.css": "c80eaaca72733d0cceeae26d8d1f58dfa4456dabbee7ce110e87c592fc824d51"
+  },
+  "limits": [
+    "240 FPS is a scheduling target/cap, not an achieved hardware display rate; measured rates are reported separately.",
+    "Time scaling cannot increase available CPU/GPU performance; severe stalls drop wall time above 250ms per callback.",
+    "Other reconstructed games need explicit clock and presentation adapters; not an arbitrary EXE speedhack.",
+    "Audio and menus use real time; original pose images are not newly generated.",
+    "Core behavior evidence is inherited from the baseline; new source tests check same-step state equality across speeds.",
+    "Portable binary, archive digest and privacy audit are verified separately and recorded in Release attachments."
+  ]
+}

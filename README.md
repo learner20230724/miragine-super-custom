@@ -2,7 +2,7 @@
 
 [English](README.en.md)
 
-这是独立的改版仓库，基于 [原版重建工程](https://github.com/learner20230724/miragine-super-rebuild) 的 `8554d89713456368378738744bfeb32ec41c2689` 提交建立。原仓库及其 Release 保持不变。本仓库目前只增加仓库说明，游戏代码、数值、配置和素材尚未修改；后续功能需明确确认后再实施。下方验证记录与启动包均属于继承的 preview.2 基线，不代表已经完成改版功能。
+独立改版仓库，基于 [原版重建工程](https://github.com/learner20230724/miragine-super-rebuild) 的 `8554d89713456368378738744bfeb32ec41c2689` 提交建立，原仓库及其 Release 不动。新增 **1／2／4／8 倍速、独立最高 240 FPS 显示目标、斜视角滚轮缩放、拖动、一键全图与恢复跟随**；原始核心逻辑、数值和素材保留。旧验证记录属于继承的 preview.2 基线，改版验证另行记录。
 
 以 **Flash 超级版**为基准的可修改 JavaScript 工程，保留恢复源码、原始素材及数据来源。不是 JKS 重制版，也不是 C++ 网络对战版。
 
@@ -10,9 +10,9 @@
 
 ## Windows 启动包
 
-在 **[原版基线 Releases](https://github.com/learner20230724/miragine-super-rebuild/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash。本改版仓库尚未发布独立启动包。
+在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-包外的 `config/custom.json` 可直接编辑，重启生效；升级前请备份此文件。`ui-helper/` 提供可替换的绘图源码及说明。`build-info.json` 标明对应源码提交。预览版的验证结果和尚存差异见 [验证记录](docs/verification.json) 与 [已知问题](docs/known-issues.md)。
+包外的 `config/custom.json` 可直接编辑，重启生效；升级前请备份此文件。`ui-helper/` 提供可替换的绘图源码及说明。`build-info.json` 标明对应源码提交。改版见 [改版验证记录](docs/custom-verification.json)，继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 
@@ -48,12 +48,21 @@ npm run dev
 | 方向键、Enter | 同机双人模式中右方选兵、切换招募 |
 | 拖动小地图 | 移动视角 |
 | I / J / K / L | 移动视角 |
+| 战场滚轮 | 以鼠标位置为锚点缩放，边界处优先保持镜头范围 |
+| 战场鼠标右键／中键拖动 | 拖动观察镜头，不影响战斗判定 |
+| 游戏内 1×／2×／4×／8× | 整体游戏时间倍速，双方同时生效 |
+| 游戏内「全图」／「跟随」 | 全景显示整张战场／恢复原版跟随视角 |
+| 游戏内「显示上限」 | 选择 30／60／120／240 FPS 目标，不改变逻辑步长 |
 | Esc | 打开退出对局确认 |
 | F11 | 全屏 / 退出全屏 |
 
 菜单提供单人四档难度与同机双人；本项目目前没有网络对战。
 
 ### 性能
+
+**改版：**每个游戏秒仍是 30 个原版逻辑步；2×／4×／8×分别在每个真实秒尝试执行 60／120／240 步。画面独立刷新并对位置和镜头插值；原动画姿势仍来自有限张原素材。工具条分别显示目标倍率、实际模拟步数和实际画面提交频率；240 是上限目标，受显示器、硬件及兵力影响，不保证锁定。菜单、观察操作和音乐仍按真实时间运行。
+
+可复用模块及其他游戏的接入方法见 [时间控制工具](docs/time-control.zh-CN.md)；它是源码层 SDK＋适配器，不是任意 EXE 的免适配加速器。下方 preview.2 性能数字仅属于原版重建基线。
 
 **preview.2** 修复进入对局后的持续卡顿。同机最大化、DPI 1.5 实测：普通战场 **4.77 → 28.74 FPS**，兵种提示 **5.05 → 28.44 FPS**（最终画布提交频率）。仍有少量迟帧，不保证所有硬件锁定 30 帧；完整条件见 [性能报告](https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json)。
 
@@ -89,6 +98,7 @@ node tools/profile-desktop.mjs --dir <测试副本目录> --out .local/performan
 |---|---|
 | `src/core/` | 可无界面测试的模拟、单位、攻击物、场景及 AS3 数值语义 |
 | `src/app/` | 菜单、输入、对局流程、声音与界面 |
+| `src/runtime/` | 可复用固定步长时钟、显示调度与呈现插值；游戏接线在 `src/app/playback-session.mjs` |
 | `src/render/` | 战场、透视投影、地面与人物渲染 |
 | `src/platform/`、`desktop/` | 缩放与坐标转换、Electron 桌面适配 |
 | `src/config/` | 配置加载、校验与覆盖合并 |

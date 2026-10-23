@@ -23,7 +23,7 @@ export function isProductionPath(input, { directory = false } = {}) {
   if (parts[0] === 'docs') {
     if (directory) return relative === 'docs' || parts[1] === 'licenses';
     return parts[1] === 'licenses' || /^docs\/parameters\.(?:en|zh-CN)\.md$/.test(relative)
-      || ['docs/known-issues.md', 'docs/verification.json'].includes(relative);
+      || ['docs/known-issues.md', 'docs/verification.json', 'docs/custom-verification.json', 'docs/time-control.zh-CN.md', 'docs/time-control.en.md'].includes(relative);
   }
   if (!runtimeDirectories.has(parts[0])) return false;
   if (directory) return true;
@@ -119,7 +119,7 @@ export function writePortableExtras(projectRoot, output, buildInfo) {
     if (!file.isFile()) throw new Error('Only regular license files may be bundled');
     copy(`docs/licenses/${file.name}`);
   }
-  for (const name of ['parameters.en.md', 'parameters.zh-CN.md']) {
+  for (const name of ['parameters.en.md', 'parameters.zh-CN.md', 'time-control.zh-CN.md', 'time-control.en.md', 'custom-verification.json']) {
     if (fs.existsSync(path.join(project, 'docs', name))) copy(`docs/${name}`);
   }
   for (const name of ['known-issues.md', 'verification.json']) copy(`docs/${name}`);

@@ -1,7 +1,9 @@
 import { loadConfiguration } from '../config/index.mjs';
 import { validateCoreConfiguration, CORE_PARITY_GATES } from '../core/index.mjs';
 import { fitViewport, clientToGame } from '../platform/viewport.mjs';
-import { FixedStepFrameClock } from '../platform/frame-clock.mjs';
+import { MiraginePlayback } from './playback-session.mjs';
+import { ViewCamera } from '../render/view-camera.mjs';
+import { createCustomControls } from './custom-controls.mjs';
 import { BattlefieldRenderer } from '../render/battlefield.mjs';
 import { GameController } from './controller.mjs';
 import { OriginalGameView } from './view.mjs';
@@ -26,6 +28,46 @@ let failure = null;
 let mapDrag = false;
 let pressed = null;
 let frameClock = null;
+let observer = null;
+let controls = null;
+let cameraDrag = null;
+let presented = 0;
+let observedSimulation = null;
+let presentation = null;
+let controlsUpdatedAt = -Infinity;
+let measurement = null;
+let measured = { simulationHz: null, presentationHz: null, actualSpeed: null };
+let previousWallNow = null;
+const cameraKeys = new Set();
+const toolbarKeys = new Set();
+
+function resetMeasurements(now = performance.now()) {
+  measurement = { now, frame: controller?.simulation?.frame ?? 0, presented };
+  measured = { simulationHz: null, presentationHz: null, actualSpeed: null };
+}
+
+function updateMeasurements(now) {
+  if (!measurement) resetMeasurements(now);
+  const elapsed = now - measurement.now;
+  if (elapsed < 1000) return;
+  const frame = controller?.simulation?.frame ?? 0;
+  const simulationHz = Math.max(0, frame - measurement.frame) * 1000 / elapsed;
+  measured = { simulationHz, presentationHz: (presented - measurement.presented) * 1000 / elapsed,
+    actualSpeed: simulationHz / controller.config.rules.frameRate };
+  measurement = { now, frame, presented };
+}
+
+function updateControls(now = performance.now(), force = false) {
+  if (!controls || !fit || !frameClock) return;
+  if (!force && now - controlsUpdatedAt < 200) return;
+  controlsUpdatedAt = now;
+  controls.update({ enabled: ready && controller.phase === 'game' && !controller.overlay && !controller.simulation?.winner,
+    speed: frameClock.speed, mode: observer.mode, renderHz: frameClock.clock.renderHz,
+    baseSimulationHz: controller.config.rules.frameRate,
+    actualSimulationHz: measured.simulationHz, actualDisplayHz: measured.presentationHz,
+    position: { left: fit.left + 8, top: fit.top + fit.height * 110 / 480,
+      maxWidth: Math.max(0, fit.width - 16) } });
+}
 
 function cloneFrozen(value) {
   if (Array.isArray(value)) return Object.freeze(value.map(cloneFrozen));
@@ -52,6 +94,10 @@ Object.defineProperty(globalThis, '__MIRAGINE__', {
         frameRate: controller.config.rules.frameRate,
       } : null,
       parityGates: CORE_PARITY_GATES,
+      customization: frameClock ? { speed: frameClock.speed, renderHz: frameClock.clock.renderHz,
+        timing: frameClock.snapshot(), measured,
+        displayCamera: controller.simulation ? observer.snapshot(presentation?.camera ?? controller.simulation.renderCamera)
+          : { mode: 'follow', zoom: 1, centerX: null, centerY: null, mapCorners: [] } } : null,
     }),
     getHotspots: () => cloneFrozen(view?.hotspots ?? []),
   }),
@@ -71,13 +117,19 @@ function resize() {
   if (canvas.width !== fit.backingWidth) canvas.width = fit.backingWidth;
   if (canvas.height !== fit.backingHeight) canvas.height = fit.backingHeight;
   present();
+  updateControls(performance.now(), true);
 }
 
 function present() {
   if (!fit) return;
   display.setTransform(1, 0, 0, 1, 0, 0);
   display.imageSmoothingEnabled = true;
-  display.drawImage(logical, 0, 0, canvas.width, canvas.height);
+  // Replace, do not source-over old physical pixels through transparent areas
+  // introduced by a changed observation frustum.
+  display.globalCompositeOperation = 'copy';
+  try { display.drawImage(logical, 0, 0, canvas.width, canvas.height); }
+  finally { display.globalCompositeOperation = 'source-over'; }
+  presented++;
 }
 
 function message(title, detail = '') {
@@ -102,15 +154,35 @@ function sameHotspot(a, b) { return a && b && a.action === b.action && a.value =
 function moveMap(p) {
   if (!p || controller?.phase !== 'game') return;
   const map = view.hotspots.find(h => h.action === 'minimap');
-  if (map) controller.simulation.pointCamera((p.x - map.left) / map.scale, (p.y - map.top) / map.scale);
+  if (map) {
+    const camera = presentation?.camera ?? controller.simulation.renderCamera;
+    observer.centerOn((p.x - map.left) / map.scale, (p.y - map.top) / map.scale, camera);
+    frameClock.invalidate();
+    updateControls(performance.now(), true);
+  }
+}
+
+function battlefieldPoint(p) {
+  return p && p.x >= 0 && p.x <= 640 && p.y >= 100 && p.y < 400
+    && controller?.phase === 'game' && !controller.overlay && !controller.simulation?.winner
+    && !view.hit(p);
 }
 
 canvas.addEventListener('pointerdown', event => {
-  if (!ready || event.button !== 0) return;
+  if (!ready) return;
+  const p = point(event);
+  if ((event.button === 1 || event.button === 2) && battlefieldPoint(p)) {
+    event.preventDefault();
+    audio.unlock();
+    canvas.focus({ preventScroll: true });
+    cameraDrag = { pointerId: event.pointerId, previous: p };
+    canvas.setPointerCapture(event.pointerId);
+    return;
+  }
+  if (event.button !== 0) return;
   event.preventDefault();
   audio.unlock();
   canvas.focus({ preventScroll: true });
-  const p = point(event);
   pressed = view.hit(p);
   if (pressed?.action === 'minimap') { mapDrag = true; moveMap(p); }
   canvas.setPointerCapture(event.pointerId);
@@ -121,14 +193,28 @@ canvas.addEventListener('pointermove', event => {
   const p = point(event);
   view.pointer = p;
   frameClock?.invalidate();
+  if (cameraDrag?.pointerId === event.pointerId && p) {
+    observer.panBy(p.x - cameraDrag.previous.x, p.y - cameraDrag.previous.y,
+      presentation?.camera ?? controller.simulation.renderCamera, cameraDrag.previous);
+    cameraDrag.previous = p;
+    updateControls(performance.now(), true);
+  }
   if (mapDrag) moveMap(p);
   const h = view.hit(p);
-  canvas.style.cursor = h && h.action !== 'blocked'
+  canvas.style.cursor = cameraDrag ? 'grabbing' : h && h.action !== 'blocked'
     && (h.action !== 'unit' || h.side !== 'right' || !controller.singlePlay) ? 'pointer' : 'default';
 });
 
 canvas.addEventListener('pointerup', event => {
   if (!ready) return;
+  if (cameraDrag?.pointerId === event.pointerId) {
+    cameraDrag = null;
+    canvas.style.cursor = 'default';
+    frameClock.invalidate();
+    if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    return;
+  }
+  if (event.button !== 0) return;
   const h = view.hit(point(event));
   if (!mapDrag && sameHotspot(h, pressed)) {
     if (h.action === 'unit') controller.select(h.side, h.id);
@@ -139,17 +225,36 @@ canvas.addEventListener('pointerup', event => {
   mapDrag = false;
   pressed = null;
   frameClock?.invalidate();
+  updateControls(performance.now(), true);
   if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
 });
-canvas.addEventListener('pointercancel', () => { mapDrag = false; pressed = null; });
+canvas.addEventListener('pointercancel', () => { mapDrag = false; pressed = null; cameraDrag = null; });
 canvas.addEventListener('pointerleave', () => {
   if (view && !mapDrag) { view.pointer = null; frameClock?.invalidate(); }
 });
 canvas.addEventListener('contextmenu', event => event.preventDefault());
+canvas.addEventListener('wheel', event => {
+  const p = point(event);
+  if (!ready || !battlefieldPoint(p)) return;
+  event.preventDefault();
+  const pixels = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 400 : 1);
+  observer.zoomAt(Math.exp(-Math.max(-500, Math.min(500, pixels)) * .0015), p,
+    presentation?.camera ?? controller.simulation.renderCamera);
+  frameClock.invalidate();
+  updateControls(performance.now(), true);
+}, { passive: false });
 
 const inputCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
   'Space', 'Enter', 'Escape', 'KeyI', 'KeyJ', 'KeyK', 'KeyL', 'Equal', 'Minus', 'NumpadAdd', 'NumpadSubtract']);
 window.addEventListener('keydown', event => {
+  if (event.target?.closest?.('[data-custom-controls]')) {
+    toolbarKeys.add(event.code);
+    return; // Native select/button keyboard interaction, not game input.
+  }
+  if (toolbarKeys.has(event.code)) {
+    event.preventDefault();
+    return; // Focus may return to canvas before this physical key is released.
+  }
   if (event.code === 'F11') {
     event.preventDefault();
     const operation = document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen();
@@ -159,11 +264,31 @@ window.addEventListener('keydown', event => {
   if (!ready || !inputCodes.has(event.code)) return;
   event.preventDefault();
   audio.unlock();
+  if (['KeyI', 'KeyJ', 'KeyK', 'KeyL'].includes(event.code)) {
+    cameraKeys.add(event.code);
+    return;
+  }
   if (event.code === 'Escape') { controller.key(event.code); frameClock?.invalidate(); }
   else keyboard.keyDown(event.code);
 });
-window.addEventListener('keyup', event => keyboard?.keyUp(event.code));
-window.addEventListener('blur', () => { keyboard?.clear(); mapDrag = false; pressed = null; });
+window.addEventListener('keyup', event => {
+  toolbarKeys.delete(event.code); keyboard?.keyUp(event.code); cameraKeys.delete(event.code);
+});
+window.addEventListener('blur', () => {
+  keyboard?.clear(); cameraKeys.clear(); toolbarKeys.clear(); mapDrag = false; pressed = null; cameraDrag = null;
+});
+document.addEventListener('visibilitychange', () => {
+  const now = performance.now();
+  // Synchronize at BOTH edges, even if the browser suspends all hidden RAFs.
+  // No hidden wall time is replayed as accelerated combat on restoration.
+  frameClock?.advance(now, { hidden: true });
+  frameClock?.invalidate();
+  previousWallNow = now;
+  keyboard?.clear(); cameraKeys.clear(); toolbarKeys.clear();
+  mapDrag = false; pressed = null; cameraDrag = null;
+  resetMeasurements(now);
+  updateControls(now, true);
+});
 new ResizeObserver(resize).observe(stage);
 window.addEventListener('resize', resize);
 document.addEventListener('fullscreenchange', resize);
@@ -186,20 +311,50 @@ try {
   renderer = new BattlefieldRenderer(view.ctx, manifest);
   await renderer.load();
   audio = new GameAudio(manifest);
+  observer = new ViewCamera({ mapWidth: config.rules.mapWidth, mapHeight: config.rules.mapHeight });
+  controls = createCustomControls({ root: stage,
+    onSpeed(speed) { frameClock.setSpeed(speed); resetMeasurements(); updateControls(performance.now(), true); },
+    onOverview() { observer.fitAll(controller.simulation.renderSnapshot); frameClock.invalidate(); updateControls(performance.now(), true); },
+    onFollow() { observer.follow(); frameClock.invalidate(); updateControls(performance.now(), true); },
+    onRenderRate(rate) { frameClock.setRenderHz(rate); resetMeasurements(); updateControls(performance.now(), true); } });
   audio.playMusic('mainLoop');
   ready = true;
   canvas.focus({ preventScroll: true });
-  frameClock = new FixedStepFrameClock({ frameRate: config.rules.frameRate, now: performance.now(),
-    step(now) { keyboard.step(); controller.tick(now); } });
+  frameClock = new MiraginePlayback(controller, { now: performance.now(), inputStep: () => keyboard.step(), renderHz: 240 });
+  const presentationRenderer = { render() {
+    return renderer.render(presentation.snapshot, presentation.camera, { displayView: observer.getView(presentation.camera) });
+  } };
   function animate(now) {
     try {
+    const wallDelta = previousWallNow === null || document.hidden ? 0 : Math.min(250, now - previousWallNow);
+    previousWallNow = now;
+    if (observedSimulation !== controller.simulation) {
+      observedSimulation = controller.simulation;
+      observer.follow();
+      resetMeasurements(now);
+    }
     const { render } = frameClock.advance(now, { hidden: document.hidden });
     audio.consume(controller.drainEvents());
-    if (render) { view.render(controller, renderer); present(); }
+    // Observation controls use wall time even at 8x speed and low display caps.
+    if (controller.phase === 'game' && !controller.overlay && cameraKeys.size) {
+      const x = Number(cameraKeys.has('KeyL')) - Number(cameraKeys.has('KeyJ'));
+      const y = Number(cameraKeys.has('KeyK')) - Number(cameraKeys.has('KeyI'));
+      observer.panBy(-x * wallDelta * .15, -y * wallDelta * .15,
+        presentation?.camera ?? controller.simulation.renderCamera);
+    }
+    if (render) {
+      presentation = frameClock.presentation();
+      view.observation = presentation.camera ? observer.snapshot(presentation.camera) : null;
+      view.render(controller, presentationRenderer);
+      present();
+    }
+    updateMeasurements(now);
+    updateControls(now);
     requestAnimationFrame(animate);
     } catch (error) {
       failure = error;
       ready = false;
+      controls?.update({ enabled: false });
       audio.music?.pause();
       console.error(error);
       message('运行中断', error.message);

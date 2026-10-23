@@ -1,10 +1,10 @@
 {
-  "name": "miragine-super-rebuild",
-  "version": "0.1.0-preview.2",
+  "name": "miragine-super-custom",
+  "version": "0.2.0-preview.1",
   "private": true,
   "type": "module",
   "main": "desktop/entry.cjs",
-  "description": "Source-based Super Miragine War reconstruction with editable configuration",
+  "description": "Super Miragine War customization with reusable game-time control and oblique overview camera",
   "author": "learner20230724",
   "license": "SEE LICENSE IN NOTICE.txt",
   "scripts": {

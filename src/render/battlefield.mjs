@@ -1,4 +1,7 @@
 import { GroundWebGLRenderer } from './ground-webgl.mjs';
+import { GroundLayerCache } from './ground-layer-cache.mjs';
+import { projectViewGround, projectViewSymbol } from './view-camera.mjs';
+import { overviewGroundGeometry } from './overview-ground.mjs';
 import {
   backgroundLayers,
   groundCorners,
@@ -135,6 +138,10 @@ export class BattlefieldRenderer {
     this.loaded = false;
     this.lastRenderStats = null;
     this.fidelity = RENDER_FIDELITY;
+    this.displayGroundCache = null;
+    this.displayGroundStats = null;
+    this.displayImageIds = new WeakMap();
+    this.nextDisplayImageId = 1;
   }
 
   async load() {
@@ -218,9 +225,52 @@ export class BattlefieldRenderer {
     }
   }
 
-  render(snapshot, camera, { clear = true } = {}) {
+  /** Explicitly invalidate after editing an already-uploaded terrain in place. */
+  invalidateDisplayGround() {
+    this.displayGroundCache?.invalidate();
+    this.groundRenderer?.invalidateTexture?.();
+  }
+
+  displayGround(terrain, view) {
+    if (!this.displayGroundCache) this.displayGroundCache = new GroundLayerCache({
+      width: BATTLEFIELD_WIDTH, height: BATTLEFIELD_HEIGHT, canvasFactory: this.canvasFactory,
+    });
+    if (!this.displayImageIds.has(terrain)) this.displayImageIds.set(terrain, this.nextDisplayImageId++);
+    // Exact single-revision cache: no pixel quantization or unbounded per-camera
+    // entries. Units and interpolation are deliberately absent from this key.
+    // The original 13 strips do not reach a zoomed-out observation frustum.
+    // Merge additional decorative grid cells into ONE UV-repeated quad, keeping
+    // the original world anchor/texture period. No gameplay map is enlarged.
+    const coverage = this.groundTiles === ORIGINAL_GROUND_TILES ? overviewGroundGeometry(view,
+      { top: this.manifest.images.bg1 ? 79 : 0 }) : null;
+    const geometry = coverage ? [coverage.vectors, coverage.uvScale]
+      : this.groundTiles.map(tile => tile.map(point => [point.x, point.y]));
+    const key = JSON.stringify([this.displayImageIds.get(terrain), terrain.width, terrain.height,
+      view.centerX, view.centerY, view.zoom, view.width, view.height, view.offsetX, view.offsetY, view.nearPlane,
+      geometry]);
+    const result = this.displayGroundCache.get(key, () => {
+      const grounds = coverage ? (coverage.vectors.length === 4
+        ? [projectViewGround(coverage.vectors, view, coverage.uvScale)] : [])
+        : groundPainterOrder(this.groundTiles).map(vectors => projectViewGround(vectors, view));
+      const surface = this.groundRenderer.draw(terrain, grounds);
+      this.displayGroundStats = this.groundRenderer.lastDrawStats ?? null;
+      return surface;
+    });
+    return { ...result, stats: this.displayGroundStats, coverage: coverage ? {
+      decorativeOnly: true, quads: coverage.vectors.length === 4 ? 1 : 0,
+      equivalentGridCells: coverage.uvScale.u * coverage.uvScale.v, coverageLimited: coverage.coverageLimited,
+    } : null };
+  }
+
+  render(snapshot, camera, { clear = true, displayView = null } = {}) {
     if (!this.loaded) throw new Error('Call and await BattlefieldRenderer.load() before rendering');
     if (!Array.isArray(snapshot)) throw new TypeError('renderSnapshot must be an array');
+    if (displayView && (displayView.kind !== 'observation-view'
+      || displayView.width !== BATTLEFIELD_WIDTH || displayView.height !== BATTLEFIELD_HEIGHT
+      || !['centerX', 'centerY', 'zoom', 'offsetX', 'offsetY', 'nearPlane'].every(key => Number.isFinite(displayView[key]))
+      || displayView.zoom <= 0 || displayView.nearPlane <= 0 || displayView.nearPlane >= 600)) {
+      throw new TypeError('Observation displayView must target the separate 640x400 battlefield');
+    }
     const context = this.context;
     const stats = { spritesDrawn: 0, hidden: 0, emptySymbols: 0,
       missingSprites: [], zeroScale: 0, unsupportedCoordinates: 0 };
@@ -229,12 +279,39 @@ export class BattlefieldRenderer {
       context.beginPath();
       context.rect(0, 0, BATTLEFIELD_WIDTH, BATTLEFIELD_HEIGHT);
       context.clip();
-      if (clear) context.clearRect(0, 0, BATTLEFIELD_WIDTH, BATTLEFIELD_HEIGHT);
-      const grounds = groundPainterOrder(this.groundTiles).map(vectors => projectGround(vectors, camera));
+      if (clear) {
+        context.clearRect(0, 0, BATTLEFIELD_WIDTH, BATTLEFIELD_HEIGHT);
+        if (displayView) {
+          // Zoomed-out source terrain does not cover the whole stage. Leaving
+          // that area transparent makes source-over presentation retain units
+          // from the previous follow view on an opaque display canvas. Give
+          // only the custom view an explicit stage-colour backdrop; this is not
+          // extra terrain or a resized screenshot of the old battlefield.
+          context.save();
+          try {
+            context.globalAlpha = 1;
+            context.globalCompositeOperation = 'source-over';
+            context.fillStyle = '#0e0e0e';
+            context.fillRect(0, 0, BATTLEFIELD_WIDTH, BATTLEFIELD_HEIGHT);
+          } finally { context.restore(); }
+        }
+      }
       const terrain = this.images.get(this.manifest.images.terrain.file);
-      context.drawImage(this.groundRenderer.draw(terrain, grounds), 0, 0);
-      stats.ground = this.groundRenderer.lastDrawStats ?? null;
-      for (const layer of backgroundLayers(camera, {
+      if (displayView) {
+        const ground = this.displayGround(terrain, displayView);
+        context.drawImage(ground.surface, 0, 0);
+        stats.groundCacheHit = ground.hit;
+        stats.ground = ground.stats;
+        stats.groundCoverage = ground.coverage;
+        stats.displayView = { mode: displayView.mode, zoom: displayView.zoom };
+      } else {
+        // No display override means the exact legacy projection/draw sequence.
+        const grounds = groundPainterOrder(this.groundTiles).map(vectors => projectGround(vectors, camera));
+        context.drawImage(this.groundRenderer.draw(terrain, grounds), 0, 0);
+        stats.ground = this.groundRenderer.lastDrawStats ?? null;
+      }
+      const backgroundCamera = displayView ? { x: displayView.centerX } : camera;
+      for (const layer of backgroundLayers(backgroundCamera, {
         bg1: Boolean(this.manifest.images.bg1), bg2: Boolean(this.manifest.images.bg2),
       })) this.drawBackground(layer);
       for (const entity of snapshot) {
@@ -243,7 +320,7 @@ export class BattlefieldRenderer {
         if (!key || entity.displayFrame == null) { stats.emptySymbols += 1; continue; }
         const selection = resolveSpriteFrame(entity, this.manifest);
         if (!selection) { stats.missingSprites.push({ uid: entity.uid, key, frame: entity.displayFrame }); continue; }
-        const projected = projectSymbol(entity, camera);
+        const projected = displayView ? projectViewSymbol(entity, displayView) : projectSymbol(entity, camera);
         if (![projected.x, projected.y, projected.scaleX, projected.scaleY].every(Number.isFinite)) {
           stats.unsupportedCoordinates += 1;
           continue;
@@ -270,6 +347,8 @@ export class BattlefieldRenderer {
 
   dispose() {
     this.groundRenderer?.dispose?.();
+    this.displayGroundCache?.dispose();
+    this.displayGroundCache = null;
     this.images.clear();
     this.surfaces.clear();
     this.patterns.clear();

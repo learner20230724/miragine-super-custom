@@ -2,10 +2,11 @@
  * Real-browser pixel oracle for UI caching, NOT a performance benchmark.
  * Runs isolated test controllers/canvases; production main.mjs is never loaded.
  * Usage: node tools/verify-ui-cache.mjs [--url <loopback-origin>] [--channel msedge]
- *   [--max-channel-difference 0|1]
+ *   [--max-channel-difference 0|1|2]
  * Default: temporarily serve current source on an ephemeral loopback port.
- * Strict integer RGBA equality by default. Explicit tolerance 1 permits only
- * bounded RGB rounding; alpha, hotspots and simulation frame remain exact.
+ * Strict integer RGBA equality by default. Explicit 1 permits bounded RGB
+ * rounding; explicit 2 is custom numeric compositing tolerance, NOT <=1 parity.
+ * Alpha, hotspots and simulation frame must remain exact under either policy.
  */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -28,7 +29,7 @@ export function parseOptions(args) {
     const value = args[++index];
     if (!value || value.startsWith('--')) throw new Error(`Missing value: ${key}`);
     if (key === '--max-channel-difference') {
-      if (!['0', '1'].includes(value)) throw new Error('--max-channel-difference must be exactly 0 or 1');
+      if (!['0', '1', '2'].includes(value)) throw new Error('--max-channel-difference must be exactly 0, 1 or 2');
       options.maxChannelDifference = Number(value);
     } else options[key.slice(2)] = value;
   }
@@ -41,8 +42,15 @@ export function parseOptions(args) {
   return options;
 }
 
+export function comparisonDescription(maxChannelDifference) {
+  if (![0, 1, 2].includes(maxChannelDifference)) throw new Error('maxChannelDifference must be 0, 1 or 2');
+  if (maxChannelDifference === 0) return 'Strict RGBA equality';
+  if (maxChannelDifference === 1) return 'Explicit bounded RGB rounding at most 1/255; exact alpha, hotspots and simulation frame required';
+  return 'custom numeric compositing tolerance: RGB difference at most 2/255; exact alpha, hotspots and simulation frame required; not strict RGBA identity or <=1 bounded rounding';
+}
+
 export async function verifyUiCache({ url, channel = 'msedge', maxChannelDifference = 0 } = {}) {
-  if (![0, 1].includes(maxChannelDifference)) throw new Error('maxChannelDifference must be 0 or 1');
+  const comparison = comparisonDescription(maxChannelDifference);
   fs.mkdirSync(path.dirname(reportFile), { recursive: true });
   let username = '';
   try { username = os.userInfo().username; } catch { /* Optional OS metadata. */ }
@@ -51,8 +59,7 @@ export async function verifyUiCache({ url, channel = 'msedge', maxChannelDiffere
     command: ['node', 'tools/verify-ui-cache.mjs', ...(url ? ['--url', url] : []), '--channel', channel,
       '--max-channel-difference', String(maxChannelDifference)],
     allowedMaxChannelDifference: maxChannelDifference,
-    comparison: maxChannelDifference === 0 ? 'Strict RGBA equality' :
-      'Explicit bounded RGB rounding at most 1/255; exact alpha, hotspots and simulation frame required',
+    comparison,
     scope: 'Independent pixel-only run, not benchmark timing or full-match victory proof', errors: [], cleanup: {} };
   const save = stage => {
     if (stage) proof.progress = stage;
@@ -72,6 +79,8 @@ export async function verifyUiCache({ url, channel = 'msedge', maxChannelDiffere
     }
     proof.origin = url;
     proof.sources = Object.fromEntries(['src/app/view.mjs', 'src/app/controller.mjs',
+      'src/render/battlefield.mjs', 'src/render/view-camera.mjs', 'src/render/projection.mjs',
+      'src/render/ground-webgl.mjs', 'src/render/ground-layer-cache.mjs', 'src/render/overview-ground.mjs',
       'generated/ui/original-graphics.js', 'generated/ui/layout.generated.json', 'config/defaults.generated.json']
       .map(file => [file, createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex')]));
     browserServer = await chromium.launchServer({ channel, headless: true, timeout: 60000 });
@@ -133,15 +142,22 @@ export async function verifyUiCache({ url, channel = 'msedge', maxChannelDiffere
           if (key === 'hud' || key.startsWith('title-background:')) return originalCached(key, draw);
           return draw(this.ctx);
         };
-        // barLayer returns a canvas and its caller drawImages it. Draw directly,
-        // then suppress ONLY that caller's marker: never redraw the whole stage.
-        const barMarker = Object.freeze({ testOnlyAlreadyDrawnBar: true });
+        // Bar/number layers return a canvas and their callers drawImage it.
+        // Draw each callback directly once, then suppress ONLY its marker:
+        // never redraw the whole stage or compare two equally cached counters.
+        const layerMarker = Object.freeze({ testOnlyAlreadyDrawnLayer: true });
+        view.testDirectDraws = { bars: 0, numbers: 0 };
         const nativeDrawImage = view.ctx.drawImage.bind(view.ctx);
         view.ctx.drawImage = function (image, ...args) {
-          if (image === barMarker) return;
+          if (image === layerMarker) return;
           return nativeDrawImage(image, ...args);
         };
-        view.barLayer = function (_name, _ratio, draw) { draw(this.ctx); return barMarker; };
+        view.barLayer = function (_name, _ratio, draw) {
+          this.testDirectDraws.bars++; draw(this.ctx); return layerMarker;
+        };
+        view.numberLayer = function (_name, _revision, draw) {
+          this.testDirectDraws.numbers++; draw(this.ctx); return layerMarker;
+        };
         const originalTooltipLayout = view.tooltipLayout.bind(view);
         view.tooltipLayout = function (id, unit, ctx) {
           this.tooltipLayouts.delete(id);
@@ -216,13 +232,14 @@ export async function verifyUiCache({ url, channel = 'msedge', maxChannelDiffere
         const exactInvariants = alphaChangedPixels === 0 && hotspotsEqual && frameUnchanged;
         const strictRgbaEquality = changedPixels === 0;
         const withinBoundedRounding = maxChannelDifference <= 1 && exactInvariants;
+        const withinConfiguredTolerance = maxChannelDifference <= allowedMaxChannelDifference && exactInvariants;
         cases.push({ name, changedPixels, changedChannels, alphaChangedPixels, maxChannelDifference,
           maximaRGBA: maxima, firstDifferences, worstDifference, hotspotsEqual, frameUnchanged,
-          strictRgbaEquality, withinBoundedRounding,
+          strictRgbaEquality, withinBoundedRounding, withinConfiguredTolerance,
           contextStates: views.map(view => ({ alpha: view.ctx.globalAlpha, composite: view.ctx.globalCompositeOperation,
             matrix: [view.ctx.getTransform().a, view.ctx.getTransform().b, view.ctx.getTransform().c,
               view.ctx.getTransform().d, view.ctx.getTransform().e, view.ctx.getTransform().f] })),
-          pass: maxChannelDifference <= allowedMaxChannelDifference && exactInvariants });
+          pass: withinConfiguredTolerance });
       }
       try {
         resetGame(); compare('HUD static cold'); compare('HUD static warm');
@@ -250,12 +267,16 @@ export async function verifyUiCache({ url, channel = 'msedge', maxChannelDiffere
           strictRgbaEquality: cases.every(value => value.strictRgbaEquality),
           allStrictlyEqual: cases.every(value => value.strictRgbaEquality && value.hotspotsEqual && value.frameUnchanged),
           allWithinBoundedRounding: cases.every(value => value.withinBoundedRounding),
+          allWithinConfiguredTolerance: cases.every(value => value.withinConfiguredTolerance),
           alphaUnchanged: cases.every(value => value.alphaChangedPixels === 0),
           hotspotsEqual: cases.every(value => value.hotspotsEqual),
           frameUnchanged: cases.every(value => value.frameUnchanged),
           worstChannelDifference: Math.max(...cases.map(value => value.maxChannelDifference)),
-          cacheSizes: { static: cached.cache.size, bars: Object.keys(cached.barLayers).length, tooltips: cached.tooltipLayouts.size },
-          baseline: 'New UI caches bypassed; pre-existing HUD/title-background/clipped-strip caches retained; direct bar draw executes exactly once',
+          cacheSizes: { static: cached.cache.size, bars: Object.keys(cached.barLayers).length,
+            numbers: Object.keys(cached.numberLayers).length, tooltips: cached.tooltipLayouts.size },
+          directReference: { callbackDraws: direct.testDirectDraws,
+            numberCacheSlots: Object.keys(direct.numberLayers).length, barCacheSlots: Object.keys(direct.barLayers).length },
+          baseline: 'New UI caches bypassed; pre-existing HUD/title-background/clipped-strip caches retained; direct bar and numeric vector/shadow callbacks each execute exactly once without a cached-layer composite',
           fixtures: 'Isolated UI state fixtures, including synthetic results/HP values; not proof of an organically won match' };
       } finally { for (const renderer of renderers) renderer.dispose(); }
     }, { allowedMaxChannelDifference: maxChannelDifference }), 'paired browser UI pixel comparisons', 180000);
@@ -283,6 +304,7 @@ export async function verifyUiCache({ url, channel = 'msedge', maxChannelDiffere
   console.log(JSON.stringify({ status: safe.status, comparisons: safe.result?.comparisons,
     passed: safe.result?.passed, allowedMaxChannelDifference: safe.allowedMaxChannelDifference,
     strictRgbaEquality: safe.strictRgbaEquality, allWithinBoundedRounding: safe.result?.allWithinBoundedRounding,
+    allWithinConfiguredTolerance: safe.result?.allWithinConfiguredTolerance,
     worstChannelDifference: safe.result?.worstChannelDifference,
     report: '.local/ui-cache-pixels.json', ...(safe.failure ? { failure: safe.failure } : {}) }, null, 2));
   if (safe.status !== 'passed') process.exitCode = 1;
@@ -292,7 +314,7 @@ export async function verifyUiCache({ url, channel = 'msedge', maxChannelDiffere
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const options = parseOptions(process.argv.slice(2));
-    if (options.help) console.log('Usage: node tools/verify-ui-cache.mjs [--url <loopback-origin>] [--channel msedge] [--max-channel-difference 0|1] (default: strict 0)');
+    if (options.help) console.log('Usage: node tools/verify-ui-cache.mjs [--url <loopback-origin>] [--channel msedge] [--max-channel-difference 0|1|2] (default: strict 0; explicit 2: custom numeric compositing tolerance)');
     else await verifyUiCache(options);
   } catch (error) {
     console.error(redact(error.message, [root, os.homedir()])); process.exitCode = 1;
