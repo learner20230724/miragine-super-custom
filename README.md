@@ -12,13 +12,15 @@
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-本页操作说明对应 **v0.4 设置重组源码**；其发布与验证以对应 Release 记录为准，不能拿旧包的测试替代。此前已验证启动包 **[v0.3.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2)** 对应运行代码 `c1dcb85`，只改进原始图片采样、保留旧设置交互；该包的 497 项源码测试、96 项浏览器交互及 96 项 EXE 检查见 [历史交付记录](docs/releases/v0.3.0-preview.2.json)。
+当前已发布 **[v0.4.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.1)**，对应运行源码 `334b25d`。**597 项源码测试、75 项浏览器交互、76 项独立 EXE 检查通过**，Windows／Linux CI 通过；实际验证了 F2 不自动暂停、超量输入钳制、红蓝独立数值、超过 500 个士兵与取消生成、全屏和预设跨两次启动保留。ZIP 全新解压、源码逐字节比对和隐私审计通过；远端 11 个附件的大小与 SHA-256 均与本地一致，未另做完整远端重下载。详见 [本版交付记录](docs/releases/v0.4.0-preview.1.json) 与 Release 附件。
+
+历史 **[v0.3.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2)** 对应 `c1dcb85`，原始图片采样及旧设置交互验证保留在 [该版交付记录](docs/releases/v0.3.0-preview.2.json)，不替代新版验证。
 
 历史 **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.1)** 对应 `75e4c6f`，471 项源码测试、97 项 EXE 交互和额外 10 轮暂停／继续记录保留于 [该版交付记录](docs/releases/v0.3.0-preview.1.json)，不用于替代新版验证。
 
 包外的 `config/custom.json` 可直接编辑，重启生效，设置面板不会改写它。桌面草稿与预设保存在 `userdata/custom-settings.json`，恢复后仍须明确应用；升级前请备份这两个文件。`ui-helper/` 提供可替换绘图源码；`build-info.json` 标明对应源码提交。继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
-历史 v0.3.0-preview.2 源码约 65.6 MB（含约 12.0 MB 运行素材），Windows ZIP 约 170.5 MB，解压约 402.1 MB；不含开发依赖、Git 历史和运行后生成的用户数据。新版大小须以对应发行记录为准。20 倍与 240 FPS 都是目标，不是性能保证；兵量与窗口负载会影响实际结果。
+本版源码约 **65.85 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.56 MB**，解压 **402.17 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证；本次最大化 EXE 的约 1 秒、20 倍目标短测实际约 **7.51 倍**，仅是该窗口／机器条件的样本，不代表持续满兵性能。
 
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 

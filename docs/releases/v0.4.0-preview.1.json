@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "version": "0.4.0-preview.1",
+  "sourceCommit": "334b25d62345db2de80b19e3c7db335c1cc662f8",
+  "sourceTests": {
+    "passed": 597,
+    "failed": 0
+  },
+  "ci": {
+    "status": "passed",
+    "run": "https://github.com/learner20230724/miragine-super-custom/actions/runs/39985971027",
+    "platforms": [
+      "ubuntu-latest / Python 3.13",
+      "windows-latest / Python 3.14"
+    ]
+  },
+  "sourceBrowser": {
+    "passed": 75,
+    "failed": 0,
+    "coreUnchanged": true,
+    "finishedAt": "2026-10-23T16:18:54.664Z"
+  },
+  "portable": {
+    "passed": 76,
+    "failed": 0,
+    "finishedAt": "2026-10-23T16:29:17.374Z",
+    "actualExeLaunches": 2,
+    "closed": true,
+    "persistentPresetAcrossDifferentOrigins": true,
+    "editableFilesUnchanged": true,
+    "nativeExport": {
+      "status": "completed",
+      "filename": "miragine-preset-V4-independent-sides.json",
+      "totalBytes": 36627,
+      "receivedBytes": 36627,
+      "mimeType": "application/json"
+    },
+    "executableSha256": "c134b8c45c1f7da0456fbf6cfbe370a8880d77e80d8a6ca18b2b296930036df9",
+    "appAsarSha256": "828c2a81be1e261782136a487fea75aeed5ed08f14571a4e3135bd2b8f08f8b0"
+  },
+  "featuresVerified": [
+    "F2 opening and closing never auto-pauses or releases manual pause.",
+    "Clear clickable HUD text, speed/pause before a separate view/fullscreen section.",
+    "MAX_SAFE_INTEGER input clamps before confirmation and exceeds int32 without wrapping.",
+    "Independent current resources, crystals and red/blue unit attributes, including paid recruitment.",
+    "Four expanded AI profiles, isolated startup edits and v1 profile migration without activation.",
+    "Finite 501-troop creation, cancellable MAX_SAFE_INTEGER request, direct side/both clearing.",
+    "Native fullscreen, compact crystal framing, wide/narrow dock layout and cross-restart presets."
+  ],
+  "numericPolicy": {
+    "integerMaximum": 9007199254740991,
+    "overflowingInput": "clamps immediately to the field maximum",
+    "integerArithmetic": "safe saturated accounting in the opt-in custom runtime",
+    "imports": "strict validation",
+    "semanticBoundariesRetained": true,
+    "incomeCapIsBalanceCap": false,
+    "manualSpawnGameplayCap": null,
+    "totalTroopGameplayCap": null
+  },
+  "speedSample": {
+    "environment": "Actual foreground maximized Windows portable EXE; short functional sample, not a sustained full-army performance benchmark",
+    "requestedSpeed": 20,
+    "logicalHz": 30,
+    "requestedSimulationHz": 600,
+    "simulationHz": 225.394440230099,
+    "actualSpeed": 7.513148007669967,
+    "elapsedMs": 1064.8000001907349,
+    "frameDelta": 240,
+    "sampleCount": 9,
+    "limits": "Machine, army size, window size and scheduling affect throughput; neither 20x nor 240 FPS is guaranteed."
+  },
+  "integrity": {
+    "status": "passed",
+    "decodedAsarFiles": 777,
+    "exactGitSourceFiles": 775,
+    "externalAuthoredFiles": 26,
+    "sourceDifferencesUnresolved": 0,
+    "productionWhitelistExact": true,
+    "committedSourceInventorySha256": "1ac455ac8bdd58c58e24311b8d167ea11d0e4601c1ebf892f959908c43969d7d",
+    "sourceCheckoutCleanAndMatchesBuildCommitBeforeAndAfter": true,
+    "metadataExceptions": [
+      "generated build-info.json",
+      "package.json with devDependencies, private and scripts removed"
+    ],
+    "originalEffectCopiesByteIdentical": true
+  },
+  "privacy": {
+    "sourceFindings": 0,
+    "runtimeRawFindings": 5,
+    "reviewedUpstreamFindings": 5,
+    "rawArchiveWarnings": 59,
+    "unresolved": 0,
+    "matchedVendorFiles": 71,
+    "matchedNonResourcePeSections": 14,
+    "limits": "Exact pinned upstream findings were reviewed, not suppressed. PE headers, resource section and overlay are not claimed byte-identical."
+  },
+  "archive": {
+    "status": "passed",
+    "filename": "MiragineSuper-Custom-v0.4.0-preview.1-win-x64.zip",
+    "archiveSha256": "d5ff1ea508ba54d734e9b8066e1712cc3c63b0da9445a95373dec9ae39d9061f",
+    "sourceCommit": "334b25d62345db2de80b19e3c7db335c1cc662f8",
+    "filesVerified": 99,
+    "zipBytes": 170560928,
+    "unpackedBytes": 402173835,
+    "zipCrcPassed": true,
+    "buildAndExtractedHashesPassed": true,
+    "freshNoUserData": true,
+    "scope": "Local clean final ZIP extraction; runtime checks are recorded separately under portable. No complete remote redownload performed."
+  },
+  "storage": {
+    "sourceBytesAtRuntimeCommit": 65851431,
+    "sourceFiles": 3055,
+    "runtimeAssetBytes": 11974108,
+    "zipBytes": 170560928,
+    "unpackedBytes": 402173835,
+    "excludes": "Development dependencies, Git history and generated user data"
+  },
+  "unchanged": {
+    "baselineCommit": "404b61a8a214743eace39dbf30d28f85c25d44d1",
+    "scopes": [
+      "src/core/",
+      "src/config/",
+      "generated/",
+      "assets/",
+      "config/"
+    ],
+    "allScopesUnchanged": true,
+    "originalRepositoryCommit": "8554d89713456368378738744bfeb32ec41c2689",
+    "originalRepositoryClean": true,
+    "scopeLimit": "Local original repository HEAD and worktree only; this audit does not query or change remotes."
+  },
+  "remainingLimits": [
+    "20x and 240 FPS are targets, not guaranteed simulation or display throughput.",
+    "No artificial 100/500 spawn cap does not imply unlimited performance: quadratic combat scans and finite memory remain. Verification generated finite troops and cancelled a huge request, not MAX_SAFE_INTEGER live troops.",
+    "Extreme finite floating-point fields retain ordinary precision limits; values are not guaranteed useful gameplay.",
+    "Original scenery and 640x480 logical rendering remain; no full HD art remaster or full Flash pixel parity is claimed.",
+    "Windows executable is unsigned.",
+    "Bundle READMEs describe release state at the runtime source commit; later delivery documentation does not change the built code.",
+    "Archive was independently extracted locally; no full remote redownload has been performed."
+  ],
+  "remoteRelease": {
+    "url": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.1",
+    "published": true,
+    "targetCommit": "334b25d62345db2de80b19e3c7db335c1cc662f8",
+    "allRemoteAssetSizesAndSha256MatchLocal": true,
+    "fullRemoteRedownloadPerformed": false,
+    "releaseId": 422079344,
+    "assetCount": 11
+  }
+}
