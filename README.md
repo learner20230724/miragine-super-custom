@@ -14,6 +14,8 @@
 
 包外的 `config/custom.json` 可直接编辑，重启生效；升级前请备份此文件。`ui-helper/` 提供可替换的绘图源码及说明。`build-info.json` 标明对应源码提交。改版见 [改版验证记录](docs/custom-verification.json)，继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
+本次便携版的实际 EXE 验证、公开附件校验值与存储占用见 [v0.2.0-preview.1 交付记录](docs/releases/v0.2.0-preview.1.json)。240 FPS 是显示上限目标，不是已达到的实测帧率。
+
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 
 ## 本地运行

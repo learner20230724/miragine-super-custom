@@ -31,6 +31,9 @@ if (state.render) {
 - Accepted wall delta is capped at 250 ms **before** multiplication by speed.
   Hidden time adds zero; fractional game remainder is retained. Long stalls still
   discard capped wall time, so the requested speed is not a throughput guarantee.
+  Call `advance(now, { hidden: true })` on both visibility-change edges; checking
+  visibility only inside RAF may count up to the 250 ms cap as elapsed game time
+  after resume. The game adapter wires both edges in `src/app/main.mjs`.
 - Render deadlines retain fractional phase, submit at most once per RAF, and do
   not repay missed display slots. The render target is an average cadence: on a
   non-divisible monitor rate, individual presentation intervals can vary.

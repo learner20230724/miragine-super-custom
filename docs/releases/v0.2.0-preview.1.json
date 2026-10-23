@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "reportedOnClientDate": "2026-10-23",
+  "delivery": "custom-clock-oblique-overview-and-difficulty-label-alignment",
+  "release": {
+    "tag": "v0.2.0-preview.1",
+    "sourceCommit": "c75836061d0d45680c6cec7a1d47527b0f6dd01e",
+    "url": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.2.0-preview.1",
+    "publishedAt": "2026-10-23T12:54:04Z",
+    "isPrerelease": true,
+    "isDraft": false,
+    "zipSha256": "b6517b51377b1b4a43b09843ad9b9db5fcfc3eb22fe4d05773e1f0483e219126",
+    "allApiAssetDigestsMatch": true,
+    "anonymousReleaseHttpStatus": 200,
+    "roundTripDownload": {
+      "status": "not-completed",
+      "downloadedZipEqualsTestedZip": null,
+      "note": "Full round-trip download was attempted then stopped due to slow network; it is not counted as a passing gate. All 14 published GitHub SHA-256 digests/sizes match the local files; the matching ZIP was independently extracted and its actual EXE tested."
+    }
+  },
+  "assets": [
+    {
+      "name": "custom-overview.png",
+      "bytes": 1272784,
+      "sha256": "72e2886e13f78e441dfcb61fb97e9590723cf829505de42cfb7db4ea3ed6a5fa",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/custom-overview.png"
+    },
+    {
+      "name": "MiragineSuper-0.2.0-preview.1-win32-x64.zip",
+      "bytes": 170422250,
+      "sha256": "b6517b51377b1b4a43b09843ad9b9db5fcfc3eb22fe4d05773e1f0483e219126",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/MiragineSuper-0.2.0-preview.1-win32-x64.zip"
+    },
+    {
+      "name": "MiragineSuper-0.2.0-preview.1-win32-x64.zip.inventory.json",
+      "bytes": 16956,
+      "sha256": "d2ff6e6c09c9ab9bbb150021266026872d64891506ac33e4afde92c717635695",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/MiragineSuper-0.2.0-preview.1-win32-x64.zip.inventory.json"
+    },
+    {
+      "name": "overview-coverage-proof.json",
+      "bytes": 391536,
+      "sha256": "5f9f140d4d5fe4bbcb9b19fa575debcd4591d3418d9b0241df02190bb6d4ded6",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/overview-coverage-proof.json"
+    },
+    {
+      "name": "privacy-review.json",
+      "bytes": 28479,
+      "sha256": "2afdb4d951bd267ccab4400c63601cf7fd88fd228d4adb3d14b6bfae50af6849",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/privacy-review.json"
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 1228,
+      "sha256": "7939483761b66c8c04ef6e2172f9edd7f70a038b5add74a3b46cdb9b78978ed9",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/SHA256SUMS"
+    },
+    {
+      "name": "storage.json",
+      "bytes": 1045,
+      "sha256": "1705e0811842cb8e8fe3b910259a2c5998b6c239f6b4a1c89ee1d44fbf73e9ac",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/storage.json"
+    },
+    {
+      "name": "ui-cache-pixels.json",
+      "bytes": 55895,
+      "sha256": "ea71119d10f4c77be92952c170dac8cc3bea186bd97c5991141407ea5b32aa8f",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/ui-cache-pixels.json"
+    },
+    {
+      "name": "verification-custom.json",
+      "bytes": 52718,
+      "sha256": "89ae879c269d8434bb28cda0a61e27cc0b718a905b435d6d304792d1e9e05ec1",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/verification-custom.json"
+    },
+    {
+      "name": "verification-customization.json",
+      "bytes": 57504,
+      "sha256": "eb235a6e9ac5bf0a50e52a7a3c524140eb473ddeb77a9b6f79f6353d5f464eed",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/verification-customization.json"
+    },
+    {
+      "name": "verification-default.json",
+      "bytes": 52633,
+      "sha256": "649971e6587c829b3953fd454bcba7dc0bf50032f9930dae6bd7752a333bb999",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/verification-default.json"
+    },
+    {
+      "name": "verification-preferences.json",
+      "bytes": 5831,
+      "sha256": "af136f830a75ebbd955f1f94dc589ff741791a1ee5f89c3d9493f821e16bbcaa",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/verification-preferences.json"
+    },
+    {
+      "name": "verification-source.json",
+      "bytes": 57273,
+      "sha256": "61c9925b6e7370d276961ac516415674fe36a2291a28f5e486bfc0bd52b2e245",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/verification-source.json"
+    },
+    {
+      "name": "verification-summary.json",
+      "bytes": 3032,
+      "sha256": "7e03a6fdf70b95f2d2570efe9504e6a5b163511ba0603b500ba346d69ef0988b",
+      "url": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.2.0-preview.1/verification-summary.json"
+    }
+  ],
+  "releaseAssetBytes": 172419164,
+  "verification": {
+    "schemaVersion": 1,
+    "version": "0.2.0-preview.1",
+    "sourceCommit": "c75836061d0d45680c6cec7a1d47527b0f6dd01e",
+    "sourceTests": {
+      "passed": 358,
+      "failed": 0
+    },
+    "ci": {
+      "run": "https://github.com/learner20230724/miragine-super-custom/actions/runs/39954720308",
+      "platforms": [
+        "ubuntu-latest / Python 3.13",
+        "windows-latest / Python 3.14"
+      ],
+      "status": "success",
+      "tagRun": "https://github.com/learner20230724/miragine-super-custom/actions/runs/39955900132"
+    },
+    "sourceBrowser": {
+      "checks": 71,
+      "status": "passed"
+    },
+    "portable": {
+      "checks": 63,
+      "status": "passed",
+      "simulation": [
+        {
+          "speed": 1,
+          "simulationHz": 30.246853352250113,
+          "presentationHz": 32.68611571936706
+        },
+        {
+          "speed": 2,
+          "simulationHz": 59.370160041300984,
+          "presentationHz": 23.74806401652039
+        },
+        {
+          "speed": 4,
+          "simulationHz": 119.58942578537204,
+          "presentationHz": 26.629224365163815
+        },
+        {
+          "speed": 8,
+          "simulationHz": 237.7684086452835,
+          "presentationHz": 18.629277378393347
+        }
+      ],
+      "displayCaps": [
+        {
+          "requestedHz": 30,
+          "actualPresentationHz": 30.848840685056185
+        },
+        {
+          "requestedHz": 60,
+          "actualPresentationHz": 32.85758291083936
+        },
+        {
+          "requestedHz": 120,
+          "actualPresentationHz": 33.82880574064582
+        },
+        {
+          "requestedHz": 240,
+          "actualPresentationHz": 34.95425105205433
+        }
+      ],
+      "performanceAcceptance": "Scheduling caps and functional correctness verified; achieved high-refresh performance not established. Sequential natural-game samples are not controlled same-army speed benchmarks."
+    },
+    "configuration": {
+      "default": {
+        "checks": 25,
+        "status": "passed",
+        "cost": 20,
+        "hp": 45,
+        "startingIncome": 500
+      },
+      "customIsolatedFixture": {
+        "checks": 26,
+        "status": "passed",
+        "cost": 7,
+        "hp": 99,
+        "startingIncome": 777,
+        "rightStartingIncome": 777,
+        "note": "Deliberately edited isolated test copy only; not the default distribution."
+      }
+    },
+    "preferences": {
+      "checks": 25,
+      "launches": 2,
+      "status": "passed",
+      "allOwnedClosed": true,
+      "persistedNeverTutorial": true
+    },
+    "uiCache": {
+      "cases": 23,
+      "explicitCustomMaxRgbDifference": 2,
+      "strictRgbaEquality": false,
+      "previousToleranceOnePassed": false,
+      "alphaHotspotsAndFrameExact": true
+    },
+    "privacy": {
+      "rawFindingCount": 5,
+      "unresolved": 0,
+      "decodedAsarFiles": 739,
+      "asarSha256": "0333631058a7cd323401842ffcdb92841c7d707b2fa25074c0d9e38f0fb1cd5d",
+      "report": "privacy-review.json"
+    },
+    "oldRepositoryUnchanged": true,
+    "storage": "storage.json",
+    "limits": "240 FPS is an upper scheduling target, not an achieved display claim. Wall-clock audio/menus, finite original PNG poses, unsigned preview, source-level per-game adapters required."
+  },
+  "storage": {
+    "schemaVersion": 1,
+    "sourceCommit": "c75836061d0d45680c6cec7a1d47527b0f6dd01e",
+    "repository": "https://github.com/learner20230724/miragine-super-custom",
+    "sourceCheckout": {
+      "files": 2993,
+      "bytes": 65132282,
+      "note": "Tracked file contents at the release source commit; excludes Git history, dependencies, caches and generated build directories."
+    },
+    "runtimeAssets": {
+      "files": 678,
+      "bytes": 11927432,
+      "includedInSourceAndPortable": true
+    },
+    "portable": {
+      "archive": "MiragineSuper-0.2.0-preview.1-win32-x64.zip",
+      "zipBytes": 170422250,
+      "unpackedBytes": 401817022,
+      "files": 97,
+      "sha256": "b6517b51377b1b4a43b09843ad9b9db5fcfc3eb22fe4d05773e1f0483e219126",
+      "note": "Unpacked distribution bytes exclude user data created after launch."
+    },
+    "releaseStorageNote": "GitHub stores source history and Release assets separately. Total Release asset bytes are listed in the final public release record; assets already counted inside source/ZIP must not be added again as extra files."
+  },
+  "sourcePreservation": {
+    "originalRepository": "https://github.com/learner20230724/miragine-super-rebuild",
+    "unchangedOriginalHead": "8554d89713456368378738744bfeb32ec41c2689",
+    "originalRepositoryAndReleasesNotModified": true,
+    "unchangedCoreDefaultsAssetsAndRecoveredEvidence": true
+  },
+  "documentationNote": "The runtime is built from the pinned release source commit. Later documentation-only commits record delivery and clarify generic SDK visibility handling; they do not replace the tagged binary."
+}

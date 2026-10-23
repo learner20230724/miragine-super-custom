@@ -14,6 +14,8 @@ Download the Windows x64 preview from the **[custom Releases](https://github.com
 
 Edit the external `config/custom.json` and restart to apply changes; back it up before upgrading. `ui-helper/` contains replaceable drawing source and instructions. `build-info.json` identifies the source commit. See the [custom verification record](docs/custom-verification.json), inherited [baseline verification](docs/verification.json), and [known issues](docs/known-issues.md).
 
+Actual portable-EXE checks, public asset checksums and storage sizes are in the [v0.2.0-preview.1 delivery record](docs/releases/v0.2.0-preview.1.json). The 240 FPS setting is a display target/cap, not an achieved frame-rate claim.
+
 Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents. The never-show-help preference persists across restarts in `userdata/preferences.json`; delete that file to restore the initial tutorial.
 
 ## Run locally

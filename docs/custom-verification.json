@@ -460,5 +460,8 @@
     "Audio and menus use real time; original pose images are not newly generated.",
     "Core behavior evidence is inherited from the baseline; new source tests check same-step state equality across speeds.",
     "Portable binary, archive digest and privacy audit are verified separately and recorded in Release attachments."
-  ]
+  ],
+  "sourceCommit": "c75836061d0d45680c6cec7a1d47527b0f6dd01e",
+  "sourceSha256Scope": "Recorded release source commit, not later documentation-only commits.",
+  "portableReleaseRecord": "releases/v0.2.0-preview.1.json"
 }
