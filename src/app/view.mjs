@@ -12,13 +12,16 @@ export function stageTintProgress(elapsedMs) {
 
 /** The original stage display list, drawn with exported native Canvas graphics. */
 export class OriginalGameView {
-  constructor(canvas, graphics, layout, config) {
+  constructor(canvas, graphics, layout, config, { canvasFactory = () => document.createElement('canvas') } = {}) {
     this.canvas = canvas;
     this.graphics = graphics;
     this.layout = layout;
     this.config = config;
     this.ctx = graphics.attach(canvas);
     this.cache = new Map();
+    this.canvasFactory = canvasFactory;
+    this.barLayers = Object.create(null);
+    this.tooltipLayouts = new Map();
     this.hotspots = [];
     this.hovered = null;
     this.pointer = null;
@@ -39,9 +42,9 @@ export class OriginalGameView {
     this.graphics.draw(symbol, ctx, { matrix: [.05 * scaleX, 0, 0, .05 * scaleY, x, y], frame, time, filter });
   }
 
-  drawInstance(instance, options = {}) {
+  drawInstance(instance, options = {}, ctx = this.ctx) {
     const { x, y } = this.origin(instance);
-    this.draw(instance.symbol, { x, y, ...options });
+    this.draw(instance.symbol, { x, y, ...options }, ctx);
   }
 
   cached(key, draw) {
@@ -50,14 +53,41 @@ export class OriginalGameView {
 
   cachedLayer(key, draw) {
     if (!this.cache.has(key)) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 640;
-      canvas.height = 480;
+      const canvas = this.createLayer();
       const ctx = this.graphics.attach(canvas);
       draw(ctx);
       this.cache.set(key, canvas);
     }
     return this.cache.get(key);
+  }
+
+  createLayer() {
+    const canvas = this.canvasFactory();
+    canvas.width = 640;
+    canvas.height = 480;
+    return canvas;
+  }
+
+  /** Two fixed revision slots; changing health never creates another cache key. */
+  barLayer(name, ratio, draw) {
+    if (name !== 'leftBar' && name !== 'rightBar') throw new RangeError('Unknown health-bar layer');
+    let slot = this.barLayers[name];
+    if (!slot) {
+      const canvas = this.createLayer();
+      slot = this.barLayers[name] = { canvas, ctx: this.graphics.attach(canvas), valid: false, ratio: undefined };
+    }
+    if (!slot.valid || !Object.is(slot.ratio, ratio)) {
+      slot.valid = false;
+      slot.ctx.save();
+      try {
+        slot.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        slot.ctx.clearRect(0, 0, 640, 480);
+        draw(slot.ctx);
+      } finally { slot.ctx.restore(); }
+      slot.ratio = ratio;
+      slot.valid = true;
+    }
+    return slot.canvas;
   }
 
   hotspot(action, instance, { offsetX = 0, offsetY = 0, value, side, id, clip } = {}) {
@@ -135,12 +165,16 @@ export class OriginalGameView {
     });
     for (const [name, hp] of [['leftBar', sim.redBoss], ['rightBar', sim.blueBoss]]) {
       const instance = this.instance(210, name), m = instance.localMatrix;
-      this.draw(instance.symbol, { x: m[4], y: m[5], scaleX: m[0], scaleY: m[3], filter: ({ symbol, matrix }) => {
-        if (symbol === 'sprite131') {
-          const next = [...matrix]; next[0] *= Math.max(0, hp.nowHP / hp.maxHP);
-          return { matrix: next };
-        }
-      } });
+      const ratio = Math.max(0, hp.nowHP / hp.maxHP);
+      const layer = this.barLayer(name, ratio, ctx => {
+        this.draw(instance.symbol, { x: m[4], y: m[5], scaleX: m[0], scaleY: m[3], filter: ({ symbol, matrix }) => {
+          if (symbol === 'sprite131') {
+            const next = [...matrix]; next[0] *= ratio;
+            return { matrix: next };
+          }
+        } }, ctx);
+      });
+      this.ctx.drawImage(layer, 0, 0);
     }
     this.numeric('time', sim.timeSeconds, 22, 'center');
     for (const key of ['leftMoney', 'leftIncome', 'leftPopulation', 'rightMoney', 'rightIncome', 'rightPopulation']) {
@@ -160,9 +194,15 @@ export class OriginalGameView {
       }
     }
     this.minimap(sim);
+    // Both original buttons create full-stage shadow/filter intermediates.
+    // Their filters read only their own transparent child canvases, not the
+    // battlefield. Flatten at the original stage coordinates, then composite
+    // here (after the minimap) to preserve layer order and filter extents.
+    this.cached('game-controls', ctx => {
+      for (const name of ['tipopen', 'bnquit']) this.drawInstance(this.root('game', name), {}, ctx);
+    });
     for (const name of ['tipopen', 'bnquit']) {
       const instance = this.root('game', name);
-      this.drawInstance(instance);
       this.hotspot(name === 'tipopen' ? 'tutorial' : 'quit', instance);
     }
     const music = this.layout.rootFrames.game.placements.find(x => x.symbol === 'sprite25');
@@ -243,6 +283,8 @@ export class OriginalGameView {
     for (const layer of layers) {
       const tutorial = layer === 'tutorial';
       const instance = this.root('game', tutorial ? 'tutorial' : 'quitgame');
+      // Keep these translucent layers on the original drawing context: whole-
+      // overlay flattening changes stacked tutorial/quit compositing pixels.
       this.drawInstance(instance);
       // Only the original filled area intercepts pointers. The tutorial's
       // 500x290 panel leaves bottom cards/map live, whereas quit.shape231 has
@@ -256,20 +298,23 @@ export class OriginalGameView {
 
   results(controller) {
     const instance = this.root('over', 'unit_over');
-    this.drawInstance(instance, { filter: ({ symbol, matrix }) => {
-      if (symbol !== 'sprite247' && symbol !== 'sprite253') return;
-      const win = symbol === 'sprite247', m = [...matrix];
-      m[4] = ((controller.simulation.winner === 'left') === win ? 159 : 484) * 20;
-      return { matrix: m };
-    } });
+    const winner = controller.simulation.winner;
+    // The current results artwork is static. Any future verified Flag.as
+    // implementation must draw its animated layer separately from this cache.
+    this.cached(`results:${winner === 'left' ? 'left' : 'right'}`, ctx => {
+      this.drawInstance(instance, { filter: ({ symbol, matrix }) => {
+        if (symbol !== 'sprite247' && symbol !== 'sprite253') return;
+        const win = symbol === 'sprite247', m = [...matrix];
+        m[4] = ((winner === 'left') === win ? 159 : 484) * 20;
+        return { matrix: m };
+      } }, ctx);
+    });
     const p = this.origin(instance);
     for (const name of ['replay', 'home']) this.hotspot(name, this.instance(258, name), { offsetX: p.x, offsetY: p.y });
   }
 
-  tooltip(controller) {
-    const h = this.hit(this.pointer);
-    if (h?.action !== 'unit') return;
-    const unit = this.config.units[h.id];
+  tooltipLayout(id, unit, ctx) {
+    if (!Number.isInteger(id) || id < 0 || id > 15) throw new RangeError('Unknown tooltip unit');
     // Text and styles match DragonForce.initUI and WowTips.draw. The original
     // tooltip displays the raw weaponSpeed parameter, NOT a fixed attacks/sec.
     const source = [unit.name, `消耗资源: 金币 ${unit.cost} 人力 ${unit.population}`,
@@ -277,8 +322,10 @@ export class OriginalGameView {
       `护甲类型:${unit.armorTypeID === 0 ? '轻甲' : '重甲'}`, `移动速度:${unit.moveSpeed}`, '',
       `攻击力对轻甲:${unit.damage[0]}`, `攻击力对重甲:${unit.damage[1]}`, `攻击距离:${unit.range}`,
       `攻击速度:${unit.weaponSpeed}`];
-    const ctx = this.ctx, lines = [];
-    ctx.save(); ctx.font = '12px Verdana, OriginalYahei, sans-serif';
+    const signature = JSON.stringify([ctx.font, ...source]);
+    const previous = this.tooltipLayouts.get(id);
+    if (previous?.signature === signature) return previous.layout;
+    const lines = [];
     for (let i = 0; i < source.length; i++) {
       let line = '';
       for (const character of String(source[i])) {
@@ -292,6 +339,18 @@ export class OriginalGameView {
     }
     const textWidth = Math.max(...lines.map(line => ctx.measureText(line.text).width));
     const textHeight = lines.length * 17, width = textWidth + 20, height = textHeight + 20;
+    const layout = { lines, textWidth, textHeight, width, height };
+    this.tooltipLayouts.set(id, { signature, layout });
+    return layout;
+  }
+
+  tooltip(controller) {
+    const h = this.hit(this.pointer);
+    if (h?.action !== 'unit') return;
+    const unit = this.config.units[h.id];
+    const ctx = this.ctx;
+    ctx.save(); ctx.font = '12px Verdana, OriginalYahei, sans-serif';
+    const { lines, textWidth, textHeight, width, height } = this.tooltipLayout(h.id, unit, ctx);
     const x = this.pointer.x + textWidth + 20 < 640 ? this.pointer.x + 35 : this.pointer.x - (35 + textWidth + 20);
     const y = Math.min(this.pointer.y - 10, 480 - textHeight - 25);
     ctx.fillStyle = 'rgba(14,14,14,.85)'; ctx.strokeStyle = 'rgba(239,239,239,.8)'; ctx.lineWidth = 1;

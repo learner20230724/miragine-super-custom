@@ -1,6 +1,7 @@
 import { loadConfiguration } from '../config/index.mjs';
 import { validateCoreConfiguration, CORE_PARITY_GATES } from '../core/index.mjs';
 import { fitViewport, clientToGame } from '../platform/viewport.mjs';
+import { FixedStepFrameClock } from '../platform/frame-clock.mjs';
 import { BattlefieldRenderer } from '../render/battlefield.mjs';
 import { GameController } from './controller.mjs';
 import { OriginalGameView } from './view.mjs';
@@ -24,6 +25,7 @@ let ready = false;
 let failure = null;
 let mapDrag = false;
 let pressed = null;
+let frameClock = null;
 
 function cloneFrozen(value) {
   if (Array.isArray(value)) return Object.freeze(value.map(cloneFrozen));
@@ -118,6 +120,7 @@ canvas.addEventListener('pointermove', event => {
   if (!ready) return;
   const p = point(event);
   view.pointer = p;
+  frameClock?.invalidate();
   if (mapDrag) moveMap(p);
   const h = view.hit(p);
   canvas.style.cursor = h && h.action !== 'blocked'
@@ -135,10 +138,13 @@ canvas.addEventListener('pointerup', event => {
   }
   mapDrag = false;
   pressed = null;
+  frameClock?.invalidate();
   if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
 });
 canvas.addEventListener('pointercancel', () => { mapDrag = false; pressed = null; });
-canvas.addEventListener('pointerleave', () => { if (view && !mapDrag) view.pointer = null; });
+canvas.addEventListener('pointerleave', () => {
+  if (view && !mapDrag) { view.pointer = null; frameClock?.invalidate(); }
+});
 canvas.addEventListener('contextmenu', event => event.preventDefault());
 
 const inputCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
@@ -153,7 +159,7 @@ window.addEventListener('keydown', event => {
   if (!ready || !inputCodes.has(event.code)) return;
   event.preventDefault();
   audio.unlock();
-  if (event.code === 'Escape') controller.key(event.code);
+  if (event.code === 'Escape') { controller.key(event.code); frameClock?.invalidate(); }
   else keyboard.keyDown(event.code);
 });
 window.addEventListener('keyup', event => keyboard?.keyUp(event.code));
@@ -183,22 +189,13 @@ try {
   audio.playMusic('mainLoop');
   ready = true;
   canvas.focus({ preventScroll: true });
-  let previous = performance.now(), accumulator = 0;
-  const frameMs = 1000 / config.rules.frameRate;
+  frameClock = new FixedStepFrameClock({ frameRate: config.rules.frameRate, now: performance.now(),
+    step(now) { keyboard.step(); controller.tick(now); } });
   function animate(now) {
     try {
-    // A suspended browser tab does not replay minutes of combat when reopened.
-    const delta = document.hidden ? 0 : Math.min(now - previous, 250);
-    previous = now;
-    accumulator += delta;
-    while (accumulator >= frameMs) {
-      keyboard.step();
-      controller.tick(now);
-      accumulator -= frameMs;
-    }
+    const { render } = frameClock.advance(now, { hidden: document.hidden });
     audio.consume(controller.drainEvents());
-    view.render(controller, renderer);
-    present();
+    if (render) { view.render(controller, renderer); present(); }
     requestAnimationFrame(animate);
     } catch (error) {
       failure = error;

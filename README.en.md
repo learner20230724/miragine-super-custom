@@ -51,6 +51,16 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 
 The menu offers four single-player difficulties and local two-player play. Network multiplayer is not implemented.
 
+### Performance
+
+Combat retains the original **30 Hz** simulation. Static button shadows, unchanged health bars and results panels are cached instead of recalculating full-stage filters at every display refresh. Numbers, pointer tooltips, selection pulses and transitions still update; asset resolution is not reduced. Profile an independently extracted test copy with:
+
+```sh
+node tools/profile-desktop.mjs --dir <test-copy-directory> --out .local/performance.json
+```
+
+The tool enters a real match through the menus and measures both ordinary gameplay and a unit tooltip. Browser callback rate, final canvas submission rate and the 30 Hz simulation rate are recorded separately, not interchangeable FPS claims.
+
 ## Change game parameters
 
 Edit **[`config/custom.json`](config/custom.json)**, then reload the browser or restart the desktop game. Do not edit generated defaults for lasting customizations.
