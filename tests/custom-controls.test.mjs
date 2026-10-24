@@ -119,10 +119,11 @@ test('authoritative updates distinguish target speed, pause, measured simulation
   assert.equal(f.find('[data-action="overview"]').getAttribute('aria-pressed'), 'true');
   assert.equal(f.find('[data-action="follow"]').getAttribute('aria-pressed'), 'false');
   assert.equal(f.find('[data-action="render-rate"]').value, '120');
-  assert.equal(f.find('[data-custom-status]').textContent, '目标 4× · 实际模拟 95.0 步/秒（3.17×） · 实际显示 58.5 帧/秒');
+  assert.equal(f.find('[data-custom-status]').textContent, '实际模拟 95.0 步/秒（3.17×） · 显示 58.5 帧/秒');
+  assert.equal(f.find('[data-custom-status]').getAttribute('aria-label'), '目标 4× · 实际模拟 95.0 步/秒（3.17×） · 实际显示 58.5 帧/秒');
   f.controls.update({ speed: 0, mode: 'manual' });
   assert.equal(f.find('[data-action="pause"]').textContent, '继续游戏');
-  assert.match(f.find('[data-custom-status]').textContent, /目标 0×（暂停）/);
+  assert.match(f.find('[data-custom-status]').getAttribute('aria-label'), /目标 0×（暂停）/);
   assert.equal(f.find('[data-action="overview"]').getAttribute('aria-pressed'), 'false');
   f.controls.destroy();
 });
@@ -190,15 +191,17 @@ test('legacy compatibility geometry remains valid and invalid positions are atom
 test('unchanged updates do not rewrite measured status or selected attributes', () => {
   const f = fixture(), patch = { enabled: true, speed: 2, actualSimulationHz: 59.8, actualDisplayHz: 120.1 };
   f.controls.update(patch); const status = f.find('[data-custom-status]'), button = f.find('[data-speed="2"]');
-  const before = [status.textWrites, button.attributeWrites];
+  const before = [status.textWrites, status.attributeWrites, button.attributeWrites];
   for (let i = 0; i < 100; i++) f.controls.update(patch);
-  assert.deepEqual([status.textWrites, button.attributeWrites], before); f.controls.destroy();
+  assert.deepEqual([status.textWrites, status.attributeWrites, button.attributeWrites], before); f.controls.destroy();
 });
 
 test('formatting preserves zero measurements and reports paused independently from target', () => {
   assert.equal(formatCustomStatus({ speed: 20, actualSimulationHz: 305.2, actualDisplayHz: 59.9 }), '目标 20× · 实际模拟 305.2 步/秒（10.17×） · 实际显示 59.9 帧/秒');
   assert.match(formatCustomStatus({ speed: 4, paused: true, actualSimulationHz: 0 }), /目标 4×（暂停） · 实际模拟 0.0 步\/秒（0.00×）/);
   for (const unknown of [undefined, null, NaN, Infinity, -1]) assert.equal(formatCustomStatus({ actualSimulationHz: unknown, actualDisplayHz: unknown }).match(/测量中/g).length, 2);
+  assert.equal(formatCustomStatus({ speed: 100, actualSimulationHz: 300, actualDisplayHz: 60 }, { compact: true }), '实际模拟 300.0 步/秒（10.00×） · 显示 60.0 帧/秒');
+  assert.equal(formatCustomStatus({ speed: 100 }, { compact: true }), '实际模拟 测量中 · 显示 测量中');
 });
 
 test('destroy removes launcher playback handlers and reference-counted style exactly once', () => {

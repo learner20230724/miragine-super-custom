@@ -19,6 +19,8 @@
 - Regeneration may update generated files only; it must never overwrite custom configuration or extension code.
 - Preserve a faithful default profile. Optional enhancements must be separately enabled and tested.
 - Runtime UI must show only the game. Use the full available viewport with aspect-preserving scaling and correctly transformed pointer coordinates.
+- Every future UI addition or change must match the game's established visual and interaction style. Reuse original buttons, typography, colors, shadows, selection feedback, spacing and menu transitions wherever possible; do not introduce an unrelated web-style skin or redundant on-battle controls. Verify the changed screen visually alongside the original screen before delivery. This standing requirement was explicitly confirmed by the user on 2026-10-25.
+- Dual-AI menus follow the original menu button style: replace the original Credits menu slot with Dual AI (keep three home buttons); each side selects among four visible difficulty buttons, not a dropdown. Keep attribution and license documents. In battle, show only the original-style difficulty text; Space and Enter control left/right recruitment without extra on-battle recruitment buttons.
 - Chinese and English READMEs should focus on features, running, configuration, and development. Keep provenance and legal details in separate documents.
 - Never stage `.local`, caches, complete chat exports, local absolute paths, usernames, tokens, or credentials. Scan public artifacts before publishing.
 - User confirmed on 2026-10-23 that original assets and recovered code may be publicly redistributed. Record attribution and distinguish that permission statement from an original-author open-source release.

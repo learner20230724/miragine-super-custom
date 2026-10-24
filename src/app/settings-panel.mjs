@@ -49,7 +49,6 @@ export const SETTINGS_PANEL_CSS = `
 [data-settings-panel] .ms-footer {padding:10px 14px;flex-shrink:0;background:#1b251f;border-top:1px solid #3b4b3c}
 [data-settings-panel] .ms-footer-actions {display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 [data-settings-panel] .ms-footer-actions button {white-space:nowrap;flex:0 1 auto}
-[data-settings-panel] .ms-apply-help {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
 [data-settings-panel] .ms-dirty {font-size:11px;color:#e4c97f}
 [data-settings-panel] .ms-check {display:flex;align-items:center;gap:7px;font-size:12px}
 [data-settings-panel] .ms-sides {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;container-type:inline-size}
@@ -57,12 +56,13 @@ export const SETTINGS_PANEL_CSS = `
 [data-settings-panel] .ms-side[data-side=right] {border-top-color:#668ed6}
 [data-settings-panel] .ms-side .ms-field {min-width:0;margin-bottom:9px}
 [data-settings-panel] .ms-side input:not([type=checkbox]),[data-settings-panel] .ms-side select {width:100%;min-width:0}
-[data-settings-panel] .ms-field-help {font-size:10px;color:#abbba5;overflow-wrap:anywhere}
+[data-settings-panel] .ms-pools {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px;align-items:start}
+[data-settings-panel] .ms-pools>.ms-field {min-width:0;margin:0;padding:10px;border:1px solid #374838;border-radius:5px;container-type:inline-size}
 [data-settings-panel] .ms-choice {display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
 [data-settings-panel] .ms-choice button[aria-pressed=true] {background:#665d30;border-color:#ccb868}
 [data-settings-panel] .ms-candidates {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 8px}
 [data-settings-panel] .ms-candidates .ms-check {font-size:11px;min-width:0;overflow-wrap:anywhere}
-[data-settings-panel] .ms-live-note {margin-bottom:9px;color:#d5c28a;font-size:11px}
+@container(max-width:220px) {[data-settings-panel] .ms-pools .ms-candidates {grid-template-columns:1fr}}
 [data-settings-panel] [data-spawn-progress] {font-size:12px;overflow-wrap:anywhere}
 @media(max-width:480px) {[data-settings-panel] .ms-sides {grid-template-columns:1fr}}
 [data-settings-panel] [hidden] {display:none!important}
@@ -113,7 +113,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   const cleanups = [], invalid = new Map(), unconfirmed = new Map(), selection = new Map(), tabButtons = new Map();
   const state = () => customization.getState();
   let opened = false, destroyed = false, busy = false, activeTab = 'sandbox', selectedPreset = '', lastPresetSignature = '';
-  let presentation = { paused: false, speed: 1 }, beforeFocus = null, presetNameDraft = '';
+  let beforeFocus = null, presetNameDraft = '';
   let currentTabCleanup = [], liveBindings = [], metadataCache = null, sandboxContext = null, startDifficulty = 1, startSinglePlay = true;
   let startDualAI = false, startingContext = null, startAIOptions = { leftDifficulty: 1, rightDifficulty: 1, applyDifficultyStats: true };
   let saving = 0, saveFailed = false, saveRevision = 0;
@@ -133,7 +133,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   const header = node('header', 'ms-header'), titleBlock = node('div');
   const titleRow = node('div', 'ms-title-row'); titleRow.appendChild(node('h2', '', '自定义规则与沙盒'));
   const dirtyLabel = node('span', 'ms-dirty'); dirtyLabel.setAttribute('data-settings-save-status', ''); titleRow.appendChild(dirtyLabel); titleBlock.appendChild(titleRow);
-  const pauseStatus = node('p', 'ms-muted'); pauseStatus.setAttribute('data-editor-pause-status', ''); titleBlock.appendChild(pauseStatus); header.appendChild(titleBlock);
+  header.appendChild(titleBlock);
   const headerActions = node('div', 'ms-header-actions'); header.appendChild(headerActions); element.appendChild(header);
   function button(parent, text, action, callback, className = '', transient = false) {
     const control = node('button', className, text); control.type = 'button';
@@ -178,15 +178,15 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     await persist(); notice('全部面板参数已恢复原版默认并保存；弹道命中和延寿改进保留。' + reportMessage(report, '当前可改项已生效；开局项从下局生效。'));
   }));
   reset.setAttribute('title', '恢复全部面板参数并应用、保存；保留弹道和延寿改进，不删除预设，不重开或重置当前资源');
-  const applyHelp = node('p', 'ms-apply-help'); applyHelp.setAttribute('data-settings-apply-help', ''); applyHelp.id = 'miragine-settings-apply-help';
-  footerTools.setAttribute('aria-describedby', applyHelp.id);
-  footer.appendChild(footerTools); footer.appendChild(applyHelp); element.appendChild(footer); root.appendChild(element);
+  footer.appendChild(footerTools); element.appendChild(footer); root.appendChild(element);
   const storageNotice = node('p', 'ms-muted'); storageNotice.setAttribute('data-storage-warning', ''); footer.appendChild(storageNotice);
   function option(select, value, text) { const result = node('option', '', text); result.value = String(value); select.appendChild(result); return result; }
   function label(parent, text, input) {
     const result = node('label', 'ms-field'); result.appendChild(node('span', '', text)); result.appendChild(input); parent.appendChild(result); return input;
   }
-  function notice(text, error = false) { if (destroyed) return; setText(message, String(text)); message.setAttribute('data-error', String(error)); }
+  function notice(text, error = false) {
+    if (destroyed) return; setText(message, String(text)); message.setAttribute('data-error', String(error)); message.hidden = !text;
+  }
   function assertValid() { if (invalid.size) throw new Error(`有 ${invalid.size} 项输入无效，请修正红框字段或撤销 / 恢复默认。`); }
   function reportMessage(report, fallback) {
     if (typeof report === 'string') return report;
@@ -259,19 +259,30 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   }
   function fieldSide(field) { return field.side ?? /config\.sides\.(left|right)\./.exec(field.path)?.[1]; }
   function sortedFields(fields) { return [...fields].sort((a, b) => Number(a.path.endsWith('.description')) - Number(b.path.endsWith('.description'))); }
+  function fieldUnit(field) {
+    if (field.type !== 'number' || field.unit === '兵种 ID') return '';
+    const unit = field.unit ?? '';
+    if (field.path.endsWith('.armorTypeID')) return '0 轻甲 / 1 重甲';
+    if (field.label.endsWith('倍率')) return '倍';
+    if (unit.includes('金币 / 轮')) return '金币/轮';
+    if (unit === '金币' || field.path.endsWith('MoneyThreshold')) return '金币';
+    if (unit.startsWith('世界距离 /')) return '世界单位/步';
+    if (unit.startsWith('世界距离')) return '世界单位';
+    if (unit.startsWith('逻辑帧') || unit.startsWith('倒计时帧数')) return '帧';
+    if (unit.startsWith('人口')) return '人口';
+    if (unit.startsWith('个') || field.path.endsWith('CountThreshold')) return '个';
+    return ['HP', '0–1'].includes(unit) ? unit : '';
+  }
   function fieldsInto(parent, fields, { live = false, prefix = '' } = {}) {
     const current = state();
     for (const field of sortedFields(fields)) {
       const sideName = fieldSide(field) === 'left' ? '红方' : fieldSide(field) === 'right' ? '蓝方' : '';
       const input = fieldInput(field, readPath(current.draft, field.path), { live, prefix: prefix || sideName });
-      const wrap = node('div', 'ms-field'), name = node('label', '', !prefix && sideName ? `${sideName} · ${field.label}` : field.label);
+      const unit = fieldUnit(field), title = (!prefix && sideName ? `${sideName} · ${field.label}` : field.label) + (unit ? `（${unit}）` : '');
+      const wrap = node('div', 'ms-field'), name = node('label', '', title);
       // A label cannot contain a group of candidate checkboxes; its name is supplied to the fieldset instead.
       if (field.type !== 'unit-list') { const id = `miragine-field-${field.path.replace(/[^a-zA-Z0-9_-]/g, '-')}`; input.id = id; name.setAttribute('for', id); }
       wrap.appendChild(name); wrap.appendChild(input);
-      const defaultValue = readPath(current.defaults, field.path);
-      const timing = field.apply === '下局' || field.apply?.startsWith('下局') ? '确认后自动保存，下局生效'
-        : `确认后自动保存 · ${field.apply ?? '立即生效'}`;
-      wrap.appendChild(node('span', 'ms-field-help', `${field.unit ? `${field.unit} · ` : ''}原版默认：${Array.isArray(defaultValue) ? defaultValue.join(', ') : formatted(defaultValue)}${timing ? ` · ${timing}` : ''}`));
       parent.appendChild(wrap);
     }
   }
@@ -283,7 +294,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     selector.setAttribute('data-entry-select', 'units'); selector.value = selected;
     on(selector, 'change', () => { selection.set('units', selector.value); renderContent(); }, true);
     label(content, '选择兵种', selector);
-    content.appendChild(node('p', 'ms-live-note', '红蓝独立编辑。按 Enter 或离开输入框后自动保存并应用对应阵营；生命上限变化保留当前生命比例。'));
     const columns = node('div', 'ms-sides'); content.appendChild(columns);
     const entry = entries.find(item => String(item.id) === selected);
     for (const [side, title] of [['left', '红方兵种'], ['right', '蓝方兵种']]) {
@@ -462,7 +472,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
         return side === 'left';
       });
       fieldsInto(sideCard, sideFields, { live: true, prefix: sideLabel });
-      if (dualAI) sideCard.appendChild(node('p', 'ms-live-note', '双 AI 水晶的攻击伤害 / 间隔在“难度 / AI”编辑对应数值档；双方同档时共用该档参数。'));
       const selectedUnit = selectInput((group('units')?.entries ?? []).map(entry => [entry.id, entry.label]), sideLabel + '当前招募兵种');
       selectedUnit.setAttribute('data-live-selected-unit', side); selectedUnit.setAttribute('data-needs-battle', '');
       selectedUnit.value = String(s.battle?.[side]?.selectedUnit ?? 0); label(sideCard, '当前招募兵种', selectedUnit);
@@ -481,10 +490,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       }, true);
     }
     const basics = card(content, '通用基础规则');
-    basics.appendChild(node('p', 'ms-live-note', '按 Enter 或离开输入框后自动保存并应用。打开设置不会暂停游戏。'));
     fieldsInto(basics, groupFields('basic').length ? groupFields('basic') : groupFields('economy').filter(field => field.apply !== '下局'), { live: true });
-    if (dualAI) basics.appendChild(node('p', 'ms-live-note', '双 AI 对战固定启用双方每轮选兵；战场两侧“暂停出兵”只控制本局招募，不暂停已有士兵。单人局的蓝方 AI 开关不影响此模式。'));
-    else {
+    if (!dualAI) {
       const ai = node('input'); ai.type = 'checkbox'; ai.checked = s.battle?.enemyAi ?? true; ai.setAttribute('data-live-ai', ''); ai.setAttribute('data-needs-battle', '');
       const aiLabel = node('label', 'ms-check'); aiLabel.appendChild(ai); aiLabel.appendChild(node('span', '', '蓝方电脑自动选择兵种（单人局）')); basics.appendChild(aiLabel);
       on(ai, 'change', () => {
@@ -517,7 +524,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
         await customization.clearTroops(side); notice('已清除' + sideLabel + '士兵；死亡动画随游戏运行播放，暂停时等待恢复。');
       }, 'ms-danger');
     }
-    spawnCard.appendChild(node('p', 'ms-muted', '生成数量没有额外的沙盒上限，分批执行、可取消；大量士兵依然可能耗尽内存或拖慢战斗。'));
     // Keep combat tools directly under the summary, followed by common rules
     // and then both sides. appendChild also works in lightweight DOM adapters.
     content.appendChild(spawnCard); content.appendChild(basics); content.appendChild(columns);
@@ -539,7 +545,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     }
   }
   function renderStarting() {
-    content.appendChild(node('p', 'ms-summary', '开局资源与倒计时只影响新战局，不改变当前金币、收入、人口或倒计时。底部自动行为开关本局立即生效，后续新局也沿用。'));
     const startCard = card(content, '开始新战局');
     const difficulties = group('difficulties')?.entries ?? [];
     const current = state(), battle = current.battle, context = battleContext(current);
@@ -556,7 +561,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       });
     if (startDualAI) {
       for (const [side, name] of [['left', '红方 AI'], ['right', '蓝方 AI']]) {
-        startCard.appendChild(node('p', 'ms-muted', `${name} 难度`));
+        startCard.appendChild(node('span', 'ms-muted', `${name} 难度`));
         inlineChoices(startCard, difficulties.map(entry => [Number(entry.id), entry.label]), startAIOptions[`${side}Difficulty`],
           `data-start-ai-${side}`, value => { startAIOptions[`${side}Difficulty`] = value; });
       }
@@ -564,9 +569,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       full.setAttribute('data-start-ai-stats', '');
       const line = node('label', 'ms-check'); line.appendChild(full); line.appendChild(node('span', '', '同时使用所选难度的数值加成')); startCard.appendChild(line);
       on(full, 'change', () => { startAIOptions.applyDifficultyStats = full.checked; }, true);
-      startCard.appendChild(node('p', 'ms-muted', '关闭加成时，双方数值都用当前普通档，仅 AI 选兵使用各自所选难度。'));
     } else {
-      startCard.appendChild(node('p', 'ms-muted', '选择新局难度'));
+      startCard.appendChild(node('span', 'ms-muted', '新局难度'));
       inlineChoices(startCard, difficulties.map(entry => [Number(entry.id), entry.label]), startDifficulty, 'data-start-difficulty', value => { startDifficulty = value; });
     }
     button(startCard, '按当前设置开始新战局', 'start-battle', () => action(async () => {
@@ -596,31 +600,26 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     selector.setAttribute('data-entry-select', 'difficulties'); selector.value = String(entry?.id ?? '');
     on(selector, 'change', () => { selection.set('difficulties', selector.value); renderContent(); }, true);
     label(content, 'AI 难度', selector);
-    const groups = [['general', '概率与水晶战斗参数'], ['thresholds', '选兵阈值与强制选兵'], ['candidates', '随机候选与反制表']];
+    const groups = [['general', '战斗参数与选兵规则'], ['random', '随机候选与统计兵种'], ['counter', '反制候选']];
     const category = selection.get('ai-category') ?? 'general';
     const menu = selectInput(groups, 'AI 参数分类'); menu.value = category; menu.setAttribute('data-ai-category', '');
     on(menu, 'change', () => { selection.set('ai-category', menu.value); renderContent(); }, true);
     label(content, '参数分类', menu);
-    content.appendChild(node('p', 'ms-live-note', '选择这里只切换编辑内容，不改变本局难度。参数确认后自动保存；当前难度对应项即时生效，其他难度留待使用该难度时生效。'));
     const section = card(content, entry?.label ?? 'AI'); section.setAttribute('data-ai-difficulty', entry?.id ?? '');
     const fields = (entry?.fields ?? []).filter(field => field.apply !== '下局');
-    if (category === 'candidates') {
-      const candidates = fields.filter(field => field.type === 'unit-list');
-      const chosen = candidates.find(field => field.path.split('.ai.')[1] === selection.get('ai-candidate')) ?? candidates[0];
-      const choices = selectInput(candidates.map(field => {
-        const key = field.path.split('.ai.')[1], id = /^counterChoices\.(\d+)$/.exec(key)?.[1];
+    if (category === 'random' || category === 'counter') {
+      const pools = node('div', 'ms-pools'); pools.setAttribute('data-ai-candidate-pools', category); section.appendChild(pools);
+      const candidates = fields.filter(field => field.type === 'unit-list'
+        && field.path.includes('.ai.counterChoices.') === (category === 'counter'));
+      fieldsInto(pools, candidates.map(field => {
+        const id = /\.ai\.counterChoices\.(\d+)$/.exec(field.path)?.[1];
         const unit = group('units')?.entries?.find(item => String(item.id) === id);
-        return [key, unit ? `对 ${unit.label} 的反制候选` : field.label];
-      }), '选择候选兵种表');
-      choices.setAttribute('data-ai-candidate-select', ''); choices.value = chosen?.path.split('.ai.')[1] ?? '';
-      on(choices, 'change', () => { selection.set('ai-candidate', choices.value); renderContent(); }, true);
-      label(section, '候选表', choices); fieldsInto(section, chosen ? [chosen] : []);
-    } else fieldsInto(section, fields.filter(field => category === 'general' ? !field.path.includes('.ai.')
-      : field.path.includes('.ai.') && field.type !== 'unit-list'));
+        return unit ? { ...field, label: `对 ${unit.label} 的反制候选` } : field;
+      }));
+    } else fieldsInto(section, fields.filter(field => field.type !== 'unit-list'));
   }
   let presetSelect = null, presetName = null;
   function renderPresets() {
-    content.appendChild(node('p', 'ms-summary', '参数确认后已自动保存到本机，无需另点应用。预设是可命名的设置副本；载入 / 导入后直接应用，开局项从下局生效。JSON 用于文件备份或交换，不会覆盖 config/custom.json。'));
     const card = node('section', 'ms-card'), row = node('div', 'ms-row'); card.appendChild(node('h3', '', '本机预设'));
     presetSelect = selectInput([['', '选择已保存预设']], '已保存预设'); presetSelect.setAttribute('data-preset-select', '');
     presetName = node('input'); presetName.type = 'text'; presetName.maxLength = 80; presetName.placeholder = '例如：近战大混战'; presetName.value = presetNameDraft; presetName.setAttribute('aria-label', '预设名称'); presetName.setAttribute('data-preset-name', '');
@@ -669,7 +668,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       }
       notice('已将当前设置导出为 JSON 备份文件；导出不会再次改变战局。');
     }), '', true);
-    transfer.appendChild(fileActions); transfer.appendChild(node('p', 'ms-muted', '预设只包含白名单规则，不包含脚本。倍速、视角与显示上限是本次运行设置，不随预设保存。恢复原版默认不会删除已保存预设。')); content.appendChild(transfer);
+    transfer.appendChild(fileActions); content.appendChild(transfer);
   }
   async function discardEdits(actionName) { return !(unconfirmed.size || invalid.size) || await confirmAction(`${actionName}将替换尚未确认的输入，继续？`); }
   async function savePreset(overwrite) {
@@ -691,9 +690,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     option(presetSelect, '', '选择已保存预设'); for (const preset of presets) option(presetSelect, preset.id, preset.name);
     presetSelect.value = presets.some(preset => preset.id === retained) ? retained : '';
   }
-  function update(patch = {}) {
+  function update() {
     if (destroyed) return;
-    presentation = { ...presentation, ...patch };
     // The collapsed editor performs no profile cloning / DOM traversal in the game loop.
     if (!opened) return;
     const current = state();
@@ -704,9 +702,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       // resulting blur cannot accidentally apply old text to the new match.
       renderContent(); notice('战局已切换，当前状态已刷新；旧战局未确认的输入未应用。'); return;
     }
-    const stopped = Boolean(presentation.paused);
-    const zeroSpeed = presentation.speed === 0;
-    setText(pauseStatus, !current.isBattle ? '打开设置不自动开始对局' : zeroSpeed ? '0 倍暂停中 · 使用时间控制继续' : stopped ? '战斗已暂停 · 可编辑与观察' : '战斗进行中 · 打开设置不暂停');
     const saveState = saving || ['pending', 'saving'].includes(current.storageStatus) ? 'saving'
       : saveFailed || current.storageStatus === 'error' ? 'failed' : current.settingsSaved === false ? 'default' : 'saved';
     setText(dirtyLabel, invalid.size ? `${invalid.size} 项输入无效` : saveState === 'saving' ? '本机保存中…'
@@ -715,9 +710,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     dirtyLabel.setAttribute('data-save-state', saveState);
     undo.disabled = busy || !current.canUndoSettings;
     reset.disabled = busy;
-    setText(applyHelp, !current.isBattle ? '参数按 Enter 或离开输入框后自动保存，从下局使用。无需点击应用。'
-      : '参数按 Enter 或离开输入框后自动保存。可即时生效项应用本局；开局项自动从下局生效。');
-    footerTools.setAttribute('title', applyHelp.textContent);
     for (const control of content.querySelectorAll('[data-needs-battle]')) control.disabled = busy || !current.isBattle;
     for (const binding of liveBindings) {
       const { input, field, read } = binding;
@@ -737,7 +729,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     }
     const summary = content.querySelector('[data-battle-summary]');
     if (summary) {
-      if (!current.isBattle || !current.battle) setText(summary, '尚无进行中的战局。可以从主菜单开始，或按当前设置新建战局。');
+      if (!current.isBattle || !current.battle) setText(summary, '尚无进行中的战局。');
       else {
         const battle = current.battle;
         const line = (side, name) => `${name}：金币 ${formatted(battle[side]?.money)} · 收入 ${formatted(battle[side]?.income)} · 人口 ${formatted(battle[side]?.population)} · 士兵 ${formatted(battle[side]?.units)} · 水晶 HP ${formatted(battle[side]?.baseHp)}`;
@@ -763,7 +755,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   function open() {
     if (destroyed || opened) return; opened = true; beforeFocus = doc.activeElement;
     element.hidden = false; renderContent(); onOpenChange(true); closeButton.focus({ preventScroll: true });
-    notice('打开设置不自动暂停。参数按 Enter 或离开输入框后自动保存：可即时生效项应用本局，开局项从下局生效。预设只是命名副本，JSON 用于备份 / 交换。');
   }
   function close() {
     if (destroyed || !opened) return; opened = false; cancelConfirmation(); element.hidden = true; onOpenChange(false);
@@ -776,7 +767,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     event.stopPropagation(); // Keep native input editing but never leak WASD, IJKL or Enter to the game.
   });
   on(element, 'keyup', event => event.stopPropagation());
-  renderContent(); notice('参数确认后自动保存并生效，无需额外点击应用。');
+  renderContent(); notice('');
   return Object.freeze({ element, open, close, toggle() { if (opened) close(); else open(); },
     get isOpen() { return opened; }, get isConfirming() { return Boolean(awaitingConfirmation); }, update, destroy() {
       if (destroyed) return; close(); destroyed = true; confirmation.destroy();

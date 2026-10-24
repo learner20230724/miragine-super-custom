@@ -8,9 +8,11 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
+**Current source: v0.7.4-preview.1 release candidate, a cleaner dual-AI battlefield.** Each side shows only its original single-player-style difficulty text, such as 简单的难度 (Easy) or 不可战胜的难度 (Impossible), without Red AI/Blue AI prefixes or recruitment buttons. Space toggles red recruitment and Enter toggles blue recruitment, including during global pause without advancing the battle. Parameter inputs and confirmations retain keyboard priority. The title menu keeps three original-style buttons: AI versus AI replaces the former Credits slot, leaving no Credits entry. Each side chooses from four original-style difficulty buttons; full difficulty-stat differences remain enabled by default. P selects Overview, and the physical Semicolon key (; / ；) restores Follow; IJKL, dragging or minimap positioning switches to free observation. The sidebar removes persistent introductions and lengthy field hints while retaining parameters, units, live status and action feedback. AI settings use three categories with every candidate pool in the selected category shown together in a grid. Packaged EXE acceptance and publication are not complete; the 137 settings/smooth-zoom and 66 dual-AI checks for 0.7.3 validate only that earlier build and are not claimed as rerun here.
+
 **Current published version: [v0.7.3-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.3-preview.1), smooth U/O zoom and AI-versus-AI matches.** Hold U/O to zoom continuously using real time: the zoom factor doubles/halves each real second. Release stops zoom, without waiting for operating-system key repeat; holding both keys cancels out. Observation zoom remains available during combat pause, while parameter editing and confirmation dialogs retain keyboard priority. Battlefield-center anchoring, pointer-anchored wheel zoom, 30 Hz logic and unit-selection repeat are unchanged. The portable build passed two independent EXE acceptance suites and is published; see this version’s delivery record below.
 
-**New AI-versus-AI mode:** a separate title-menu entry selects one of the four existing AI levels for each side. Both decide after each income settlement; manual selection lasts until the next round, and each side's recruitment can be paused/resumed independently without freezing existing soldiers, the opponent or the game clock. Original single/local-two-player entries remain. See [difficulty-stat coupling and mirrored defaults](docs/custom-settings.en.md#ai-versus-ai-matches).
+**AI-versus-AI controls:** the third title-menu button opens four original single-player-style difficulty buttons for each side. Both decide after each income settlement; manual selection lasts until the next round, and Space/Enter independently pause/resume red/blue recruitment without freezing existing soldiers, the opponent or the game clock. Original single/local-two-player entries remain. See [difficulty-stat coupling and mirrored defaults](docs/custom-settings.en.md#ai-versus-ai-matches).
 
 **Previously published: [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1), keyboard zoom and controlled selection repeat.** U zooms in and O zooms out around the battlefield center; the wheel retains its pointer anchor. WASD/arrow selection moves immediately on keydown, then repeats every 85 ms after an initial 350 ms hold, independent of game speed. Parameter editing and in-app confirmations retain keyboard priority. The portable build is verified and published; see this version's delivery record below. Parameter rules and approved improvements are unchanged.
 
@@ -129,11 +131,13 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 |---|---|
 | Click a unit | Select unit |
 | W / A / S / D | Left selection cursor: immediate first move, then every 85 ms after holding for 350 ms |
-| Space | Toggle left player's recruitment |
-| Arrow keys, Enter | Right selection in local two-player mode: immediate first move, then every 85 ms after 350 ms; Enter toggles recruitment |
-| Drag the minimap | Move the camera |
-| I / J / K / L | World-coordinate pan: approximately four real seconds between default crystals, independent of zoom/speed |
+| Space | Toggle left player's recruitment; also works during global pause in dual-AI mode |
+| Arrow keys, Enter | Right selection in local two-player / dual-AI mode: immediate first move, then every 85 ms after 350 ms; Enter toggles recruitment, including during global pause in dual-AI mode |
+| Drag the minimap | Position the camera and cancel Follow, entering free observation |
+| I / J / K / L | Cancel Follow and pan in world coordinates: approximately four real seconds between default crystals, independent of zoom/speed |
 | U / O | Hold for smooth battlefield-centered zoom: 2× / 0.5× per real second; release stops, both keys cancel |
+| P | Compact battlefield overview, not window fullscreen |
+| Semicolon ; / ； | Restore Follow using the physical Semicolon key; English/Chinese punctuation both work |
 | Wheel over the battlefield | Pointer-anchored zoom; map boundaries take priority at limits |
 | Left / right / middle mouse drag | Pan into free observation; left dragging starts after 5 CSS pixels, so simple clicks do not pan |
 | F2 | The only settings entry: opening/closing never changes pause state. Side-by-side in wide windows, stacked in narrow windows |
@@ -147,7 +151,7 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 
 Selection repeat uses **real time**, not 0.1×/1×/100× game time. Releasing the relevant key, losing window focus or pausing stops repeats, preventing stale held selection after resumption. Parameter inputs and in-app confirmations keep keyboard priority; typing there does not select troops or trigger U/O zoom.
 
-The menu offers four single-player difficulties and local two-player play. Network multiplayer is not implemented.
+The three main-menu entries offer single-player, local two-player and AI-versus-AI play. The former Credits slot now opens AI versus AI. Network multiplayer is not implemented.
 
 ### Performance
 
@@ -184,7 +188,7 @@ The tool enters a real match through the menus and measures both ordinary gamepl
 - **Current match / basics:** match/difficulty summary, spawning and clearing, common rules, then red/blue current status. Money, round income, remaining manpower and current crystal HP are live operations, not a battle save.
 - **Units:** independent red/blue columns for the same unit; confirmed edits apply automatically without changing the other side.
 - **Starting settings:** initial money, income, first-round manpower and wait time take effect next match, without resetting current resources or countdown. The separate Automation (this and later matches) recruitment/AI switches act now and are saved for later matches.
-- **Difficulty / AI:** select a difficulty and parameter category to edit probabilities, thresholds, candidate sets, counter tables and forced selection. Only the current difficulty's values affect this match; editing another profile never switches difficulty.
+- **Difficulty / AI:** select the difficulty to edit, then Combat parameters and selection rules (战斗参数与选兵规则), Random pools and counted units (随机候选与统计兵种), or Counter pools (反制候选). All pools in the chosen category appear together in a grid instead of a second pool dropdown. Only the current difficulty's values affect this match; editing another profile never switches difficulty.
 - **Presets / files:** saving a preset makes a named copy, not a required application step. Loading/importing automatically applies and saves settings; JSON export is for backup or exchange.
 
 Integer resources support **9,007,199,254,740,991**, JavaScript's safe-integer maximum. Excess input clamps immediately instead of failing only after confirmation. The **round-income cap** governs income gained through recruitment, not the held-money balance. The old 100-per-action / 500-total spawn caps are removed: generation runs in cancellable batches with progress. This does not mean arbitrary army sizes fit in memory or run smoothly. See the **[custom settings guide](docs/custom-settings.en.md)** for limits and application timing.

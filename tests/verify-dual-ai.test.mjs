@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseDualAIOptions, dualAIInventoryRows, summarizeDualAI, chooseDifficultyByKeyboard } from '../tools/verify-dual-ai.mjs';
+import { parseDualAIOptions, dualAIInventoryRows, summarizeDualAI, chooseDifficultyByHotspot, recruitmentKey } from '../tools/verify-dual-ai.mjs';
 
 const args = ['--dir', 'dist/dual-ai-qa-example/MiragineSuper', '--archive', 'artifacts/release-example.zip',
-  '--version', '0.7.3-preview.1', '--commit', 'a'.repeat(40)];
+  '--version', '0.7.4-preview.1', '--commit', 'a'.repeat(40)];
 
 test('dual AI verifier requires exact release provenance and ignored report destinations', () => {
-  assert.equal(parseDualAIOptions(args).out, '.local/dual-ai-qa.json');
-  assert.equal(parseDualAIOptions(args).screenshotPrefix, 'dual-ai');
+  assert.equal(parseDualAIOptions(args).out, '.local/dual-ai-clean-hud-qa.json');
+  assert.equal(parseDualAIOptions(args).screenshotPrefix, 'dual-ai-clean-hud');
   assert.equal(parseDualAIOptions([...args, '--out', 'output/dual-ai.json', '--screenshot-prefix', 'dual-ai-isolated']).out, 'output/dual-ai.json');
   assert.throws(() => parseDualAIOptions(args.slice(0, -2)), /Supply/);
   assert.throws(() => parseDualAIOptions(args.filter((_, index) => index !== 2 && index !== 3)), /Supply/);
@@ -87,42 +87,32 @@ test('dual AI observation does not claim AI state for original single or two-pla
   assert.throws(() => summarizeDualAI(invalid), /Missing/);
 });
 
-function keyboardFixture({ accepts = true } = {}) {
-  const calls = []; let value = 2;
-  const control = {
-    async click() { calls.push(['click']); },
-    async inputValue() { calls.push(['inputValue']); return String(value); },
-    async selectOption() { throw new Error('No synthetic selectOption'); },
-    async evaluate() { throw new Error('No DOM property writes'); },
-  };
-  const page = {
-    locator(selector) { calls.push(['locator', selector]); return control; },
-    keyboard: { async press(key) {
-      calls.push(['press', key]);
-      if (accepts && key === 'Home') value = 0;
-      if (accepts && key === 'ArrowDown') value++;
-    } },
-  };
-  return { page, calls };
-}
-
 for (const side of ['left', 'right']) for (const value of [0, 1, 2, 3]) {
-  test(`dual AI ${side} difficulty ${value} uses only a mouse click and real keyboard navigation`, async () => {
-    const fixture = keyboardFixture(); await chooseDifficultyByKeyboard({ page: fixture.page, side, value });
-    assert.deepEqual(fixture.calls, [['locator', `[data-dual-ai-difficulty="${side}"]`], ['click'], ['press', 'Home'],
-      ...Array.from({ length: value }, () => ['press', 'ArrowDown']), ['press', 'Enter'], ['press', 'Tab'], ['inputValue']]);
+  test(`dual AI ${side} difficulty ${value} clicks the original-style button hotspot`, async () => {
+    const calls = [], hit = async (...args) => calls.push(args);
+    await chooseDifficultyByHotspot({ hit, side, value });
+    assert.deepEqual(calls, [[`dual-ai-${side}`, { value }]]);
   });
 }
 
-test('dual AI keyboard selection refuses invalid difficulty before any input', async () => {
+test('dual AI difficulty selection refuses invalid difficulty before any input', async () => {
   for (const { side, value } of [{ side: 'other', value: 0 }, { side: 'left', value: -1 }, { side: 'right', value: 4 },
     { side: 'left', value: '1' }, { side: 'right', value: 1.5 }]) {
-    const fixture = keyboardFixture(); await assert.rejects(chooseDifficultyByKeyboard({ page: fixture.page, side, value }), /Difficulty/);
-    assert.deepEqual(fixture.calls, []);
+    const calls = [], hit = async (...args) => calls.push(args);
+    await assert.rejects(chooseDifficultyByHotspot({ hit, side, value }), /Difficulty/);
+    assert.deepEqual(calls, []);
   }
 });
 
-test('dual AI keyboard selection fails if the real control ignored its keyboard input', async () => {
-  const fixture = keyboardFixture({ accepts: false });
-  await assert.rejects(chooseDifficultyByKeyboard({ page: fixture.page, side: 'left', value: 3 }), /did not apply/);
+test('dual AI difficulty selection requires a real hotspot helper and propagates click failures', async () => {
+  await assert.rejects(chooseDifficultyByHotspot({ side: 'left', value: 1 }), /genuine mapped/);
+  const failure = new Error('No visible original-style button');
+  await assert.rejects(chooseDifficultyByHotspot({ hit() { throw failure; }, side: 'left', value: 3 }), error => error === failure);
+});
+
+test('dual AI recruitment acceptance binds red to physical Space and blue to Enter', () => {
+  assert.equal(recruitmentKey('left'), 'Space'); assert.equal(recruitmentKey('right'), 'Enter');
+  for (const side of [undefined, null, '', 'red', 'blue', 0, 1, 'Space', 'Enter']) {
+    assert.throws(() => recruitmentKey(side), /left or right/);
+  }
 });

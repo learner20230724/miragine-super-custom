@@ -15,7 +15,7 @@ const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 export function parseAutoOptions(args) {
-  const options = { out: '.local/smooth-zoom-qa.json', screenshotPrefix: 'settings-auto-smooth-zoom' };
+  const options = { out: '.local/compact-settings-qa.json', screenshotPrefix: 'settings-compact' };
   const keys = { '--dir': 'dir', '--version': 'version', '--commit': 'commit', '--out': 'out', '--screenshot-prefix': 'screenshotPrefix' };
   for (let i = 0; i < args.length; i += 2) {
     const key = keys[args[i]], value = args[i + 1];
@@ -25,7 +25,7 @@ export function parseAutoOptions(args) {
   }
   expect(options.dir && /^\d+\.\d+\.\d+(?:-[A-Za-z0-9.-]+)?$/.test(options.version ?? '') && /^[a-f0-9]{40}$/.test(options.commit ?? ''),
     'Supply an isolated portable directory, exact version and 40-character source commit');
-  expect(/^settings-auto(?:-[a-z0-9]+)*$/.test(options.screenshotPrefix), 'Use a safe settings-auto screenshot prefix');
+  expect(/^settings-(?:auto|compact)(?:-[a-z0-9]+)*$/.test(options.screenshotPrefix), 'Use a safe settings-auto or settings-compact screenshot prefix');
   reportPath(options.out);
   return options;
 }
@@ -35,6 +35,18 @@ export function correctAutoOrder(parts) {
   return Array.isArray(parts) && parts.length >= 4 && parts[0]?.kind === 'summary'
     && parts[1]?.title === '生成士兵 / 清场' && parts[2]?.title === '通用基础规则'
     && same(parts[3]?.sides, ['left', 'right']);
+}
+
+/** Actual screen geometry, not a CSS-class assertion: rates belong beside the title. */
+export function compactTimeHeader({ title, status, container, commonParent, helpVisible, captionVisible } = {}) {
+  const valid = rectangle => rectangle && ['x', 'y', 'width', 'height'].every(key => Number.isFinite(rectangle[key]))
+    && rectangle.width > 0 && rectangle.height > 0;
+  if (![title, status, container].every(valid) || !commonParent || helpVisible || captionVisible) return false;
+  const contained = rectangle => rectangle.x >= container.x - 1 && rectangle.y >= container.y - 1
+    && rectangle.x + rectangle.width <= container.x + container.width + 1
+    && rectangle.y + rectangle.height <= container.y + container.height + 1;
+  return contained(title) && contained(status) && status.x >= title.x + title.width - 1
+    && Math.min(title.y + title.height, status.y + status.height) > Math.max(title.y, status.y);
 }
 
 /** Targets above hardware throughput are recorded honestly, never asserted as achieved. */
@@ -253,6 +265,104 @@ export async function verifySettingsAuto(options) {
     const s = await state(), units = s.customization.unitDetails?.left;
     check(units?.length === 1 && units[0].spawnHP === hp && units[0].range === range * s.customization.editor.applied.config.rules.rangeMultiplier,
       name, units);
+  }
+  async function compactSettingsAcceptance() {
+    const panel = page.locator('[data-settings-panel]');
+    check(await page.locator('[data-editor-pause-status], [data-settings-apply-help]').count() === 0
+      && await panel.locator('.ms-header .ms-muted').count() === 0,
+    'compact header contains no repeated pause status or permanent application instructions');
+    check(await page.locator('[data-settings-message]').evaluate(node => node.hidden),
+      'compact fresh settings footer has no permanent explanatory message');
+    const header = await page.locator('[data-control-header="time"]').evaluate(node => {
+      const title = node.querySelector('h3'), status = node.querySelector('[data-custom-status]');
+      const rectangle = element => { const r = element.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; };
+      const section = node.closest('[data-control-section]');
+      return { title: title && rectangle(title), status: status && rectangle(status), container: rectangle(node),
+        commonParent: Boolean(title && status && title.parentElement === status.parentElement),
+        helpVisible: [...section.querySelectorAll('.custom-controls-help')].some(element => !element.hidden),
+        captionVisible: Boolean(section.querySelector('.custom-controls-caption')),
+        text: status?.textContent, accessible: status?.getAttribute('aria-label') };
+    });
+    check(compactTimeHeader(header), 'compact actual-rate status is visibly beside the time title without wrapping below it', header);
+    check(/模拟.*显示/.test(header.text) && /目标|暂停/.test(header.accessible)
+      && !/逻辑步长保持|按住 U|每秒 ×2|松开即停/.test(await page.locator('[data-playback-controls]').innerText()),
+    'compact time and view controls remove permanent captions while retaining accessible timing details');
+    await screenshot('compact-header');
+    const previousSpeed = (await state()).customization.speed;
+    await typeByMouseAndKeyboard({ page, control: playback('speed-number'), value: 'not-a-number' });
+    check(await page.locator('[data-speed-help]').isVisible() && /请输入数字/.test(await page.locator('[data-speed-help]').textContent())
+      && (await state()).customization.speed === previousSpeed,
+    'compact invalid speed still shows a specific error and preserves the active speed');
+    await typeByMouseAndKeyboard({ page, control: playback('speed-number'), value: 1 }); await pause();
+    check(await page.locator('[data-speed-help]').isHidden(), 'compact speed error disappears after a valid real keyboard correction');
+
+    for (const tab of ['sandbox', 'units', 'starting']) {
+      await act(`tab-${tab}`).click();
+      check(await panel.locator('.ms-field-help, .ms-live-note, [data-settings-apply-help]').count() === 0,
+        `compact ${tab} tab removes repeated help without removing editable fields`);
+      check(await panel.locator('[data-field-path], [data-live-field-path]').count() > 0,
+        `compact ${tab} tab retains real configuration inputs`);
+    }
+    await screenshot('compact-starting');
+    const untouched = (await model()).next;
+    await act('tab-difficulties').click();
+    const difficulty = page.locator('[data-entry-select="difficulties"]'), category = page.locator('[data-ai-category]');
+    check(await difficulty.evaluate(node => node.tagName === 'SELECT' && node.options.length === 4),
+      'compact AI difficulty uses one selector containing all four original difficulties');
+    check(same(await category.locator('option').evaluateAll(nodes => nodes.map(node => node.value)), ['general', 'random', 'counter']),
+      'compact AI categories are exactly merged general, random and counter');
+    await difficulty.selectOption('2'); await difficulty.selectOption('1'); await category.selectOption('general');
+    check(await field('config.difficulties.1.ai.forceOverlordMoneyThreshold').count() === 1
+      && await field('config.difficulties.1.ai.forcedUnitId').count() === 1 && await panel.locator('.ms-field-help, .ms-live-note').count() === 0,
+    'compact general AI category retains the merged thresholds and selected-unit rules without repeated help');
+    const valueAt = (profile, fieldPath) => fieldPath.split('.').reduce((value, part) => value?.[part], profile);
+    for (const [group, count, fieldPath] of [
+      ['random', 4, 'config.difficulties.1.ai.randomLowIncomeChoices'],
+      ['counter', 15, 'config.difficulties.1.ai.counterChoices.1'],
+    ]) {
+      await category.selectOption(group);
+      const pools = page.locator(`[data-ai-candidate-pools="${group}"]`), cards = pools.locator(':scope > .ms-field');
+      check(await cards.count() === count && await pools.locator('select').count() === 0
+        && await page.locator('[data-ai-candidate-select]').count() === 0,
+      `compact ${group} exposes all candidate pools as cards instead of a hidden pool sub-selector`);
+      const geometry = await cards.evaluateAll(nodes => nodes.slice(0, 2).map(node => {
+        const r = node.getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height };
+      }));
+      check(geometry.length === 2 && geometry.every(rect => rect.width >= 120)
+        && Math.abs(geometry[0].y - geometry[1].y) < 2 && geometry[1].x >= geometry[0].x + geometry[0].width,
+      `compact ${group} candidate cards are actually side by side at the default dock width`, geometry);
+      const identities = await pools.locator('[data-field-path]').evaluateAll(nodes => nodes.map(node => ({
+        path: node.dataset.fieldPath, units: [...node.querySelectorAll('[data-candidate-unit]')].map(input => Number(input.dataset.candidateUnit)),
+      })));
+      check(identities.length === count && new Set(identities.map(item => item.path)).size === count
+        && identities.every(item => same(item.units, Array.from({ length: 16 }, (_, index) => index))),
+      `compact ${group} cards retain unique original configuration paths and all sixteen unit identities`, identities);
+      check(same((await model()).next, untouched), `compact ${group} navigation and relabeling never silently alter saved parameters`);
+      const before = valueAt(untouched, fieldPath), changeId = Array.from({ length: 16 }, (_, index) => index).find(id => !before.includes(id)) ?? before[0];
+      const checked = !before.includes(changeId), expected = checked ? [...before, changeId].sort((a, b) => a - b) : before.filter(id => id !== changeId);
+      await field(fieldPath).locator(`[data-candidate-unit="${changeId}"]`).setChecked(checked); await saved();
+      const changed = await model(), expectedProfile = structuredClone(untouched);
+      const parts = fieldPath.split('.'), leaf = parts.pop(); parts.reduce((value, part) => value[part], expectedProfile)[leaf] = expected;
+      check(same(valueAt(changed.applied, fieldPath), expected) && same(changed.next, expectedProfile),
+        `compact ${group} real candidate checkbox immediately applies only its own pool without losing other parameters`);
+      const disk = JSON.parse(fs.readFileSync(path.join(directory, 'userdata/custom-settings.json'), 'utf8'));
+      check(same(JSON.parse(disk.entries['miragine-custom-draft-v1']).profile, expectedProfile),
+        `compact ${group} candidate edit is durably saved to the portable profile without Apply`);
+      await category.selectOption('general'); await category.selectOption(group);
+      check(await field(fieldPath).locator(`[data-candidate-unit="${changeId}"]`).isChecked() === checked,
+        `compact ${group} candidate edit remains selected after leaving and returning to the category`);
+      await cards.first().scrollIntoViewIfNeeded(); await screenshot(`compact-ai-${group}`);
+      if (group === 'counter') {
+        const last = pools.locator('[data-candidate-unit]').last(); await last.scrollIntoViewIfNeeded();
+        check(await last.isVisible() && await last.evaluate(node => {
+          const r = node.getBoundingClientRect(), panel = node.closest('[data-settings-panel]').getBoundingClientRect();
+          return r.y >= panel.y && r.bottom <= panel.bottom && r.x >= panel.x && r.right <= panel.right;
+        }), 'compact final counter pool remains reachable by real sidebar scrolling without clipping');
+      }
+      await act('undo').click(); await saved();
+      check(same((await model()).next, untouched), `compact ${group} undo restores precisely the original candidate pool`);
+    }
+    await act('tab-sandbox').click();
   }
   async function keyboardAcceptance() {
     // Run after the complete settings/focus acceptance, in a separate real
@@ -513,6 +623,7 @@ export async function verifySettingsAuto(options) {
       'obsolete manual Apply and unsaved-draft message are absent');
     check(await page.locator('[data-settings-save-status]').getAttribute('data-save-state') !== 'failed', 'fresh installation does not falsely report a save failure');
     await screenshot('homepage');
+    await compactSettingsAcceptance();
     for (const side of ['left', 'right']) await page.locator(`[data-live-recruitment="${side}"]`).uncheck();
     await page.locator('[data-live-ai]').uncheck(); await act('clear-all').click();
     for (const target of [50, 100]) {
@@ -532,7 +643,7 @@ export async function verifySettingsAuto(options) {
     await speed(1); await pause();
 
     await act('tab-difficulties').click(); await page.locator('[data-entry-select="difficulties"]').selectOption('1');
-    await page.locator('[data-ai-category]').selectOption('thresholds');
+    await page.locator('[data-ai-category]').selectOption('general');
     const aiPath = 'config.difficulties.1.ai.forceOverlordMoneyThreshold';
     await edit(aiPath, 0, 'Tab'); await edit('config.difficulties.1.ai.forcedUnitId', 7);
     check((await model()).applied.config.difficulties[1].ai.forceOverlordMoneyThreshold === 0, 'AI threshold confirms automatically without an Apply button');

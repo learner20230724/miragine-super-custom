@@ -103,6 +103,15 @@
       "evidence": "docs/releases/v0.1.0-preview.2.json"
     }
   ],
+  "customizationRequirements": [
+    {
+      "id": "C15",
+      "confirmedAt": "2026-10-25",
+      "requirement": "今后任何界面改动都必须与游戏整体视觉和交互风格相匹配，优先复用原版按钮、字体、颜色、阴影、选择反馈、间距和菜单过渡，不引入不协调的网页皮肤或多余战场控件。",
+      "acceptance": "交付前对照原界面进行截图验收；双 AI 替换首页原制作人员按钮的位置并沿用原菜单风格，仍保留三个首页按钮，作者与许可文档保留；左右各四个可见难度按钮，不用下拉框；战场仅显示原样难度文字，空格和回车分别控制双方招募，无额外出兵按钮。",
+      "status": "standing-requirement"
+    }
+  ],
   "delivery": {
     "tag": "v0.1.0-preview.2",
     "sourceCommit": "7d01d07fbf519d3f16af05237043c846673ca2a7",

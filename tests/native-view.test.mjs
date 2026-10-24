@@ -110,7 +110,7 @@ test('native menu and results are cached at final density and release on phase c
   const background = h.view.cache.get('title-background');
   assert.deepEqual([background.width, background.height], [1280, 960]);
   assert.equal(h.view.cache.has('title-button-strip'), false);
-  assert.equal([...h.view.cache.keys()].filter(key => key.startsWith('title-button:')).length, 3);
+  assert.equal([...h.view.cache.keys()].filter(key => key.startsWith('title-button:')).length, 2);
   assert.ok([...h.view.cache].filter(([key]) => key.startsWith('title-button:')).every(([, canvas]) => canvas.width <= 520 && canvas.height <= 157));
   const old = [...h.canvases];
   h.game();
@@ -160,7 +160,7 @@ test('recovered static HUD bounds are contained in native cached strips without 
 test('title cold filters use tight native components instead of a full-stage target', () => {
   const h = harness(3180, 2385); h.view.render(h.controller, h.renderer);
   const filtered = h.calls.filter(call => call.type === 'draw' && ['sprite75', 'sprite55'].includes(call.symbol));
-  assert.equal(filtered.length, 6, 'logo, music, heading and only three visible menu buttons');
+  assert.equal(filtered.length, 5, 'logo, music, heading and two unchanged menu buttons; the credits slot is now the custom AI entry');
   for (const call of filtered) {
     const canvas = h.canvases.find(canvas => canvas.id === call.id);
     assert.ok(canvas.width * canvas.height < h.canvas.width * h.canvas.height * .07,
@@ -173,7 +173,7 @@ test('title cold filters use tight native components instead of a full-stage tar
 
 test('title component selectors retain the original parent effects while excluding all unrelated siblings', () => {
   const h = harness(); h.view.render(h.controller, h.renderer);
-  for (const [id, symbols] of [[75, ['sprite12', 'sprite25', 'text31']], [55, ['button40', 'button42', 'button50']]]) {
+  for (const [id, symbols] of [[75, ['sprite12', 'sprite25', 'text31']], [55, ['button40', 'button42']]]) {
     const calls = h.calls.filter(call => call.type === 'draw' && call.symbol === `sprite${id}`);
     assert.equal(calls.length, symbols.length);
     for (const [index, call] of calls.entries()) {
@@ -205,10 +205,10 @@ test('title mute updates only its small music component and does not rebuild the
 test('menu slide lazily builds the original difficulty column without changing clipping or hot areas', () => {
   const h = harness(1920, 1440); h.view.render(h.controller, h.renderer);
   assert.deepEqual([...h.view.cache.keys()].filter(key => key.startsWith('title-button:')),
-    ['title-button:button40', 'title-button:button42', 'title-button:button50']);
+    ['title-button:button40', 'title-button:button42']);
   h.controller.panel = 'difficulty'; h.view.menuFrom = h.view.menuTarget = -43; h.view.menuStarted = 0;
   h.view.render(h.controller, h.renderer);
-  assert.equal([...h.view.cache.keys()].filter(key => key.startsWith('title-button:')).length, 8);
+  assert.equal([...h.view.cache.keys()].filter(key => key.startsWith('title-button:')).length, 7);
   assert.deepEqual(h.view.hotspots.filter(h => h.action === 'difficulty').map(h => h.value), [0, 1, 2, 3]);
   const easy = h.view.hotspots.find(h => h.action === 'difficulty' && h.value === 0);
   assert.equal(easy.left, 213); assert.equal(easy.right, 440);

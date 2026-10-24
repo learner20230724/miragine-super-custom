@@ -87,13 +87,16 @@ test('dock is collapsed by default; open/close restores focus without pausing or
   assert.doesNotMatch(f.find('[data-settings-save-status]').textContent, /草稿/); f.panel.destroy();
 });
 
-test('metadata supplies real editable sections with defaults and no invented building/skill/wave tabs', () => {
+test('metadata supplies real editable sections with labels and no invented building/skill/wave tabs', () => {
   const f = fixture(); f.panel.open();
   for (const id of ['sandbox', 'units', 'starting', 'difficulties', 'presets']) assert.ok(f.button(`tab-${id}`));
   assert.equal(f.button('tab-buildings'), null); assert.equal(f.button('tab-waves'), null);
   f.tab('units'); assert.equal(f.find('[data-entry-select="units"]').children.length, 16);
   assert.equal(f.find('[data-field-path="config.sides.left.units.0.weaponSpeed"]').value, '0.83');
-  assert.match(f.panel.element.textContent, /原版默认/); assert.match(f.panel.element.textContent, /向零取整/);
+  assert.match(f.panel.element.textContent, /基础攻击间隔/);
+  assert.match(f.find('[data-field-path="config.sides.left.units.0.hp"]').parentNode.textContent, /HP/);
+  assert.match(f.find('[data-field-path="config.sides.left.units.0.range"]').parentNode.textContent, /世界单位/);
+  assert.doesNotMatch(f.find('[role="tabpanel"]').textContent, /原版默认：|应用后生效|确认后自动/);
   f.tab('difficulties'); assert.ok(f.find('[data-entry-select="difficulties"]'));
   for (let id = 0; id < 4; id++) {
     const select=f.find('[data-entry-select="difficulties"]');select.value=String(id);select.fire('change');
@@ -238,10 +241,11 @@ test('return to main menu ends the battle without silently restoring original ru
   f.controller.startMatch(true, 1); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7); f.panel.destroy();
 });
 
-test('editor observes pause status without a duplicated header control or changing the host pause state', () => {
+test('editor omits a redundant pause-status row without changing the host pause state', () => {
   const f = fixture(); f.panel.open(); assert.equal(f.button('pause'), null); assert.equal(f.panel.isOpen, true);
   f.panel.update({ paused: true, speed: 0 }); assert.equal(f.button('pause'), null);
-  assert.match(f.find('[data-editor-pause-status]').textContent, /0 倍暂停.*时间控制/);
+  assert.equal(f.find('[data-editor-pause-status]'), null);
+  assert.ok(f.find('[data-settings-save-status]')); assert.equal(f.find('header').querySelectorAll('p').length, 0);
   assert.deepEqual(f.events, [['open', true]]); f.panel.destroy();
 });
 

@@ -6,6 +6,43 @@ const selectionOpposites = new Map([
   ['ArrowUp', 'ArrowDown'], ['ArrowDown', 'ArrowUp'], ['ArrowLeft', 'ArrowRight'], ['ArrowRight', 'ArrowLeft'],
 ]);
 
+/** Match-local, immediate toggles for the opt-in AI-vs-AI observer mode. */
+export class DualAIRecruitmentKeyboard {
+  constructor(controller) {
+    this.controller = controller;
+    this.scene = controller.simulation;
+    this.held = new Set();
+  }
+
+  clear() {
+    this.held.clear();
+    this.scene = this.controller.simulation;
+  }
+
+  sync({ blocked = false } = {}) {
+    const c = this.controller;
+    if (this.scene !== c.simulation) this.clear();
+    if (blocked || c.phase !== 'game' || c.matchMode !== 'ai-vs-ai' || c.overlay
+      || !c.simulation?.running || c.simulation.winner) {
+      this.clear();
+      return false;
+    }
+    return true;
+  }
+
+  keyDown(event, context = {}) {
+    const side = event.code === 'Space' ? 'left' : event.code === 'Enter' ? 'right' : null;
+    if (!side || !this.sync(context) || event.repeat || this.held.has(event.code)) return false;
+    this.held.add(event.code);
+    const selection = side === 'left' ? this.controller.simulation.p1 : this.controller.simulation.p2;
+    // Deliberately bypass frame-sampled key bindings: a short tap or paused
+    // world must still change this match's recruitment, without ticking it.
+    return this.controller.setRecruitment(side, selection[2] !== 1);
+  }
+
+  keyUp(event) { this.held.delete(event.code); }
+}
+
 /** Native KeyManager bindings, with opt-in wall-time selection repetition in the custom app. */
 export class OriginalKeyboard {
   constructor(controller, { repeatSelection = false } = {}) {

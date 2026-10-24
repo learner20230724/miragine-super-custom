@@ -271,7 +271,7 @@ test('main new-match synchronization preserves a fresh held U and a complete sho
     let clears = 0;
     const sandbox = vm.createContext({ ready: true, observedSimulation: previous,
       controller: { phase: 'game', simulation: next, config: { rules: { mapWidth: 4500, mapHeight: 800, baseSpawnInset: 300 } } },
-      keyboard: { clear() { clears++; } }, cameraZoom: f.keys, observer: f.camera, ViewCamera,
+      keyboard: { clear() { clears++; } }, dualAIRecruitment: null, cameraZoom: f.keys, observer: f.camera, ViewCamera,
       presentation: { camera: previous.renderCamera }, view: { releaseRasterCaches() {}, tooltipLayouts: new Map() },
       resetMeasurements() {}, performance: { now: () => 5 }, document: { hidden: false, activeElement: null },
       settings: { isConfirming: false }, uiOwnsGameKeyboard });

@@ -7,7 +7,6 @@ import { MiraginePlayback } from './playback-session.mjs';
 import { ViewCamera } from '../render/view-camera.mjs';
 import { createCustomControls } from './custom-controls.mjs';
 import { createGameTextControls } from './game-text-controls.mjs';
-import { createDualAIControls } from './dual-ai-controls.mjs';
 import { createSettingsPanel } from './settings-panel.mjs';
 import { createCustomization } from '../customization/index.mjs';
 import { createCustomStorage } from './custom-storage.mjs';
@@ -15,8 +14,9 @@ import { BattlefieldRenderer } from '../render/battlefield.mjs';
 import { GameController } from './controller.mjs';
 import { OriginalGameView } from './view.mjs';
 import { GameAudio } from './audio.mjs';
-import { OriginalKeyboard } from './input.mjs';
+import { OriginalKeyboard, DualAIRecruitmentKeyboard } from './input.mjs';
 import { CameraZoomKeyboard, uiOwnsGameKeyboard, wheelZoomFactor } from './camera-keyboard.mjs';
+import { applyCameraShortcut } from './camera-shortcuts.mjs';
 import { beginPointerDrag, advancePointerDrag } from './pointer-drag.mjs';
 import { createPreferenceStorage } from './preferences.mjs';
 
@@ -33,6 +33,7 @@ let view = null;
 let renderer = null;
 let audio = null;
 let keyboard = null;
+let dualAIRecruitment = null;
 let ready = false;
 let failure = null;
 let mapDrag = false;
@@ -41,7 +42,6 @@ let frameClock = null;
 let observer = null;
 let controls = null;
 let gameTextControls = null;
-let dualAIControls = null;
 let desktopFullscreen = false;
 let settings = null;
 let customization = null;
@@ -90,10 +90,6 @@ function updateControls(now = performance.now(), force = false) {
     actualSimulationHz: measured.simulationHz, actualDisplayHz: measured.presentationHz });
   gameTextControls?.update({ visible: ready && controller.phase === 'game' && !controller.overlay && !controller.simulation?.winner,
     paused: frameClock.paused, fit });
-  dualAIControls?.update({ ready, fit, phase: controller.phase, panel: controller.panel, overlay: controller.overlay,
-    confirming: settings?.isConfirming ?? false, winner: controller.simulation?.winner,
-    matchMode: controller.matchMode, options: controller.dualAIOptions,
-    recruitment: controller.simulation ? { left: controller.simulation.p1[2] === 1, right: controller.simulation.p2[2] === 1 } : null });
   settings?.update({ paused: frameClock.paused, speed: frameClock.speed,
     battle: controller.phase === 'game' && !controller.simulation?.winner });
 }
@@ -101,6 +97,9 @@ function updateControls(now = performance.now(), force = false) {
 // The settings drawer does not own time. Only explicit pause / speed controls do.
 function clearGameInput() {
   keyboard?.clear(); cameraKeys.clear(); cameraZoom.clear(); mapDrag = false; pressed = null; cameraDrag = null;
+  dualAIRecruitment?.clear();
+  if (view) view.pressed = null;
+  frameClock?.invalidate();
 }
 
 function syncObservationScene(now = performance.now()) {
@@ -108,6 +107,7 @@ function syncObservationScene(now = performance.now()) {
   observedSimulation = controller.simulation;
   keyboard.clear();
   cameraZoom.clear();
+  dualAIRecruitment?.clear();
   // Input may arrive after a new match was created but before its first RAF.
   // Synchronize here too, so that RAF cannot erase a fresh press or short tap.
   presentation = null;
@@ -170,13 +170,6 @@ async function toggleFullscreen() {
 function gameTextAction(action) {
   if (!ready || controller.phase !== 'game' || controller.overlay) return;
   clearGameInput(); audio.unlock(); controller.action(action);
-  audio.setMuted(controller.muted); audio.consume(controller.drainEvents());
-  frameClock.invalidate(); updateControls(performance.now(), true);
-}
-
-function dualAIAction(action, value) {
-  if (!ready || controller.overlay || settings?.isConfirming) return;
-  clearGameInput(); audio.unlock(); controller.action(action, value);
   audio.setMuted(controller.muted); audio.consume(controller.drainEvents());
   frameClock.invalidate(); updateControls(performance.now(), true);
 }
@@ -299,7 +292,7 @@ function point(event) { return fit ? clientToGame(event.clientX, event.clientY, 
 function sameHotspot(a, b) { return a && b && a.action === b.action && a.value === b.value && a.side === b.side && a.id === b.id; }
 
 function moveMap(p) {
-  if (!p || controller?.phase !== 'game') return;
+  if (!p || !cameraZoomContext().enabled) return;
   const map = view.hotspots.find(h => h.action === 'minimap');
   if (map) {
     const camera = presentation?.camera ?? controller.simulation.renderCamera;
@@ -318,10 +311,12 @@ function battlefieldPoint(p) {
 canvas.addEventListener('pointerdown', event => {
   if (!ready) return;
   const p = point(event);
+  view.pointer = p;
   if ([0, 1, 2].includes(event.button) && battlefieldPoint(p)) {
     event.preventDefault();
     audio.unlock();
     canvas.focus({ preventScroll: true });
+    pressed = null; view.pressed = null;
     cameraDrag = beginPointerDrag(event, p);
     canvas.setPointerCapture(event.pointerId);
     return;
@@ -331,6 +326,8 @@ canvas.addEventListener('pointerdown', event => {
   audio.unlock();
   canvas.focus({ preventScroll: true });
   pressed = view.hit(p);
+  view.pressed = pressed;
+  frameClock.invalidate();
   if (pressed?.action === 'minimap') { mapDrag = true; moveMap(p); }
   canvas.setPointerCapture(event.pointerId);
 });
@@ -341,7 +338,7 @@ canvas.addEventListener('pointermove', event => {
   view.pointer = p;
   frameClock?.invalidate();
   const drag = advancePointerDrag(cameraDrag, event, p);
-  if (drag) {
+  if (drag && cameraZoomContext().enabled) {
     observer.panBy(drag.x, drag.y,
       presentation?.camera ?? controller.simulation.renderCamera, drag.pivot);
     updateControls(performance.now(), true);
@@ -356,6 +353,7 @@ canvas.addEventListener('pointerup', event => {
   if (!ready) return;
   if (cameraDrag?.pointerId === event.pointerId) {
     cameraDrag = null;
+    pressed = null; view.pressed = null;
     canvas.style.cursor = 'default';
     frameClock.invalidate();
     if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
@@ -371,12 +369,21 @@ canvas.addEventListener('pointerup', event => {
   }
   mapDrag = false;
   pressed = null;
+  view.pressed = null;
   frameClock?.invalidate();
   updateControls(performance.now(), true);
   if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
 });
-canvas.addEventListener('pointercancel', () => { mapDrag = false; pressed = null; cameraDrag = null; });
-canvas.addEventListener('lostpointercapture', () => { mapDrag = false; pressed = null; cameraDrag = null; });
+canvas.addEventListener('pointercancel', () => {
+  mapDrag = false; pressed = null; cameraDrag = null;
+  if (view) view.pressed = null;
+  frameClock?.invalidate();
+});
+canvas.addEventListener('lostpointercapture', () => {
+  mapDrag = false; pressed = null; cameraDrag = null;
+  if (view) view.pressed = null;
+  frameClock?.invalidate();
+});
 canvas.addEventListener('pointerleave', () => {
   if (view && !mapDrag) { view.pointer = null; frameClock?.invalidate(); }
 });
@@ -425,6 +432,13 @@ window.addEventListener('keydown', event => {
     event.preventDefault();
     return; // Focus may return to canvas before this physical key is released.
   }
+  if (applyCameraShortcut(event, { ...cameraZoomContext(), snapshot: controller?.simulation?.renderSnapshot })) {
+    event.preventDefault();
+    audio.unlock();
+    frameClock.invalidate();
+    updateControls(performance.now(), true);
+    return;
+  }
   if (cameraZoom.keyDown(event, performance.now(), cameraZoomContext())) {
     event.preventDefault();
     audio.unlock();
@@ -436,7 +450,20 @@ window.addEventListener('keydown', event => {
   event.preventDefault();
   audio.unlock();
   if (['KeyI', 'KeyJ', 'KeyK', 'KeyL'].includes(event.code)) {
-    cameraKeys.add(event.code);
+    if (cameraZoomContext().enabled && !event.ctrlKey && !event.altKey && !event.metaKey && !event.isComposing
+      && (!event.repeat || cameraKeys.has(event.code))) cameraKeys.add(event.code);
+    return;
+  }
+  if (controller.matchMode === 'ai-vs-ai' && (event.code === 'Space' || event.code === 'Enter')) {
+    // This is a match-local UI choice, including while globally paused. Do not
+    // also enqueue the original frame binding or advance the simulation.
+    syncObservationScene();
+    if (dualAIRecruitment.keyDown(event, { blocked: document.hidden || Boolean(settings?.isConfirming)
+      || uiOwnsGameKeyboard(document.activeElement) })) {
+      audio.consume(controller.drainEvents());
+      frameClock.invalidate();
+      updateControls(performance.now(), true);
+    }
     return;
   }
   if (event.code === 'Escape') { controller.key(event.code); frameClock?.invalidate(); }
@@ -446,14 +473,20 @@ window.addEventListener('keydown', event => {
 }, { capture: true });
 window.addEventListener('keyup', event => {
   if (cameraZoom.keyUp(event, performance.now(), cameraZoomContext())) frameClock?.invalidate();
+  dualAIRecruitment?.keyUp(event);
   toolbarKeys.delete(event.code); keyboard?.keyUp(event.code); cameraKeys.delete(event.code);
 }, { capture: true });
 settingsRoot.addEventListener('focusin', clearGameInput);
 document.addEventListener('focusin', event => {
   if (uiOwnsGameKeyboard(event.target)) cameraZoom.clear();
+  if (uiOwnsGameKeyboard(event.target)) cameraKeys.clear();
+  if (uiOwnsGameKeyboard(event.target)) dualAIRecruitment?.clear();
 });
 window.addEventListener('blur', () => {
   keyboard?.clear(); cameraKeys.clear(); cameraZoom.clear(); toolbarKeys.clear(); mapDrag = false; pressed = null; cameraDrag = null;
+  dualAIRecruitment?.clear();
+  if (view) view.pressed = null;
+  frameClock?.invalidate();
 });
 document.addEventListener('visibilitychange', () => {
   const now = performance.now();
@@ -463,7 +496,9 @@ document.addEventListener('visibilitychange', () => {
   frameClock?.invalidate();
   previousWallNow = now;
   keyboard?.clear(); cameraKeys.clear(); cameraZoom.clear(); toolbarKeys.clear();
+  dualAIRecruitment?.clear();
   mapDrag = false; pressed = null; cameraDrag = null;
+  if (view) view.pressed = null;
   resetMeasurements(now);
   updateControls(now, true);
 });
@@ -490,6 +525,7 @@ try {
     createSimulation: options => installCombatHitRules(installCasterProjectileLifetime(new MiragineSimulation(options))) });
   customization = createCustomization({ controller, defaults, initialConfig: config, storage: customStorage, autoRestore: true, onChange: customChanged });
   keyboard = new OriginalKeyboard(controller, { repeatSelection: true });
+  dualAIRecruitment = new DualAIRecruitmentKeyboard(controller);
   view = new OriginalGameView(canvas, globalThis.OriginalGraphics, layout, config, { crispTextControls: true });
   view.setRenderSize(fit.backingWidth, fit.backingHeight);
   // Sample unchanged original PNGs directly into native window pixels.
@@ -518,7 +554,6 @@ try {
     onOpenChange: setEditorOpen });
   gameTextControls = createGameTextControls({ root: stage, onPause: togglePause,
     onHelp() { gameTextAction('tutorial'); }, onQuit() { gameTextAction('quit'); } });
-  dualAIControls = createDualAIControls({ root: stage, onAction: dualAIAction });
   if (typeof window.miragineDesktop?.onFullscreenChanged === 'function') {
     window.miragineDesktop.onFullscreenChanged(value => { desktopFullscreen = value; resize(); });
     desktopFullscreen = await window.miragineDesktop.getFullscreen();
@@ -537,6 +572,10 @@ try {
     const wallDelta = previousWallNow === null || document.hidden ? 0 : Math.max(0, Math.min(250, now - previousWallNow));
     previousWallNow = now;
     syncObservationScene(now);
+    // Keep the immediate AI-mode toggle latch across paused RAFs. The original
+    // sampled keyboard below intentionally clears its own holds while paused.
+    dualAIRecruitment.sync({ blocked: document.hidden || Boolean(settings?.isConfirming)
+      || uiOwnsGameKeyboard(document.activeElement) });
     // Selection repeat is wall-time input, once per RAF, never one step per
     // accelerated simulation tick. An open drawer alone does not own keys.
     if (keyboard.advanceSelection(now, { blocked: document.hidden || frameClock.paused || Boolean(controller.overlay)
@@ -547,11 +586,15 @@ try {
     // must clear held zoom, rather than leaking an interval into the next scene.
     if (cameraZoom.advance(performance.now(), cameraZoomContext())) frameClock.invalidate();
     // Cross the crystal-to-crystal span in four real seconds at every zoom/speed.
-    if (controller.phase === 'game' && !controller.overlay && cameraKeys.size) {
+    if (cameraKeys.size && !cameraZoomContext().enabled) cameraKeys.clear();
+    if (cameraKeys.size) {
       const x = Number(cameraKeys.has('KeyL')) - Number(cameraKeys.has('KeyJ'));
       const y = Number(cameraKeys.has('KeyK')) - Number(cameraKeys.has('KeyI'));
+      const previousMode = observer.mode;
       observer.keyboardPan(x, y, wallDelta,
         presentation?.camera ?? controller.simulation.renderCamera);
+      if (observer.mode !== previousMode) updateControls(now, true);
+      frameClock.invalidate();
     }
     if (render) {
       const renderStarted = performance.now();

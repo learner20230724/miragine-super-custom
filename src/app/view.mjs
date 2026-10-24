@@ -1,3 +1,5 @@
+import { dualAIMenuItems, menuButtonState } from './dual-ai-controls.mjs';
+
 /** TweenLite.defaultEase: 1 - (1 - time / duration)^2. homebtns uses .5 seconds. */
 export function menuSlidePosition(from, to, elapsedMs) {
   const ratio = Math.max(0, Math.min(1, elapsedMs / 500));
@@ -21,6 +23,7 @@ const HUD_DYNAMIC_SYMBOLS = new Set(['sprite209', 'sprite134', 'sprite135',
 
 const NUMBER_FIELDS = Object.freeze(['time', 'leftMoney', 'leftIncome', 'leftPopulation',
   'rightMoney', 'rightIncome', 'rightPopulation']);
+const DIFFICULTY_LABELS = Object.freeze(['简单的难度', '普通的难度', '困难的难度', '不可战胜的难度']);
 
 /** The original stage display list, drawn with exported native Canvas graphics. */
 export class OriginalGameView {
@@ -45,6 +48,9 @@ export class OriginalGameView {
     this.hotspots = [];
     this.hovered = null;
     this.pointer = null;
+    this.pressed = null;
+    this.titlePanel = null;
+    this.dualMenuStarted = 0;
     this.lastStats = null;
     this.previousPhase = null;
     this.transitionStarted = null;
@@ -278,6 +284,9 @@ export class OriginalGameView {
 
   title(controller) {
     const difficulty = controller.panel === 'difficulty';
+    const now = performance.now();
+    if (controller.panel === 'dual-ai' && this.titlePanel !== 'dual-ai') this.dualMenuStarted = now;
+    this.titlePanel = controller.panel;
     const parts = this.sprite(75).placements;
     // This recovered bitmap background has no parent effect. Drawing the
     // whole parent would run four expensive screen-sized shadow/glow passes,
@@ -288,15 +297,16 @@ export class OriginalGameView {
       const key = symbol === 'sprite25' ? `title-component:${symbol}:${controller.muted}` : `title-component:${symbol}`;
       this.compositeLayer(this.titleComponent(75, placement, key, controller.muted));
     }
-    // The custom mirrored-AI setup is native DOM, replacing only this menu
-    // column. Do not leave original single/dual hotspots live underneath it.
+    // The custom setup reuses original button artwork and stage hit areas;
+    // no second DOM skin or hidden original menu remains underneath it.
     if (controller.panel === 'dual-ai' && !controller.overlay) {
+      this.dualAIMenu(controller, now);
       this.hotspot('music', parts.find(part => part.symbol === 'sprite25'));
       return;
     }
     const buttons = this.instance(75, 'bn_btns');
     const p = this.origin(buttons);
-    const now = performance.now(), target = difficulty ? -43 : 212;
+    const target = difficulty ? -43 : 212;
     const current = menuSlidePosition(this.menuFrom, this.menuTarget, now - this.menuStarted);
     if (target !== this.menuTarget) {
       this.menuFrom = current;
@@ -311,6 +321,9 @@ export class OriginalGameView {
     this.ctx.rect(clip.xMin, clip.yMin, clip.xMax - clip.xMin, clip.yMax - clip.yMin);
     this.ctx.clip();
     for (const placement of this.sprite(55).placements) {
+      // The user replaces the original credits slot; do not leave its old
+      // words or hit target underneath the new entry, even during a slide.
+      if (placement.name === 'bn_creadit') continue;
       const b = placement.bounds;
       const padding = Math.max(16, 16 / Math.min(this.scaleX, this.scaleY));
       if (b.xMax + padding + offsetX <= clip.xMin || b.xMin - padding + offsetX >= clip.xMax ||
@@ -321,6 +334,7 @@ export class OriginalGameView {
       const layer = this.titleComponent(55, placement, `title-button:${placement.symbol}`);
       this.compositeLayer(layer, offsetX, p.y);
     }
+    if (!controller.overlay) this.dualAIMenu({ ...controller, panel: 'home' }, now, offsetX - 212);
     this.ctx.restore();
     if (controller.overlay === 'credits') {
       const credit = this.instance(75, 'credit');
@@ -329,7 +343,7 @@ export class OriginalGameView {
       this.hotspot('credits-back', this.instance(74, 'back'), { offsetX: p.x, offsetY: p.y });
       return;
     }
-    for (const [name, action] of [['bn_sp', 'single'], ['bn_mp', 'dual'], ['bn_creadit', 'credits']]) {
+    for (const [name, action] of [['bn_sp', 'single'], ['bn_mp', 'dual']]) {
       this.hotspot(action, this.instance(55, name), { offsetX, offsetY: p.y, clip });
     }
     for (const [name, value] of [['bn_easy', 0], ['bn_normal', 1], ['bn_hard', 2], ['bn_abyss', 3]]) {
@@ -338,6 +352,89 @@ export class OriginalGameView {
     this.hotspot('back', this.instance(55, 'bn_back'), { offsetX, offsetY: p.y, clip });
     const music = this.sprite(75).placements.find(x => x.symbol === 'sprite25');
     this.hotspot('music', music);
+  }
+
+  originalMenuButton(item) {
+    const source = this.instance(55, item.source);
+    const state = menuButtonState(item, this.pointer, this.pressed);
+    if (item.source === 'bn_back') {
+      // Back's shadow is on its original parent, not the button itself.
+      const layer = this.titleComponent(55, source, `custom-menu:${source.symbol}:${state}`);
+      this.compositeLayer(layer, item.left - source.bounds.xMin, item.top - source.bounds.yMin);
+      return;
+    }
+    const sourceBounds = source.localBounds;
+    const padding = Math.max(16, 16 / Math.min(this.scaleX, this.scaleY));
+    const bounds = { xMin: sourceBounds.xMin - padding, yMin: sourceBounds.yMin - padding,
+      xMax: sourceBounds.xMax + padding, yMax: sourceBounds.yMax + padding };
+    const key = `custom-menu:${source.symbol}:${item.textOverride ? item.label : ''}:${state}`;
+    const layer = this.cachedLayer(key, ctx => {
+      // The recovered SimpleButton up/over/down backgrounds are the original
+      // shape34/37/39 bitmaps. Its export contains only frame 0, so compose the
+      // existing state bitmap with the unchanged original text/filter child.
+      if (item.source !== 'bn_back') {
+        this.draw(state === 'pressed' ? 'shape39' : state === 'hover' ? 'shape37' : 'shape34', {}, ctx);
+      }
+      this.draw(source.symbol, { filter: ({ symbol }) => {
+        if (symbol === 'shape34' || (item.textOverride && symbol.startsWith('text'))) return false;
+      } }, ctx);
+      if (item.textOverride) {
+        // New wording is the only new artwork: match the recovered 18px bold
+        // Yahei menu typography, baseline 30.7 and black text shadow.
+        ctx.save();
+        ctx.font = "700 18px OriginalYahei, 'Microsoft YaHei', sans-serif";
+        ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = '#fff';
+        ctx.shadowColor = '#000'; ctx.shadowBlur = 5 * Math.max(this.scaleX, this.scaleY);
+        ctx.shadowOffsetX = this.scaleX; ctx.shadowOffsetY = this.scaleY;
+        ctx.fillText(item.label, 113.5, 30.7); ctx.restore();
+      }
+      if (item.side) {
+        // sprite55 applies this recovered matrix to every difficulty button.
+        // Keep its exact RGB weights (not CSS grayscale's different weights)
+        // after replacing only the original up/over/down background. This
+        // component-sized operation runs once per cached button state.
+        const pixels = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+        for (let i = 0; i < pixels.data.length; i += 4) {
+          const gray = .3086 * pixels.data[i] + .6094 * pixels.data[i + 1] + .082 * pixels.data[i + 2];
+          pixels.data[i] = pixels.data[i + 1] = pixels.data[i + 2] = gray;
+        }
+        ctx.putImageData(pixels, 0, 0);
+      }
+    }, bounds);
+    this.compositeLayer(layer, item.left - sourceBounds.xMin, item.top - sourceBounds.yMin);
+  }
+
+  dualAIMenu(controller, now, offsetX = 0) {
+    const setup = controller.panel === 'dual-ai';
+    const progress = setup ? menuSlidePosition(0, 1, now - this.dualMenuStarted) : 1;
+    const items = dualAIMenuItems({ panel: controller.panel, options: controller.dualAIOptions, progress });
+    if (setup) {
+      this.ctx.save(); this.ctx.globalAlpha *= progress;
+      this.menuCaption('红方 AI', 157.5, 188, 18, '#fff');
+      this.menuCaption('蓝方 AI', 482.5, 188, 18, '#fff');
+      this.ctx.restore();
+    }
+    for (const raw of items) {
+      const item = offsetX ? { ...raw, left: raw.left + offsetX, right: raw.right + offsetX } : raw;
+      if (item.source) this.originalMenuButton(item);
+      else {
+        const hover = menuButtonState(item, this.pointer, this.pressed) !== 'normal';
+        this.menuCaption(item.label, (item.left + item.right) / 2, 438, 12, hover ? '#fff' : '#f8dd1c');
+        this.menuCaption(controller.dualAIOptions?.applyDifficultyStats === false ? '双方使用当前普通档' : '使用各自难度数值',
+          (item.left + item.right) / 2, 454, 10, '#fff');
+      }
+      if (item.interactive) this.hotspot(item.action, { bounds: { xMin: item.left, yMin: item.top, xMax: item.right, yMax: item.bottom } },
+        { value: item.value, side: item.side, clip: setup ? STAGE_BOUNDS : this.sprite(75).placements.find(part => part.symbol === 'shape32').bounds });
+    }
+  }
+
+  menuCaption(text, x, y, size, color) {
+    const ctx = this.ctx; ctx.save();
+    ctx.font = `700 ${size}px OriginalYahei, 'Microsoft YaHei', sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = color;
+    ctx.shadowColor = '#000'; ctx.shadowBlur = 5 * Math.max(this.scaleX, this.scaleY);
+    ctx.shadowOffsetX = this.scaleX; ctx.shadowOffsetY = this.scaleY;
+    ctx.fillText(text, x, y); ctx.restore();
   }
 
   hud(controller, renderer) {
@@ -406,17 +503,7 @@ export class OriginalGameView {
       this.drawInstance(music, { frame: controller.muted ? 1 : 0 });
       this.hotspot('music', music);
     }
-    if (controller.singlePlay) {
-      const text = ['简单的难度', '普通的难度', '困难的难度', '不可战胜的难度'][controller.difficulty];
-      const field = this.root('game', 'tt');
-      // tt is a root TextField, not a sprite210 child. Its placement matrix
-      // gives the registration point; the RECT and glyph baseline add their
-      // own offsets. Flash's 2px text gutter is inside the right-aligned RECT
-      // (FFDec's static text export instead places this edge 4px too far right).
-      const x = field.bounds.xMax - 2;
-      const y = field.localMatrix[5] + field.text.exportedBaseline;
-      this.label(text, x, y, field.text.fontSize, '#fff', 'right', true);
-    }
+    this.difficultyLabels(controller);
     if (sim.winner) {
       const result = this.root('game', 'gameover');
       const ratio = Math.max(0, Math.min(1, (performance.now() - controller.winStarted - 300) / 600));
@@ -433,6 +520,27 @@ export class OriginalGameView {
     }
     if (controller.overlay) this.overlay(controller);
     this.tooltip(controller);
+  }
+
+  difficultyLabels(controller) {
+    const dualAI = controller.matchMode === 'ai-vs-ai';
+    if (!dualAI && !controller.singlePlay) return;
+    const field = this.root('game', 'tt');
+    // tt is a root TextField, not a sprite210 child. Its placement matrix
+    // gives the registration point; the RECT and glyph baseline add their
+    // own offsets. Flash's 2px text gutter is inside the right-aligned RECT
+    // (FFDec's static text export instead places this edge 4px too far right).
+    const right = field.bounds.xMax - 2;
+    const y = field.localMatrix[5] + field.text.exportedBaseline;
+    const options = controller.simulation?.dualAI?.options ?? controller.dualAIOptions;
+    const labels = dualAI ? [['left', options.leftDifficulty], ['right', options.rightDifficulty]]
+      : [['right', controller.difficulty]];
+    for (const [side, difficulty] of labels) {
+      // Mirror only the left HUD anchor/alignment, never the glyphs. These
+      // stage coordinates are independent of the observation camera/zoom.
+      const x = side === 'left' ? STAGE_BOUNDS.xMax - right : right;
+      this.label(DIFFICULTY_LABELS[difficulty], x, y, field.text.fontSize, '#fff', side, true);
+    }
   }
 
   numeric(name, value, size, align) {

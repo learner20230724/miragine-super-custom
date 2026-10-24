@@ -84,6 +84,21 @@ test('a fresh editor distinguishes not-yet-persisted defaults from an actual sav
   f.panel.destroy();
 });
 
+test('compact editor hides an empty feedback row and keeps genuine action and validation feedback', async () => {
+  const f = fixture(); f.panel.open();
+  assert.equal(f.find('[data-settings-message]').hidden, true);
+  assert.equal(f.find('[data-editor-pause-status]'), null);
+  f.tab('units'); const hp = f.find('[data-field-path="config.sides.left.units.0.hp"]');
+  assert.match(hp.parentNode.textContent, /生命（HP）/);
+  assert.doesNotMatch(hp.parentNode.textContent, /默认|确认后|生效/);
+  f.edit('config.sides.left.units.0.hp', 123); await settle();
+  assert.equal(f.find('[data-settings-message]').hidden, false);
+  assert.equal(f.find('[data-settings-message]').getAttribute('data-error'), 'false');
+  f.edit('config.sides.left.units.0.hp', 'invalid'); await settle();
+  assert.equal(f.find('[data-settings-message]').getAttribute('data-error'), 'true');
+  assert.match(f.find('[data-settings-save-status]').textContent, /输入无效/); f.panel.destroy();
+});
+
 test('unconfirmed numeric text survives status refresh and tab rendering without applying early', async () => {
   const f = fixture(); f.panel.open(); f.tab('units');
   const path = 'config.sides.left.units.0.hp', input = f.find(`[data-field-path="${path}"]`);
@@ -157,5 +172,6 @@ test('homepage recruitment and AI toggles save for future matches and undo their
   f.tab('starting');
   const enabled = f.find('[data-field-path="rules.enemyAi"]'); enabled.checked = false; enabled.fire('change'); await settle();
   assert.equal(f.custom.getBattleState().enemyAi, false);
-  assert.match(enabled.parentNode.textContent, /本局立即生效/); f.panel.destroy();
+  assert.match(enabled.parentNode.textContent, /蓝方 AI 自动选兵/);
+  assert.doesNotMatch(enabled.parentNode.textContent, /本局立即生效|原版默认|确认后/); f.panel.destroy();
 });

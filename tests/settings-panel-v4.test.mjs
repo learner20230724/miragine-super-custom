@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createSettingsPanel, parseFieldValue, SETTINGS_PANEL_CSS } from '../src/app/settings-panel.mjs';
+import { createSettingsPanel, parseFieldValue } from '../src/app/settings-panel.mjs';
 import { createCustomization } from '../src/customization/index.mjs';
 import { GameController } from '../src/app/controller.mjs';
 import { MiragineSimulation, seededRandom } from '../src/core/index.mjs';
@@ -269,18 +269,28 @@ test('unit input clamps extreme cost to a safe integer and automatically applies
   assert.equal(f.button('apply-current'), null); f.panel.destroy();
 });
 
-test('AI uses difficulty/category/candidate menus while starting difficulty buttons remain direct', () => {
+test('AI uses three meaningful categories with direct candidate pools while difficulty selection remains independent', () => {
   const f = fixture(); f.panel.open(); f.tab('difficulties');
+  const category = f.find('[data-ai-category]');
+  assert.deepEqual(category.children.map(option => [option.value, option.textContent]), [
+    ['general', '战斗参数与选兵规则'], ['random', '随机候选与统计兵种'], ['counter', '反制候选'],
+  ]);
   for (let id = 0; id < 4; id++) {
-    const select = f.find('[data-entry-select="difficulties"]'); select.value=String(id); select.fire('change');
+    const select = f.find('[data-entry-select="difficulties"]'); select.value = String(id); select.fire('change');
     assert.equal(f.panel.element.querySelectorAll('[data-ai-difficulty]').length, 1);
     assert.ok(f.find(`[data-field-path="config.difficulties.${id}.counterSelectionProbability"]`));
+    assert.ok(f.find(`[data-field-path="config.difficulties.${id}.ai.forceOverlordMoneyThreshold"]`));
+    assert.ok(f.find(`[data-field-path="config.difficulties.${id}.ai.forceMoneyEnabled"]`));
+    const expected = f.custom.getMetadata().find(group => group.id === 'difficulties').entries.find(entry => Number(entry.id) === id)
+      .fields.filter(field => field.type !== 'unit-list' && field.apply !== '下局').map(field => field.path).sort();
+    assert.deepEqual(f.panel.element.querySelectorAll('[data-field-path]').map(input => input.getAttribute('data-field-path')).sort(), expected,
+      'General combines all numeric/boolean combat and selection rules without hiding them behind another category');
+    assert.equal(f.find('[data-ai-candidate-select]'), null);
   }
-  const category=f.find('[data-ai-category]'); category.value='candidates'; category.fire('change');
-  assert.equal(f.panel.element.querySelectorAll('[data-candidate-unit]').length,16);
-  const candidate=f.find('[data-ai-candidate-select]');candidate.value='counterChoices.5';candidate.fire('change');
+  const counter = f.find('[data-ai-category]'); counter.value = 'counter'; counter.fire('change');
   assert.ok(f.find('[data-field-path="config.difficulties.3.ai.counterChoices.5"]'));
-  assert.equal(f.controller.difficulty,1,'editing menus never change active difficulty');
+  assert.equal(f.find('[data-ai-candidate-select]'), null);
+  assert.equal(f.controller.difficulty, 1, 'Editing menus never change active difficulty');
   f.tab('starting');
   for (let id = 0; id < 4; id++) assert.ok(f.find(`[data-start-difficulty="${id}"]`), `starting difficulty ${id}`);
   f.panel.destroy();
@@ -311,13 +321,11 @@ test('v4 next-match-only values live on the starting page, not the current battl
 test('v4 AI thresholds, toggles, and candidate sets automatically apply separately for every difficulty', async () => {
   const f = fixture(); f.panel.open(); f.tab('difficulties');
   f.edit('config.difficulties.1.counterSelectionProbability', '2');
-  const category=f.find('[data-ai-category]');category.value='thresholds';category.fire('change');
   f.edit('config.difficulties.1.ai.forceOverlordMoneyThreshold', '999999999999999999999999');
   f.edit('config.difficulties.1.ai.forceOverlordEliteCountThreshold', '37');
   const enabled = f.find('[data-field-path="config.difficulties.1.ai.forceMoneyEnabled"]'); assert.ok(enabled);
   enabled.checked = false; enabled.fire('change');
-  const candidates=f.find('[data-ai-category]');candidates.value='candidates';candidates.fire('change');
-  const menu=f.find('[data-ai-candidate-select]');menu.value='eliteUnitIds';menu.fire('change');
+  const candidates=f.find('[data-ai-category]');candidates.value='random';candidates.fire('change');
   const elite = f.find('[data-field-path="config.difficulties.1.ai.eliteUnitIds"]'); assert.ok(elite);
   assert.equal(elite.querySelectorAll('[data-candidate-unit]').length, 16);
   const recruit = elite.querySelector('[data-candidate-unit="0"]'); recruit.checked = true; recruit.fire('change');
@@ -422,26 +430,29 @@ test('automatic settings footer has only undo/reset and save status appears in t
   assert.doesNotMatch(header.textContent, /草稿未保存/); f.panel.destroy();
 });
 
-test('automatic-save guidance remains accessible without occupying another footer layout row', () => {
+test('compact footer omits hidden apply guidance and retains only actionable controls and warnings', () => {
   const f = fixture(); f.panel.open();
-  const help = f.find('[data-settings-apply-help]'); assert.ok(help);
-  const css = SETTINGS_PANEL_CSS.match(/\.ms-apply-help\s*\{([^}]+)\}/)?.[1]; assert.ok(css);
-  assert.match(css, /position:absolute/); assert.match(css, /width:1px/); assert.match(css, /height:1px/);
-  assert.match(css, /clip-path:inset\(50%\)/); assert.match(css, /overflow:hidden/);
-  assert.doesNotMatch(css, /display:none|visibility:hidden/);
-  assert.equal(help.hidden, false, 'Guidance remains available to aria-describedby');
-  assert.match(help.textContent, /自动/); assert.match(help.textContent, /下局/);
+  assert.equal(f.find('[data-settings-apply-help]'), null);
+  const actions = f.find('[data-settings-footer-actions]');
+  assert.equal(actions.getAttribute('aria-describedby'), null);
+  assert.equal(f.find('footer').querySelectorAll('button').length, 2);
+  assert.ok(f.find('[data-storage-warning]')); assert.ok(f.find('[data-settings-message]'));
   f.panel.destroy();
 });
 
-test('every settings page explains automatic confirmation and never asks for a second apply click', () => {
+test('every settings page keeps controls and save status without standing explanation paragraphs', () => {
   const f = fixture(); f.panel.open(); const undo = f.button('undo'), reset = f.button('reset');
+  const flatten = element => [element, ...element.children.flatMap(flatten)];
   for (const id of ['sandbox', 'units', 'starting', 'difficulties', 'presets']) {
     f.tab(id); assert.equal(f.button('undo'), undo); assert.equal(f.button('reset'), reset);
     assert.equal(f.button('apply-current'), null); assert.equal(f.button('apply-next'), null);
-    assert.equal(f.find('[data-health-policy]'), null);
-    assert.match(f.find('[data-settings-apply-help]').textContent, /自动/);
+    assert.equal(f.find('[data-health-policy]'), null); assert.equal(f.find('[data-settings-apply-help]'), null);
+    assert.equal(f.find('[data-editor-pause-status]'), null);
     assert.doesNotMatch(f.find('[data-settings-save-status]').textContent, /草稿/);
+    const content = f.find('[role="tabpanel"]');
+    assert.equal(content.querySelectorAll('p').filter(node => node.getAttribute('data-battle-summary') === null).length, 0, `No standing explanation paragraphs on ${id}`);
+    assert.equal(flatten(content).filter(node => /(?:^|\s)ms-field-help(?:\s|$)/.test(node.className ?? '')).length, 0);
+    assert.doesNotMatch(content.textContent, /原版默认：|打开设置不会暂停|无需另点应用|只影响新战局|预设只包含白名单|这里修改的是草稿/);
     for (let node = reset; node; node = node.parentNode) assert.notEqual(node.hidden, true, `Reset must remain visible on ${id}`);
   }
   f.tab('presets'); assert.doesNotMatch(f.panel.element.textContent, /载入草稿/); f.panel.destroy();
@@ -521,4 +532,54 @@ test('current battle places spawn/clear below its summary and universal rules be
   const universal = text.indexOf('通用基础规则'), red = text.indexOf('红方当前状态'), blue = text.indexOf('蓝方当前状态');
   assert.ok(text.indexOf(summary) < text.indexOf(spawn)); assert.ok(text.indexOf(clear) < universal);
   assert.ok(universal >= 0 && universal < red && universal < blue); f.panel.destroy();
+});
+
+
+test('each AI candidate category directly displays every valid pool with all sixteen unit choices', () => {
+  const f = fixture(); f.panel.open(); f.tab('difficulties');
+  const metadata = f.custom.getMetadata().find(group => group.id === 'difficulties');
+  for (let difficulty = 0; difficulty < 4; difficulty++) {
+    const select = f.find('[data-entry-select="difficulties"]'); select.value = String(difficulty); select.fire('change');
+    const fields = metadata.entries.find(entry => Number(entry.id) === difficulty).fields;
+    const lists = fields.filter(field => field.type === 'unit-list');
+    const counterPools = lists.filter(field => field.path.includes('.counterChoices.'));
+    // Unit 0 uses dedicated recruit-selection rules, not an editable counter pool.
+    assert.equal(counterPools.length, 15); assert.equal(counterPools.some(field => field.path.endsWith('.counterChoices.0')), false);
+    for (const [categoryName, expected] of [
+      ['random', lists.filter(field => !field.path.includes('.counterChoices.'))], ['counter', counterPools],
+    ]) {
+      const category = f.find('[data-ai-category]'); category.value = categoryName; category.fire('change');
+      assert.equal(f.find('[data-ai-candidate-select]'), null);
+      const actual = f.panel.element.querySelectorAll('[data-field-path]').map(node => node.getAttribute('data-field-path'));
+      assert.deepEqual(actual.sort(), expected.map(field => field.path).sort(), `${difficulty}/${categoryName} shows all and only its own pools`);
+      for (const field of expected) {
+        const pool = f.find(`[data-field-path="${field.path}"]`); assert.ok(pool);
+        assert.deepEqual(pool.querySelectorAll('[data-candidate-unit]').map(input => Number(input.getAttribute('data-candidate-unit'))), Array.from({ length: 16 }, (_, id) => id));
+        assert.ok(pool.getAttribute('aria-label'), 'Every direct pool remains named accessibly');
+      }
+    }
+  }
+  assert.equal(f.controller.difficulty, 1); f.panel.destroy();
+});
+
+test('editing a displayed random or counter pool applies only that pool and survives category changes', async () => {
+  const f = fixture(); f.panel.open(); f.tab('difficulties');
+  const before = structuredClone(f.custom.getState().draft.config.difficulties[1].ai);
+  const chooseCategory = value => { const category = f.find('[data-ai-category]'); category.value = value; category.fire('change'); };
+  chooseCategory('random');
+  const random = f.find('[data-field-path="config.difficulties.1.ai.eliteUnitIds"]');
+  const randomRecruit = random.querySelector('[data-candidate-unit="0"]'); randomRecruit.checked = true; randomRecruit.fire('change'); await settle();
+  const randomIds = f.custom.getState().applied.config.difficulties[1].ai.eliteUnitIds;
+  assert.deepEqual(randomIds, [0, ...before.eliteUnitIds]);
+  assert.deepEqual(f.custom.getState().applied.config.difficulties[1].ai.counterChoices, before.counterChoices);
+  chooseCategory('counter');
+  const targetId = 5, counter = f.find(`[data-field-path="config.difficulties.1.ai.counterChoices.${targetId}"]`);
+  const counterRecruit = counter.querySelector('[data-candidate-unit="0"]'); counterRecruit.checked = true; counterRecruit.fire('change'); await settle();
+  const after = f.custom.getState().applied.config.difficulties[1].ai;
+  assert.deepEqual(after.counterChoices[targetId], [0, ...before.counterChoices[targetId]]);
+  for (const id of Object.keys(before.counterChoices)) if (Number(id) !== targetId) assert.deepEqual(after.counterChoices[id], before.counterChoices[id]);
+  assert.deepEqual(after.eliteUnitIds, randomIds);
+  chooseCategory('random'); assert.equal(f.find('[data-field-path="config.difficulties.1.ai.eliteUnitIds"]').querySelector('[data-candidate-unit="0"]').checked, true);
+  chooseCategory('counter'); assert.equal(f.find(`[data-field-path="config.difficulties.1.ai.counterChoices.${targetId}"]`).querySelector('[data-candidate-unit="0"]').checked, true);
+  assert.equal(f.controller.difficulty, 1); f.panel.destroy();
 });

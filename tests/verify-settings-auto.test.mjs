@@ -1,16 +1,91 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseAutoOptions, correctAutoOrder, autoTiming, typeByMouseAndKeyboard,
-  answerSettingsConfirmation, withHeldKeys, analyzeSmoothZoomSamples, tapHeldKey } from '../tools/verify-settings-auto.mjs';
+  answerSettingsConfirmation, withHeldKeys, analyzeSmoothZoomSamples, tapHeldKey,
+  compactTimeHeader } from '../tools/verify-settings-auto.mjs';
 
-const args = ['--dir', 'dist/settings-auto-proof/MiragineSuper', '--version', '0.7.3-preview.1', '--commit', 'a'.repeat(40)];
+const args = ['--dir', 'dist/settings-auto-proof/MiragineSuper', '--version', '0.7.4-preview.1', '--commit', 'a'.repeat(40)];
 test('automatic-settings verifier requires explicit provenance and safe local outputs', () => {
-  assert.equal(parseAutoOptions(args).out, '.local/smooth-zoom-qa.json');
-  assert.equal(parseAutoOptions(args).screenshotPrefix, 'settings-auto-smooth-zoom');
+  assert.equal(parseAutoOptions(args).out, '.local/compact-settings-qa.json');
+  assert.equal(parseAutoOptions(args).screenshotPrefix, 'settings-compact');
   assert.throws(() => parseAutoOptions(args.slice(0, 4)), /Supply/);
   assert.throws(() => parseAutoOptions([...args, '--unknown', 'x']), /Expected/);
   assert.throws(() => parseAutoOptions([...args, '--out', 'README.json']), /ignored output/);
   assert.throws(() => parseAutoOptions([...args, '--screenshot-prefix', '../escape']), /safe/);
+});
+
+test('compact settings verifier accepts both new compact and existing automatic screenshot prefixes', () => {
+  for (const prefix of ['settings-compact', 'settings-compact-narrow', 'settings-auto', 'settings-auto-smooth-zoom']) {
+    assert.equal(parseAutoOptions([...args, '--screenshot-prefix', prefix]).screenshotPrefix, prefix);
+  }
+  for (const prefix of ['settings', 'settings-other', 'settings-compact-', 'settings-compact/escape', 'settings-compact-Upper']) {
+    assert.throws(() => parseAutoOptions([...args, '--screenshot-prefix', prefix]), /safe/);
+  }
+});
+
+function compactHeaderFixture(patch = {}) {
+  return { title: { x: 20, y: 20, width: 70, height: 20 },
+    status: { x: 100, y: 19, width: 150, height: 22 },
+    container: { x: 10, y: 10, width: 500, height: 50 },
+    commonParent: true, helpVisible: false, captionVisible: false, ...patch };
+}
+
+test('compact time header accepts an actually shared row inside its container', () => {
+  assert.equal(compactTimeHeader(compactHeaderFixture()), true);
+});
+
+test('compact time header allows the documented one-pixel alignment and container tolerance', () => {
+  assert.equal(compactTimeHeader(compactHeaderFixture({ status: { x: 89, y: 19, width: 150, height: 22 } })), true);
+  assert.equal(compactTimeHeader(compactHeaderFixture({ title: { x: 9, y: 9, width: 70, height: 20 },
+    status: { x: 90, y: 20, width: 421, height: 41 } })), true);
+});
+
+test('compact time header rejects status wrapped below the title or merely touching its bottom edge', () => {
+  for (const y of [40, 45]) {
+    assert.equal(compactTimeHeader(compactHeaderFixture({ status: { x: 100, y, width: 150, height: 10 } })), false);
+  }
+});
+
+test('compact time header rejects horizontal text overlap or status placed before the title', () => {
+  for (const x of [88.9, 20, 10]) {
+    assert.equal(compactTimeHeader(compactHeaderFixture({ status: { x, y: 19, width: 150, height: 22 } })), false);
+  }
+});
+
+test('compact time header rejects either item extending outside any container edge', () => {
+  const escapedTitle = [
+    { x: 8.9, y: 20, width: 70, height: 20 },
+    { x: 20, y: 8.9, width: 70, height: 20 },
+    { x: 20, y: 20, width: 492, height: 20 },
+    { x: 20, y: 20, width: 70, height: 42 },
+  ];
+  const escapedStatus = [
+    { x: 8.9, y: 19, width: 150, height: 22 },
+    { x: 100, y: 8.9, width: 150, height: 22 },
+    { x: 100, y: 19, width: 412, height: 22 },
+    { x: 100, y: 19, width: 150, height: 43 },
+  ];
+  for (const title of escapedTitle) assert.equal(compactTimeHeader(compactHeaderFixture({ title })), false);
+  for (const status of escapedStatus) assert.equal(compactTimeHeader(compactHeaderFixture({ status })), false);
+});
+
+test('compact time header rejects separate parents or extra visible caption and help', () => {
+  for (const patch of [{ commonParent: false }, { helpVisible: true }, { captionVisible: true },
+    { helpVisible: true, captionVisible: true }]) {
+    assert.equal(compactTimeHeader(compactHeaderFixture(patch)), false);
+  }
+});
+
+test('compact time header returns false for empty, missing or invalid geometry', () => {
+  assert.equal(compactTimeHeader({}), false);
+  for (const key of ['title', 'status', 'container']) {
+    for (const rect of [undefined, null, {}, { x: 0, y: 0, width: 0, height: 1 },
+      { x: 0, y: 0, width: 1, height: 0 }, { x: 0, y: 0, width: -1, height: 1 },
+      { x: NaN, y: 0, width: 1, height: 1 }, { x: 0, y: Infinity, width: 1, height: 1 },
+      { x: 0, y: 0, width: '1', height: 1 }, { x: 0, y: 0, width: 1, height: Infinity }]) {
+      assert.equal(compactTimeHeader(compactHeaderFixture({ [key]: rect })), false);
+    }
+  }
 });
 test('automatic-settings verifier checks actual homepage order and both sides', () => {
   const parts = [{ kind: 'summary' }, { title: '生成士兵 / 清场' }, { title: '通用基础规则' }, { sides: ['left', 'right'] }];

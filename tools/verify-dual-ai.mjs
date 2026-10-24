@@ -17,7 +17,7 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const SIDES = ['left', 'right'];
 
 export function parseDualAIOptions(args) {
-  const options = { out: '.local/dual-ai-qa.json', screenshotPrefix: 'dual-ai' };
+  const options = { out: '.local/dual-ai-clean-hud-qa.json', screenshotPrefix: 'dual-ai-clean-hud' };
   const names = { '--dir': 'dir', '--archive': 'archive', '--version': 'version', '--commit': 'commit',
     '--out': 'out', '--screenshot-prefix': 'screenshotPrefix' };
   const seen = new Set();
@@ -66,14 +66,16 @@ export function summarizeDualAI(state) {
     money: { ...state.money }, paused: state.customization?.paused, speed: state.customization?.speed };
 }
 
-/** Actual DOM focus and keyboard selection, not selectOption/value assignment. */
-export async function chooseDifficultyByKeyboard({ page, side, value }) {
+/** Original-style difficulty buttons are clicked via their read-only hotspots. */
+export async function chooseDifficultyByHotspot({ hit, side, value }) {
   expect(SIDES.includes(side) && Number.isInteger(value) && value >= 0 && value <= 3, 'Difficulty must be left/right and 0..3');
-  const select = page.locator(`[data-dual-ai-difficulty="${side}"]`);
-  await select.click(); await page.keyboard.press('Home');
-  for (let index = 0; index < value; index++) await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('Enter'); await page.keyboard.press('Tab');
-  expect(await select.inputValue() === String(value), 'Real keyboard difficulty selection did not apply');
+  expect(typeof hit === 'function', 'A genuine mapped-hotspot click helper is required');
+  await hit(`dual-ai-${side}`, { value });
+}
+
+export function recruitmentKey(side) {
+  expect(SIDES.includes(side), 'Recruitment side must be left or right');
+  return side === 'left' ? 'Space' : 'Enter';
 }
 
 export async function verifyDualAI(options) {
@@ -107,12 +109,13 @@ export async function verifyDualAI(options) {
   }
   const destination = reportPath(options.out), executable = path.join(directory, 'MiragineSuper.exe');
   fs.mkdirSync(path.dirname(destination), { recursive: true }); fs.mkdirSync(path.join(root, 'output/playwright'), { recursive: true });
-  const report = { schemaVersion: 1, suite: 'dual-ai-real-exe', status: 'running', build,
+  const report = { schemaVersion: 1, suite: 'dual-ai-clean-hud-real-exe', status: 'running', build,
     archive: { sha256: inventory.sha256, fileCount: rows.length, everyExtractedFileHash: 'matched' },
     startedAt: new Date().toISOString(), checks: [], screenshots: [], runs: [], errors: [], observations: [],
-    policy: 'Fresh isolated release-ZIP EXE only. First game interaction turns music off. Real DOM clicks and keyboard input; canvas clicks use read-only mapped hotspots. No injected game state, configuration, RNG, clocks, storage, selections or decisions. Only this owned QA process is controlled and closed.',
+    policy: 'Fresh isolated release-ZIP EXE only. First game interaction turns music off. Original-style menu and unit buttons use read-only mapped hotspots and real mouse clicks. Recruitment uses real Space/Enter keydown/up. No injected game state, configuration, RNG, clocks, storage, selections or decisions. Only this owned QA process is controlled and closed.',
     limits: ['AI choice is random where the recovered rules are random; exact unit IDs are observed, not predetermined.',
       'Three difficulty/stat combinations are exercised in the EXE; exhaustive combinations are a separate source-test gate.',
+      'Physical Semicolon is exercised without changing the system input method; Chinese-key fallback and OS-repeat events have separate source tests.',
       'This suite observes income-point decisions and recruitment, not a full-match outcome or maximum-population benchmark.'],
     cleanup: { ownedApplicationsClosed: false } };
   const privateValues = [root, directory, archive, os.homedir(), os.userInfo().username];
@@ -122,8 +125,7 @@ export async function verifyDualAI(options) {
     report.checks.push({ id, ok: Boolean(condition), ...(details === undefined ? {} : { details }) }); save(id); expect(condition, id);
   };
   const state = () => bounded(page.evaluate(() => window.__MIRAGINE__.getState()), 'read-only dual AI state');
-  const action = name => page.locator(`[data-dual-ai-action="${name}"]`);
-  const playback = name => page.locator(`[data-playback-controls] [data-action="${name}"]`);
+  const settingsAction = name => page.locator(`[data-settings-action="${name}"]`);
   async function until(probe, name, milliseconds = 20000) {
     const deadline = Date.now() + milliseconds;
     do {
@@ -148,7 +150,7 @@ export async function verifyDualAI(options) {
       if (!value.hotspot) return false;
       const signature = JSON.stringify(value);
       if (signature !== previous) { previous = signature; stableSince = Date.now(); return false; }
-      return Date.now() - stableSince >= 100 ? value : false;
+      return Date.now() - stableSince >= 500 ? value : false;
     }, `mapped ${name} hotspot`);
     const p = visibleHotspotCenter(target.hotspot), f = target.fit;
     await page.mouse.click(f.clientLeft + f.left + p.x * f.scale, f.clientTop + f.top + p.y * f.scale);
@@ -167,23 +169,34 @@ export async function verifyDualAI(options) {
     await until(async () => (await state()).customization.speed === value, `speed ${value}`); await drawer(false);
   }
   async function recruit(side, enabled) {
-    if ((await state()).selection[side][2] !== Number(enabled)) await action(`dual-ai-recruit-${side}`).click();
+    if ((await state()).selection[side][2] !== Number(enabled)) {
+      await canvasFocus(); await page.keyboard.press(recruitmentKey(side));
+    }
     await until(async () => (await state()).selection[side][2] === Number(enabled), `${side} recruitment ${enabled}`);
+  }
+  async function canvasFocus() {
+    const fit = (await state()).viewport;
+    await page.mouse.click(fit.clientLeft + fit.left + 320 * fit.scale, fit.clientTop + fit.top + 250 * fit.scale);
+    expect(await page.locator('#game').evaluate(node => node.ownerDocument.hasFocus() && node.ownerDocument.activeElement === node),
+      'A genuine battlefield click must own game keyboard input');
+  }
+  async function recruitment() {
+    const s = await state(); return Object.fromEntries(SIDES.map(side => [side, s.selection[side][2]]));
   }
   async function finishTutorial() {
     if ((await state()).overlay === 'tutorial') await hit('tutorial-never');
     await until(async () => (await state()).phase === 'game' && !(await state()).overlay, 'playable battle');
   }
   async function start(left, right, stats) {
-    await drawer(false); await action('dual-ai').click();
+    await drawer(false); await hit('dual-ai');
     await until(async () => (await state()).panel === 'dual-ai', 'dual AI setup panel');
-    await chooseDifficultyByKeyboard({ page, side: 'left', value: left });
-    await chooseDifficultyByKeyboard({ page, side: 'right', value: right });
-    if (await page.locator('[data-dual-ai-stats]').isChecked() !== stats) await page.locator('[data-dual-ai-stats]').click();
+    await chooseDifficultyByHotspot({ hit, side: 'left', value: left });
+    await chooseDifficultyByHotspot({ hit, side: 'right', value: right });
+    if ((await state()).dualAIOptions.applyDifficultyStats !== stats) await hit('dual-ai-stats', { value: stats });
     check(same((await state()).dualAIOptions, { leftDifficulty: left, rightDifficulty: right, applyDifficultyStats: stats }),
       `setup-${left}-${right}-${stats}-real-controls`);
     await screenshot(`setup-${left}-${right}-${stats ? 'stats' : 'strategy'}`);
-    await action('dual-ai-start').click(); await finishTutorial(); await pause();
+    await hit('dual-ai-start'); await finishTutorial(); await pause();
     const s = await state(), ai = summarizeDualAI(s), battle = s.customization.editor.battle;
     report.observations.push({ stage: `opening-${left}-${right}-${stats}`, ...ai, battle });
     check(s.singlePlay === false && s.matchMode === 'ai-vs-ai' && same(ai.difficulty, { left, right }), `opening-${left}-${right}-${stats}-mode`);
@@ -196,11 +209,13 @@ export async function verifyDualAI(options) {
         && battle[side].baseWeaponSpeedFrames === (impossible ? 25 : 30), `opening-${left}-${right}-${stats}-${side}-actual-stats`, battle[side]);
     }
     check(ai.decisions.left.count === 0 && ai.decisions.right.count === 0, `opening-${left}-${right}-${stats}-no-premature-ai`);
+    check(await page.locator('[data-dual-ai-controls], [data-dual-ai-side], [data-dual-ai-status], [data-dual-ai-action^="dual-ai-recruit-"]').count() === 0,
+      `opening-${left}-${right}-${stats}-no-obstructive-dom-hud`);
   }
   async function home() {
     await drawer(false); await page.locator('[data-game-action="quit"]').click(); await hit('quit-confirm');
     await until(async () => (await state()).phase === 'title' && (await state()).panel === 'home', 'original quit returns home');
-    await action('dual-ai').waitFor({ state: 'visible' });
+    await until(() => page.evaluate(() => window.__MIRAGINE__.getHotspots().some(item => item.action === 'dual-ai')), 'original-style homepage dual AI button');
   }
   async function nextDecision(label) {
     const before = summarizeDualAI(await state());
@@ -216,6 +231,89 @@ export async function verifyDualAI(options) {
     check(SIDES.every(side => after.selection[side][2] === before.selection[side][2]), `${label}-ai-preserves-recruitment-flags`, after.selection);
     return after;
   }
+  async function pausedKeyboardAcceptance() {
+    await pause(); await canvasFocus();
+    const frozenFrame = (await state()).frame;
+    for (const side of SIDES) {
+      const before = await recruitment(), other = side === 'left' ? 'right' : 'left';
+      await withHeldKeys({ keyboard: page.keyboard, keys: [recruitmentKey(side)], during: async () => {
+        const first = await recruitment();
+        check(first[side] === 1 - before[side] && first[other] === before[other], `${side}-paused-key-immediately-toggles-only-own-recruitment`, { before, first });
+        const samples = [];
+        for (let index = 0; index < 6; index++) { await delay(125); samples.push(await recruitment()); }
+        check(samples.every(sample => same(sample, first)) && (await state()).frame === frozenFrame,
+          `${side}-paused-held-key-toggles-once-without-stepping`, samples);
+      } });
+      await page.keyboard.press(recruitmentKey(side));
+      check(same(await recruitment(), before), `${side}-release-then-fresh-press-restores-recruitment`);
+    }
+    await drawer(true); await settingsAction('tab-presets').click();
+    const name = page.locator('[data-preset-name]'), flags = await recruitment();
+    await name.click(); await page.keyboard.press('Control+A'); await page.keyboard.type('keyboard');
+    await page.keyboard.press('Space');
+    check(await name.inputValue() === 'keyboard ' && same(await recruitment(), flags), 'space-edits-text-without-toggling-red-recruitment');
+    await page.keyboard.press('Enter');
+    check(same(await recruitment(), flags), 'enter-in-editor-does-not-toggle-blue-recruitment');
+    const cameraBefore = (await state()).customization.displayCamera;
+    await page.keyboard.type('p;');
+    check(await name.inputValue() === 'keyboard p;' && same((await state()).customization.displayCamera, cameraBefore),
+      'p-and-semicolon-remain-editor-text-not-camera-shortcuts');
+    for (const key of ['Space', 'Enter']) {
+      const profile = (await state()).customization.editor.next;
+      await settingsAction('reset').click(); const dialog = page.locator('[data-settings-confirm]');
+      await dialog.waitFor({ state: 'visible' });
+      expect(await page.locator('[data-settings-confirm-cancel]').evaluate(node => node.ownerDocument.activeElement === node),
+        'Confirmation must initially focus its safe Cancel button');
+      await page.keyboard.press(key); await dialog.waitFor({ state: 'hidden' });
+      check(same(await recruitment(), flags) && same((await state()).customization.editor.next, profile),
+        `${key.toLowerCase()}-confirmation-cancels-without-recruitment-or-settings-leak`);
+    }
+    await drawer(false); await page.locator('[data-game-action="tutorial"]').click();
+    await until(async () => (await state()).overlay === 'tutorial', 'real help overlay');
+    await page.keyboard.press('Space'); await page.keyboard.press('Enter');
+    check(same(await recruitment(), flags), 'tutorial-overlay-blocks-both-recruitment-shortcuts');
+    await hit('tutorial-okay'); await canvasFocus();
+    check((await state()).frame === frozenFrame, 'keyboard-focus-and-overlay-checks-never-advance-paused-logic');
+  }
+  async function fastKeyboardAcceptance() {
+    for (const side of SIDES) await recruit(side, false);
+    await speed(100); await pause(false); await canvasFocus();
+    const before = await state();
+    await withHeldKeys({ keyboard: page.keyboard, keys: ['Space', 'Enter'], during: async () => {
+      const first = await recruitment(), samples = [];
+      for (let index = 0; index < 6; index++) { await delay(100); samples.push(await recruitment()); }
+      check(same(first, { left: 1, right: 1 }) && samples.every(sample => same(sample, first)),
+        'hundred-speed-held-space-enter-toggle-each-side-once', samples);
+    } });
+    const after = await state();
+    check(after.frame > before.frame && after.customization.speed === 100 && after.customization.timing.stepHz === 30,
+      'recruitment-key-repeat-is-independent-of-hundred-speed-30hz-logic', { before: before.frame, after: after.frame });
+    await pause();
+    for (const side of SIDES) await recruit(side, false);
+    check(same(await recruitment(), { left: 0, right: 0 }), 'fresh-space-enter-after-fast-hold-can-pause-both-sides');
+  }
+  async function cameraKeyboardAcceptance() {
+    await pause(); await canvasFocus(); const frame = (await state()).frame;
+    await page.keyboard.press('p');
+    check((await state()).customization.displayCamera.mode === 'overview', 'physical-p-fits-entire-battlefield');
+    await page.keyboard.press(';');
+    check((await state()).customization.displayCamera.mode === 'follow', 'physical-semicolon-restores-follow-camera');
+    const followed = (await state()).customization.displayCamera;
+    await withHeldKeys({ keyboard: page.keyboard, keys: ['j'], during: () => delay(250) });
+    const manual = (await state()).customization.displayCamera;
+    check(manual.mode === 'manual' && (manual.centerX !== followed.centerX || manual.centerY !== followed.centerY),
+      'held-j-camera-pan-leaves-follow-for-free-observation', { followed, manual });
+    await page.keyboard.press(';');
+    expect((await state()).customization.displayCamera.mode === 'follow', 'Follow shortcut must re-arm before dragging');
+    const fit = (await state()).viewport, x = fit.clientLeft + fit.left + 320 * fit.scale, y = fit.clientTop + fit.top + 250 * fit.scale;
+    await page.mouse.move(x, y); await page.mouse.down({ button: 'right' });
+    try { await page.mouse.move(x + 60 * fit.scale, y + 12 * fit.scale, { steps: 8 }); }
+    finally { await page.mouse.up({ button: 'right' }); }
+    check((await state()).customization.displayCamera.mode === 'manual', 'real-right-mouse-drag-leaves-follow-for-free-observation');
+    await page.keyboard.press('p');
+    check((await state()).customization.displayCamera.mode === 'overview' && (await state()).frame === frame,
+      'camera-shortcuts-and-manual-motion-work-with-paused-logic');
+  }
   async function closeOwned() {
     if (!app) return;
     await bounded(app.close(), 'close only owned dual AI QA EXE', 15000); if (run) run.closed = true; app = null; page = null;
@@ -223,8 +321,8 @@ export async function verifyDualAI(options) {
   try {
     check(true, 'fresh-zip-every-file-hash', report.archive);
     const { extractFile } = await import('@electron/asar');
-    for (const name of ['src/app/main.mjs', 'src/app/controller.mjs', 'src/app/dual-ai-controls.mjs', 'src/app/view.mjs',
-      'src/app/camera-keyboard.mjs', 'src/app/settings-panel.mjs', 'src/extensions/dual-ai.mjs',
+    for (const name of ['src/app/main.mjs', 'src/app/input.mjs', 'src/app/controller.mjs', 'src/app/dual-ai-controls.mjs', 'src/app/view.mjs',
+      'src/app/camera-keyboard.mjs', 'src/app/camera-shortcuts.mjs', 'src/app/settings-panel.mjs', 'src/extensions/dual-ai.mjs',
       'src/customization/index.mjs', 'src/customization/runtime.mjs', 'src/runtime/game-clock.mjs']) {
       check(extractFile(path.join(directory, 'resources/app.asar'), name.split('/').join(path.sep)).equals(fs.readFileSync(path.join(root, name))),
         `packaged-source-${name}`);
@@ -245,15 +343,26 @@ export async function verifyDualAI(options) {
     expect((await state()).muted === false, 'Fresh install unexpectedly already muted'); await hit('music');
     check((await state()).muted === true, 'first-game-input-music-off');
     await app.evaluate(({ BrowserWindow }) => { const w = BrowserWindow.getAllWindows()[0]; w.webContents.setAudioMuted(false); w.maximize(); w.show(); w.focus(); });
-    await action('dual-ai').click(); await page.locator('[data-dual-ai-panel]').waitFor({ state: 'visible' });
-    check(await page.locator('[data-dual-ai-stats]').isChecked() && (await state()).dualAIOptions.applyDifficultyStats,
-      'homepage-default-includes-difficulty-stats');
-    await action('dual-ai-back').click();
+    const homeButtons = await page.evaluate(() => window.__MIRAGINE__.getHotspots().filter(item => ['single', 'dual', 'dual-ai', 'credits'].includes(item.action)).map(item => item.action));
+    check(same(homeButtons.slice().sort(), ['dual', 'dual-ai', 'single']), 'homepage-replaces-credits-with-third-original-style-dual-ai-button', homeButtons);
+    check(await page.locator('[data-dual-ai-controls], [data-dual-ai-panel], [data-dual-ai-difficulty]').count() === 0,
+      'homepage-and-setup-have-no-modern-dom-panel-or-dropdowns');
+    await screenshot('homepage');
+    await hit('dual-ai'); await until(async () => (await state()).panel === 'dual-ai', 'original-style dual AI setup');
+    check((await state()).dualAIOptions.applyDifficultyStats, 'homepage-default-includes-difficulty-stats');
+    for (const side of SIDES) for (let value = 0; value < 4; value++) {
+      const other = side === 'left' ? 'right' : 'left', before = (await state()).dualAIOptions;
+      await chooseDifficultyByHotspot({ hit, side, value }); const after = (await state()).dualAIOptions;
+      check(after[`${side}Difficulty`] === value && after[`${other}Difficulty`] === before[`${other}Difficulty`],
+        `${side}-original-style-difficulty-${value}-is-independent`, { before, after });
+    }
+    await hit('dual-ai-back');
     check((await state()).phase === 'title' && (await state()).panel === 'home' && !(await state()).running, 'setup-back-does-not-start-battle');
     await start(0, 3, true);
+    await pausedKeyboardAcceptance();
     for (const side of SIDES) await recruit(side, false);
     const initial = summarizeDualAI(await state()); await delay(300);
-    check((await state()).frame === initial.frame && SIDES.every(side => initial.recruitment[side] === false), 'global-pause-and-independent-recruitment-controls');
+    check((await state()).frame === initial.frame && SIDES.every(side => initial.recruitment[side] === false), 'global-pause-and-independent-keyboard-recruitment-controls');
     const fit = (await state()).viewport;
     await page.mouse.click(fit.clientLeft + fit.left + 320 * fit.scale, fit.clientTop + fit.top + 250 * fit.scale);
     const zoomBefore = (await state()).customization.displayCamera.zoom;
@@ -262,6 +371,7 @@ export async function verifyDualAI(options) {
     await withHeldKeys({ keyboard: page.keyboard, keys: ['o'], during: () => delay(250) });
     check(zoomUp > zoomBefore && (await state()).customization.displayCamera.zoom < zoomUp && (await state()).frame === initial.frame,
       'paused-dual-ai-smooth-uo-does-not-step-logic');
+    await cameraKeyboardAcceptance();
     for (const [side, id] of [['left', 14], ['right', 15]]) await hit('unit', { side, id });
     const manual = summarizeDualAI(await state());
     check(manual.selection.left[0] + manual.selection.left[1] * 8 === 14
@@ -295,12 +405,13 @@ export async function verifyDualAI(options) {
     check(heldFlags.selection.left[2] === 0 && heldFlags.selection.right[2] === 0
       && heldFlags.decisions.left.count >= 2 && heldFlags.decisions.right.count >= 2, 'later-ai-thinking-cannot-resume-paused-recruitment', heldFlags);
     for (const side of SIDES) await recruit(side, true);
-    check((await state()).selection.left[2] === 1 && (await state()).selection.right[2] === 1, 'both-recruitment-resume-buttons-work');
+    check((await state()).selection.left[2] === 1 && (await state()).selection.right[2] === 1, 'space-enter-recruitment-resume-keys-both-work');
     await screenshot('independent-recruitment'); await speed(1); await pause(); await home();
 
     await start(3, 0, true);
     for (const side of SIDES) await recruit(side, false);
     await nextDecision('reverse-difficulties');
+    await fastKeyboardAcceptance();
     await screenshot('reverse-difficulties'); await speed(1); await pause(); await home();
     await start(3, 0, false);
     for (const side of SIDES) await recruit(side, false);
@@ -312,13 +423,13 @@ export async function verifyDualAI(options) {
     await hit('single'); await hit('difficulty', { value: 1 }); await finishTutorial(); await pause();
     const single = await state();
     check(single.matchMode === 'single' && single.singlePlay && single.dualAI === null, 'return-to-original-single-has-no-dual-ai-state');
-    check(await action('dual-ai-recruit-left').isVisible() === false && await action('dual-ai-recruit-right').isVisible() === false,
-      'original-single-hides-dual-ai-controls'); await home();
+    check(await page.locator('[data-dual-ai-controls], [data-dual-ai-action^="dual-ai-recruit-"]').count() === 0,
+      'original-single-has-no-dual-ai-dom-controls'); await home();
     await hit('dual'); await finishTutorial(); await pause();
     const dual = await state();
     check(dual.matchMode === 'dual' && dual.singlePlay === false && dual.dualAI === null, 'return-to-original-two-player-has-no-dual-ai-state');
-    check(await action('dual-ai-recruit-left').isVisible() === false && await action('dual-ai-recruit-right').isVisible() === false,
-      'original-two-player-hides-dual-ai-controls');
+    check(await page.locator('[data-dual-ai-controls], [data-dual-ai-action^="dual-ai-recruit-"]').count() === 0,
+      'original-two-player-has-no-dual-ai-dom-controls');
     await screenshot('original-mode-regression');
     check((await state()).customization.timing.stepHz === 30 && (await state()).config.frameRate === 30, 'all-modes-retain-original-30hz-logic');
     check(report.errors.length === 0 && !(await state()).error && (await state()).muted, 'owned-qa-remains-muted-without-runtime-errors');

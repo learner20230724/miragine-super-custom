@@ -66,7 +66,8 @@ test('v4 time section contains speed and full-width pause; camera section follow
   }
   assert.equal(f.find('[data-action="pause"]').className, 'custom-controls-pause');
   assert.match(CUSTOM_CONTROLS_CSS, /custom-controls-pause\s*\{width:100%/);
-  assert.match(sections[1].children.at(-1).textContent, /战场左 \/ 右 \/ 中键拖动/);
+  assert.equal(sections[1].children.length, 3, 'only the view header, actions and display-rate row remain');
+  assert.equal(sections[1].querySelector('[data-speed-help]'), null);
   f.controls.destroy();
 });
 
@@ -145,7 +146,8 @@ test('v4 all speed presets remain exact; measurements never replace target or cl
   f.controls.update({ enabled: true, speed: 20, actualSimulationHz: 168, actualDisplayHz: 59.9 });
   for (const speed of CUSTOM_SPEEDS) f.find(`[data-speed="${speed}"]`).fire('click');
   assert.deepEqual(requests, [...CUSTOM_SPEEDS]);
-  assert.equal(f.find('[data-custom-status]').textContent, '目标 20× · 实际模拟 168.0 步/秒（5.60×） · 实际显示 59.9 帧/秒');
+  assert.equal(f.find('[data-custom-status]').textContent, '实际模拟 168.0 步/秒（5.60×） · 显示 59.9 帧/秒');
+  assert.equal(f.find('[data-custom-status]').getAttribute('aria-label'), '目标 20× · 实际模拟 168.0 步/秒（5.60×） · 实际显示 59.9 帧/秒');
   f.controls.destroy();
 });
 
@@ -162,13 +164,61 @@ test('50x and 100x shortcuts, slider and numeric entry share the same cap and di
     assert.equal(requests.at(-1), speed);
     assert.equal(button.getAttribute('aria-pressed'), 'true');
     assert.equal(range.value, String(speed)); assert.equal(input.value, String(speed));
-    assert.equal(f.find('[data-custom-status]').textContent, `目标 ${speed}× · 实际模拟 600.0 步/秒（20.00×） · 实际显示 59.9 帧/秒`);
+    assert.equal(f.find('[data-custom-status]').textContent, '实际模拟 600.0 步/秒（20.00×） · 显示 59.9 帧/秒');
+    assert.equal(f.find('[data-custom-status]').getAttribute('aria-label'), `目标 ${speed}× · 实际模拟 600.0 步/秒（20.00×） · 实际显示 59.9 帧/秒`);
     range.value = String(speed - 0.1); range.fire('input');
     assert.equal(requests.at(-1), speed - 0.1);
     input.value = String(speed); input.fire('keydown', { code: 'Enter' });
     assert.equal(requests.at(-1), speed);
   }
-  assert.match(f.find('[data-speed-help]').textContent, /高倍速受机器性能限制/);
+  assert.equal(f.find('[data-speed-help]').textContent, '');
+  assert.equal(f.find('[data-speed-help]').hidden, true);
+  f.controls.destroy();
+});
+
+test('compact time header places actual measurements beside its heading without persistent explanatory blocks', () => {
+  const f = setup(), time = f.find('[data-control-section="time"]'), header = f.find('[data-control-header="time"]');
+  const status = f.find('[data-custom-status]'), heading = header.querySelector('h3');
+  assert.equal(header.parentNode, time);
+  assert.equal(time.children[0], header);
+  assert.deepEqual(header.children, [heading, status]);
+  assert.equal(heading.textContent, '时间控制');
+  assert.equal(status.tag, 'span');
+  assert.equal(status.getAttribute('role'), 'status');
+  assert.equal(status.getAttribute('aria-live'), 'off', 'live measurements must not continually interrupt assistive reading');
+  assert.equal(time.children.some(child => child.className === 'custom-controls-caption'), false);
+  assert.equal(time.children.includes(status), false, 'no separate full-width status block below pause');
+  assert.equal(f.find('[data-speed-help]').hidden, true);
+  assert.equal(f.find('[data-speed-help]').textContent, '');
+  assert.match(CUSTOM_CONTROLS_CSS, /custom-controls-header\s*\{display:flex;align-items:baseline/);
+  assert.match(CUSTOM_CONTROLS_CSS, /\[data-custom-status\]\s*\{[^}]*min-width:0;[^}]*font-size:10px;[^}]*overflow-wrap:anywhere/);
+  assert.doesNotMatch(CUSTOM_CONTROLS_CSS, /custom-controls-caption/);
+  f.controls.update({ enabled: true, speed: 100, paused: true, actualSimulationHz: 0, actualDisplayHz: 60 });
+  assert.equal(status.textContent, '实际模拟 0.0 步/秒（0.00×） · 显示 60.0 帧/秒');
+  assert.equal(status.getAttribute('aria-label'), '目标 100×（暂停） · 实际模拟 0.0 步/秒（0.00×） · 实际显示 60.0 帧/秒');
+  assert.equal(status.getAttribute('title'), status.getAttribute('aria-label'));
+  f.controls.destroy();
+});
+
+test('speed help is error-only and disappears after valid typing, a slider input or a speed preset', () => {
+  const f = setup({ onSpeed(speed) { f.controls.update({ speed }); } });
+  f.controls.update({ enabled: true, speed: 4 });
+  const input = f.find('[data-action="speed-number"]'), range = f.find('[data-action="speed-range"]'), help = f.find('[data-speed-help]');
+  assert.equal(help.hidden, true); assert.equal(help.textContent, '');
+  assert.equal(help.getAttribute('aria-live'), 'polite');
+  const trigger = () => {
+    input.value = 'not a number'; input.fire('change');
+    assert.equal(help.hidden, false); assert.match(help.textContent, /请输入数字/);
+    assert.equal(input.value, '4');
+  };
+  trigger(); input.value = '4'; input.fire('input');
+  assert.equal(help.hidden, true); assert.equal(help.textContent, '');
+  trigger(); range.value = '4'; range.fire('input');
+  assert.equal(help.hidden, true); assert.equal(help.textContent, '');
+  trigger(); f.find('[data-speed="4"]').fire('click');
+  assert.equal(help.hidden, true); assert.equal(help.textContent, '');
+  input.value = '-'; input.fire('input');
+  assert.equal(help.hidden, true, 'intermediate numeric edits do not show an error before commitment');
   f.controls.destroy();
 });
 

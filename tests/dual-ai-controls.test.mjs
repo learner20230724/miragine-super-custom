@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createDualAIControls, dualAILayout, DUAL_AI_DIFFICULTIES, DUAL_AI_CONTROLS_CSS } from '../src/app/dual-ai-controls.mjs';
+import { dualAIMenuItems, menuButtonState, DUAL_AI_DIFFICULTIES } from '../src/app/dual-ai-controls.mjs';
 import { createSettingsPanel } from '../src/app/settings-panel.mjs';
 import { GameController } from '../src/app/controller.mjs';
 import { OriginalGameView } from '../src/app/view.mjs';
@@ -51,14 +51,6 @@ function documentFixture() {
   const game = document.createElement('canvas'); game.id = 'game'; root.appendChild(game);
   return { document, root, game };
 }
-const fit = { left: 0, top: 0, width: 640, height: 480 };
-function controlsFixture() {
-  const h = documentFixture(), calls = [];
-  const controls = createDualAIControls({ root: h.root, onAction: (...args) => calls.push(args) });
-  const find = selector => controls.element.querySelector(selector), button = action => find(`[data-dual-ai-action="${action}"]`);
-  const update = patch => controls.update({ ready: true, fit, phase: 'title', panel: 'home', ...patch });
-  return { ...h, calls, controls, find, button, update };
-}
 const defaults = JSON.parse(readFileSync(new URL('../config/defaults.generated.json', import.meta.url), 'utf8'));
 const settle = async () => { await new Promise(resolve => setImmediate(resolve)); await new Promise(resolve => setImmediate(resolve)); };
 function settingsFixture(options = { leftDifficulty: 0, rightDifficulty: 3, applyDifficultyStats: true }) {
@@ -71,80 +63,125 @@ function settingsFixture(options = { leftDifficulty: 0, rightDifficulty: 3, appl
   return { ...h, controller, custom, panel, find, button, tab };
 }
 
-test('dual AI entry stays below original menu while scaled HUD stays above unit cards and lower controls', () => {
-  for (const [scale, left, top] of [[.5, 10, 80], [1, 0, 0], [2, 80, 0], [3, 0, 40]]) {
-    const layout = dualAILayout({ left, top, width: 640 * scale, height: 480 * scale });
-    assert.equal(layout.left, left); assert.equal(layout.top, top);
-    assert.equal(layout.entry.top, 384 * scale); assert.ok(layout.entry.top >= 374 * scale);
-    assert.ok(layout.entry.top + layout.entry.height < 480 * scale);
-    assert.ok(layout.panel.top + layout.panel.height < 480 * scale);
-    for (const side of ['leftSide', 'rightSide']) {
-      assert.ok(layout[side].top >= 96 * scale);
-      assert.ok(layout[side].top + layout[side].height < 341 * scale);
-      assert.ok(layout[side].left + layout[side].width <= 640 * scale);
+function assertRect(item, left, top, width, height) {
+  for (const [key, expected] of Object.entries({ left, top, right: left + width, bottom: top + height })) {
+    assert.ok(Math.abs(item[key] - expected) < 1e-9, `${item.action}.${key}: ${item[key]} != ${expected}`);
+  }
+}
+const center = item => ({ x: (item.left + item.right) / 2, y: (item.top + item.bottom) / 2 });
+
+test('canvas home entry replaces the original credits third slot without adding a fourth row', () => {
+  const items = dualAIMenuItems({ panel: 'home' });
+  assert.equal(items.length, 1);
+  const [item] = items;
+  assert.equal(item.action, 'dual-ai'); assert.equal(item.label, '双 AI 对战');
+  assert.equal(item.source, 'bn_creadit'); assert.equal(item.textOverride, true); assert.equal(item.interactive, true);
+  assertRect(item, 212, 328, 227, 46);
+  const layout = JSON.parse(readFileSync(new URL('../generated/ui/layout.generated.json', import.meta.url), 'utf8'));
+  const source = layout.sprites[55].instances.bn_creadit, parent = layout.sprites[75].instances.bn_btns;
+  assertRect(item, parent.localMatrix[4] + source.bounds.xMin, parent.localMatrix[5] + source.bounds.yMin,
+    source.bounds.xMax - source.bounds.xMin, source.bounds.yMax - source.bounds.yMin);
+  assert.equal(item.bottom, 374); assert.ok(items.every(entry => entry.top < 384));
+});
+
+test('canvas AI setup exposes four independent original difficulty buttons per side for all sixteen pairs', () => {
+  assert.deepEqual([...DUAL_AI_DIFFICULTIES], ['简单', '普通', '困难', '不可战胜']);
+  const sources = ['bn_easy', 'bn_normal', 'bn_hard', 'bn_abyss'];
+  for (let leftDifficulty = 0; leftDifficulty < 4; leftDifficulty++) for (let rightDifficulty = 0; rightDifficulty < 4; rightDifficulty++) {
+    const options = Object.freeze({ leftDifficulty, rightDifficulty, applyDifficultyStats: true });
+    const items = dualAIMenuItems({ panel: 'dual-ai', options });
+    assert.equal(items.length, 11);
+    for (const [side, left] of [['left', 44], ['right', 369]]) {
+      const choices = items.filter(item => item.action === `dual-ai-${side}`);
+      assert.deepEqual(choices.map(item => item.value).sort(), [0, 1, 2, 3]);
+      for (const item of choices) {
+        assert.equal(item.source, sources[item.value]);
+        assert.equal(Boolean(item.selected), item.value === options[`${side}Difficulty`]);
+        assert.equal(item.interactive, true); assertRect(item, left, 200 + 56 * item.value, 227, 46);
+      }
     }
-    assert.ok(layout.leftSide.left + layout.leftSide.width < layout.rightSide.left);
   }
-  for (const value of [null, {}, { ...fit, width: 0 }, { ...fit, height: NaN }, { ...fit, left: Infinity }]) assert.equal(dualAILayout(value), null);
 });
 
-test('title mode entry is native text with isolated action namespace and native keyboard ownership', () => {
-  const h = controlsFixture(); assert.equal(h.controls.element.hidden, true);
-  h.update(); assert.equal(h.controls.element.hidden, false); assert.equal(h.button('dual-ai').hidden, false);
-  assert.equal(h.controls.element.getAttribute('data-game-text-controls'), '');
-  assert.equal(h.button('dual-ai').getAttribute('data-game-action'), null);
-  h.button('dual-ai').click(); assert.deepEqual(h.calls, [['dual-ai', undefined]]); assert.equal(h.document.activeElement, h.game);
-  assert.match(DUAL_AI_CONTROLS_CSS, /pointer-events:none/); assert.match(DUAL_AI_CONTROLS_CSS, /focus-visible/);
-  h.controls.destroy();
-});
-
-test('four independent AI difficulties and numerical-bonus checkbox dispatch authoritative options without resetting native focus', () => {
-  const h = controlsFixture(); h.update({ panel: 'dual-ai', options: { leftDifficulty: 0, rightDifficulty: 3, applyDifficultyStats: false } });
-  const left = h.find('[data-dual-ai-difficulty="left"]'), right = h.find('[data-dual-ai-difficulty="right"]'), stats = h.find('[data-dual-ai-stats]');
-  assert.deepEqual(left.children.map(item => item.textContent), [...DUAL_AI_DIFFICULTIES]);
-  assert.equal(left.value, '0'); assert.equal(right.value, '3'); assert.equal(stats.checked, false);
-  left.focus(); left.value = '2'; left.fire('change');
-  assert.equal(h.document.activeElement, left); assert.deepEqual(h.calls.at(-1), ['dual-ai-left', 2]);
-  h.update({ panel: 'dual-ai', options: { leftDifficulty: 0, rightDifficulty: 1 } }); assert.equal(left.value, '2'); assert.equal(right.value, '1');
-  right.value = '0'; right.fire('change'); stats.checked = true; stats.fire('change');
-  assert.deepEqual(h.calls.slice(-2), [['dual-ai-right', 0], ['dual-ai-stats', true]]);
-  h.button('dual-ai-start').click(); assert.deepEqual(h.calls.at(-1), ['dual-ai-start', undefined]);
-  h.controls.destroy();
-});
-
-test('AI recruitment controls are separate, operate while global time is paused, and only follow confirmed state', () => {
-  const h = controlsFixture(), battle = { phase: 'game', matchMode: 'ai-vs-ai', paused: true, options: { leftDifficulty: 3, rightDifficulty: 0 }, recruitment: { left: true, right: false } };
-  h.update(battle);
-  assert.equal(h.find('[data-dual-ai-status="left"]').textContent, '红方 AI · 不可战胜');
-  assert.equal(h.find('[data-dual-ai-status="right"]').textContent, '蓝方 AI · 简单');
-  const left = h.button('dual-ai-recruit-left'), right = h.button('dual-ai-recruit-right');
-  assert.equal(left.textContent, '暂停出兵'); assert.equal(right.textContent, '开始出兵');
-  left.click(); right.click(); assert.deepEqual(h.calls, [['dual-ai-recruit-left', false], ['dual-ai-recruit-right', true]]);
-  assert.equal(left.textContent, '暂停出兵', 'do not invent state until next authoritative update');
-  h.update({ ...battle, recruitment: { left: false, right: true } });
-  assert.equal(left.textContent, '开始出兵'); assert.equal(left.getAttribute('aria-pressed'), 'true');
-  assert.equal(right.getAttribute('aria-label'), '暂停蓝方出兵'); h.controls.destroy();
-});
-
-test('hidden, setup-only, original-mode, overlay and confirming controls never dispatch gameplay actions', () => {
-  const h = controlsFixture();
-  for (const patch of [{ ready: false }, { overlay: 'credits' }, { confirming: true }, { fit: null }, { phase: 'game', matchMode: 'single' }, { phase: 'over', matchMode: 'ai-vs-ai' }, { phase: 'game', matchMode: 'ai-vs-ai', winner: 'left' }]) {
-    h.update(patch); assert.equal(h.controls.element.hidden, true);
-    for (const action of ['dual-ai', 'dual-ai-start', 'dual-ai-back', 'dual-ai-recruit-left', 'dual-ai-recruit-right']) h.button(action).click();
+test('start, recovered back button and numerical-bonus toggle have independent visible canvas hit rectangles', () => {
+  for (const applyDifficultyStats of [false, true]) {
+    const items = dualAIMenuItems({ panel: 'dual-ai', options: { leftDifficulty: 1, rightDifficulty: 2, applyDifficultyStats } });
+    const start = items.find(item => item.action === 'dual-ai-start'), back = items.find(item => item.action === 'dual-ai-back');
+    const stats = items.find(item => item.action === 'dual-ai-stats');
+    assertRect(start, 206.5, 420, 227, 46); assert.equal(start.source, 'bn_sp'); assert.equal(start.label, '开始对战'); assert.equal(start.textOverride, true);
+    assertRect(back, 78.3, 433.55, 31.85, 18.5); assert.equal(back.source, 'bn_back');
+    assertRect(stats, 478, 425, 144, 36); assert.equal(stats.source, null);
+    assert.equal(stats.label, `数值加成：${applyDifficultyStats ? '开启' : '关闭'}`); assert.equal(stats.value, !applyDifficultyStats);
+    for (const [index, item] of items.entries()) {
+      assert.ok(item.left >= 0 && item.right <= 640 && item.top >= 0 && item.bottom <= 480);
+      for (const other of items.slice(index + 1)) {
+        const overlapping = Math.max(item.left, other.left) < Math.min(item.right, other.right)
+          && Math.max(item.top, other.top) < Math.min(item.bottom, other.bottom);
+        assert.equal(overlapping, false, `${item.action}:${item.value} overlaps ${other.action}:${other.value}`);
+      }
+    }
   }
-  assert.deepEqual(h.calls, []);
-  h.update({ panel: 'dual-ai' }); h.button('dual-ai').click(); h.button('dual-ai-recruit-left').click();
-  h.update({ phase: 'game', matchMode: 'ai-vs-ai' }); h.button('dual-ai-start').click(); h.button('dual-ai-back').click();
-  assert.deepEqual(h.calls, []); h.controls.destroy();
 });
 
-test('native dual AI pointer and wheel actions cannot leak into battlefield camera handlers; teardown owns no canvas', () => {
-  const h = controlsFixture(), leaks = [];
-  for (const type of ['pointerdown', 'pointerup', 'wheel', 'click']) h.root.addEventListener(type, () => leaks.push(type));
-  h.update(); const entry = h.button('dual-ai');
-  for (const type of ['pointerdown', 'pointerup', 'wheel']) assert.equal(entry.fire(type).propagationStopped, true);
-  assert.deepEqual(leaks, []); h.controls.destroy(); h.controls.destroy(); entry.click();
-  assert.deepEqual(h.calls, []); assert.deepEqual(h.root.children, [h.game]); assert.equal(h.document.head.children.length, 0);
+test('split animation interpolates the two original menu columns but disables every moving setup target', () => {
+  for (const progress of [0, .25, .5, .999, 1]) {
+    const items = dualAIMenuItems({ panel: 'dual-ai', progress });
+    for (const item of items) assert.equal(item.interactive, progress === 1);
+    for (const [side, destination] of [['left', 44], ['right', 369]]) {
+      for (const item of items.filter(item => item.action === `dual-ai-${side}`)) {
+        assertRect(item, 212 + (destination - 212) * progress, 200 + 56 * item.value, 227, 46);
+      }
+    }
+  }
+});
+
+test('non-AI title panels have no custom menu targets and menu items never introduce battle recruitment actions', () => {
+  for (const panel of ['difficulty', 'credits', 'game', 'over', '', null]) assert.deepEqual(dualAIMenuItems({ panel }), []);
+  for (const panel of ['home', 'dual-ai']) {
+    for (const item of dualAIMenuItems({ panel })) assert.doesNotMatch(item.action, /recruit|pause/);
+  }
+  const source = readFileSync(new URL('../src/app/dual-ai-controls.mjs', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /createElement|createDualAIControls|DUAL_AI_CONTROLS_CSS|data-dual-ai-controls/);
+});
+
+test('canvas menu hover and press state use exact action/value identity, including half-open pointer boundaries', () => {
+  const items = dualAIMenuItems({ panel: 'dual-ai', options: { leftDifficulty: 1, rightDifficulty: 2 } });
+  const item = items.find(item => item.action === 'dual-ai-left' && item.value === 0);
+  const pointer = center(item), outside = { x: -1, y: -1 };
+  assert.equal(menuButtonState(item, null, null), 'normal');
+  assert.equal(menuButtonState(item, pointer, null), 'hover');
+  assert.equal(menuButtonState(item, pointer, { action: item.action, value: item.value }), 'pressed');
+  assert.equal(menuButtonState(item, pointer, { action: 'dual-ai-right', value: item.value }), 'hover');
+  assert.equal(menuButtonState(item, pointer, { action: item.action, value: 3 }), 'hover');
+  assert.equal(menuButtonState(item, outside, item), 'normal');
+  assert.equal(menuButtonState(item, { x: item.left, y: item.top }, null), 'hover');
+  assert.equal(menuButtonState(item, { x: item.right, y: pointer.y }, null), 'normal');
+  assert.equal(menuButtonState(item, { x: pointer.x, y: item.bottom }, null), 'normal');
+  for (const selected of items.filter(entry => entry.selected)) {
+    assert.equal(menuButtonState(selected, outside, null), 'hover');
+    assert.equal(menuButtonState(selected, center(selected), selected), 'pressed');
+  }
+});
+
+test('canvas menu action payloads select both AI levels and numerical mode through the authoritative controller', () => {
+  const controller = new GameController(defaults, { storage: { getItem: () => 'true' },
+    createSimulation: options => new MiragineSimulation({ ...options, rng: seededRandom(8) }) });
+  const items = () => dualAIMenuItems({ panel: controller.panel, options: controller.dualAIOptions });
+  const click = (action, value) => {
+    const item = items().find(item => item.action === action && (value === undefined || item.value === value));
+    assert.ok(item, `Missing canvas target: ${action}:${value}`); assert.equal(item.interactive, true);
+    assert.equal(controller.action(item.action, item.value), true);
+  };
+  click('dual-ai'); assert.equal(controller.panel, 'dual-ai');
+  click('dual-ai-left', 3); click('dual-ai-right', 0); click('dual-ai-stats', false);
+  assert.deepEqual(controller.dualAIOptions, { leftDifficulty: 3, rightDifficulty: 0, applyDifficultyStats: false });
+  for (const side of ['left', 'right']) {
+    assert.deepEqual(items().filter(item => item.action === `dual-ai-${side}` && item.selected).map(item => item.value),
+      [controller.dualAIOptions[`${side}Difficulty`]]);
+  }
+  click('dual-ai-start'); assert.equal(controller.phase, 'game'); assert.equal(controller.matchMode, 'ai-vs-ai');
+  assert.deepEqual(controller.simulation.dualAI.options, controller.dualAIOptions);
+  controller.home(); click('dual-ai'); click('dual-ai-back'); assert.equal(controller.panel, 'home');
 });
 
 test('dual AI settings summary identifies two difficulties and hides misleading original blue-only AI and crystal damage', () => {
@@ -156,7 +193,7 @@ test('dual AI settings summary identifies two difficulties and hides misleading 
   assert.equal(h.find('[data-live-field-path="config.difficulties.3.blueBaseDamage.0"]'), null);
   assert.ok(h.find('[data-live-field-path="config.sides.left.base.range"]'));
   assert.ok(h.find('[data-live-field-path="config.sides.right.base.hp"]'));
-  assert.match(h.panel.element.textContent, /双方同档时共用该档参数/); h.panel.destroy();
+  assert.doesNotMatch(h.panel.element.textContent, /双方同档时共用该档参数/); h.panel.destroy();
 });
 
 test('dual AI settings new-match controls preserve the current two difficulties and numerical mode', async () => {
@@ -215,24 +252,30 @@ test('open starting tab follows native single-to-AI and AI-to-dual changes witho
 
 test('dual AI main wiring retains held smooth camera and selection-repeat guards without mutating original modes', () => {
   const main = readFileSync(new URL('../src/app/main.mjs', import.meta.url), 'utf8');
-  assert.match(main, /createDualAIControls\(\{ root: stage, onAction: dualAIAction \}\)/);
-  assert.match(main, /function dualAIAction\(action, value\)[\s\S]*?settings\?\.isConfirming/);
+  assert.doesNotMatch(main, /createDualAIControls|dualAIAction/);
   assert.match(main, /!frameClock\.paused \|\| controller\.matchMode === 'ai-vs-ai'/);
   assert.match(main, /syncObservationScene\(now\)/); assert.match(main, /cameraZoom\.advance\(performance\.now\(\), cameraZoomContext\(\)\)/);
   assert.match(main, /keyboard\.advanceSelection\(now/);
   const view = readFileSync(new URL('../src/app/view.mjs', import.meta.url), 'utf8');
-  assert.match(view, /controller\.panel === 'dual-ai' && !controller\.overlay[\s\S]*?this\.hotspot\('music'[\s\S]*?return;/);
+  assert.match(view, /this\.dualAIMenu\(controller/);
+  assert.doesNotMatch(view, /native DOM|native setup controls/);
+  assert.match(view, /if \(placement\.name === 'bn_creadit'\) continue;/);
+  assert.doesNotMatch(view, /\['bn_creadit',\s*'credits'\]/, 'old credits action must not survive below the replacement');
 });
 
-test('dual AI title setup never draws or registers the original menu beneath native setup controls', () => {
+test('dual AI title draws its canvas menu instead of leaving an empty DOM setup placeholder', () => {
   const layout = JSON.parse(readFileSync(new URL('../generated/ui/layout.generated.json', import.meta.url), 'utf8'));
-  const hotspots = [], composites = [];
+  const hotspots = [], composites = [], menuCalls = [];
   const view = { sprite: id => layout.sprites[id], cached() {},
     titleComponent(id, placement) { return placement.symbol; }, compositeLayer(symbol) { composites.push(symbol); },
     hotspot(action, placement) { hotspots.push({ action, placement }); },
-    instance() { assert.fail('The original menu should not be drawn or hit-tested under native dual AI setup'); } };
-  OriginalGameView.prototype.title.call(view, { panel: 'dual-ai', overlay: null, muted: true });
+    dualAIMenu(controller, now) { menuCalls.push({ controller, now }); },
+    instance() { assert.fail('The single-player menu should not be drawn or hit-tested behind the two AI columns'); } };
+  const controller = { panel: 'dual-ai', overlay: null, muted: true };
+  OriginalGameView.prototype.title.call(view, controller);
   assert.deepEqual(composites, ['sprite12', 'sprite25', 'text31']);
+  assert.equal(menuCalls.length, 1); assert.equal(menuCalls[0].controller, controller);
+  assert.equal(Number.isFinite(menuCalls[0].now), true);
   assert.deepEqual(hotspots.map(item => item.action), ['music']);
   assert.equal(hotspots[0].placement.symbol, 'sprite25');
 });

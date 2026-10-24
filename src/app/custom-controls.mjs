@@ -14,6 +14,8 @@ export const CUSTOM_CONTROLS_CSS = `
 [data-playback-controls] .custom-controls-row {display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 [data-playback-controls] .custom-controls-section {display:flex;flex-direction:column;gap:9px;padding:10px;border:1px solid #52604d;border-radius:7px;background:#1b2821}
 [data-playback-controls] .custom-controls-section h3 {margin:0;font:inherit;font-size:14px;font-weight:700;color:#f0ddb2}
+[data-playback-controls] .custom-controls-header {display:flex;align-items:baseline;gap:8px;min-width:0}
+[data-playback-controls] .custom-controls-header h3 {flex:0 0 auto;white-space:nowrap}
 [data-playback-controls] .custom-controls-pause {width:100%;min-height:39px;font-size:15px;font-weight:600}
 [data-playback-controls] .custom-controls-speed-row {display:grid;grid-template-columns:1fr 76px;gap:8px;align-items:center}
 [data-playback-controls] input[type=range] {width:100%;padding:0;accent-color:#d7b66b;cursor:pointer}
@@ -21,9 +23,9 @@ export const CUSTOM_CONTROLS_CSS = `
 [data-playback-controls] button[aria-pressed=true],[data-custom-controls] button[aria-pressed=true] {background:#716033;border-color:#e6c170}
 [data-custom-controls] button:focus-visible,[data-playback-controls] :is(button,select,input):focus-visible {outline:2px solid #f0cb78;outline-offset:2px}
 [data-custom-controls] button:disabled,[data-playback-controls] :disabled {opacity:.5;cursor:default}
-[data-playback-controls] .custom-controls-caption {font-weight:600;color:#f0ddb2}
 [data-playback-controls] .custom-controls-help {font-size:11px;color:#a9b9aa}
-[data-custom-status] {font-size:12px;line-height:1.5;color:#c3d1c2}
+[data-speed-help][hidden] {display:none!important}
+[data-custom-status] {flex:1 1 0;min-width:0;margin-left:auto;font-size:10px;line-height:1.35;text-align:right;overflow-wrap:anywhere;color:#c3d1c2}
 `;
 
 const styleEntries = new WeakMap();
@@ -54,11 +56,12 @@ export function normalizeSpeedInput(value) {
 }
 /** Target multiplier is never substituted for measured work or display frequency. */
 export function formatCustomStatus({ speed = 1, paused = false, actualSimulationHz = null, actualDisplayHz = null,
-  baseSimulationHz = 30 } = {}) {
+  baseSimulationHz = 30 } = {}, { compact = false } = {}) {
   const simulation = isRate(actualSimulationHz)
     ? `${actualSimulationHz.toFixed(1)} 步/秒${baseSimulationHz > 0 && Number.isFinite(baseSimulationHz)
       ? `（${(actualSimulationHz / baseSimulationHz).toFixed(2)}×）` : ''}` : '测量中';
   const display = isRate(actualDisplayHz) ? `${actualDisplayHz.toFixed(1)} 帧/秒` : '测量中';
+  if (compact) return `实际模拟 ${simulation} · 显示 ${display}`;
   return `目标 ${speed}×${paused || speed === 0 ? '（暂停）' : ''} · 实际模拟 ${simulation} · 实际显示 ${display}`;
 }
 function setText(element, value) { if (element.textContent !== value) element.textContent = value; }
@@ -95,10 +98,15 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
   function section(name, title) {
     const host = node('section'); host.className = 'custom-controls-section';
     host.setAttribute('data-control-section', name); host.setAttribute('aria-label', title);
-    host.appendChild(node('h3', title)); playbackElement.appendChild(host); return host;
+    const header = node('div'); header.className = 'custom-controls-header'; header.setAttribute('data-control-header', name);
+    header.appendChild(node('h3', title)); host.appendChild(header); playbackElement.appendChild(host);
+    return { host, header };
   }
-  const timeSection = section('time', '时间控制');
-  const caption = node('div', '游戏倍速 · 逻辑步长保持 30 Hz'); caption.className = 'custom-controls-caption'; timeSection.appendChild(caption);
+  const { host: timeSection, header: timeHeader } = section('time', '时间控制');
+  const status = node('span'); status.setAttribute('data-custom-status', '');
+  // Frequent measurements stay readable without continually interrupting a
+  // screen reader; its accessible label retains target, pause and actual rates.
+  status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'off'); timeHeader.appendChild(status);
   const speedRow = node('div'); speedRow.className = 'custom-controls-speed-row'; timeSection.appendChild(speedRow);
   const range = node('input'); range.type = 'range'; range.min = '0'; range.max = String(MAX_GAME_SPEED); range.step = '0.1';
   range.setAttribute('aria-label', '游戏倍速滑块，0 为暂停'); range.setAttribute('data-action', 'speed-range'); speedRow.appendChild(range);
@@ -106,15 +114,18 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
   // we clamp it. Native number inputs can sanitize overflow to an empty value.
   const numeric = node('input'); numeric.type = 'text'; numeric.min = '0'; numeric.max = String(MAX_GAME_SPEED); numeric.step = '0.1'; numeric.inputMode = 'decimal';
   numeric.setAttribute('aria-label', `游戏倍速数值，0 到 ${MAX_GAME_SPEED}`); numeric.setAttribute('data-action', 'speed-number'); speedRow.appendChild(numeric);
+  function speedError(message = '') {
+    setText(speedHelp, message); speedHelp.hidden = !message;
+  }
   function changeSpeed(control) {
     if (!state.enabled || destroyed) return;
     const number = normalizeSpeedInput(control.value);
     if (number !== null) {
-      numeric.setCustomValidity?.(''); setText(speedHelp, '0 倍即暂停；高倍速受机器性能限制。'); onSpeed(number);
+      numeric.setCustomValidity?.(''); speedError(); onSpeed(number);
     } else {
       // No range-rejection popup: real numbers clamp. Empty / nonnumeric text is
       // restored to the active speed with a quiet, specific instruction instead.
-      numeric.setCustomValidity?.(''); setText(speedHelp, '请输入数字；已恢复当前倍速。');
+      numeric.setCustomValidity?.(''); speedError('请输入数字；已恢复当前倍速。');
     }
     range.value = String(state.speed); numeric.value = String(state.speed);
   }
@@ -123,6 +134,7 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
     event.stopPropagation(); if (!state.enabled || destroyed) return;
     const raw = numeric.value, value = normalizeSpeedInput(raw);
     numeric.setCustomValidity?.('');
+    if (value !== null) speedError();
     // Keep partial edits and ordinary decimals intact until committed, while a
     // genuinely excessive number is visibly clamped as soon as it is entered.
     if (value !== null && (Number(raw) < 0 || Number(raw) > MAX_GAME_SPEED)) numeric.value = String(value);
@@ -138,13 +150,13 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
   });
   const presets = node('div'); presets.className = 'custom-controls-row'; timeSection.appendChild(presets);
   const speedButtons = CUSTOM_SPEEDS.map(speed => button(presets, `${speed}×`,
-    { 'data-speed': String(speed), 'aria-label': speed === 0 ? '零倍速，暂停' : `${speed} 倍模拟速度` }, () => onSpeed(speed)));
+    { 'data-speed': String(speed), 'aria-label': speed === 0 ? '零倍速，暂停' : `${speed} 倍模拟速度` }, () => { speedError(); onSpeed(speed); }));
   const pause = button(timeSection, '暂停游戏', { 'data-action': 'pause', 'aria-label': '暂停游戏' }, onPause);
   pause.className = 'custom-controls-pause';
-  const status = node('div'); status.setAttribute('data-custom-status', ''); timeSection.appendChild(status);
-  const speedHelp = node('div', '0 倍即暂停；高倍速受机器性能限制。');
-  speedHelp.className = 'custom-controls-help'; speedHelp.setAttribute('data-speed-help', ''); timeSection.appendChild(speedHelp);
-  const viewSection = section('view', '视角与显示');
+  const speedHelp = node('div', ''); speedHelp.hidden = true;
+  speedHelp.className = 'custom-controls-help'; speedHelp.setAttribute('data-speed-help', '');
+  speedHelp.setAttribute('role', 'status'); speedHelp.setAttribute('aria-live', 'polite'); timeSection.appendChild(speedHelp);
+  const { host: viewSection } = section('view', '视角与显示');
   const row = node('div'); row.className = 'custom-controls-row'; viewSection.appendChild(row);
   const free = button(row, '自由观察', { 'data-action': 'free', title: '保持当前视角，自行移动和缩放' }, onFree);
   const follow = button(row, '跟随', { 'data-action': 'follow' }, onFollow);
@@ -159,8 +171,6 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
     const rate = Number(rateSelect.value); if (CUSTOM_RENDER_RATES.includes(rate)) onRenderRate(rate);
     rateSelect.value = String(state.renderHz);
   });
-  const help = node('div', '按住 U / O 平滑放大 / 缩小（每秒 ×2 / ×0.5，松开即停，双键抵消，战场中心）· 滚轮缩放（鼠标位置）· 战场左 / 右 / 中键拖动 · IJKL 移动视角。WASD / 方向键选兵：首按立即，350 ms 后每 85 ms 连选；编辑参数时不抢键。显示上限受屏幕与机器性能限制。');
-  help.className = 'custom-controls-help'; viewSection.appendChild(help);
   for (const host of [element, playbackElement]) {
     for (const type of ['pointerdown', 'pointerup', 'click', 'wheel']) listen(host, type, event => event.stopPropagation());
   }
@@ -206,7 +216,9 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
     setText(fullscreen, state.fullscreen ? '退出全屏' : '全屏');
     setAttribute(fullscreen, 'aria-pressed', String(state.fullscreen));
     rateSelect.disabled = !state.available; rateSelect.value = String(state.renderHz);
-    setText(status, formatCustomStatus(state));
+    setText(status, formatCustomStatus(state, { compact: true }));
+    const accessibleStatus = formatCustomStatus(state);
+    setAttribute(status, 'aria-label', accessibleStatus); setAttribute(status, 'title', accessibleStatus);
   }
   update();
   return Object.freeze({ element, playbackElement, update, destroy() {

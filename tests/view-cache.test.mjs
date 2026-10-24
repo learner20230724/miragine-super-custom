@@ -318,7 +318,7 @@ test('credits stay direct-context while both result layouts have finite caches a
     ['sprite247', 159 * 20], ['sprite253', 484 * 20],
     ['sprite247', 484 * 20], ['sprite253', 159 * 20],
   ]);
-  assert.equal(h.view.cache.size, 9); // Background, three title components, three visible buttons, two results.
+  assert.equal(h.view.cache.size, 8); // Background, three title components, two unchanged buttons, two results; credits overlay hides the AI entry.
 });
 
 test('tooltip layout is reused while pointer placement stays live and config edits invalidate the same slot', () => {
