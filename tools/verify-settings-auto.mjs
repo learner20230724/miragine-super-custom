@@ -15,7 +15,7 @@ const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 export function parseAutoOptions(args) {
-  const options = { out: '.local/keyboard-controls-qa.json', screenshotPrefix: 'settings-auto-keyboard-controls' };
+  const options = { out: '.local/smooth-zoom-qa.json', screenshotPrefix: 'settings-auto-smooth-zoom' };
   const keys = { '--dir': 'dir', '--version': 'version', '--commit': 'commit', '--out': 'out', '--screenshot-prefix': 'screenshotPrefix' };
   for (let i = 0; i < args.length; i += 2) {
     const key = keys[args[i]], value = args[i + 1];
@@ -88,6 +88,28 @@ export async function withHeldKeys({ keyboard, keys, during }) {
   }
   if (failure) throw failure;
   return result;
+}
+
+/** A real short press still occupies time; zero-duration automation is not a human tap. */
+export async function tapHeldKey({ keyboard, key, milliseconds = 20 }) {
+  expect(typeof key === 'string' && key.length > 0 && Number.isFinite(milliseconds)
+    && milliseconds >= 20 && milliseconds <= 200, 'Expected one key and a 20–200 ms tap');
+  return withHeldKeys({ keyboard, keys: [key], during: () => delay(milliseconds) });
+}
+
+/** Pure summary of read-only observations; never smooth or rewrite measured samples. */
+export function analyzeSmoothZoomSamples(samples, direction) {
+  expect(Array.isArray(samples) && samples.length >= 3 && [1, -1].includes(direction)
+    && samples.every((sample, index) => Number.isFinite(sample?.at) && Number.isFinite(sample?.zoom)
+      && sample.zoom > 0 && (index === 0 || sample.at > samples[index - 1].at)), 'Invalid smooth zoom observations');
+  const ratios = samples.slice(1).map((sample, index) => sample.zoom / samples[index].zoom);
+  const durationMs = samples.at(-1).at - samples[0].at, finalRatio = samples.at(-1).zoom / samples[0].zoom;
+  return { durationMs, distinct: new Set(samples.map(sample => sample.zoom)).size,
+    directedChanges: ratios.filter(ratio => direction * (ratio - 1) > 1e-9).length,
+    maxStepRatio: Math.max(...ratios.map(ratio => Math.max(ratio, 1 / ratio))),
+    firstRatio: ratios[0], finalRatio,
+    monotonic: ratios.every(ratio => direction * (ratio - 1) >= -1e-9),
+    observedRateLog2PerSecond: Math.log2(finalRatio) / (durationMs / 1000) };
 }
 
 export async function verifySettingsAuto(options) {
@@ -260,9 +282,9 @@ export async function verifySettingsAuto(options) {
     const unchanged = async (before, milliseconds = 500) => { await delay(milliseconds); return same(await selection(), before); };
     await canvasClick();
     const pausedFrame = (await state()).frame, beforeZoom = await zoom();
-    for (let i = 0; i < 3; i++) await page.keyboard.press('u');
+    for (let i = 0; i < 3; i++) await tapHeldKey({ keyboard: page.keyboard, key: 'u' });
     const zoomed = await zoom(); check(zoomed > beforeZoom, 'three actual U presses zoom in without a mouse wheel');
-    await page.keyboard.press('o'); const zoomedOut = await zoom();
+    await tapHeldKey({ keyboard: page.keyboard, key: 'o' }); const zoomedOut = await zoom();
     check(zoomedOut < zoomed && zoomedOut > 0 && (await state()).frame === pausedFrame,
       'actual O zooms out while paused without advancing game logic');
     await screenshot('keyboard-zoom');
@@ -356,6 +378,123 @@ export async function verifySettingsAuto(options) {
     check(same(await selection(), pausedSelection), 'keys newly pressed during pause cannot move either troop cursor');
     check((await state()).muted && !(await state()).winner, 'keyboard acceptance remains muted and does not end or corrupt the battle');
     await screenshot('keyboard-interruption-final');
+  }
+  async function smoothZoomAcceptance() {
+    const read = () => page.evaluate(() => {
+      const state = window.__MIRAGINE__.getState();
+      return { at: performance.now(), zoom: state.customization.displayCamera.zoom, frame: state.frame,
+        focused: document.hasFocus(), active: document.activeElement?.id ?? '' };
+    });
+    const held = (keys, during) => withHeldKeys({ keyboard: page.keyboard, keys, during });
+    async function canvasClick() {
+      const f = (await state()).viewport;
+      await page.mouse.click(f.clientLeft + f.left + 320 * f.scale, f.clientTop + f.top + 250 * f.scale);
+      const snapshot = await read(); expect(snapshot.focused && snapshot.active === 'game', 'Smooth zoom requires genuine canvas keyboard focus');
+    }
+    async function follow() {
+      await playback('follow').click(); await canvasClick();
+      expect((await read()).zoom === 1, 'Follow control restores a real, unclamped zoom starting point');
+    }
+    async function sampleHeld(key, direction, label) {
+      const samples = [await read()];
+      await held([key], async () => {
+        samples.push(await read()); // After exactly one keydown: no repeat is synthesized.
+        for (let index = 0; index < 12; index++) { await delay(40); samples.push(await read()); }
+      });
+      const released = [await read()];
+      for (let index = 0; index < 3; index++) { await delay(80); released.push(await read()); }
+      const analysis = analyzeSmoothZoomSamples(samples, direction);
+      const response = samples.find(sample => direction * (sample.zoom / samples[0].zoom - 1) > 1e-6);
+      const observed = { key, label, samples, released, analysis };
+      (report.smoothZoom ??= []).push(observed); save(`smooth ${label} observations`);
+      check(samples[1].at - samples[0].at < 120 && Math.max(analysis.firstRatio, 1 / analysis.firstRatio) < 1.08,
+        `smooth ${label}: keydown has no initial 16-percent zoom jump`, observed);
+      check(response && response.at - samples[0].at <= 160,
+        `smooth ${label}: zoom begins before the OS-repeat delay`, { responseMs: response?.at - samples[0].at });
+      check(analysis.monotonic && analysis.directedChanges >= 5 && analysis.distinct >= 6,
+        `smooth ${label}: one physical keydown produces many continuous monotonic zoom values`, analysis);
+      const rate = direction * analysis.observedRateLog2PerSecond;
+      check(rate >= .35 && rate <= 1.25,
+        `smooth ${label}: measured zoom rate follows real time rather than a per-event step`, analysis);
+      check(released.every(sample => sample.zoom === released[0].zoom),
+        `smooth ${label}: release stops immediately with no inertia or animation tail`, released);
+      return observed;
+    }
+    async function stableZoom(before, milliseconds = 250) {
+      await delay(milliseconds); return (await read()).zoom === before;
+    }
+    await pause(); await follow();
+    const pausedFrame = (await state()).frame;
+    const up = await sampleHeld('u', 1, 'U paused');
+    const down = await sampleHeld('o', -1, 'O paused');
+    check((await state()).frame === pausedFrame && up.samples[0].zoom < up.samples.at(-1).zoom
+      && down.samples[0].zoom > down.samples.at(-1).zoom,
+    'smooth U/O works while paused without advancing even one original logic step');
+    await screenshot('smooth-continuous-paused');
+
+    await held(['u', 'o'], async () => {
+      const baseline = await read(), samples = [];
+      for (let index = 0; index < 4; index++) { await delay(60); samples.push(await read()); }
+      check(samples.every(sample => sample.zoom === baseline.zoom),
+        'smooth simultaneous U and O cancel for the entire jointly held interval', { baseline, samples });
+    });
+    const afterBoth = await read();
+    check(await stableZoom(afterBoth.zoom), 'smooth releasing both opposite keys leaves no residual movement');
+
+    await follow(); await speed(100); await pause(false); await canvasClick();
+    const fast = await sampleHeld('u', 1, 'U at 100x');
+    check((await state()).customization.speed === 100 && (await state()).customization.timing.stepHz === 30
+      && fast.samples.at(-1).frame > fast.samples[0].frame
+      && Math.abs(fast.analysis.observedRateLog2PerSecond - up.analysis.observedRateLog2PerSecond) < .35,
+    'smooth zoom remains real-time at 100x while the original 30 Hz simulation advances');
+    await speed(1); await pause(); await follow();
+
+    await act('tab-presets').click();
+    const nameInput = page.locator('[data-preset-name]');
+    await nameInput.click();
+    const inputZoom = (await read()).zoom;
+    for (const key of ['u', 'o']) {
+      await held([key], async () => { await delay(200); });
+      check(await stableZoom(inputZoom) && await nameInput.evaluate(node => node.ownerDocument.hasFocus() && node.ownerDocument.activeElement === node),
+        `smooth held ${key.toUpperCase()} in an editing field never zooms or steals input focus`);
+    }
+    await canvasClick();
+    await held(['u'], async () => {
+      const before = await read(); await delay(150);
+      check((await read()).zoom > before.zoom, 'smooth U is actually moving before the field-focus interruption');
+      await nameInput.click(); const stopped = await read();
+      check(await stableZoom(stopped.zoom) && await nameInput.evaluate(node => node.ownerDocument.activeElement === node),
+        'smooth clicking a field cancels active held zoom and keeps keyboard focus');
+      await canvasClick();
+      check(await stableZoom(stopped.zoom), 'smooth canvas refocus cannot revive a key still physically held after field cancellation');
+    });
+    const beforeFresh = await read(); await tapHeldKey({ keyboard: page.keyboard, key: 'u' });
+    check((await read()).zoom > beforeFresh.zoom, 'smooth a fresh real 20 ms tap works after the interrupted key is released');
+
+    await held(['u'], async () => {
+      const before = await read(); await delay(150);
+      check((await read()).zoom > before.zoom, 'smooth U is actually moving before the confirmation interruption');
+      await act('reset').click(); await page.locator('[data-settings-confirm]').waitFor({ state: 'visible' });
+      const stopped = await read();
+      check(await stableZoom(stopped.zoom), 'smooth a visible confirmation cancels active held zoom');
+      await held(['o'], async () => { await delay(200); });
+      check((await read()).zoom === stopped.zoom && await page.locator('[data-settings-confirm]').evaluate(node => node.contains(node.ownerDocument.activeElement)),
+        'smooth a new O hold is blocked by the confirmation without stealing its focus');
+      await screenshot('smooth-confirmation-blocked');
+      const answer = await answerSettingsConfirmation({ page, choice: 'cancel', expectedText: /全部面板参数恢复/ });
+      (report.dialogs ??= []).push({ action: 'reset-smooth-zoom-cancel', ...answer });
+      await canvasClick();
+      check(await stableZoom(stopped.zoom), 'smooth closing confirmation cannot revive the still-held U key');
+    });
+    const afterDialog = await read(); await tapHeldKey({ keyboard: page.keyboard, key: 'o' });
+    check((await read()).zoom < afterDialog.zoom, 'smooth a fresh O tap works after confirmation cancellation and release');
+    const beforeWheel = await read(); await page.mouse.wheel(0, -100);
+    await until(async () => (await read()).zoom > beforeWheel.zoom, 'original mouse wheel still zooms');
+    check(Math.abs((await read()).zoom / beforeWheel.zoom - Math.exp(.15)) < 1e-8,
+      'smooth keyboard changes leave the original mouse-wheel zoom factor unchanged');
+    check((await state()).customization.paused && (await state()).muted && !(await state()).winner,
+      'smooth acceptance ends paused and muted without ending or corrupting the match');
+    await screenshot('smooth-final');
   }
   try {
     save('package provenance');
@@ -543,6 +682,7 @@ export async function verifySettingsAuto(options) {
     check(await act('apply-current').count() === 0 && !/草稿未保存/.test(await page.locator('[data-settings-panel]').textContent()),
       'restarted UI still requires no manual Apply or draft workflow');
     await keyboardAcceptance();
+    await smoothZoomAcceptance();
     for (const file of editable) file.after = hash(path.join(directory, file.name));
     check(editable.every(file => file.before === file.after), 'external editable config and graphics helper were not rewritten', editable);
     check(report.dialogs?.length >= 10 && report.dialogs.every(dialog => dialog.type === 'dom') && !report.errors.some(error => error.type === 'native-dialog'),

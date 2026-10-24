@@ -8,6 +8,10 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
+**Current source: v0.7.3-preview.1 release candidate, smooth U/O zoom and AI-versus-AI matches.** Hold U/O to zoom continuously using real time: the zoom factor doubles/halves each real second. Release stops zoom, without waiting for operating-system key repeat; holding both keys cancels out. Observation zoom remains available during combat pause, while parameter editing and confirmation dialogs retain keyboard priority. Battlefield-center anchoring, pointer-anchored wheel zoom, 30 Hz logic and unit-selection repeat are unchanged. Packaged verification and publication are not complete; the 0.7.2 record below validates only the preceding version.
+
+**Candidate AI-versus-AI mode:** a separate title-menu entry selects one of the four existing AI levels for each side. Both decide after each income settlement; manual selection lasts until the next round, and each side's recruitment can be paused/resumed independently without freezing existing soldiers, the opponent or the game clock. Original single/local-two-player entries remain. See [difficulty-stat coupling and mirrored defaults](docs/custom-settings.en.md#ai-versus-ai-matches).
+
 **Current published version: [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1), keyboard zoom and controlled selection repeat.** U zooms in and O zooms out around the battlefield center; the wheel retains its pointer anchor. WASD/arrow selection moves immediately on keydown, then repeats every 85 ms after an initial 350 ms hold, independent of game speed. Parameter editing and in-app confirmations retain keyboard priority. The portable build is verified and published; see this version's delivery record below. Parameter rules and approved improvements are unchanged.
 
 **Retains the preceding in-app confirmation and input-focus fixes**, plus the v0.6.0 large-army optimization: spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Current and historical delivery results are recorded separately below.
@@ -112,7 +116,7 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 | Arrow keys, Enter | Right selection in local two-player mode: immediate first move, then every 85 ms after 350 ms; Enter toggles recruitment |
 | Drag the minimap | Move the camera |
 | I / J / K / L | World-coordinate pan: approximately four real seconds between default crystals, independent of zoom/speed |
-| U / O | Zoom in / out around the battlefield center, independently of pointer position |
+| U / O | Hold for smooth battlefield-centered zoom: 2× / 0.5× per real second; release stops, both keys cancel |
 | Wheel over the battlefield | Pointer-anchored zoom; map boundaries take priority at limits |
 | Left / right / middle mouse drag | Pan into free observation; left dragging starts after 5 CSS pixels, so simple clicks do not pan |
 | F2 | The only settings entry: opening/closing never changes pause state. Side-by-side in wide windows, stacked in narrow windows |

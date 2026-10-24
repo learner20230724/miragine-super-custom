@@ -288,6 +288,12 @@ export class OriginalGameView {
       const key = symbol === 'sprite25' ? `title-component:${symbol}:${controller.muted}` : `title-component:${symbol}`;
       this.compositeLayer(this.titleComponent(75, placement, key, controller.muted));
     }
+    // The custom mirrored-AI setup is native DOM, replacing only this menu
+    // column. Do not leave original single/dual hotspots live underneath it.
+    if (controller.panel === 'dual-ai' && !controller.overlay) {
+      this.hotspot('music', parts.find(part => part.symbol === 'sprite25'));
+      return;
+    }
     const buttons = this.instance(75, 'bn_btns');
     const p = this.origin(buttons);
     const now = performance.now(), target = difficulty ? -43 : 212;

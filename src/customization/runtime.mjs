@@ -28,6 +28,22 @@ export function customSideConfiguration(sim, side) {
   const config = sim.config, rules = sim.rules, difficulty = config.difficulties[sim.difficulty];
   const extension = config.customization, sideConfig = extension?.sides?.[side];
   const diff = extension?.difficulties?.[sim.difficulty];
+  if (sim.dualAI) {
+    // Both armies receive the selected AI's original difficulty conditions.
+    // Strategy-only mode fixes those conditions at normal (1) for both sides.
+    // Side-specific sprites, unit stats, crystal HP/range and money remain intact.
+    const index = sim.dualAI.options.applyDifficultyStats ? sim.dualAI.options[`${side}Difficulty`] : 1;
+    const selected = config.difficulties[index], custom = extension?.difficulties?.[index];
+    return {
+      units: sideConfig?.units ?? config.units,
+      base: { hp: rules.baseHp, range: rules.baseRange, ...sideConfig?.base,
+        damage: custom?.rightBase?.damage ?? selected.blueBaseDamage,
+        weaponSpeedFrames: custom?.rightBase?.weaponSpeedFrames ?? selected.blueBaseWeaponSpeedFrames },
+      initial: { money: sideConfig?.initial?.money ?? rules.initialMoney,
+        income: custom?.rightInitial?.income ?? selected.rightStartingIncome,
+        population: custom?.rightInitial?.population ?? selected.rightStartingPopulation },
+    };
+  }
   return {
     units: sideConfig?.units ?? config.units,
     base: {

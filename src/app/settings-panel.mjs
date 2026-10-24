@@ -115,6 +115,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   let opened = false, destroyed = false, busy = false, activeTab = 'sandbox', selectedPreset = '', lastPresetSignature = '';
   let presentation = { paused: false, speed: 1 }, beforeFocus = null, presetNameDraft = '';
   let currentTabCleanup = [], liveBindings = [], metadataCache = null, sandboxContext = null, startDifficulty = 1, startSinglePlay = true;
+  let startDualAI = false, startingContext = null, startAIOptions = { leftDifficulty: 1, rightDifficulty: 1, applyDifficultyStats: true };
   let saving = 0, saveFailed = false, saveRevision = 0;
   let awaitingConfirmation = null, actionFocus = null;
   function on(element, type, listener, transient = false) {
@@ -442,9 +443,10 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   function renderSandbox() {
     const summary = node('p', 'ms-summary'); summary.setAttribute('data-battle-summary', ''); content.appendChild(summary);
     const columns = node('div', 'ms-sides');
-    const s = state(), baseFields = groupFields('bases'); sandboxContext = battleContext(s);
+    const s = state(), dualAI = s.battle?.matchMode === 'ai-vs-ai';
+    const baseFields = groupFields('bases').filter(field => !dualAI || field.path.startsWith('config.sides.')); sandboxContext = battleContext(s);
     const difficulty = s.battle?.difficulty ?? startDifficulty;
-    baseFields.push(...(group('difficulties')?.entries?.find(entry => Number(entry.id) === difficulty)?.fields ?? []).filter(field => /\.blueBase/.test(field.path)));
+    if (!dualAI) baseFields.push(...(group('difficulties')?.entries?.find(entry => Number(entry.id) === difficulty)?.fields ?? []).filter(field => /\.blueBase/.test(field.path)));
     for (const [side, sideLabel] of [['left', '红方'], ['right', '蓝方']]) {
       const sideCard = card(columns, sideLabel + '当前状态', side); sideCard.setAttribute('data-live-side', side);
       for (const [key, text, integer] of [['money', '当前金币', true], ['income', '当前每轮收入', true], ['population', '本轮剩余人口', true], ['baseHp', '水晶当前生命', false]]) {
@@ -460,6 +462,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
         return side === 'left';
       });
       fieldsInto(sideCard, sideFields, { live: true, prefix: sideLabel });
+      if (dualAI) sideCard.appendChild(node('p', 'ms-live-note', '双 AI 水晶的攻击伤害 / 间隔在“难度 / AI”编辑对应数值档；双方同档时共用该档参数。'));
       const selectedUnit = selectInput((group('units')?.entries ?? []).map(entry => [entry.id, entry.label]), sideLabel + '当前招募兵种');
       selectedUnit.setAttribute('data-live-selected-unit', side); selectedUnit.setAttribute('data-needs-battle', '');
       selectedUnit.value = String(s.battle?.[side]?.selectedUnit ?? 0); label(sideCard, '当前招募兵种', selectedUnit);
@@ -480,12 +483,15 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     const basics = card(content, '通用基础规则');
     basics.appendChild(node('p', 'ms-live-note', '按 Enter 或离开输入框后自动保存并应用。打开设置不会暂停游戏。'));
     fieldsInto(basics, groupFields('basic').length ? groupFields('basic') : groupFields('economy').filter(field => field.apply !== '下局'), { live: true });
-    const ai = node('input'); ai.type = 'checkbox'; ai.checked = s.battle?.enemyAi ?? true; ai.setAttribute('data-live-ai', ''); ai.setAttribute('data-needs-battle', '');
-    const aiLabel = node('label', 'ms-check'); aiLabel.appendChild(ai); aiLabel.appendChild(node('span', '', '蓝方电脑自动选择兵种（单人局）')); basics.appendChild(aiLabel);
-    on(ai, 'change', () => {
-      const enabled = ai.checked;
-      return commitBehavior('rules.enemyAi', enabled, '电脑自动选兵');
-    }, true);
+    if (dualAI) basics.appendChild(node('p', 'ms-live-note', '双 AI 对战固定启用双方每轮选兵；战场两侧“暂停出兵”只控制本局招募，不暂停已有士兵。单人局的蓝方 AI 开关不影响此模式。'));
+    else {
+      const ai = node('input'); ai.type = 'checkbox'; ai.checked = s.battle?.enemyAi ?? true; ai.setAttribute('data-live-ai', ''); ai.setAttribute('data-needs-battle', '');
+      const aiLabel = node('label', 'ms-check'); aiLabel.appendChild(ai); aiLabel.appendChild(node('span', '', '蓝方电脑自动选择兵种（单人局）')); basics.appendChild(aiLabel);
+      on(ai, 'change', () => {
+        const enabled = ai.checked;
+        return commitBehavior('rules.enemyAi', enabled, '电脑自动选兵');
+      }, true);
+    }
     const spawnCard = card(content, '生成士兵 / 清场'), row = node('div', 'ms-row');
     const unit = selectInput((group('units')?.entries ?? []).map(entry => [entry.id, entry.label]), '刷兵兵种'); unit.setAttribute('data-sandbox-unit', '');
     const count = numberInput(1, '刷兵数量', 1); count.setAttribute('data-sandbox-count', '');
@@ -536,13 +542,38 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     content.appendChild(node('p', 'ms-summary', '开局资源与倒计时只影响新战局，不改变当前金币、收入、人口或倒计时。底部自动行为开关本局立即生效，后续新局也沿用。'));
     const startCard = card(content, '开始新战局');
     const difficulties = group('difficulties')?.entries ?? [];
-    startCard.appendChild(node('p', 'ms-muted', '选择新局难度'));
-    inlineChoices(startCard, difficulties.map(entry => [Number(entry.id), entry.label]), startDifficulty, 'data-start-difficulty', value => { startDifficulty = value; });
-    inlineChoices(startCard, [[true, '单人对战电脑'], [false, '双人对战']], startSinglePlay, 'data-start-mode', value => { startSinglePlay = value; });
+    const current = state(), battle = current.battle, context = battleContext(current);
+    if (startingContext !== context && battle) {
+      startDualAI = battle.matchMode === 'ai-vs-ai';
+      if (startDualAI) startAIOptions = { leftDifficulty: battle.dualAI.leftDifficulty, rightDifficulty: battle.dualAI.rightDifficulty,
+        applyDifficultyStats: battle.dualAI.applyDifficultyStats };
+      else { startSinglePlay = battle.matchMode !== 'dual'; startDifficulty = battle.difficulty; }
+    }
+    startingContext = context;
+    inlineChoices(startCard, [[true, '单人对战电脑'], [false, '双人对战'], ['ai-vs-ai', '双 AI 对战']],
+      startDualAI ? 'ai-vs-ai' : startSinglePlay, 'data-start-mode', value => {
+        startDualAI = value === 'ai-vs-ai'; if (!startDualAI) startSinglePlay = value; renderContent();
+      });
+    if (startDualAI) {
+      for (const [side, name] of [['left', '红方 AI'], ['right', '蓝方 AI']]) {
+        startCard.appendChild(node('p', 'ms-muted', `${name} 难度`));
+        inlineChoices(startCard, difficulties.map(entry => [Number(entry.id), entry.label]), startAIOptions[`${side}Difficulty`],
+          `data-start-ai-${side}`, value => { startAIOptions[`${side}Difficulty`] = value; });
+      }
+      const full = node('input'); full.type = 'checkbox'; full.checked = startAIOptions.applyDifficultyStats;
+      full.setAttribute('data-start-ai-stats', '');
+      const line = node('label', 'ms-check'); line.appendChild(full); line.appendChild(node('span', '', '同时使用所选难度的数值加成')); startCard.appendChild(line);
+      on(full, 'change', () => { startAIOptions.applyDifficultyStats = full.checked; }, true);
+      startCard.appendChild(node('p', 'ms-muted', '关闭加成时，双方数值都用当前普通档，仅 AI 选兵使用各自所选难度。'));
+    } else {
+      startCard.appendChild(node('p', 'ms-muted', '选择新局难度'));
+      inlineChoices(startCard, difficulties.map(entry => [Number(entry.id), entry.label]), startDifficulty, 'data-start-difficulty', value => { startDifficulty = value; });
+    }
     button(startCard, '按当前设置开始新战局', 'start-battle', () => action(async () => {
       assertValid();
       if (state().isBattle && !await confirmAction('重新开始将结束当前战局。按当前设置开始新局？')) return;
-      const options = { difficulty: startDifficulty, singlePlay: startSinglePlay };
+      const options = startDualAI ? { mode: 'ai-vs-ai', dualAI: { ...startAIOptions } }
+        : { difficulty: startDifficulty, singlePlay: startSinglePlay };
       if (onStartBattle) await onStartBattle(options); else await customization.startBattle(options);
       notice('已开始新战局。');
     }), 'ms-primary', true);
@@ -553,7 +584,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     const behavior = group('behavior');
     if (behavior) {
       const section = card(content, '自动行为（本局与下局）');
-      fieldsInto(section, (behavior.entries?.flatMap(entry => entry.fields ?? []) ?? []).map(field => ({ ...field,
+      fieldsInto(section, (behavior.entries?.flatMap(entry => entry.fields ?? []) ?? []).filter(field => !startDualAI || field.path !== 'rules.enemyAi').map(field => ({ ...field,
         label: field.label.replace('开局', ''), unit: field.path === 'rules.enemyAi' ? field.unit : '本局与下局共用', apply: '本局立即生效，后续新局沿用' })));
     }
   }
@@ -666,7 +697,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     // The collapsed editor performs no profile cloning / DOM traversal in the game loop.
     if (!opened) return;
     const current = state();
-    if (activeTab === 'sandbox' && sandboxContext !== battleContext(current)) {
+    if ((activeTab === 'sandbox' && sandboxContext !== battleContext(current))
+      || (activeTab === 'starting' && startingContext !== battleContext(current))) {
       // Native menu navigation can replace a match without closing this dock.
       // clearContent removes listeners before detaching focused fields, so a
       // resulting blur cannot accidentally apply old text to the new match.
@@ -710,7 +742,10 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
         const battle = current.battle;
         const line = (side, name) => `${name}：金币 ${formatted(battle[side]?.money)} · 收入 ${formatted(battle[side]?.income)} · 人口 ${formatted(battle[side]?.population)} · 士兵 ${formatted(battle[side]?.units)} · 水晶 HP ${formatted(battle[side]?.baseHp)}`;
         const difficulty = group('difficulties')?.entries?.find(entry => Number(entry.id) === Number(battle.difficulty));
-        setText(summary, `本局难度：${difficulty?.label ?? battle.difficulty}\n规则：${current.mode === 'original' ? '原版规则' : '自定义（已修改）'}\n${line('left', '红方')}\n${line('right', '蓝方')}`);
+        const aiDifficulty = side => group('difficulties')?.entries?.find(entry => Number(entry.id) === battle.dualAI?.[`${side}Difficulty`])?.label ?? battle.dualAI?.[`${side}Difficulty`];
+        const match = battle.matchMode === 'ai-vs-ai' ? `双 AI 对战：红方 ${aiDifficulty('left')} / 蓝方 ${aiDifficulty('right')}\n数值档：${battle.dualAI.applyDifficultyStats ? '分别使用所选难度' : '双方当前普通档（仅 AI 选兵难度不同）'}`
+          : `本局难度：${difficulty?.label ?? battle.difficulty}`;
+        setText(summary, `${match}\n规则：${current.mode === 'original' ? '原版规则' : '自定义（已修改）'}\n${line('left', '红方')}\n${line('right', '蓝方')}`);
       }
     }
     for (const side of ['left', 'right']) {

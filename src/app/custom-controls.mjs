@@ -159,7 +159,7 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
     const rate = Number(rateSelect.value); if (CUSTOM_RENDER_RATES.includes(rate)) onRenderRate(rate);
     rateSelect.value = String(state.renderHz);
   });
-  const help = node('div', 'U 放大 / O 缩小（战场中心）· 滚轮缩放（鼠标位置）· 战场左 / 右 / 中键拖动 · IJKL 移动视角。WASD / 方向键选兵：首按立即，350 ms 后每 85 ms 连选；编辑参数时不抢键。显示上限受屏幕与机器性能限制。');
+  const help = node('div', '按住 U / O 平滑放大 / 缩小（每秒 ×2 / ×0.5，松开即停，双键抵消，战场中心）· 滚轮缩放（鼠标位置）· 战场左 / 右 / 中键拖动 · IJKL 移动视角。WASD / 方向键选兵：首按立即，350 ms 后每 85 ms 连选；编辑参数时不抢键。显示上限受屏幕与机器性能限制。');
   help.className = 'custom-controls-help'; viewSection.appendChild(help);
   for (const host of [element, playbackElement]) {
     for (const type of ['pointerdown', 'pointerup', 'click', 'wheel']) listen(host, type, event => event.stopPropagation());

@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseAutoOptions, correctAutoOrder, autoTiming, typeByMouseAndKeyboard,
-  answerSettingsConfirmation, withHeldKeys } from '../tools/verify-settings-auto.mjs';
+  answerSettingsConfirmation, withHeldKeys, analyzeSmoothZoomSamples, tapHeldKey } from '../tools/verify-settings-auto.mjs';
 
-const args = ['--dir', 'dist/settings-auto-proof/MiragineSuper', '--version', '0.7.2-preview.1', '--commit', 'a'.repeat(40)];
+const args = ['--dir', 'dist/settings-auto-proof/MiragineSuper', '--version', '0.7.3-preview.1', '--commit', 'a'.repeat(40)];
 test('automatic-settings verifier requires explicit provenance and safe local outputs', () => {
-  assert.equal(parseAutoOptions(args).out, '.local/keyboard-controls-qa.json');
-  assert.equal(parseAutoOptions(args).screenshotPrefix, 'settings-auto-keyboard-controls');
+  assert.equal(parseAutoOptions(args).out, '.local/smooth-zoom-qa.json');
+  assert.equal(parseAutoOptions(args).screenshotPrefix, 'settings-auto-smooth-zoom');
   assert.throws(() => parseAutoOptions(args.slice(0, 4)), /Supply/);
   assert.throws(() => parseAutoOptions([...args, '--unknown', 'x']), /Expected/);
   assert.throws(() => parseAutoOptions([...args, '--out', 'README.json']), /ignored output/);
@@ -239,4 +239,149 @@ test('held-key acceptance preserves its observation error even if keyup also fai
   } }), error => error === failure);
   assert.deepEqual(fixture.calls, [['down', 'j'], ['down', 'l'], ['during'], ['up', 'l'], ['up', 'j']]);
   assert.equal(fixture.held.size, 0);
+});
+
+test('smooth zoom tap presses once, remains held asynchronously and releases once', async () => {
+  const fixture = heldKeysFixture();
+  const tapping = tapHeldKey({ keyboard: fixture.keyboard, key: 'u' });
+  assert.deepEqual(fixture.calls, [['down', 'u']]);
+  assert.deepEqual([...fixture.held], ['u']);
+  await tapping;
+  assert.deepEqual(fixture.calls, [['down', 'u'], ['up', 'u']]);
+  assert.equal(fixture.held.size, 0);
+});
+
+test('smooth zoom tap supports an explicit short duration without synthetic key repeats', async () => {
+  const fixture = heldKeysFixture();
+  await tapHeldKey({ keyboard: fixture.keyboard, key: 'o', milliseconds: 25 });
+  assert.deepEqual(fixture.calls, [['down', 'o'], ['up', 'o']]);
+  assert.equal(fixture.held.size, 0);
+});
+
+test('smooth zoom tap propagates keydown failure without releasing an unpressed key', async () => {
+  const fixture = heldKeysFixture({ downFailureKey: 'u' });
+  await assert.rejects(tapHeldKey({ keyboard: fixture.keyboard, key: 'u' }), error => error === fixture.downError);
+  assert.deepEqual(fixture.calls, [['down', 'u']]);
+});
+
+test('smooth zoom tap attempts release and reports a keyup failure', async () => {
+  const fixture = heldKeysFixture({ upFailureKey: 'o' });
+  await assert.rejects(tapHeldKey({ keyboard: fixture.keyboard, key: 'o', milliseconds: 25 }), error => error === fixture.upError);
+  assert.deepEqual(fixture.calls, [['down', 'o'], ['up', 'o']]);
+  assert.equal(fixture.held.size, 0);
+});
+
+test('smooth zoom tap rejects invalid keys and unsafe tap durations before pressing anything', async () => {
+  for (const key of [undefined, null, '', 1]) {
+    const fixture = heldKeysFixture();
+    await assert.rejects(tapHeldKey({ keyboard: fixture.keyboard, key }));
+    assert.deepEqual(fixture.calls, []);
+  }
+  for (const milliseconds of [null, '20', 0, 19, 201, NaN, Infinity, -Infinity]) {
+    const fixture = heldKeysFixture();
+    await assert.rejects(tapHeldKey({ keyboard: fixture.keyboard, key: 'u', milliseconds }));
+    assert.deepEqual(fixture.calls, []);
+  }
+});
+
+test('smooth zoom analysis measures a doubling per second without rewriting samples', () => {
+  const samples = Object.freeze([Object.freeze({ at: 100, zoom: 1 }),
+    Object.freeze({ at: 1100, zoom: 2 }), Object.freeze({ at: 2100, zoom: 4 })]);
+  const result = analyzeSmoothZoomSamples(samples, 1);
+  assert.equal(result.durationMs, 2000);
+  assert.equal(result.distinct, 3);
+  assert.equal(result.directedChanges, 2);
+  assert.equal(result.maxStepRatio, 2);
+  assert.equal(result.firstRatio, 2);
+  assert.equal(result.finalRatio, 4);
+  assert.equal(result.monotonic, true);
+  assert.equal(result.observedRateLog2PerSecond, 1);
+});
+
+test('smooth zoom analysis keeps zoom-out ratios and rate signed instead of reporting zoom-in values', () => {
+  const result = analyzeSmoothZoomSamples([{ at: 0, zoom: 4 }, { at: 1000, zoom: 2 }, { at: 2000, zoom: 1 }], -1);
+  assert.equal(result.durationMs, 2000);
+  assert.equal(result.distinct, 3);
+  assert.equal(result.directedChanges, 2);
+  assert.equal(result.maxStepRatio, 2);
+  assert.equal(result.firstRatio, 0.5);
+  assert.equal(result.finalRatio, 0.25);
+  assert.equal(result.monotonic, true);
+  assert.equal(result.observedRateLog2PerSecond, -1);
+});
+
+test('smooth zoom analysis permits plateaus but does not count them as actual zoom changes', () => {
+  const result = analyzeSmoothZoomSamples([{ at: 0, zoom: 1 }, { at: 500, zoom: 1 },
+    { at: 1000, zoom: 2 }, { at: 1500, zoom: 2 }], 1);
+  assert.equal(result.durationMs, 1500);
+  assert.equal(result.distinct, 2);
+  assert.equal(result.directedChanges, 1);
+  assert.equal(result.firstRatio, 1);
+  assert.equal(result.finalRatio, 2);
+  assert.equal(result.maxStepRatio, 2);
+  assert.equal(result.monotonic, true);
+  assert.ok(Math.abs(result.observedRateLog2PerSecond - 2 / 3) < 1e-12);
+});
+
+test('smooth zoom analysis identifies a backward step even if total zoom moved in the requested direction', () => {
+  const result = analyzeSmoothZoomSamples([{ at: 0, zoom: 1 }, { at: 100, zoom: 1.2 },
+    { at: 200, zoom: 1.1 }, { at: 300, zoom: 1.3 }], 1);
+  assert.equal(result.distinct, 4);
+  assert.equal(result.directedChanges, 2);
+  assert.equal(result.monotonic, false);
+  assert.equal(result.maxStepRatio, 1.2);
+  assert.equal(result.firstRatio, 1.2);
+  assert.equal(result.finalRatio, 1.3);
+  assert.ok(Math.abs(result.observedRateLog2PerSecond - Math.log2(1.3) / 0.3) < 1e-12);
+});
+
+test('smooth zoom analysis marks movement against the requested direction without flipping its observed rate', () => {
+  const result = analyzeSmoothZoomSamples([{ at: 0, zoom: 1 }, { at: 1000, zoom: 2 }, { at: 2000, zoom: 4 }], -1);
+  assert.equal(result.directedChanges, 0);
+  assert.equal(result.monotonic, false);
+  assert.equal(result.observedRateLog2PerSecond, 1);
+});
+
+test('smooth zoom analysis honestly reports a completely stationary sample sequence', () => {
+  for (const direction of [1, -1]) {
+    const result = analyzeSmoothZoomSamples([{ at: 0, zoom: 2 }, { at: 100, zoom: 2 }, { at: 200, zoom: 2 }], direction);
+    assert.equal(result.distinct, 1);
+    assert.equal(result.directedChanges, 0);
+    assert.equal(result.firstRatio, 1);
+    assert.equal(result.finalRatio, 1);
+    assert.equal(result.maxStepRatio, 1);
+    assert.equal(result.monotonic, true);
+    assert.equal(result.observedRateLog2PerSecond, 0);
+  }
+});
+
+test('smooth zoom analysis tolerates sub-epsilon noise without confusing distinct samples and directed movement', () => {
+  const result = analyzeSmoothZoomSamples([{ at: 0, zoom: 1 }, { at: 100, zoom: 1 + 5e-10 }, { at: 200, zoom: 1 }], 1);
+  assert.equal(result.distinct, 2);
+  assert.equal(result.directedChanges, 0);
+  assert.equal(result.monotonic, true);
+  assert.equal(result.finalRatio, 1);
+  assert.equal(result.observedRateLog2PerSecond, 0);
+});
+
+test('smooth zoom analysis requires at least three valid numeric observations', () => {
+  const valid = [{ at: 0, zoom: 1 }, { at: 100, zoom: 1.1 }, { at: 200, zoom: 1.2 }];
+  const invalidSamples = [undefined, null, {}, [], valid.slice(0, 1), valid.slice(0, 2),
+    [valid[0], null, valid[2]],
+    ...['100', NaN, Infinity, -Infinity].map(at => [valid[0], { at, zoom: 1.1 }, valid[2]]),
+    ...[0, -1, '1.1', NaN, Infinity, -Infinity].map(zoom => [valid[0], { at: 100, zoom }, valid[2]])];
+  for (const samples of invalidSamples) assert.throws(() => analyzeSmoothZoomSamples(samples, 1));
+});
+
+test('smooth zoom analysis rejects repeated or reversed timestamps rather than inventing a rate', () => {
+  for (const times of [[0, 0, 200], [0, 100, 100], [0, 200, 100]]) {
+    assert.throws(() => analyzeSmoothZoomSamples(times.map((at, i) => ({ at, zoom: 1 + i / 10 })), 1));
+  }
+});
+
+test('smooth zoom analysis accepts only the two explicit zoom directions', () => {
+  const samples = [{ at: 0, zoom: 1 }, { at: 100, zoom: 1.1 }, { at: 200, zoom: 1.2 }];
+  for (const direction of [undefined, null, 0, 2, -2, '1', '-1', NaN, Infinity]) {
+    assert.throws(() => analyzeSmoothZoomSamples(samples, direction));
+  }
 });

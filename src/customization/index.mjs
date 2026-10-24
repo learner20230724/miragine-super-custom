@@ -5,6 +5,7 @@ import { clampInteger, clampFinite } from './numeric.mjs';
 import { releaseSpatialIndexes } from '../performance/simulation-spatial.mjs';
 import { installCombatHitRules } from '../extensions/combat-hits.mjs';
 import { installCasterProjectileLifetime } from '../extensions/projectile-lifetime.mjs';
+import { dualAISnapshot, normalizeDualAIOptions } from '../extensions/dual-ai.mjs';
 
 export { DRAFT_KEY, PRESETS_KEY, MAX_SANDBOX_UNITS, validateProfile, profileFromConfiguration,
   configurationFromProfile } from './schema.mjs';
@@ -179,7 +180,7 @@ export function createCustomization({ controller, defaults, initialConfig = cont
     const needsCustomRuntime = nextIsCustom || nextMode === 'custom';
     install(sim, next.rules, needsCustomRuntime, { initialize: needsCustomRuntime });
     sim.p1[2] = Number(next.rules.leftRecruitment); sim.p2[2] = Number(next.rules.rightRecruitment);
-    controller.config = configuration; applied = clone(next); currentMode = nextMode;
+    controller.config = configuration; applied = clone(next); currentMode = options.matchMode === 'ai-vs-ai' ? 'custom' : nextMode;
     if (options.autoStart !== false) sim.step();
     return sim;
   };
@@ -209,6 +210,7 @@ export function createCustomization({ controller, defaults, initialConfig = cont
         recruitment: selection[2] === 1 };
     };
     return { left: side('left'), right: side('right'), enemyAi: behaviorBySimulation.get(sim)?.enemyAi ?? true,
+      matchMode: sim.dualAI ? 'ai-vs-ai' : sim.singlePlay ? 'single' : 'dual', dualAI: dualAISnapshot(sim),
       battleId: battleIds.get(sim), difficulty: sim.difficulty, frame: sim.frame, round: sim.round, canSpawn: true };
   }
   function currentBehavior(sim) {
@@ -379,10 +381,17 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       notify('apply-next', { applied: [], deferred: changedFields(applied, valid).map(field => field.path) });
       return clone(next);
     },
-    startBattle({ difficulty = controller.difficulty, singlePlay = controller.singlePlay } = {}) {
+    startBattle(options = {}) {
+      const { difficulty = controller.difficulty, singlePlay = controller.singlePlay,
+        mode = Object.hasOwn(options, 'singlePlay') ? singlePlay ? 'single' : 'dual' : controller.matchMode,
+        dualAI = controller.dualAIOptions } = options;
       integer(difficulty, 0, 3, 'difficulty');
       if (typeof singlePlay !== 'boolean') throw new TypeError('singlePlay must be boolean');
-      api.applyNext(); controller.startMatch(singlePlay, difficulty);
+      if (!['single', 'dual', 'ai-vs-ai'].includes(mode)) throw new TypeError('Invalid match mode');
+      if (mode === 'ai-vs-ai') normalizeDualAIOptions(dualAI);
+      api.applyNext();
+      if (mode === 'ai-vs-ai') controller.startAIMatch(dualAI);
+      else controller.startMatch(mode === 'single', difficulty);
       notify('start-battle'); return api.getState();
     },
     returnToOriginal() {
@@ -485,9 +494,11 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       const edits = [];
       if(Object.hasOwn(input,'maxHp'))edits.push([`config.sides.${side}.base.hp`,input.maxHp]);
       if(Object.hasOwn(input,'range'))edits.push([`config.sides.${side}.base.range`,input.range]);
-      const attackPrefix=side==='left'?'config.rules':`config.difficulties.${sim.difficulty}`;
-      if(Object.hasOwn(input,'damage')) { if(!Array.isArray(input.damage)||input.damage.length!==2)throw new TypeError('Two damage values required'); for(let i=0;i<2;i++)edits.push([`${attackPrefix}.${side==='left'?'baseDamage':'blueBaseDamage'}.${i}`,input.damage[i]]); }
-      if(Object.hasOwn(input,'weaponSpeedFrames'))edits.push([`${attackPrefix}.${side==='left'?'baseWeaponSpeedFrames':'blueBaseWeaponSpeedFrames'}`,input.weaponSpeedFrames]);
+      const aiDifficulty = sim.dualAI ? sim.dualAI.options.applyDifficultyStats ? sim.dualAI.options[`${side}Difficulty`] : 1 : null;
+      const usesDifficulty = side === 'right' || aiDifficulty !== null;
+      const attackPrefix=usesDifficulty?`config.difficulties.${aiDifficulty ?? sim.difficulty}`:'config.rules';
+      if(Object.hasOwn(input,'damage')) { if(!Array.isArray(input.damage)||input.damage.length!==2)throw new TypeError('Two damage values required'); for(let i=0;i<2;i++)edits.push([`${attackPrefix}.${usesDifficulty?'blueBaseDamage':'baseDamage'}.${i}`,input.damage[i]]); }
+      if(Object.hasOwn(input,'weaponSpeedFrames'))edits.push([`${attackPrefix}.${usesDifficulty?'blueBaseWeaponSpeedFrames':'baseWeaponSpeedFrames'}`,input.weaponSpeedFrames]);
       if(edits.length)liveFields(edits,options);
       if(Object.hasOwn(input,'hp'))api.setResources({side,baseHp:input.hp});
       return currentResources(sim);
@@ -505,7 +516,9 @@ export function createCustomization({ controller, defaults, initialConfig = cont
     },
     setEnemyAi(enabled) {
       if (typeof enabled !== 'boolean') throw new TypeError('enabled must be boolean');
-      const sim = battle(); enableCustom(sim); behaviorBySimulation.get(sim).enemyAi = enabled;
+      const sim = battle();
+      if (sim.dualAI) throw new Error('双 AI 对战固定启用双方 AI；请使用各方出兵开关。');
+      enableCustom(sim); behaviorBySimulation.get(sim).enemyAi = enabled;
       applied.rules.enemyAi = enabled; notify('enemy-ai');
     },
   };

@@ -1,90 +1,232 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
 import { ViewCamera } from '../src/render/view-camera.mjs';
-import { uiOwnsGameKeyboard, wheelZoomFactor, zoomCameraFromKey } from '../src/app/camera-keyboard.mjs';
+import { CameraZoomKeyboard, KEYBOARD_ZOOM_PER_SECOND, MAX_KEYBOARD_ZOOM_DELTA_MS,
+  uiOwnsGameKeyboard, wheelZoomFactor } from '../src/app/camera-keyboard.mjs';
 
 const core = Object.freeze({ x: 2250, y: 400, width: 640, height: 400 });
 const center = { x: 320, y: 250 };
 const event = (code, extras = {}) => ({ code, target: { closest: () => null }, ...extras });
-const context = (camera, extras = {}) => ({ enabled: true, camera, coreCamera: core, ...extras });
 const close = (actual, expected, tolerance = 1e-7) => assert.ok(Math.abs(actual - expected) < tolerance,
   `${actual} differs from ${expected}`);
+const fixture = (extras = {}) => {
+  const camera = new ViewCamera();
+  return { camera, keys: new CameraZoomKeyboard(), state: { enabled: true, camera, coreCamera: core, scene: core, ...extras } };
+};
+function hold(f, code, start, duration, hz = 60) {
+  f.keys.keyDown(event(code), start, f.state);
+  const count = Math.ceil(duration / (1000 / hz));
+  for (let n = 1; n <= count; n++) f.keys.advance(start + n * duration / count, f.state);
+  f.keys.keyUp(event(code), start + duration, f.state);
+}
 
-test('U and O exactly match opposite 100-pixel wheel steps at the visible battlefield center', () => {
-  for (const [code, delta] of [['KeyU', -100], ['KeyO', 100]]) {
-    const keyed = new ViewCamera(), wheeled = new ViewCamera();
-    assert.equal(zoomCameraFromKey(event(code), context(keyed)), true);
-    wheeled.zoomAt(wheelZoomFactor(delta), center, core);
-    assert.deepEqual(keyed.descriptor(), wheeled.descriptor());
-    assert.equal(keyed.mode, 'manual');
-    assert.equal(code === 'KeyU' ? keyed.zoom > 1 : keyed.zoom < 1, true);
+test('held U doubles and O halves zoom per real second at 30, 60, 120 and 240 display Hz', () => {
+  assert.equal(KEYBOARD_ZOOM_PER_SECOND, 2);
+  for (const hz of [30, 60, 120, 240]) for (const [code, expected] of [['KeyU', 2], ['KeyO', .5]]) {
+    const f = fixture(); hold(f, code, 0, 1000, hz);
+    close(f.camera.zoom, expected); assert.equal(f.camera.mode, 'manual');
   }
 });
 
-test('keyboard zoom preserves the center ground anchor and original frozen camera', () => {
-  const camera = new ViewCamera(), initial = camera.screenToWorld(center, core);
-  zoomCameraFromKey(event('KeyU'), context(camera));
-  const after = camera.screenToWorld(center, core);
+test('first keydown has no 16% jump or repeat delay; the first elapsed millisecond already zooms', () => {
+  const f = fixture();
+  assert.equal(f.keys.keyDown(event('KeyU'), 0, f.state), true);
+  assert.equal(f.camera.zoom, 1); assert.equal(f.camera.mode, 'follow');
+  assert.equal(f.keys.advance(1, f.state), true); close(f.camera.zoom, 2 ** .001);
+  assert.equal(f.keys.advance(2, f.state), true); close(f.camera.zoom, 2 ** .002);
+});
+
+test('keyboard zoom preserves the battlefield center anchor and original frozen camera', () => {
+  const f = fixture(), initial = f.camera.screenToWorld(center, core);
+  hold(f, 'KeyU', 0, 1000);
+  const after = f.camera.screenToWorld(center, core);
   close(after.x, initial.x); close(after.y, initial.y);
-  zoomCameraFromKey(event('KeyO'), context(camera));
-  close(camera.zoom, 1); close(camera.centerX, core.x); close(camera.centerY, core.y);
+  hold(f, 'KeyO', 1000, 1000);
+  close(f.camera.zoom, 1); close(f.camera.centerX, core.x); close(f.camera.centerY, core.y);
   assert.deepEqual(core, { x: 2250, y: 400, width: 640, height: 400 });
 });
 
-test('held U/O accepts keyboard repeat at every simulation speed including paused', () => {
+test('paused and 1/20/50/100 game speed produce the same wall-time zoom', () => {
   const results = [];
   for (const speed of [0, 1, 20, 50, 100]) {
-    const camera = new ViewCamera();
-    const state = context(camera, { speed, paused: speed === 0 });
-    zoomCameraFromKey(event('KeyU'), state);
-    for (let n = 0; n < 5; n++) assert.equal(zoomCameraFromKey(event('KeyU', { repeat: true }), state), true);
-    close(camera.zoom, Math.exp(.15 * 6));
-    results.push(camera.descriptor());
+    const f = fixture({ speed, paused: speed === 0 }); hold(f, 'KeyU', 0, 600);
+    results.push(f.camera.descriptor());
   }
   for (const result of results) assert.deepEqual(result, results[0]);
+  close(results[0].zoom, 2 ** .6);
 });
 
-test('keyboard zoom shares wheel minimum/maximum clamps and can leave full-map view', () => {
-  const keyed = new ViewCamera().fitAll(), wheeled = new ViewCamera().fitAll();
-  for (const [code, delta] of [['KeyO', 100], ['KeyU', -100]]) {
-    for (let n = 0; n < 100; n++) {
-      zoomCameraFromKey(event(code, { repeat: true }), context(keyed));
-      wheeled.zoomAt(wheelZoomFactor(delta), center, core);
+test('OS-repeat frequency and duplicate keydown do not affect zoom rate or move the camera at event delivery', () => {
+  for (const repeatCount of [0, 1, 40]) {
+    const f = fixture(); f.keys.keyDown(event('KeyU'), 0, f.state);
+    for (let frame = 1; frame <= 50; frame++) {
+      const before = f.camera.zoom;
+      for (let repeat = 0; repeat < repeatCount; repeat++) {
+        assert.equal(f.keys.keyDown(event('KeyU', { repeat: true }), (frame - 1) * 20 + repeat / 100, f.state), true);
+      }
+      f.keys.keyDown(event('KeyU'), (frame - 1) * 20, f.state);
+      assert.equal(f.camera.zoom, before);
+      f.keys.advance(frame * 20, f.state);
     }
-    assert.deepEqual(keyed.descriptor(), wheeled.descriptor());
-    assert.equal(keyed.zoom, code === 'KeyU' ? keyed.maxZoom : keyed.minZoom);
+    close(f.camera.zoom, 2);
   }
 });
 
-test('inactive scenes, unrelated keys, modifiers and composing text do not zoom', () => {
-  const camera = new ViewCamera();
-  for (const code of ['KeyI', 'KeyJ', 'KeyK', 'KeyL', 'KeyW', 'ArrowRight', 'Enter', 'F2']) {
-    assert.equal(zoomCameraFromKey(event(code), context(camera)), false);
-  }
-  for (const flag of ['ctrlKey', 'altKey', 'metaKey', 'isComposing']) {
-    for (const code of ['KeyU', 'KeyO']) assert.equal(zoomCameraFromKey(event(code, { [flag]: true }), context(camera)), false);
-  }
-  assert.equal(zoomCameraFromKey(event('KeyU'), context(camera, { enabled: false })), false);
-  assert.equal(zoomCameraFromKey(event('KeyU'), context(null)), false);
-  assert.equal(camera.mode, 'follow'); assert.equal(camera.zoom, 1);
+test('U and O held together cancel; releasing either resumes only the remaining direction', () => {
+  const f = fixture(); f.keys.keyDown(event('KeyU'), 0, f.state);
+  f.keys.advance(20, f.state); f.keys.keyDown(event('KeyO'), 30, f.state);
+  close(f.camera.zoom, 2 ** .03);
+  assert.equal(f.keys.advance(50, f.state), false);
+  assert.equal(f.keys.keyUp(event('KeyU'), 60, f.state), false);
+  close(f.camera.zoom, 2 ** .03);
+  f.keys.advance(80, f.state); close(f.camera.zoom, 2 ** .01);
+  f.keys.keyUp(event('KeyO'), 90, f.state); close(f.camera.zoom, 1);
 });
 
-test('editing fields, settings, toolbar and confirmation targets own U/O', () => {
-  const camera = new ViewCamera();
+test('a complete eight-millisecond tap between RAFs is settled on release and has no trailing animation', () => {
+  const f = fixture(); f.keys.advance(0, f.state);
+  f.keys.keyDown(event('KeyU'), 5, f.state); assert.equal(f.camera.zoom, 1);
+  assert.equal(f.keys.keyUp(event('KeyU'), 13, f.state), true);
+  close(f.camera.zoom, 2 ** .008);
+  const released = f.camera.descriptor();
+  for (const now of [16, 33, 100, 5000]) assert.equal(f.keys.advance(now, f.state), false);
+  assert.deepEqual(f.camera.descriptor(), released);
+});
+
+test('release between frames settles only the remaining interval, not a second full frame', () => {
+  const f = fixture(); f.keys.keyDown(event('KeyO'), 3, f.state);
+  f.keys.advance(19, f.state); f.keys.advance(35, f.state);
+  f.keys.keyUp(event('KeyO'), 40, f.state); close(f.camera.zoom, 2 ** -.037);
+  const zoom = f.camera.zoom; f.keys.advance(51, f.state); assert.equal(f.camera.zoom, zoom);
+});
+
+test('long stalls integrate at most 50 ms and discard all remaining debt', () => {
+  assert.equal(MAX_KEYBOARD_ZOOM_DELTA_MS, 50);
+  const f = fixture(); f.keys.keyDown(event('KeyU'), 0, f.state);
+  f.keys.advance(5000, f.state); close(f.camera.zoom, 2 ** .05);
+  f.keys.advance(5016, f.state); close(f.camera.zoom, 2 ** .066);
+  f.keys.keyUp(event('KeyU'), 5020, f.state); close(f.camera.zoom, 2 ** .07);
+  f.keys.advance(10000, f.state); close(f.camera.zoom, 2 ** .07);
+});
+
+test('event edges share one frame budget, including repeated taps and direction changes', () => {
+  const f = fixture(); f.keys.advance(0, f.state);
+  for (const [start, end] of [[0, 20], [25, 45], [50, 70]]) {
+    f.keys.keyDown(event('KeyU'), start, f.state); f.keys.keyUp(event('KeyU'), end, f.state);
+  }
+  close(f.camera.zoom, 2 ** .05);
+  f.keys.advance(80, f.state);
+  f.keys.keyDown(event('KeyU'), 90, f.state); f.keys.keyUp(event('KeyU'), 100, f.state);
+  close(f.camera.zoom, 2 ** .06);
+});
+
+test('a stalled release is capped and never leaves a queued zoom animation', () => {
+  const f = fixture(); f.keys.keyDown(event('KeyU'), 0, f.state);
+  f.keys.keyUp(event('KeyU'), 10000, f.state); close(f.camera.zoom, 2 ** .05);
+  const released = f.camera.descriptor();
+  f.keys.advance(10001, f.state); f.keys.advance(20000, f.state);
+  assert.deepEqual(f.camera.descriptor(), released);
+});
+
+test('cleanup loses all debt and OS repeats cannot revive cleared holds', () => {
+  const f = fixture(); f.keys.keyDown(event('KeyU'), 0, f.state);
+  f.keys.advance(16, f.state); const zoom = f.camera.zoom; f.keys.clear();
+  for (const now of [30, 300, 1000]) {
+    assert.equal(f.keys.keyDown(event('KeyU', { repeat: true }), now, f.state), false);
+    assert.equal(f.keys.advance(now, f.state), false);
+  }
+  assert.equal(f.camera.zoom, zoom);
+  f.keys.keyUp(event('KeyU'), 1001, f.state);
+  f.keys.keyDown(event('KeyU'), 1002, f.state); f.keys.advance(1012, f.state);
+  close(f.camera.zoom, zoom * 2 ** .01);
+});
+
+test('disabled scenes discard held time on either RAF or key release and do not resume automatically', () => {
+  for (const stop of ['advance', 'keyUp']) {
+    const f = fixture(); f.keys.keyDown(event('KeyU'), 0, f.state);
+    if (stop === 'advance') f.keys.advance(100, { ...f.state, enabled: false });
+    else f.keys.keyUp(event('KeyU'), 100, { ...f.state, enabled: false });
+    f.keys.advance(200, f.state); assert.equal(f.camera.zoom, 1);
+    assert.equal(f.keys.keyDown(event('KeyU', { repeat: true }), 201, f.state), false);
+  }
+});
+
+test('new match identity clears old keys even when simulation changes between RAFs or before keyup', () => {
+  for (const transition of ['advance', 'keyUp']) {
+    const f = fixture(); f.keys.keyDown(event('KeyU'), 0, f.state);
+    const fresh = { ...f.state, scene: {} };
+    if (transition === 'advance') f.keys.advance(20, fresh);
+    else f.keys.keyUp(event('KeyU'), 20, fresh);
+    assert.equal(f.camera.zoom, 1);
+    assert.equal(f.keys.keyDown(event('KeyU', { repeat: true }), 21, fresh), false);
+    f.keys.keyUp(event('KeyU'), 22, fresh); assert.equal(f.camera.zoom, 1);
+    f.keys.keyDown(event('KeyU'), 23, fresh); f.keys.advance(33, fresh);
+    close(f.camera.zoom, 2 ** .01);
+  }
+});
+
+test('editing fields, settings, toolbar and confirmation targets own U/O and cancel held time', () => {
   for (const selector of ['input', 'textarea', 'select', '[contenteditable]', '[role="dialog"]',
     '[data-custom-controls]', '[data-settings-panel]', '[data-game-text-controls]']) {
-    const target = { closest: query => query.includes(selector) ? {} : null };
+    const f = fixture(), target = { closest: query => query.includes(selector) ? {} : null };
     assert.equal(uiOwnsGameKeyboard(target), true);
-    for (const code of ['KeyU', 'KeyO']) assert.equal(zoomCameraFromKey(event(code, { target }), context(camera)), false);
+    f.keys.keyDown(event('KeyU'), 0, f.state);
+    assert.equal(f.keys.keyDown(event('KeyO', { target }), 15, f.state), false);
+    f.keys.advance(30, f.state); assert.equal(f.camera.zoom, 1);
   }
-  assert.equal(zoomCameraFromKey(event('KeyU', { target: { isContentEditable: true } }), context(camera)), false);
-  assert.equal(camera.mode, 'follow');
+  assert.equal(uiOwnsGameKeyboard({ isContentEditable: true }), true);
   assert.equal(uiOwnsGameKeyboard(undefined), false);
-  assert.equal(uiOwnsGameKeyboard({ closest: () => null }), false, 'Canvas focus is not blocked by an open drawer');
+  assert.equal(uiOwnsGameKeyboard({ closest: () => null }), false, 'An open drawer does not own canvas focus');
 });
 
-test('wheel factor extraction retains pixel, line, page and huge-delta behavior', () => {
+test('release into an editing control cannot apply leftover camera movement', () => {
+  const f = fixture(); f.keys.keyDown(event('KeyU'), 0, f.state);
+  f.keys.keyUp(event('KeyU', { target: { isContentEditable: true } }), 15, f.state);
+  f.keys.advance(30, f.state); assert.equal(f.camera.zoom, 1);
+});
+
+test('unrelated keys, modifiers, composition, missing camera and inactive contexts cannot start zoom', () => {
+  const f = fixture();
+  for (const code of ['KeyI', 'KeyJ', 'KeyK', 'KeyL', 'KeyW', 'ArrowRight', 'Enter', 'F2']) {
+    assert.equal(f.keys.keyDown(event(code), 0, f.state), false);
+    assert.equal(f.keys.keyUp(event(code), 0, f.state), false);
+  }
+  for (const flag of ['ctrlKey', 'altKey', 'metaKey', 'isComposing']) {
+    assert.equal(f.keys.keyDown(event('KeyU', { [flag]: true }), 0, f.state), false);
+  }
+  assert.equal(f.keys.keyDown(event('KeyU'), 0, { ...f.state, enabled: false }), false);
+  assert.equal(f.keys.keyDown(event('KeyU'), 0, { ...f.state, camera: null }), false);
+  f.keys.advance(30, f.state); assert.equal(f.camera.zoom, 1);
+});
+
+test('backward RAF timestamps do not double-count time and invalid time fails before mutation', () => {
+  const f = fixture(); f.keys.keyDown(event('KeyU'), 10, f.state);
+  assert.equal(f.keys.advance(8, f.state), false);
+  f.keys.advance(20, f.state); close(f.camera.zoom, 2 ** .01);
+  const zoom = f.camera.zoom;
+  for (const invalid of [NaN, Infinity, -1]) {
+    assert.throws(() => f.keys.advance(invalid, f.state), TypeError);
+    assert.throws(() => f.keys.keyDown(event('KeyO'), invalid, f.state), TypeError);
+    assert.throws(() => f.keys.keyUp(event('KeyU'), invalid, f.state), TypeError);
+  }
+  assert.equal(f.camera.zoom, zoom);
+  f.keys.keyUp(event('KeyU'), 25, f.state); close(f.camera.zoom, 2 ** .015);
+});
+
+test('keyboard shares wheel min/max clamps, may leave overview and stops making changes at a limit', () => {
+  const f = fixture(); f.camera.fitAll();
+  const initial = f.camera.zoom; hold(f, 'KeyU', 0, 1000);
+  close(f.camera.zoom, initial * 2); assert.equal(f.camera.mode, 'manual');
+  hold(f, 'KeyU', 1000, 10000); assert.equal(f.camera.zoom, f.camera.maxZoom);
+  f.keys.keyDown(event('KeyU'), 11000, f.state); assert.equal(f.keys.advance(11020, f.state), false);
+  f.keys.keyUp(event('KeyU'), 11020, f.state);
+  hold(f, 'KeyO', 11020, 10000); assert.equal(f.camera.zoom, f.camera.minZoom);
+  f.keys.keyDown(event('KeyO'), 21020, f.state); assert.equal(f.keys.advance(21040, f.state), false);
+});
+
+test('wheel factor is unchanged for pixel, line, page and huge-delta scrolling', () => {
   close(wheelZoomFactor(-100), Math.exp(.15));
   close(wheelZoomFactor(2, 1), Math.exp(-32 * .0015));
   close(wheelZoomFactor(1, 2), Math.exp(-400 * .0015));
@@ -93,30 +235,69 @@ test('wheel factor extraction retains pixel, line, page and huge-delta behavior'
   assert.equal(wheelZoomFactor(0), 1);
 });
 
-test('main routes U/O after confirmation and toolbar guards and before paused simulation keys', async () => {
+test('main routes U/O after confirmation/toolbars, advances before rendering, and permits paused observation', async () => {
   const main = await readFile(new URL('../src/app/main.mjs', import.meta.url), 'utf8');
   const listener = main.slice(main.indexOf("window.addEventListener('keydown'"), main.indexOf("window.addEventListener('keyup'"));
-  const zoom = listener.indexOf('zoomCameraFromKey(event');
+  const zoom = listener.indexOf('cameraZoom.keyDown(event');
   assert.ok(zoom > listener.indexOf("if (settings?.isConfirming && event.code !== 'F11') return;"));
   assert.ok(zoom > listener.indexOf('if (toolbarKeys.has(event.code))'));
   assert.ok(zoom < listener.indexOf('!frameClock.paused'));
-  assert.match(listener.slice(zoom), /enabled: ready && controller\.phase === 'game' && !controller\.overlay && !controller\.simulation\?\.winner/);
-  assert.match(listener.slice(zoom), /frameClock\.invalidate\(\)/);
+  const source = main.slice(main.indexOf('function cameraZoomContext()'), main.indexOf('function timingChange('));
+  assert.match(source, /controller\.phase === 'game' && !controller\.overlay && !controller\.simulation\?\.winner/);
+  assert.match(source, /!document\.hidden && !settings\?\.isConfirming && !uiOwnsGameKeyboard\(document\.activeElement\)/);
+  assert.match(source, /scene: controller\?\.simulation/); assert.doesNotMatch(source, /frameClock\.paused/);
+  const combat = main.indexOf('const { render } = frameClock.advance(now');
+  const advance = main.indexOf('if (cameraZoom.advance(performance.now(), cameraZoomContext())) frameClock.invalidate();');
+  assert.ok(advance > combat && advance < main.indexOf('if (render)', combat));
+  assert.match(main, /cameraZoom\.keyUp\(event, performance\.now\(\), cameraZoomContext\(\)\)/);
   assert.match(main, /observer\.zoomAt\(wheelZoomFactor\(event\.deltaY, event\.deltaMode\)/);
 });
 
-test('main wires real-time selection repeat outside simulation ticks and guards editing focus instead of drawer visibility', async () => {
+test('main clears held zoom on focus/visibility boundaries and fresh simulations', async () => {
+  const main = await readFile(new URL('../src/app/main.mjs', import.meta.url), 'utf8');
+  assert.match(main, /function clearGameInput\(\)\s*\{[^}]*cameraZoom\.clear\(\)/);
+  assert.match(main, /document\.addEventListener\('focusin', event => \{\s*if \(uiOwnsGameKeyboard\(event\.target\)\) cameraZoom\.clear\(\)/);
+  assert.match(main, /window\.addEventListener\('blur', \(\) => \{[^}]*cameraZoom\.clear\(\)/);
+  const hidden = main.slice(main.indexOf("document.addEventListener('visibilitychange'"), main.indexOf('new ResizeObserver'));
+  assert.match(hidden, /cameraZoom\.clear\(\)/);
+  assert.match(main, /observedSimulation = controller\.simulation;\s+keyboard\.clear\(\);\s+cameraZoom\.clear\(\)/);
+});
+
+test('main new-match synchronization preserves a fresh held U and a complete short tap before the first RAF', async () => {
+  const main = await readFile(new URL('../src/app/main.mjs', import.meta.url), 'utf8');
+  const source = main.slice(main.indexOf('function syncObservationScene('), main.indexOf('function timingChange('));
+  for (const shortTap of [false, true]) {
+    const f = fixture(), previous = { renderCamera: { ...core, x: 500 } }, next = { renderCamera: core };
+    let clears = 0;
+    const sandbox = vm.createContext({ ready: true, observedSimulation: previous,
+      controller: { phase: 'game', simulation: next, config: { rules: { mapWidth: 4500, mapHeight: 800, baseSpawnInset: 300 } } },
+      keyboard: { clear() { clears++; } }, cameraZoom: f.keys, observer: f.camera, ViewCamera,
+      presentation: { camera: previous.renderCamera }, view: { releaseRasterCaches() {}, tooltipLayouts: new Map() },
+      resetMeasurements() {}, performance: { now: () => 5 }, document: { hidden: false, activeElement: null },
+      settings: { isConfirming: false }, uiOwnsGameKeyboard });
+    vm.runInContext(source, sandbox);
+    f.keys.keyDown(event('KeyO'), 0, { ...f.state, scene: previous });
+    assert.equal(f.keys.keyDown(event('KeyU'), 5, sandbox.cameraZoomContext()), true);
+    assert.equal(clears, 1); assert.equal(sandbox.presentation, null);
+    assert.equal(sandbox.cameraZoomContext().coreCamera, core, 'Old presentation camera must not anchor the new scene');
+    if (shortTap) f.keys.keyUp(event('KeyU'), 13, sandbox.cameraZoomContext());
+    sandbox.syncObservationScene(16);
+    f.keys.advance(16, sandbox.cameraZoomContext());
+    assert.equal(clears, 1, 'First RAF must not clear a second time');
+    close(f.camera.zoom, 2 ** ((shortTap ? 8 : 11) / 1000));
+  }
+});
+
+test('main leaves selection repeat outside simulation ticks and preserves existing focus guards', async () => {
   const main = await readFile(new URL('../src/app/main.mjs', import.meta.url), 'utf8');
   assert.match(main, /new OriginalKeyboard\(controller, \{ repeatSelection: true \}\)/);
   assert.match(main, /keyboard\.keyDown\(event\.code, \{ now: performance\.now\(\), repeat: event\.repeat \}\)/);
-  assert.match(main, /observedSimulation = controller\.simulation;\s+keyboard\.clear\(\)/);
-  const repeatStart = main.indexOf('if (keyboard.advanceSelection(now');
+  const start = main.indexOf('if (keyboard.advanceSelection(now');
   const advance = main.indexOf('const { render } = frameClock.advance(now');
-  assert.ok(repeatStart >= 0 && repeatStart < advance);
-  const repeat = main.slice(repeatStart, advance);
+  assert.ok(start >= 0 && start < advance);
+  const repeat = main.slice(start, advance);
   assert.match(repeat, /document\.hidden \|\| frameClock\.paused \|\| Boolean\(controller\.overlay\)/);
   assert.match(repeat, /settings\?\.isConfirming/);
   assert.match(repeat, /uiOwnsGameKeyboard\(document\.activeElement\)/);
-  assert.doesNotMatch(repeat, /settings\?\.isOpen/);
-  assert.match(repeat, /frameClock\.invalidate\(\)/);
+  assert.doesNotMatch(repeat, /settings\?\.isOpen/); assert.match(repeat, /frameClock\.invalidate\(\)/);
 });

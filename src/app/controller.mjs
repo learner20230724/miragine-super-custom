@@ -1,5 +1,6 @@
 import { MiragineSimulation } from '../core/index.mjs';
 import { installSpatialOptimization } from '../performance/simulation-spatial.mjs';
+import { installDualAI, normalizeDualAIOptions, dualAISnapshot } from '../extensions/dual-ai.mjs';
 
 /** Native controller ported from the recovered MainTimeline/homebtns/tutorial/quitgame classes. */
 export class GameController {
@@ -12,6 +13,8 @@ export class GameController {
     this.overlay = null;
     this.underOverlay = null;
     this.singlePlay = true;
+    this.matchMode = 'single';
+    this.dualAIOptions = normalizeDualAIOptions();
     this.difficulty = 1;
     this.simulation = null;
     this.muted = false;
@@ -26,11 +29,20 @@ export class GameController {
     try { return this.storage?.getItem('miraginewar.never') === 'true'; } catch { return false; }
   }
 
-  startMatch(singlePlay = this.singlePlay, difficulty = this.difficulty) {
+  startMatch(singlePlay = this.singlePlay, difficulty = this.difficulty, { dualAI = null } = {}) {
+    const options = dualAI === null ? null : normalizeDualAIOptions(dualAI);
     this.simulation?.stop();
     this.singlePlay = !!singlePlay;
     this.difficulty = difficulty;
-    this.simulation = installSpatialOptimization(this.createSimulation({ config: this.config, singlePlay: this.singlePlay, difficulty }));
+    this.matchMode = options ? 'ai-vs-ai' : this.singlePlay ? 'single' : 'dual';
+    if (options) {
+      this.dualAIOptions = options;
+      this.singlePlay = false;
+      this.simulation = installDualAI(this.createSimulation({ config: this.config, singlePlay: false, difficulty,
+        autoStart: false, matchMode: this.matchMode }), options);
+      this.simulation.step();
+    } else this.simulation = this.createSimulation({ config: this.config, singlePlay: this.singlePlay, difficulty });
+    installSpatialOptimization(this.simulation);
     this.phase = 'game';
     this.overlay = this.neverTutorial() ? null : 'tutorial';
     this.underOverlay = null;
@@ -40,6 +52,12 @@ export class GameController {
     this.cursorPresentation = { left: { scale: 1, alpha: 1 }, right: { scale: 1, alpha: 1 } };
     this.events.push({ type: 'music', name: 'gameLoop', fadeOutMs: 2000, fadeInMs: 2000 });
     this.revision++;
+  }
+
+  startAIMatch(options = {}) {
+    normalizeDualAIOptions(options);
+    const normalized = normalizeDualAIOptions({ ...this.dualAIOptions, ...options });
+    this.startMatch(false, normalized.applyDifficultyStats ? normalized.rightDifficulty : 1, { dualAI: normalized });
   }
 
   action(name, value) {
@@ -57,16 +75,32 @@ export class GameController {
         this.panel = 'difficulty';
       } else if (name === 'dual') {
         this.startMatch(false, this.difficulty);
+      } else if (name === 'dual-ai') {
+        this.panel = 'dual-ai';
+      } else if (name === 'dual-ai-left' || name === 'dual-ai-right') {
+        if (this.panel !== 'dual-ai' || !Number.isInteger(value) || value < 0 || value > 3) return false;
+        this.dualAIOptions = normalizeDualAIOptions({ ...this.dualAIOptions, [name === 'dual-ai-left' ? 'leftDifficulty' : 'rightDifficulty']: value });
+      } else if (name === 'dual-ai-stats') {
+        if (this.panel !== 'dual-ai' || typeof value !== 'boolean') return false;
+        this.dualAIOptions = normalizeDualAIOptions({ ...this.dualAIOptions, applyDifficultyStats: value });
+      } else if (name === 'dual-ai-start') {
+        if (this.panel !== 'dual-ai') return false;
+        this.startAIMatch();
       } else if (name === 'credits') {
         this.overlay = 'credits';
-      } else if (name === 'back') {
+      } else if (name === 'back' || name === 'dual-ai-back') {
         this.panel = 'home';
       } else if (name === 'difficulty' && Number.isInteger(value) && value >= 0 && value < 4) {
         this.startMatch(true, value);
       } else return false;
     } else if (this.phase === 'game') {
       const tutorialVisible = this.overlay === 'tutorial' || this.underOverlay === 'tutorial';
-      if (name === 'quit') {
+      if (name === 'dual-ai-recruit-left' || name === 'dual-ai-recruit-right') {
+        if (this.matchMode !== 'ai-vs-ai') return false;
+        const side = name === 'dual-ai-recruit-left' ? 'left' : 'right';
+        const selection = side === 'left' ? this.simulation.p1 : this.simulation.p2;
+        return this.setRecruitment(side, value === undefined ? selection[2] !== 1 : value);
+      } else if (name === 'quit') {
         this.underOverlay = tutorialVisible ? 'tutorial' : null;
         this.overlay = 'quit';
       } else if (name === 'tutorial-okay' || name === 'tutorial-never') {
@@ -90,7 +124,10 @@ export class GameController {
         this.showResult();
       } else return false;
     } else if (this.phase === 'over') {
-      if (name === 'replay') this.startMatch();
+      if (name === 'replay') {
+        if (this.matchMode === 'ai-vs-ai') this.startAIMatch();
+        else this.startMatch();
+      }
       else if (name === 'home') this.home();
       else return false;
     } else return false;
@@ -153,6 +190,15 @@ export class GameController {
     return true;
   }
 
+  setRecruitment(side, enabled) {
+    if (side !== 'left' && side !== 'right') throw new TypeError('side must be left or right');
+    if (typeof enabled !== 'boolean') throw new TypeError('enabled must be boolean');
+    if (this.phase !== 'game' || this.simulation.winner || (side === 'right' && this.singlePlay)) return false;
+    (side === 'left' ? this.simulation.p1 : this.simulation.p2)[2] = Number(enabled);
+    this.events.push({ type: 'sound', name: 'SD_btns', volume: 1 }); this.revision++;
+    return true;
+  }
+
   key(code) {
     if (code === 'Escape' && this.phase === 'game') return this.action('quit');
     if (this.phase !== 'game' || this.simulation.winner) return false;
@@ -181,6 +227,7 @@ export class GameController {
     return {
       phase: this.phase, panel: this.panel, overlay: this.overlay, underOverlay: this.underOverlay, singlePlay: this.singlePlay,
       difficulty: this.difficulty, muted: this.muted, winner: sim?.winner ?? null,
+      matchMode: this.matchMode, dualAIOptions: { ...this.dualAIOptions }, dualAI: dualAISnapshot(sim),
       frame: sim?.frame ?? 0, round: sim?.round ?? null, running: sim?.running ?? false,
       stopTimer: sim?.stopTimer ?? false,
       selection: sim ? { left: [...sim.p1], right: [...sim.p2] } : null,

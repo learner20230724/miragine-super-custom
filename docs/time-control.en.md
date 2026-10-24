@@ -2,7 +2,7 @@
 
 [中文](time-control.zh-CN.md) · [Settings guide](custom-settings.en.md)
 
-This guide describes published [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1) with U/O keyboard zoom and real-time selection repeat. Its 895 source tests and 105 portable-EXE checks passed; see the [delivery receipt](releases/v0.7.2-preview.1.json). These controls target Super Miragine War itself, not a universal external accelerator. No system-clock changes, process injection, Cheat Engine or SWF player are used: complete logic steps are scheduled directly in this game's source.
+This guide describes the v0.7.3-preview.1 release candidate, changing U/O to continuous real-time zoom and adding AI-versus-AI matches. Packaged verification and publication are not complete. The [published 0.7.2 record with 895 source tests and 105 EXE checks](releases/v0.7.2-preview.1.json) validates the preceding version, not this candidate. These controls target Super Miragine War itself, not a universal external accelerator. No system-clock changes, process injection, Cheat Engine or SWF player are used: complete logic steps are scheduled directly in this game's source.
 
 ## Controls
 
@@ -42,11 +42,19 @@ Removing sandbox army caps does not remove CPU/memory limits. Creation now yield
 
 ## Keyboard zoom and held selection
 
-- **U zooms in, O zooms out**, anchored at the visible battlefield center rather than the pointer. The wheel remains pointer-anchored. Both preserve the original oblique view and map-boundary constraints.
+- **Hold U to zoom in smoothly, O to zoom out smoothly.** Within the supported range, the zoom factor multiplies by **2 / 0.5 per real second**, independent of game speed. There is no operating-system repeat startup delay: each presentation update advances zoom using elapsed real time. Release stops it; holding U and O together cancels out.
+- U/O remains anchored at the visible battlefield center rather than the pointer. The wheel retains its existing pointer anchor and wheel increments; it is not converted to held-key zoom. Both preserve the oblique view and map-boundary constraints.
+- U/O observation remains available while combat is paused/at 0×. Window blur, page hiding, parameter editing or confirmations clear held zoom without replaying it on return. Each RAF accepts at most **50 ms** of zoom time; excess time is discarded rather than caught up later. Below roughly 20 scheduling updates per second, zoom becomes slower to avoid post-stall jumps. Zoom boundaries also limit the actual change.
 - **W/A/S/D moves the red unit-selection cursor; arrows move blue selection in local two-player mode.** This does not move soldiers on the field or replace I/J/K/L observation controls.
 - Keydown moves one cell immediately. Holding for **350 ms** starts repeat, then one move every **85 ms**. This application-controlled cadence uses real time, not operating-system key repeat or game speed; OS scheduling can still delay input delivery.
 - Key release, window blur or pause stops held selection. Paused input time is not replayed on resumption.
 - Parameter inputs and in-app confirmation dialogs have keyboard priority. Editing there does not trigger troop selection or U/O zoom, and game controls do not steal their letters, arrows or confirmation keys.
+
+## Dual-AI mode and time
+
+The title menu adds AI-versus-AI matches with four original strategy levels per side; see the [settings guide and mirrored defaults](custom-settings.en.md#ai-versus-ai-matches). Decisions follow the original **game-time income settlements**, not a separate real-time AI timer: red decides first, then blue. Game speed shortens real waiting time between decisions; U/O zoom and WASD/arrow repeat keep their independent real-time cadence.
+
+Each side's Pause recruitment stops only its automatic purchases, not existing units or income rounds; AI still selects next round. Global pause/0× stops those battle steps. Camera observation remains available while paused, and explicit sandbox actions retain their established behavior. Original single/local-two-player modes are unchanged.
 
 ## Independent display, camera and sound
 
@@ -66,6 +74,7 @@ Removing sandbox army caps does not remove CPU/memory limits. Creation now yield
 | [`src/app/playback-session.mjs`](../src/app/playback-session.mjs) | Game input, menu timing, pause state, snapshots and new-match resets |
 | [`src/app/custom-controls.mjs`](../src/app/custom-controls.mjs), [`settings-panel.mjs`](../src/app/settings-panel.mjs) | Time/view sections, dock and explicit editing actions |
 | [`src/app/game-text-controls.mjs`](../src/app/game-text-controls.mjs) | Clear clickable in-game pause/help/quit text |
+| [`src/app/camera-keyboard.mjs`](../src/app/camera-keyboard.mjs) | Held U/O state, continuous real-time zoom and keyboard priority |
 | [`src/render/view-camera.mjs`](../src/render/view-camera.mjs) | Oblique observation, compact overview and world-coordinate keyboard movement |
 | [`src/app/audio.mjs`](../src/app/audio.mjs) | Real-time music and bounded effects |
 | [`src/app/main.mjs`](../src/app/main.mjs) | RAF, input isolation, fullscreen, visibility boundaries and measured rates |

@@ -2,7 +2,7 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes published [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1) with U/O keyboard zoom and real-time selection repeat, retaining the in-app confirmation fix. Its 895 source tests and 105 portable-EXE checks passed; see the [delivery receipt](releases/v0.7.2-preview.1.json). [Published v0.7.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.1-preview.1) passed 863 source tests and 65 portable-EXE checks; the [v0.7.0 delivery record](releases/v0.7.0-preview.1.json) retains the automatic-settings and 50×/100× evidence. These historical results are recorded separately from this version's acceptance. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes the v0.7.3-preview.1 release candidate, adding an AI-versus-AI title-menu mode and continuous real-time U/O zoom: holding doubles/halves zoom per second, releasing stops it, and both keys cancel out. Paused observation remains available; editing and confirmations retain priority. Original single/local-two-player settings and selection rules are unchanged. Packaged verification and publication are not complete; the [published 0.7.2 record](releases/v0.7.2-preview.1.json) retains its 895 source tests and 105 EXE checks, not validation of this candidate. [Published v0.7.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.1-preview.1) passed 863 source tests and 65 portable-EXE checks; the [v0.7.0 delivery record](releases/v0.7.0-preview.1.json) retains the automatic-settings and 50×/100× evidence. These historical results are recorded separately from this version's acceptance. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 
@@ -72,7 +72,7 @@ Restoring original panel parameters retains the previously approved trajectory-h
 
 ### In-app confirmation
 
-In response to inputs becoming uneditable after restoring defaults, settings operations requiring confirmation now use an asynchronous in-app dialog rather than a native blocking confirmation window. **Cancel receives initial focus**; Escape or Cancel dismisses it without performing the action. After explicit confirmation, the intended behavior is to continue clicking inputs, typing and confirming edits without restarting or switching windows. This portable EXE has passed actual keyboard editing after confirmation, cancellation, Escape cancellation, fullscreen and consecutive resets; this does not establish a unique cause of the previous problem or prove coverage of every environment.
+In response to inputs becoming uneditable after restoring defaults, settings operations requiring confirmation now use an asynchronous in-app dialog rather than a native blocking confirmation window. **Cancel receives initial focus**; Escape or Cancel dismisses it without performing the action. After explicit confirmation, the intended behavior is to continue clicking inputs, typing and confirming edits without restarting or switching windows. The published 0.7.2 portable EXE passed actual keyboard editing after confirmation, cancellation, Escape cancellation, fullscreen and consecutive resets; this does not establish a unique cause of the previous problem or prove coverage of every environment.
 
 This changes only confirmation interaction, not parameter meanings, application timing, automatic saving, presets, undo or reset scope. The user-approved trajectory-hit and lifetime improvements remain enabled.
 
@@ -81,6 +81,32 @@ This changes only confirmation interaction, not parameter meanings, application 
 - A unit edit affects only the chosen side. Existing units receive combat-stat changes when confirmed; cost/manpower/income changes affect future recruits without refunds. Existing cooldowns are not restarted; new projectiles use the new hit delay.
 - The panel always preserves the health ratio when changing initial/maximum HP: current HP / previous initial HP is mapped to the new initial HP. There is no health-policy dropdown. Dead units are not resurrected, and original overhealing is not automatically truncated. Crystal current HP and its maximum can be edited separately, but a destroyed crystal cannot be revived through the current-HP field.
 - **30 logic frames = 1 game second.** Movement and range use their base values multiplied by the corresponding rule multiplier. Attack cooldown is `Math.trunc(base attack interval × attack-interval multiplier)` frames, bounded to a safe integer in the custom runtime. Targets, actions and hit delays also affect attacks: this is not a universal fixed attacks-per-second value.
+
+## AI-versus-AI matches
+
+Choose **双 AI 对战 (AI versus AI)** on the title menu, select Easy/Normal/Hard/Impossible independently for Red AI and Blue AI, then Start. The settings panel's Starting settings also offers AI versus AI as a third mode; adjust both levels/stat coupling there before starting a new match with those settings. Original single-player/local-two-player modes retain their behavior; this is an explicitly selected custom mode, not a silent replacement of the original menu rules.
+
+- **Both sides reuse the existing selection algorithm**, not a learning model. Each income settlement refreshes the original money/manpower state, then red AI decides, then blue AI, followed by original recruitment. Each evaluates opposing troops and its own money/income. Both share the original RNG in fixed red-then-blue order; swapping sides need not produce perfectly mirrored random results.
+- **Manual intervention remains available:** click a unit, use red WASD or blue arrows. AI takes over at the next income settlement, not immediately. Existing units retain their normal movement, targeting and combat rules.
+- **Pause/start recruitment (暂停出兵／开始出兵) affects only that side's automatic purchases.** It neither clears/freezes existing troops nor stops the next AI decision. Global pause/0× stops the battle clock and income settlement; U/O observation still works. Both selection AIs are enabled in this mode; the old Blue AI switch does not apply, and its saved value is not rewritten.
+- **Difficulty-stat coupling has a separate purpose:** “同时使用所选难度的数值加成” is enabled by default. Enabling it applies each side's selected level to starting income, initial remaining manpower, crystal damage and cooldown. Disabling it uses the **currently configured Normal values**, including custom edits to that level, for these four attributes on both sides while retaining the selected AI strategies. Unit stats, crystal HP/range and starting money keep side-specific customization; there is no universal difficulty multiplier.
+
+### Mirrored difficulty defaults
+
+These are actual fields from `config/defaults.generated.json` and `src/customization/runtime.mjs`: **base values for either side with difficulty stats enabled and no custom overrides**. Both colors use this table. With coupling disabled, both use the Normal row's four stat fields. Saved customization may override these values; the panel and battle state show the effective values.
+
+| That side's AI level | Counter-branch probability | Starting income | Initial remaining manpower | Crystal damage (light/heavy) | Crystal cooldown parameter |
+|---|---:|---:|---:|---:|---|
+| Easy (0) | 0% | 500 | 80 | 100/100 | 30 logic steps (1 game second) |
+| Normal (1) | 50% | 500 | 80 | 100/100 | 30 logic steps (1 game second) |
+| Hard (2) | 100% | 500 | 80 | 100/100 | 30 logic steps (1 game second) |
+| Impossible (3) | 100% | 600 | 100 | 110/110 | 25 logic steps (25/30 game seconds) |
+
+Default starting money is **0**, crystal HP **3500**, and range **600 world units**. The first settlement waits **180 logic steps**, followed by **900-step** rounds. There are **30 steps per game second**; speed changes real waiting time. Initial manpower 100 is not a permanent cap: the first and every later settlement restores common `populationLimit` (default **80**). With zero starting money, this reset happens before the first income can be spent; it is not an extra 20 troops every round. Cooldowns are configuration parameters, not guaranteed constant hit rates under target/range/action conditions. Integer steps and fractional game seconds are reported as above, without inventing fixed troop attack speeds.
+
+**Same-level settings are shared:** when both sides use the same effective stat level, editing its crystal damage/cooldown affects both, not two independent difficulty copies. Crystal HP/range and units remain side-editable. AI-match options belong to the current application run/match; they are not written into rule presets or the current-settings file. Named presets store editable rules, not AI replays or match progress.
+
+Development: `controller.startAIMatch({ leftDifficulty, rightDifficulty, applyDifficultyStats })`, or `customization.startBattle({ mode: 'ai-vs-ai', dualAI: { ... } })`. `src/extensions/dual-ai.mjs` installs the income-settlement hook. `snapshot.dualAI` exposes effective stat levels, decision counts and recruitment states. Replay retains this mode's options; returning to the original single/local-two-player menu does not retain dual-AI hooks.
 
 ## AI selection and editable parameters
 
