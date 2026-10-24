@@ -334,14 +334,17 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       if (side !== 'both') sideOf(side);
       const sim = battle(); enableCustom(sim);
       if (spawnJob?.status === 'running' && (side === 'both' || spawnJob.side === side)) cancelSpawn('troops-cleared');
-      const remove = new Set(sim.scene.children.filter(child => child.kind === 'unit' && (side === 'both' || child.side === side)));
-      // Both sides' attacks referencing removed actors must be removed too.
-      // The engine otherwise dereferences father/target on the next frame.
-      for (const child of sim.scene.children) if (child.kind === 'attack' && (remove.has(child.father) || remove.has(child.target))) remove.add(child);
-      for (const child of [...sim.scene.children]) if (remove.has(child)) sim.scene.removeChild(child);
-      for (const list of [sim.friendList, sim.enemyList]) for (let i = list.length - 1; i >= 0; i--) if (remove.has(list[i])) list.splice(i, 1);
-      for (const child of sim.scene.children) if (remove.has(child.target)) child.target = null;
-      const count = [...remove].filter(child => child.kind === 'unit').length;
+      const selected = new Set(sim.scene.children.filter(child => child.kind === 'unit' && (side === 'both' || child.side === side)));
+      // Clear committed attacks too: a cleared soldier must not damage anyone
+      // while its visual body finishes falling. Unrelated attacks keep flying.
+      for (const child of [...sim.scene.children]) if (child.kind === 'attack' && (selected.has(child.father) || selected.has(child.target))) sim.scene.removeChild(child);
+      let count = 0;
+      for (const child of selected) if (child.nowHP > 0) {
+        // Reuse original death animation, knockback, events and list removal.
+        // Existing corpses keep their current progress; repeated clear is safe.
+        child.dead(); count++;
+      }
+      for (const child of sim.scene.children) if (selected.has(child.target)) child.target = null;
       refresh(sim); notify('clear-troops', { side, count }); return count;
     },
     setResources(input = {}) {

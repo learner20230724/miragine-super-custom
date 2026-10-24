@@ -2,7 +2,7 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes the v0.5.0-preview.2 source layout. Release availability and packaged verification are recorded separately. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes the v0.6.2-preview.1 release candidate, retaining existing settings/dragging controls and adding animated troop clearing. Release availability and packaged verification are recorded separately; candidate source does not establish either. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 
@@ -16,7 +16,7 @@ Left/right/middle dragging pans the main battlefield into free observation. Left
 
 The match summary shows actual difficulty separately from original/custom rule status. Selecting a difficulty with unchanged defaults does not mark a new match custom. AI difficulty/category/candidate-table menus only navigate editing content; they preserve pending drafts and never change the current match difficulty.
 
-The three clear-troop buttons act immediately without a confirmation dialog; crystals remain, no refund or undo is provided.
+The three clear-troop buttons act immediately without a confirmation dialog: troops leave combat but retain their original death animation. Crystals remain unharmed; no refund or undo is provided.
 
 ## Five pages
 
@@ -96,7 +96,10 @@ The [default parameter reference](parameters.en.md#ai-counters-and-thresholds) l
 
 - Choose a unit and a **number of soldiers**, then click **Spawn red** or **Spawn blue**. The number is not manpower consumption. Sandbox spawning uses current applied unit rules, costs no money/manpower and grants no income.
 - The old **100-per-action** and **500-entity** sandbox caps are removed. Requests can use the safe-integer range, but creation is incremental, with progress and **Cancel remaining**. Cancellation keeps troops already created.
-- There are three direct clear buttons: **red troops**, **blue troops**, **both**. Clearing preserves crystals, removes associated attack objects, cancels a matching pending spawn job, gives no refunds and cannot be undone. New matches/end-of-battle changes stop the old job.
+- There are three direct clear buttons: **red troops**, **blue troops**, **both**, without a confirmation dialog. Living troops follow their original `dead()` path: HP becomes zero and they immediately leave combat/targeting lists, but remain in the scene for their original backward-fall death animation instead of vanishing.
+- Clearing leaves crystals unharmed, removes associated attack objects, cancels a matching pending spawn job, gives no refunds and cannot be undone. Repeating it neither retriggers an existing corpse's death event nor resets its countdown. New matches/end-of-battle changes stop the old job.
+- Animation follows the original simulation clock: default `deadTime = 25` decreases once per processing of that corpse, with removal at 1, meaning its **24th own processing update** by default. Global 30 Hz does not guarantee exact wall-clock duration because live-list ordering can skip an object's update. Speed affects waiting; pause, 0× and other simulation-blocking states defer animation until resumption. Clearing never forces the clock to run.
+- Original death events and randomized death-sound choices remain; the existing audio layer coalesces sounds in a batch. No new assets or changes to normal combat death rules are introduced.
 - Incremental creation prevents a single enormous creation loop; it does **not** make enormous armies cheap. Original target/separation work can grow roughly quadratically, and rendering/memory remain finite. Start small, watch actual rates, and cancel if needed. Even a single expensive simulation step can stall the interface.
 - Construction, player-cast skills, fixed waves and scripted reinforcements are not original editable systems here; no invented controls are provided.
 

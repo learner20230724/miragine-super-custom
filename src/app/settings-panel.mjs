@@ -435,7 +435,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     const clearActions = node('div', 'ms-row'); spawnCard.appendChild(clearActions);
     for (const [side, sideLabel, actionId] of [['left', '红方', 'clear-left'], ['right', '蓝方', 'clear-right'], ['both', '双方', 'clear-all']]) {
       battleButton(clearActions, '清除' + sideLabel + '士兵', actionId, async () => {
-        await customization.clearTroops(side); notice('已清除' + sideLabel + '士兵。');
+        await customization.clearTroops(side); notice('已清除' + sideLabel + '士兵；死亡动画随游戏运行播放，暂停时等待恢复。');
       }, 'ms-danger');
     }
     spawnCard.appendChild(node('p', 'ms-muted', '生成数量没有额外的沙盒上限，分批执行、可取消；大量士兵依然可能耗尽内存或拖慢战斗。'));

@@ -8,19 +8,21 @@
 
 **可运行预览版**：战斗逻辑从恢复的 AS3 手工移植到 JavaScript，使用 Canvas / WebGL 渲染，不需要 Flash 或 SWF 播放器。原版插桩对照的一局普通难度共 6,842 帧逻辑状态匹配；这不代表全部 Adobe Flash 场景或逐像素一致。具体交付状态见[验证记录](docs/verification.json)。
 
-**当前源码／本地构建版本：v0.6.1-preview.1，命中修复。** 保留 v0.6.0 的大军团优化： 寻敌与同阵营推挤使用空间索引，复用显示插值缓冲，跳过完全屏外角色绘制，并释放结束刷兵任务的战局引用。30 Hz 逻辑、原素材与原生窗口画质不变，不增加兵数限制。发布状态见下方。
+**当前源码：v0.6.2-preview.1 发布候选，清场死亡动画与命中修复。** 保留 v0.6.0 的大军团优化：寻敌与同阵营推挤使用空间索引，复用显示插值缓冲，跳过完全屏外角色绘制，并释放结束刷兵任务的战局引用。30 Hz 逻辑、原素材与原生窗口画质不变，不增加兵数限制。候选源码不等于发布包已验收；发布状态见下方。
 
 **当前源码另启用用户指定的命中玩法：**远程弹丸沿直线弹道命中第一个碰到的敌人；普通攻击在原发射延迟后伤害锁定目标，支持大射程隔空攻击。红蓝水晶弹丸寿命固定为 253 步，吸血鬼、魔法师仍按地图宽 1.1 倍目标距离换算。不改开火射程、伤害／护甲公式、冷却、倍速或 30 Hz 逻辑频率。启动时标记为自定义规则；F2「回到原版」为后续对局恢复原规则，不改写磁盘。[命中规则](docs/combat-hits.zh-CN.md) · [弹丸寿命](docs/projectile-lifetime.zh-CN.md)。
+
+**清除士兵保留原死亡动画。** 清红方、蓝方或双方时，士兵立即退出战斗与寻敌名单，但留在画面中播放原来的后仰倒地动画，而不是瞬间消失。水晶不受伤、不退款，关联攻击物清除；暂停／0 倍时等恢复后继续动画，重复清场不会重新播放已有尸体。详见[清场规则](docs/custom-settings.zh-CN.md#生成与清场)。
 
 **保留 v0.5.0-preview.1 的原生窗口分辨率绘制。** 舞台布局仍用 640×480 逻辑坐标，战斗逻辑保持 30 Hz，画布实际像素按游戏视口及屏幕 DPR 绘制，不再先画完整 640×480 位图再放大。原 PNG 与规则不变；[实现与开发入口](docs/native-resolution.zh-CN.md)。
 
 ## Windows 启动包
 
-**源码与发布包的区别**：下方已发布的 v0.6.0-preview.1 **已包含吸血鬼／魔法师延寿**。本轮 v0.6.1-preview.1 本地构建包含弹道碰撞、普通攻击延迟直达结算及红蓝水晶 253 步寿命，**未发布到 GitHub Release**；旧 EXE 不会自动获得这些改动。升级外置配置时须合并新扩展字段，保留个人设置。配置位于 `config/custom.json`，暂无新增面板项；[命中参数与开发入口](docs/combat-hits.zh-CN.md)。
+**源码与发布包的区别**：v0.6.0-preview.1 **已包含吸血鬼／魔法师延寿**。弹道碰撞、普通攻击延迟直达结算及红蓝水晶 253 步寿命自 v0.6.1-preview.1 引入，连同清场死亡动画纳入本轮 v0.6.2-preview.1 发布候选；旧 v0.6.0 EXE 不包含这些新规则，也不会自动升级。以对应 Release 的实际附件和交付记录确认发布与验收。升级外置配置时须合并新扩展字段，保留个人设置。配置位于 `config/custom.json`，暂无新增面板项；[命中参数与开发入口](docs/combat-hits.zh-CN.md)。
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-当前已发布 **[v0.6.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.6.0-preview.1)**，运行源码 `6c575f808004f8fc46a086aad5d8eee322ed142a`，合并大军团优化与弹丸寿命配置。**745 项源码测试、96 项正式 EXE 设置检查、33 项输入专项、28 项千兵运行检查与 24 组像素对照通过**；[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40073111039) 通过。公开的 28 个附件大小及 API SHA-256 与本地一致，版本标签指向该运行提交；未另做完整远端重下载。[本版交付记录](docs/releases/v0.6.0-preview.1.json)。源码约 **66.30 MB**（含 **11.97 MB** 运行素材），ZIP **170.61 MB**，解压 **402.31 MB**。包内 README 保留运行提交时的发布状态，交付记录不会重新打包游戏。
+历史已发布 **[v0.6.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.6.0-preview.1)**，运行源码 `6c575f808004f8fc46a086aad5d8eee322ed142a`，合并大军团优化与弹丸寿命配置。**745 项源码测试、96 项正式 EXE 设置检查、33 项输入专项、28 项千兵运行检查与 24 组像素对照通过**；[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40073111039) 通过。公开的 28 个附件大小及 API SHA-256 与本地一致，版本标签指向该运行提交；未另做完整远端重下载。[本版交付记录](docs/releases/v0.6.0-preview.1.json)。源码约 **66.30 MB**（含 **11.97 MB** 运行素材），ZIP **170.61 MB**，解压 **402.31 MB**。包内 README 保留运行提交时的发布状态，交付记录不会重新打包游戏。
 
 历史 **[v0.5.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.2)**，对应运行源码 `2c20cf285ee5575a180388e774ecd9941abc6a20`。**669 项源码测试、96 项正式 EXE 设置检查（两次启动）及 33 项真实输入专项检查通过**；[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40070327363) 通过。ZIP 全新解压、源码逐字节比对、原素材与时钟不变检查及隐私审计通过。远端 20 个附件的 API 大小与 SHA-256 均与本地一致，未另做完整远端重下载。[本版交付记录](docs/releases/v0.5.0-preview.2.json)。包内 README 保留运行提交时的发布状态；后续交付记录不改变或重新打包运行代码。
 

@@ -2,7 +2,7 @@
 
 [中文](projectile-lifetime.zh-CN.md)
 
-This custom rule does not change firing range, projectile speed, damage, cooldowns or generated data. Distances are world units, not screen pixels. Published v0.6.0-preview.1 already includes vampire/mage extension; crystal extension and the [new hit rules](combat-hits.en.md) belong to the v0.6.1-preview.1 local build, not yet published to GitHub.
+This custom rule does not change firing range, projectile speed, damage, cooldowns or generated data. Distances are world units, not screen pixels. Published v0.6.0-preview.1 already includes vampire/mage extension; crystal extension and the [new hit rules](combat-hits.en.md) were introduced in v0.6.1-preview.1 and are included in the v0.6.2-preview.1 release candidate. The old v0.6.0 EXE lacks those two additions. Refer to the corresponding Release delivery receipt for actual publication and verification status.
 
 ## Defaults and effective travel
 

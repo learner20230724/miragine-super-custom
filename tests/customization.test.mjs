@@ -173,19 +173,27 @@ test('large sandbox requests yield in batches without the old 100/action or 500/
   assert.equal(custom.spawn({ side: 'right', unitId: 1, count: 1 }).length, 1);
   sim.rightMoney = 1000; assert.ok(sim.createUnit('right', 1), 'ordinary recruitment also continues beyond 500 troops');
 });
-test('clear troops preserves both bases and target-list identities, removes dangling attacks without RNG', () => {
+test('clear troops preserves crystals/list identities, plays death and removes associated attacks', () => {
   const { custom, sim } = start();
   custom.spawn({ side: 'left', unitId: 0, count: 2 }); custom.spawn({ side: 'right', unitId: 1, count: 2 });
   const red = sim.friendList[1], blue = sim.enemyList[1], list = sim.friendList;
   blue.target = red; sim.blueBoss.target = red;
   sim.scene.addChild(new IsometricAttack(sim, blue, red)); sim.scene.addChild(new IsometricAttack(sim, red, blue));
   const keep = new IsometricAttack(sim, blue, sim.redBoss); sim.scene.addChild(keep);
-  sim.rng = () => { throw new Error('clear must not use RNG'); };
+  let deathRandomCalls = 0; sim.rng = () => { deathRandomCalls++; return 0.5; };
   assert.equal(custom.clearTroops('left'), 2);
   assert.equal(sim.friendList, list); assert.deepEqual(sim.friendList, [sim.redBoss]);
   assert.equal(blue.target, null); assert.equal(sim.blueBoss.target, null);
   assert.deepEqual(sim.projectiles, [keep]); assert.equal(sim.enemyList.length, 3);
-  assert.equal(custom.clearTroops(), 2); assert.equal(sim.scene.children.length, 2);
+  assert.equal(red.parent, sim.scene); assert.equal(red.action, 'dead'); assert.equal(red.nowHP, 0);
+  assert.equal(custom.clearTroops(), 2); assert.equal(sim.scene.children.length, 6);
+  assert.equal(deathRandomCalls, 4, 'each newly cleared soldier follows normal death events once');
+  assert.equal(custom.clearTroops(), 0); assert.equal(deathRandomCalls, 4);
+  for (const body of [...sim.scene.children].filter(e => e.kind === 'unit')) {
+    for (let i = 0; i < sim.rules.deathAnimationFrames - 1; i++) body.step();
+    assert.equal(body.parent, null);
+  }
+  assert.equal(sim.scene.children.length, 2);
 });
 test('resource edits validate all fields atomically, clamp numeric boundaries, and never change default config', () => {
   const { custom, sim } = start();
