@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "version": "0.7.0-preview.1",
+  "sourceCommit": "3d992112c246dd449c56edb9b5202e7b93777e00",
+  "runtimeCommit": "3d992112c246dd449c56edb9b5202e7b93777e00",
+  "verificationToolCommit": "1320b80cf1dfe8677bbcb13a183751fcbffb739a",
+  "verificationToolSha256": "988cc88c2b3ef90f02da54acf38ef1d23265f3531fe252c878c32c3dc964a04c",
+  "status": "published-and-verified",
+  "publishedAt": "2026-10-24T09:47:04Z",
+  "releaseId": 422643344,
+  "releaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.0-preview.1",
+  "sourceTests": {
+    "tests": 836,
+    "suites": 0,
+    "pass": 836,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 71402.5446
+  },
+  "portableSettingsChecks": 47,
+  "portableLaunches": 2,
+  "portableRuntimeErrors": 0,
+  "ownedQaApplicationsClosed": true,
+  "ci": {
+    "databaseId": 40082589169,
+    "headSha": "3d992112c246dd449c56edb9b5202e7b93777e00",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40082589169",
+    "jobs": [
+      {
+        "name": "Source / ubuntu-latest / Python 3.13",
+        "conclusion": "success"
+      },
+      {
+        "name": "Source / windows-latest / Python 3.14",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "features": [
+    "Valid confirmed panel edits apply and save locally; saved settings automatically restore after restart. No separate Apply action or unsaved-draft status.",
+    "Current-compatible fields apply now; opening resources, first-round manpower and initial wait apply next match. Recruitment and selection-AI switches apply now and persist for future matches.",
+    "Undo reapplies the previous rules; restore defaults resets all exposed parameters while retaining approved hit/lifetime improvements. Neither rewinds battle state, clears troops or deletes named presets.",
+    "Spawn and clear controls follow the match summary; common rules precede red/blue status. Returning to the main menu ends combat but keeps settings.",
+    "Named presets are optional copies. Loading and importing apply immediately; JSON exports are backups/exchanges, not battle saves.",
+    "50x and 100x shortcuts and a 0-100 input range retain complete 30 Hz logic, the independent 240 FPS target and 8 ms/24-step accelerated-work guard."
+  ],
+  "archive": "MiragineSuper-Custom-v0.7.0-preview.1-win-x64.zip",
+  "archiveSha256": "2e0e3d51bcb604b61876bb07c0cd7570f7dd11bec34d22e4e09f274ef3d64312",
+  "archiveBytes": 170643556,
+  "unpackedBytes": 402405410,
+  "archiveFiles": 105,
+  "inventorySha256": "5b0ce8cbd52d087104e668d30e39abe4e5b08b1db422946932a3d5637fb832c5",
+  "checksumsSha256": "c7a471774743ce99fe3fcbd4c4f9322d36573fd1039e2d63d66a746b78e66938",
+  "appAsarSha256": "e5ace23dac2ec5439bad2c15f4817c831e21a639869751e05cfdba0b0e547abc",
+  "executableSha256": "83250fbad2122edc5e5ae5735f3916a8973132193fc2e90ac36828e849146b29",
+  "sourceScan": {
+    "scannedFiles": 3106,
+    "scannedBytes": 66475822,
+    "scope": "Public-source privacy scan at the runtime commit; not total Git repository disk usage, Git history, development dependencies or generated local user data."
+  },
+  "originalAssets": {
+    "baselineCommit": "3e2860a2f75dd129d68b9d79d0f56a4be89f7a61",
+    "runtimeCommit": "3d992112c246dd449c56edb9b5202e7b93777e00",
+    "scopes": [
+      "assets",
+      "generated"
+    ],
+    "gitDiffEmpty": true
+  },
+  "portableExtraction": {
+    "version": "0.7.0-preview.1",
+    "sourceCommit": "3d992112c246dd449c56edb9b5202e7b93777e00",
+    "archive": "MiragineSuper-Custom-v0.7.0-preview.1-win-x64.zip",
+    "archiveSha256": "2e0e3d51bcb604b61876bb07c0cd7570f7dd11bec34d22e4e09f274ef3d64312",
+    "archiveBytes": 170643556,
+    "unpackedBytes": 402405410,
+    "fileCount": 105,
+    "allMemberHashesVerified": true,
+    "allMemberCrcVerified": true,
+    "safeArchivePaths": true,
+    "freshQaExtractionReceiptPassed": true,
+    "buildMatchesIndependentPrivacyReview": true
+  },
+  "verificationToolProvenance": {
+    "runtimeCommit": "3d992112c246dd449c56edb9b5202e7b93777e00",
+    "verificationToolCommit": "1320b80cf1dfe8677bbcb13a183751fcbffb739a",
+    "toolRepositoryPath": "tools/verify-settings-auto.mjs",
+    "toolFile": "verify-settings-auto.mjs",
+    "toolSha256": "988cc88c2b3ef90f02da54acf38ef1d23265f3531fe252c878c32c3dc964a04c",
+    "runtimeChangedByVerificationFix": false,
+    "initialAttempt": {
+      "status": "failed",
+      "cause": "The verifier used fill() on an HTML select; corrected to selectOption().",
+      "runtimeErrors": 0,
+      "isProductFailure": false
+    },
+    "finalAttempt": {
+      "status": "passed",
+      "checks": 47,
+      "launches": 2
+    },
+    "reproduction": "Place the attached script at tools/verify-settings-auto.mjs in the runtime source checkout, or use the verification-tool commit; imports use the repository tools. Test only a fresh isolated package, never a player installation."
+  },
+  "privacy": {
+    "source": {
+      "findings": 0,
+      "warnings": 0,
+      "skipped": 0
+    },
+    "publicEvidence": {
+      "scannedFiles": 3123,
+      "scannedBytes": 74788348,
+      "findings": 0,
+      "warnings": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "rawFindings": 5,
+      "reviewedUpstreamFindings": 5,
+      "rawWarnings": 59,
+      "remainingUnresolved": 0,
+      "findingExplanation": "Raw absolute-user-path findings are existing constants matched exactly to pinned Electron upstream bytes; no newly introduced private path or credential finding remains unresolved.",
+      "warningExplanation": "Vendor PAK archives match pinned upstream bytes exactly; the application ASAR is fully decoded, each extracted file hash is checked, and the decoded privacy scan is clean."
+    },
+    "runtimeVerification": {
+      "pinnedElectronZipSha256": "790a355b684d5c7cc8dc3cdd8c4cca7c4b2d054685427c7554a956879a82e70b",
+      "vendorFilesByteIdentical": 71,
+      "nonResourcePeSectionsIdentical": 14,
+      "upstreamPakArchivesByteIdentical": 58,
+      "decodedAsarFiles": 790,
+      "decodedAsarBytes": 15138798,
+      "innerOuterBuildInfoMatches": true
+    }
+  },
+  "remote": {
+    "status": "passed",
+    "stage": "after",
+    "draft": false,
+    "prerelease": true,
+    "tag": "v0.7.0-preview.1",
+    "targetCommit": "3d992112c246dd449c56edb9b5202e7b93777e00",
+    "allRemoteAssetSizesAndDigestsMatch": true,
+    "remoteRedownloadPerformed": false,
+    "assets": 20,
+    "files": [
+      {
+        "name": "MiragineSuper-Custom-v0.7.0-preview.1-win-x64.zip",
+        "size": 170643556,
+        "sha256": "2e0e3d51bcb604b61876bb07c0cd7570f7dd11bec34d22e4e09f274ef3d64312"
+      },
+      {
+        "name": "MiragineSuper-Custom-v0.7.0-preview.1-win-x64.zip.inventory.json",
+        "size": 18384,
+        "sha256": "5b0ce8cbd52d087104e668d30e39abe4e5b08b1db422946932a3d5637fb832c5"
+      },
+      {
+        "name": "SHA256SUMS",
+        "size": 1820,
+        "sha256": "c7a471774743ce99fe3fcbd4c4f9322d36573fd1039e2d63d66a746b78e66938"
+      },
+      {
+        "name": "build-info.json",
+        "size": 175,
+        "sha256": "66f9b172f4943cfde72072ea758dac5c269a34d31fdc67a3b2d5c01c9c9bb0d1"
+      },
+      {
+        "name": "delivery-verification.json",
+        "size": 1371,
+        "sha256": "99a94310e83f21c3fbe83751c247633405e0d4acd4add6dd8593e4a9078ff4ff"
+      },
+      {
+        "name": "privacy-evidence.json",
+        "size": 333,
+        "sha256": "24e93a1bce6d1bb0f9b55875eed7ca506c8cd8644dbd688d357bd5f1afdb3b6e"
+      },
+      {
+        "name": "privacy-runtime.json",
+        "size": 1771,
+        "sha256": "c975384c6ef747ccadb928c3acef85c20c180e02a0de8021591293a51f9b2d11"
+      },
+      {
+        "name": "privacy-source.json",
+        "size": 178,
+        "sha256": "69613e87819e4b94777dc26f2d83a7588960ff6608b6eee88509b87e72eb66fe"
+      },
+      {
+        "name": "release-notes.md",
+        "size": 5887,
+        "sha256": "3724e9903e693d24b03d3e7cbc910ddd4ff4237612d368895cf26f8d2c68566d"
+      },
+      {
+        "name": "settings-auto-automatic-unit-edit.png",
+        "size": 2081610,
+        "sha256": "b4d7947cbe335cf84233f60d2870f8a34b4480e64819982bec7c810c5c29813f"
+      },
+      {
+        "name": "settings-auto-homepage.png",
+        "size": 2068527,
+        "sha256": "272d4c1a5db958bb658e48cedc3ed434e1d2c086b7a3622bb72724799e63457d"
+      },
+      {
+        "name": "settings-auto-presets.png",
+        "size": 2053454,
+        "sha256": "74b36c0649406218c3acc6d4d0eee485b4670a6395b67ce8cc72f0a12d7df281"
+      },
+      {
+        "name": "settings-auto-restored-second-launch.png",
+        "size": 2061995,
+        "sha256": "a50ecb267695a8de92f46d5a04ae1ced2e5eeff849d38d5e89645caa910b7823"
+      },
+      {
+        "name": "source-tests-summary.txt",
+        "size": 95,
+        "sha256": "d1d7087a4257f13a58c7c3ff992523a12218668c2a2127661924dede961be091"
+      },
+      {
+        "name": "source-tests.json",
+        "size": 337,
+        "sha256": "fe4bfe42dc71ac6b3966dcc095831b93662f8b23043db646ccba72de105d058f"
+      },
+      {
+        "name": "verification-ci.json",
+        "size": 463,
+        "sha256": "bbc2e3490efcfcdc0883b52fa8ca40476f14fb7a47c7041979d9477bb9e74b0c"
+      },
+      {
+        "name": "verification-settings-auto.json",
+        "size": 8897,
+        "sha256": "fc5be3d5a026584ab5c134b3f9db348c834fae3fd2c15dd5d38cf0812e17cddc"
+      },
+      {
+        "name": "verification-tool-provenance.json",
+        "size": 914,
+        "sha256": "208717f1b657b697ddfab9fffa0ab406fa710fcda6c9a8f2f300ffa7f922294b"
+      },
+      {
+        "name": "verification-zip.json",
+        "size": 528,
+        "sha256": "5573828fdf7c66c08efbe0dec05e47987c3fc94aaf3fadd2019a3818849b3a50"
+      },
+      {
+        "name": "verify-settings-auto.mjs",
+        "size": 25843,
+        "sha256": "988cc88c2b3ef90f02da54acf38ef1d23265f3531fe252c878c32c3dc964a04c"
+      }
+    ]
+  },
+  "limitations": [
+    "The 47 EXE checks and two launches describe isolated public acceptance tests only; no personal installation, configuration or migration checks are included.",
+    "The initial fill()/selectOption() failure belonged to the verifier, not the packaged runtime; the corrected verification tool is identified by its separate commit and SHA-256.",
+    "50x/100x and 240 FPS remain requested targets; no sustained high-population throughput or new full-game Flash parity claim is made.",
+    "Original damage-minus-armor and original imagery are preserved; reset retains approved trajectory-hit and projectile-lifetime improvements.",
+    "All 20 published asset sizes and API SHA-256 digests match local files after publication; no complete remote redownload was performed.",
+    "Bundled candidate wording reflects the frozen build-time documentation. This post-publication receipt does not change or rebuild the runtime ZIP.",
+    "The release evidence delivery-verification.json retains its pre-publication local-ready status; this receipt adds actual remote publication verification without changing existing assets."
+  ]
+}

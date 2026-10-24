@@ -8,13 +8,30 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
-**Current source: v0.7.0-preview.1 release candidate, automatic settings application and 50×/100× quick choices.** New-version verification and publication are not complete; the delivery figures below still describe published v0.6.2-preview.1. Retains the v0.6.0 large-army optimization: spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. See the historical delivery record below for the existing publication and verification results.
+**Current published version: v0.7.0-preview.1, automatic settings application and 50×/100× quick choices.** Verification and remote-asset checks are complete; the current delivery record below reports the actual results. Retains the v0.6.0 large-army optimization: spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Current and historical delivery results are recorded separately below.
 
 **Current source also enables the requested custom hit rules:** ranged projectiles follow a straight trajectory and hit the first enemy contacted; ordinary attacks damage their locked target after the original firing delay, supporting long-range melee customization. Red/blue crystal projectile life is fixed at 253 steps; vampire/mage life still budgets for 1.1 map widths. Firing range, damage/armor formulas, cooldowns, speed controls and the 30 Hz simulation rate are unchanged. Startup is marked as custom rules. Restoring panel parameters retains the previously approved trajectory-hit and lifetime improvements and does not rewrite the startup file. See [hit rules](docs/combat-hits.en.md) and [projectile lifetime](docs/projectile-lifetime.en.md).
 
 **Clearing troops retains their original death animation.** Clearing red, blue or both sides immediately removes troops from combat and targeting lists, while their original backward-fall animation remains visible instead of vanishing instantly. Crystals take no damage, no refund is given, and associated attacks are cleared. Animation waits during pause/0× and continues on resume; repeated clearing does not restart existing corpses. See [clearing behavior](docs/custom-settings.en.md#spawn-and-clear).
 
 **Retains v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
+
+## v0.7.0-preview.1 delivery
+
+Published **[v0.7.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.0-preview.1)** uses runtime commit `3d992112c246dd449c56edb9b5202e7b93777e00`. The EXE verification tool has a separate commit, `1320b80cf1dfe8677bbcb13a183751fcbffb739a`, correcting a verifier operation that treated a select as a text input; the packaged runtime did not change.
+
+| Delivery / verification | Result |
+|---|---|
+| Runtime-source tests | **836 passed** |
+| Isolated portable EXE | **47 real-input checks across 2 launches passed**, zero runtime errors; personal installation/migration checks excluded |
+| CI | [Windows and Linux passed](https://github.com/learner20230724/miragine-super-custom/actions/runs/40082589169) |
+| Remote assets | All **20** sizes and API SHA-256 digests match; tag identifies the runtime commit. No complete remote redownload |
+| Windows ZIP | **170,643,556 bytes** (170.64 MB) |
+| Extracted package | **402,405,410 bytes / 105 files** (402.41 MB) |
+| Source privacy-scan coverage | **3,106 files / 66,475,822 bytes** (66.48 MB), not total repository/history disk usage |
+| Privacy and assets | **0** unresolved privacy findings; original/generated assets unchanged from the preceding version |
+
+The [post-publication receipt](docs/releases/v0.7.0-preview.1.json) records runtime/tool versions and asset digests. Candidate wording in bundled READMEs/guides reflects frozen build-time status; this receipt adds publication evidence without repackaging. 50×/100× and 240 FPS are targets, not sustained-throughput guarantees.
 
 ## Windows portable build
 
