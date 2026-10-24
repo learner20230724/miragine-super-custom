@@ -20,7 +20,9 @@
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-当前已发布 **[v0.5.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.2)**，对应运行源码 `2c20cf285ee5575a180388e774ecd9941abc6a20`。**669 项源码测试、96 项正式 EXE 设置检查（两次启动）及 33 项真实输入专项检查通过**；[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40070327363) 通过。ZIP 全新解压、源码逐字节比对、原素材与时钟不变检查及隐私审计通过。远端 20 个附件的 API 大小与 SHA-256 均与本地一致，未另做完整远端重下载。[本版交付记录](docs/releases/v0.5.0-preview.2.json)。包内 README 保留运行提交时的发布状态；后续交付记录不改变或重新打包运行代码。
+当前已发布 **[v0.6.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.6.0-preview.1)**，运行源码 `6c575f808004f8fc46a086aad5d8eee322ed142a`，合并大军团优化与弹丸寿命配置。**745 项源码测试、96 项正式 EXE 设置检查、33 项输入专项、28 项千兵运行检查与 24 组像素对照通过**；[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40073111039) 通过。公开的 28 个附件大小及 API SHA-256 与本地一致，版本标签指向该运行提交；未另做完整远端重下载。[本版交付记录](docs/releases/v0.6.0-preview.1.json)。源码约 **66.30 MB**（含 **11.97 MB** 运行素材），ZIP **170.61 MB**，解压 **402.31 MB**。包内 README 保留运行提交时的发布状态，交付记录不会重新打包游戏。
+
+历史 **[v0.5.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.2)**，对应运行源码 `2c20cf285ee5575a180388e774ecd9941abc6a20`。**669 项源码测试、96 项正式 EXE 设置检查（两次启动）及 33 项真实输入专项检查通过**；[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40070327363) 通过。ZIP 全新解压、源码逐字节比对、原素材与时钟不变检查及隐私审计通过。远端 20 个附件的 API 大小与 SHA-256 均与本地一致，未另做完整远端重下载。[本版交付记录](docs/releases/v0.5.0-preview.2.json)。包内 README 保留运行提交时的发布状态；后续交付记录不改变或重新打包运行代码。
 
 历史 **[v0.5.0-preview.1](docs/releases/v0.5.0-preview.1.json)** 的原生分辨率绘制、663／96／41／9 项检查与性能对照仍保留，本次不宣称重新进行了持续性能测试。
 

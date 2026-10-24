@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "version": "0.6.0-preview.1",
+  "sourceCommit": "6c575f808004f8fc46a086aad5d8eee322ed142a",
+  "status": "published-and-verified",
+  "sourceTests": {
+    "tests": 745,
+    "pass": 745,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "settingsChecks": 96,
+  "usabilityChecks": 33,
+  "portableLargeBattleChecks": 28,
+  "sourceABChecksPerFixture": 28,
+  "offscreenCullingPixelCases": 24,
+  "cpuOnlyBenchmarkCases": 8,
+  "ciUrl": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40073111039",
+  "appAsarSha256": "0fe57bcb4d8761bf0b26df0ea474676e70d682224a176418f36ea53dafd336d8",
+  "executableSha256": "7bd0fbe20120e392956d25400369afeb43b4b347e322561b920c229f51b663e7",
+  "archive": "MiragineSuper-Custom-v0.6.0-preview.1-win-x64.zip",
+  "archiveSha256": "e6ba27ad79dc0059dcb3b44c6bdd3fb0b5f89118525a5af805c6997683f3926d",
+  "inventorySha256": "c50c11ae02574f60d1940cc21404b9b51fc2cebec013b9679c6e78f534dddc0d",
+  "archiveBytes": 170609993,
+  "unpackedBytes": 402314369,
+  "fileCount": 103,
+  "sourceBytes": 66299261,
+  "runtimeAssetsBytes": 11974108,
+  "sameArchiveThreeIndependentExtractions": true,
+  "sameASARAcrossRuntimeSuitesAndAudit": true,
+  "limitations": [
+    "Performance A/B used isolated source snapshots, not the final portable EXE. Its baseline is identified by commit and the performance-only snapshot by its complete file inventory.",
+    "The A/B snapshots kept the old startup configuration/package metadata/main adapter and deliberately excluded the separate caster projectile lifetime startup change. Final portable behavior is tested separately.",
+    "Measurements cover short approximately three-second starting phases with 500 soldiers per side, not sustained dense combat or a soak test. No RNG seed or external desktop-load control was used.",
+    "Requested 8x would require 240 simulation steps/second; measured 129.25 in the source A/B overview is only about 4.31x. Neither 8x/20x speed nor 240 FPS is guaranteed.",
+    "Render CPU/presentation counters are not physical display refresh or GPU completion. The CPU-only benchmark excludes renderer, audio, Electron and GUI and includes cases that regress.",
+    "The reported prior 32 GB memory peak was not reproduced or causally diagnosed. Process working-set sums may double-count shared pages, and JS heap excludes GPU/native allocations.",
+    "All 28 published asset sizes and SHA-256 digests match local files via GitHub API; a full remote redownload was not performed. The public version tag points to the verified runtime commit."
+  ],
+  "publicEvidencePrivacy": {
+    "findings": 0,
+    "warnings": 0,
+    "skipped": 0
+  },
+  "releaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.6.0-preview.1",
+  "releaseId": 422579772,
+  "publishedAt": "2026-10-24T07:18:52Z",
+  "remote": {
+    "status": "passed",
+    "releaseId": 422579772,
+    "releaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.6.0-preview.1",
+    "tag": "v0.6.0-preview.1",
+    "targetCommit": "6c575f808004f8fc46a086aad5d8eee322ed142a",
+    "draft": false,
+    "prerelease": true,
+    "assets": 28,
+    "allRemoteAssetSizesAndDigestsMatch": true,
+    "remoteRedownloadPerformed": false,
+    "publishedAt": "2026-10-24T07:18:52Z",
+    "files": [
+      {
+        "name": "audit-summary.json",
+        "size": 1516,
+        "sha256": "12df504e8b67b406df927ed23abbff35d4f33c31195912378b8c735c8a863d57"
+      },
+      {
+        "name": "authorized-startup-customization.json",
+        "size": 1470,
+        "sha256": "d91ff60d5e804bacf3ae246f307533c786d5dd346804665651d2e246628d3807"
+      },
+      {
+        "name": "benchmark-spatial-cpu-only.json",
+        "size": 4739,
+        "sha256": "a0e9fd1fd30f638070d9f96e98a17fbf1a33b67bcfb6f926cb5125911567c7ae"
+      },
+      {
+        "name": "delivery-verification.json",
+        "size": 2739,
+        "sha256": "cb609355ec539e0c2b06789ea34336766a40aa2174b8b3cb4b8a04621ed70715"
+      },
+      {
+        "name": "large-army-overview.png",
+        "size": 3088476,
+        "sha256": "bcdfc84122f77dfea8f4d21f178f79aaf97711954500fc8da46c6d2599206df4"
+      },
+      {
+        "name": "MiragineSuper-Custom-v0.6.0-preview.1-win-x64.zip",
+        "size": 170609993,
+        "sha256": "e6ba27ad79dc0059dcb3b44c6bdd3fb0b5f89118525a5af805c6997683f3926d"
+      },
+      {
+        "name": "MiragineSuper-Custom-v0.6.0-preview.1-win-x64.zip.inventory.json",
+        "size": 18039,
+        "sha256": "c50c11ae02574f60d1940cc21404b9b51fc2cebec013b9679c6e78f534dddc0d"
+      },
+      {
+        "name": "performance-baseline-source.json",
+        "size": 365726,
+        "sha256": "9c0e19a2c9b721cbd2b502e26110d11db3506d7ce7bdabeae20aead76192e627"
+      },
+      {
+        "name": "performance-comparison.json",
+        "size": 12313,
+        "sha256": "70cc1614b820d549026152a3a30f88a27f4ef8eaed6dfb0388375bc6fb0fa9d1"
+      },
+      {
+        "name": "performance-optimized-source.json",
+        "size": 370891,
+        "sha256": "d2f63e13cdc201ca04d4688e3610a46eb877501a0347600a3091a528c7f357a1"
+      },
+      {
+        "name": "privacy-evidence.json",
+        "size": 108,
+        "sha256": "840a9200fe873ea16fd186284348d1ed7c589000a222ad6091f57204e8b867c1"
+      },
+      {
+        "name": "privacy-source.json",
+        "size": 115,
+        "sha256": "41f479f77d282a36f9bc0bbf15adfee15162b37cfe3580da26769c9bf8a6b9fc"
+      },
+      {
+        "name": "release-notes.md",
+        "size": 3537,
+        "sha256": "339a4847d5ff8e06e36906ebb9068bb4a9559e9e91913eae171ce84040e367e3"
+      },
+      {
+        "name": "runtime-privacy-review.json",
+        "size": 25787,
+        "sha256": "95fe2596f1b5eef23f4fcf580dd1137a70d741d1cc3867b32c80bfd769f27bfc"
+      },
+      {
+        "name": "SHA256SUMS",
+        "size": 2559,
+        "sha256": "9d8896869bef320981b6deddeaba372190fd7ba3dc98d676cc50ef5b5d0bc17a"
+      },
+      {
+        "name": "source-invariants.json",
+        "size": 5070,
+        "sha256": "86abf7284785dee9dc27fb15d9b4311b1f3b0a16e67afbdc27975b989b0e3765"
+      },
+      {
+        "name": "source-proof.json",
+        "size": 22908,
+        "sha256": "283848cb1f2a2ce6af322d4b09b0f0363362615979db85dc1098d68cfbbef7f9"
+      },
+      {
+        "name": "source-tests.json",
+        "size": 366,
+        "sha256": "400b9b5f360319df2e4ccc32ecc2ca38e535495cea738145394beb3f1110a2da"
+      },
+      {
+        "name": "storage-audit.json",
+        "size": 649,
+        "sha256": "d7a9fbc7047eebe74cb30a3228cc2c713a2266b9c120097f8ac7efdda7a85616"
+      },
+      {
+        "name": "storage.json",
+        "size": 248,
+        "sha256": "b8814c8a8074abb5764a70e25135eca83385cfdb12ecd71f9cb4d8cd0fc40096"
+      },
+      {
+        "name": "verification-ci.json",
+        "size": 5222,
+        "sha256": "314329b232dccf4d0e9ca9201a7270e0c9cb28eb2a1d4bbb652786165d951926"
+      },
+      {
+        "name": "verification-large-battle-portable.json",
+        "size": 214570,
+        "sha256": "a7919bf93d58d65e1fca47c66f3bb9ca3c327afea1339725384f307e0363b8c0"
+      },
+      {
+        "name": "verification-offscreen-culling.json",
+        "size": 98322,
+        "sha256": "4543e896f967716fa8fad3407b42b6e87effd5f11ab9c1b6a2bc05753561e742"
+      },
+      {
+        "name": "verification-settings.json",
+        "size": 237776,
+        "sha256": "fe098a033bfe6f1fd7fc73af26300e7d180bd7a365f9e1af0b4a6c91d5a05f04"
+      },
+      {
+        "name": "verification-usability.json",
+        "size": 4773,
+        "sha256": "7e8437940e2cb39059cb236b6aae97aa2b38edbfc2846faf4f9eb8c75c289c68"
+      },
+      {
+        "name": "verification-zip-performance.json",
+        "size": 988,
+        "sha256": "e06f5e97b66d7e3ba0e98d9b501d0f39af28368b78bee90873f4f9318c48e425"
+      },
+      {
+        "name": "verification-zip-settings.json",
+        "size": 985,
+        "sha256": "dbd0e68f86e705ab8cc7772e54f0aff989a4b0d2dc5db6b2e659fef1b84b839a"
+      },
+      {
+        "name": "verification-zip-usability.json",
+        "size": 986,
+        "sha256": "6bd10f4177f508a47e2f5e61b84e1f746cbce44b69826e5338d02538552f25e3"
+      }
+    ]
+  },
+  "sourceABHighlight": {
+    "scenario": "8x-overview",
+    "metric": "simulation steps per wall-clock second",
+    "baseline": 54.85340347557862,
+    "optimized": 129.25280807423084,
+    "ratio": 2.3563316017715423,
+    "requestedSimulationHz": 240,
+    "baselineAchievedSpeed": 1.8284467825192872,
+    "optimizedAchievedSpeed": 4.308426935807694
+  },
+  "portableMeasured8xOverview": {
+    "elapsedMs": 3006.2999999523163,
+    "simulationHz": 130.39284170116676,
+    "actualSpeed": 4.346428056705559,
+    "presentationFps": 44.57306323458251,
+    "initialAlive": {
+      "left": 501,
+      "right": 501
+    },
+    "finalAlive": {
+      "left": 501,
+      "right": 501
+    }
+  },
+  "handoff": {
+    "launchedVersion": "0.6.0-preview.1",
+    "sourceCommit": "6c575f808004f8fc46a086aad5d8eee322ed142a",
+    "readyAt": "2026-10-24T07:16:20.223Z",
+    "initiallyPaused": true,
+    "gameMusicOff": true,
+    "forcedAudioMuteRemoved": true,
+    "otherPlayerWindowsUntouched": true
+  },
+  "storageNote": "Decimal bytes/MB; source includes original runtime assets; ZIP/extracted size excludes later user data and development dependencies.",
+  "note": "The package retains README publication status at the runtime commit; this later receipt does not repackage or change runtime code."
+}
