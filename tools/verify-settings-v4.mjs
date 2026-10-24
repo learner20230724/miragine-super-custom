@@ -49,6 +49,18 @@ export function visibleHotspotCenter(hotspot) {
   return { x: (left + right) / 2, y: (top + bottom) / 2 };
 }
 
+/** OriginalKeyboard samples keys on logic ticks; zero-duration presses can be missed. */
+export async function sampleLogicKey({ keyboard, code, frame, until }) {
+  await keyboard.down(code);
+  try {
+    const pressedAt = await frame();
+    await until(async () => (await frame()) > pressedAt, `${code} press crosses a logic tick`);
+  } finally { await keyboard.up(code); }
+  // The release must also be sampled before another discrete press can trigger.
+  const releasedAt = await frame();
+  await until(async () => (await frame()) > releasedAt, `${code} release crosses a logic tick`);
+}
+
 /** A v1 document deliberately has no side tables or configurable AI. */
 export function legacyFixture(document) {
   const result = structuredClone(document), profile = result.profile;
@@ -334,9 +346,9 @@ export async function verifySettingsV4(options) {
     } finally { await page.keyboard.up('Space'); }
     check(JSON.stringify((await state()).selection.left) === JSON.stringify(selectionBeforeHeldKey),
       'held settings Space does not leak a repeat into the live battle when F2 closes');
-    await page.keyboard.press('Space'); await delay(100);
+    await sampleLogicKey({ keyboard: page.keyboard, code: 'Space', frame: async () => (await state()).frame, until });
     check((await state()).selection.left[2] !== selectionBeforeHeldKey[2], 'fresh Space after release still controls original recruitment');
-    await page.keyboard.press('Space'); await open();
+    await sampleLogicKey({ keyboard: page.keyboard, code: 'Space', frame: async () => (await state()).frame, until }); await open();
     const order = await element('[data-control-section]').evaluateAll(nodes => nodes.map(node => node.dataset.controlSection));
     check(JSON.stringify(order) === JSON.stringify(['time', 'view']), 'time/speed/pause section precedes separate camera section', order);
     check(await playback('pause').isVisible() && await playback('fullscreen').isVisible() && await playback('free').isVisible(), 'pause, fullscreen and free-observer controls are explicit');

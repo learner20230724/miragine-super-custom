@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { OriginalKeyboard } from '../src/app/input.mjs';
 import { parseV4Options, exactSafeResource, cancelledSpawn, legacyFixture, SAFE_INTEGER_TEXT,
-  compactFooterLayout, compactFooterRegion, preservedCrystalFractions, visibleHotspotCenter } from '../tools/verify-settings-v4.mjs';
+  compactFooterLayout, compactFooterRegion, preservedCrystalFractions, visibleHotspotCenter,
+  sampleLogicKey } from '../tools/verify-settings-v4.mjs';
 
 test('v4 verifier has separate proof names and retains validated options', () => {
   const value = parseV4Options(['--url', 'http://127.0.0.1:43210/']);
@@ -67,6 +69,29 @@ test('mapped hotspot clicks reject invisible, edge-only, inverted and invalid re
     { left: NaN, right: 30, top: 10, bottom: 30 },
     { left: -Infinity, right: Infinity, top: 10, bottom: 30 },
   ]) assert.throws(() => visibleHotspotCenter(rectangle), /Invalid hotspot/);
+});
+
+test('sampled real-key helper spans press and release ticks without OS repeats', async () => {
+  const presses = [], messages = [];
+  const controller = { phase: 'game', simulation: { running: true, winner: null }, key: code => presses.push(code) };
+  const input = new OriginalKeyboard(controller);
+  let frame = 0;
+  const options = { code: 'Space', keyboard: { down: code => input.keyDown(code), up: code => input.keyUp(code) },
+    frame: async () => frame, until: async (probe, message) => {
+      messages.push(message); assert.equal(await probe(), false);
+      ++frame; input.step(); assert.equal(await probe(), true);
+    } };
+  await sampleLogicKey(options); await sampleLogicKey(options);
+  assert.deepEqual(presses, ['Space', 'Space']); assert.equal(frame, 4); assert.equal(input.down.size, 0);
+  assert.deepEqual(messages, ['Space press crosses a logic tick', 'Space release crosses a logic tick',
+    'Space press crosses a logic tick', 'Space release crosses a logic tick']);
+});
+
+test('sampled real-key helper always releases its key after observation failure', async () => {
+  const events = [];
+  await assert.rejects(sampleLogicKey({ code: 'Space', keyboard: { down: code => events.push(['down', code]), up: code => events.push(['up', code]) },
+    frame: async () => 1, until: async () => { throw new Error('sample timed out'); } }), /sample timed out/);
+  assert.deepEqual(events, [['down', 'Space'], ['up', 'Space']]);
 });
 
 test('legacy fixture removes v2-only fields without mutating actual export', () => {
