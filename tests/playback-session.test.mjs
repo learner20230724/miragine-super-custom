@@ -61,6 +61,59 @@ test('menus keep real-time scheduling while selected world speed is remembered',
   assert.equal(playback.clock.speed, 8);
 });
 
+test('50x and 100x execute original 30Hz steps and retain selection across pauses and 1x menus', () => {
+  for (const speed of [50, 100]) {
+    const c = controller(), reference = controller();
+    const playback = new MiraginePlayback(c, { now: 0 });
+    const initial = c.simulation.frame;
+    playback.setSpeed(speed, 0);
+    playback.advance(20);
+    assert.ok(Math.abs(c.simulation.frame - initial - speed * 20 * 30 / 1000) <= 1);
+    reference.simulation.step(c.simulation.frame - reference.simulation.frame);
+    assert.deepEqual(c.simulation.snapshot(), reference.simulation.snapshot());
+    assert.equal(playback.clock.stepHz, 30);
+    assert.equal(playback.clock.renderHz, 240);
+    playback.pause('editor', 20);
+    const before = c.simulation.frame;
+    playback.advance(5000);
+    playback.resume('editor', 5000);
+    assert.equal(c.simulation.frame, before);
+    assert.equal(playback.speed, speed);
+    playback.togglePause(5000);
+    playback.togglePause(10000);
+    assert.equal(playback.speed, speed);
+    assert.equal(c.simulation.frame, before);
+    c.home();
+    const count = playback.clock.totalSteps;
+    playback.advance(10100);
+    assert.ok(playback.clock.totalSteps - count <= 4);
+    assert.equal(playback.clock.speed, 1);
+    assert.equal(playback.speed, speed);
+    c.startMatch();
+    playback.advance(10101);
+    assert.equal(playback.clock.speed, speed);
+  }
+});
+
+test('50x and 100x playback keep the existing 8ms work budget without accumulating catch-up debt', () => {
+  for (const speed of [50, 100]) {
+    const c = controller(); let work = 0;
+    const playback = new MiraginePlayback(c, { now: 0, inputStep: () => { work += 3; },
+      maxWorkMs: 8, maxStepsPerAdvance: 24, workNow: () => work });
+    playback.setSpeed(speed, 0);
+    for (const now of [250, 100000, 100250]) {
+      const before = c.simulation.frame;
+      const result = playback.advance(now);
+      assert.equal(result.steps, 3);
+      assert.equal(result.workLimited, true);
+      assert.equal(c.simulation.frame, before + 3);
+      assert.ok(result.accumulatorMs >= 0 && result.accumulatorMs < playback.clock.stepMs);
+      assert.equal(playback.advance(now).steps, 0);
+      assert.equal(playback.speed, speed);
+    }
+  }
+});
+
 test('zero speed stops core, scheduled input and interpolation while presentation remains available', () => {
   const c = controller();
   let inputs = 0;
@@ -201,7 +254,7 @@ test('explicit refresh adopts same-frame customization snapshots without a step 
 test('invalid speed and pause inputs do not settle or mutate the world', () => {
   const c = controller(), playback = new MiraginePlayback(c, { now: 0 });
   const before = c.simulation.snapshot();
-  for (const speed of [-1, 20.1, Infinity, NaN, '2']) assert.throws(() => playback.setSpeed(speed, 100));
+  for (const speed of [-1, 100.1, Infinity, NaN, '2']) assert.throws(() => playback.setSpeed(speed, 100));
   for (const [paused, reason] of [[1, 'editor'], [true, ''], [false, null]]) {
     assert.throws(() => playback.setPaused(paused, 100, reason));
   }

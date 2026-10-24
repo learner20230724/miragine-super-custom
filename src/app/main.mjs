@@ -428,7 +428,7 @@ try {
   customStorage = await createCustomStorage();
   controller = new GameController(config, { storage,
     createSimulation: options => installCombatHitRules(installCasterProjectileLifetime(new MiragineSimulation(options))) });
-  customization = createCustomization({ controller, defaults, initialConfig: config, storage: customStorage, onChange: customChanged });
+  customization = createCustomization({ controller, defaults, initialConfig: config, storage: customStorage, autoRestore: true, onChange: customChanged });
   keyboard = new OriginalKeyboard(controller);
   view = new OriginalGameView(canvas, globalThis.OriginalGraphics, layout, config, { crispTextControls: true });
   view.setRenderSize(fit.backingWidth, fit.backingHeight);

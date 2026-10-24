@@ -76,14 +76,15 @@ function fixture({ battle = true, accept = true, flush = async () => true } = {}
   return { panel, custom, controller, storage, values, root, document, focus, playback, find, button, tab, edit, events, confirms, downloads };
 }
 
-test('dock is collapsed by default; open/close restores focus without pausing or discarding draft', () => {
+test('dock is collapsed by default; open/close restores focus without pausing or losing automatic settings', async () => {
   const f = fixture(); assert.equal(f.panel.isOpen, false); assert.equal(f.panel.element.hidden, true);
   f.panel.open(); assert.equal(f.panel.isOpen, true); assert.equal(f.panel.element.hidden, false);
   assert.equal(f.playback.parentNode.parentNode, f.panel.element);
   assert.equal(f.document.activeElement, f.button('close')); assert.deepEqual(f.events, [['open', true]]);
-  f.tab('units'); f.edit('config.sides.left.units.0.hp', 99); f.panel.close();
+  f.tab('units'); f.edit('config.sides.left.units.0.hp', 99); await settle(); f.panel.close();
   assert.equal(f.document.activeElement, f.focus); f.panel.open(); assert.equal(f.find('[data-field-path="config.sides.left.units.0.hp"]').value, '99');
-  assert.equal(f.controller.simulation.config.units[0].hp, 45); f.panel.destroy();
+  assert.equal(f.controller.simulation.config.customization.sides.left.units[0].hp, 99);
+  assert.doesNotMatch(f.find('[data-settings-save-status]').textContent, /草稿/); f.panel.destroy();
 });
 
 test('metadata supplies real editable sections with defaults and no invented building/skill/wave tabs', () => {
@@ -118,42 +119,42 @@ test('collapsed status updates perform no profile clone or draft query', () => {
   for (let i = 0; i < 100; i++) panel.update({ paused: true }); assert.equal(reads, before); panel.destroy();
 });
 
-test('invalid numeric draft is blocked, survives status/tabs and never alters simulation', async () => {
+test('invalid numeric input is blocked, survives status/tabs and never alters simulation until corrected', async () => {
   const f = fixture(); f.panel.open(); f.tab('units'); const bad = f.edit('config.sides.left.units.0.cost', 'NaN');
   assert.equal(bad.getAttribute('aria-invalid'), 'true'); assert.equal(f.custom.getState().draft.config.sides.left.units[0].cost, 20);
-  assert.equal(f.button('apply-current').disabled, true); f.tab('sandbox'); f.tab('units');
+  assert.equal(f.button('apply-current'), null); f.tab('sandbox'); f.tab('units');
   assert.equal(f.find('[data-field-path="config.sides.left.units.0.cost"]').value, 'NaN');
-  f.button('apply-current').click(); await settle(); assert.match(f.find('[data-draft-dirty]').textContent, /输入无效/);
-  assert.equal(f.controller.simulation.config.units[0].cost, 20, 'The disabled unified apply action cannot mutate a battle');
-  f.edit('config.sides.left.units.0.cost', 7); assert.equal(f.button('apply-current').disabled, false); assert.equal(f.controller.simulation.config.units[0].cost, 20);
-  f.button('apply-current').click(); await settle(); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7); f.panel.destroy();
+  await settle(); assert.match(f.find('[data-settings-save-status]').textContent, /输入无效/);
+  assert.equal(f.controller.simulation.config.units[0].cost, 20, 'Invalid input cannot mutate a battle');
+  f.edit('config.sides.left.units.0.cost', 7); await settle();
+  assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7); f.panel.destroy();
 });
 
-test('unified apply reports deferred initial values and preserves existing health ratios without an extra selector', async () => {
+test('automatic settings report deferred initial values and preserve existing health ratios without an extra selector', async () => {
   const f = fixture(); f.custom.spawn({ side: 'left', unitId: 0, count: 1 });
-  const unit = f.controller.simulation.friendList.find(entity => entity.kind === 'unit'); unit.nowHP = unit.spawnHP / 4;
-  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 500);
-  f.tab('starting'); f.edit('config.sides.left.initial.money', 777); assert.equal(f.find('[data-health-policy]'), null);
-  f.tab('units');
-  const frame = f.controller.simulation.frame; f.button('apply-current').click(); await settle();
-  assert.equal(f.controller.simulation.frame, frame); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].hp, 500);
+  const sim = f.controller.simulation, unit = sim.friendList.find(entity => entity.kind === 'unit'); unit.nowHP = unit.spawnHP / 4;
+  const frame = sim.frame, money = sim.leftMoney;
+  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 500); await settle();
   assert.equal(unit.nowHP, 125); assert.equal(unit.spawnHP, 500);
-  assert.notEqual(f.controller.simulation.leftMoney, 777);
-  assert.match(f.find('[data-settings-message]').textContent, /1 项下局生效/);
-  assert.match(f.find('[data-settings-message]').textContent, /倒计时/); f.panel.destroy();
+  f.tab('starting'); f.edit('config.sides.left.initial.money', 777); await settle(); assert.equal(f.find('[data-health-policy]'), null);
+  assert.equal(sim.frame, frame); assert.equal(sim.config.customization.sides.left.units[0].hp, 500);
+  assert.equal(sim.leftMoney, money); assert.equal(f.custom.getState().next.config.sides.left.initial.money, 777);
+  assert.match(f.find('[data-settings-message]').textContent, /下局生效/);
+  assert.equal(f.button('apply-current'), null); f.panel.destroy();
 });
 
-test('preset save/load is explicit, confirmed overwrite and JSON export retain drafts without auto apply', async () => {
-  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 99); f.tab('presets');
+test('named preset save and overwrite remain explicit while loading immediately applies rules', async () => {
+  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 99); await settle(); f.tab('presets');
   const name = f.find('[data-preset-name]'); name.value = '<b>我的规则</b>'; f.button('save-preset').click(); await settle();
   assert.equal(f.custom.getState().presets.length, 1); assert.match(f.find('[data-settings-message]').textContent, /已保存到本机/);
-  assert.equal(f.controller.simulation.config.units[0].hp, 45);
+  assert.equal(f.controller.simulation.config.customization.sides.left.units[0].hp, 99);
   const id = f.custom.getState().presets[0].id; f.find('[data-preset-select]').value = id;
   f.button('overwrite-preset').click(); await settle(); assert.equal(f.confirms.length, 1); assert.equal(f.custom.getState().presets.length, 1);
   f.button('export').click(); await settle(); assert.equal(f.downloads.length, 1);
   assert.equal(JSON.parse(f.downloads[0].text).profile.config.sides.left.units[0].hp, 99); assert.doesNotMatch(f.downloads[0].name, /[<>/]/);
-  f.custom.resetDraft(); f.button('load-preset').click(); await settle(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 99);
-  assert.equal(f.controller.simulation.config.units[0].hp, 45); f.panel.destroy();
+  await f.custom.resetSettings(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 45);
+  f.button('load-preset').click(); await settle(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 99);
+  assert.equal(f.controller.simulation.config.customization.sides.left.units[0].hp, 99); f.panel.destroy();
 });
 
 test('preset filename draft survives tab navigation and periodic status refresh', () => {
@@ -172,7 +173,7 @@ test('false flush never reports durable save and warnings remain visible separat
 
 test('failed asynchronous save surfaces controller warnings without overwriting the draft', async () => {
   const f = fixture({ flush: async () => { throw new Error('private path must not be surfaced'); } });
-  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 222); f.tab('presets'); f.find('[data-preset-name]').value = '失败';
+  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 222); await settle(); f.tab('presets'); f.find('[data-preset-name]').value = '失败';
   f.button('save-preset').click(); await settle();
   assert.match(f.find('[data-storage-warning]').textContent, /存储写入失败/);
   assert.doesNotMatch(f.find('[data-settings-message]').textContent, /private path/);
@@ -188,15 +189,20 @@ test('import validates size before reading and invalid JSON never replaces a val
   assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 45); f.panel.destroy();
 });
 
-test('JSON import is draft-only and reset/undo preserve saved presets', async () => {
+test('JSON import applies rules and reset/undo change real rules while preserving presets and battle resources', async () => {
   const f = fixture(); f.custom.updateDraft('config.sides.left.units.0.hp', 333); const exported = f.custom.exportJSON('导入');
   f.custom.resetDraft(); f.panel.open(); f.tab('presets');
+  const sim = f.controller.simulation; sim.leftMoney = 9876; const frame = sim.frame;
   const file = f.find('[data-preset-file]'); file.files = [{ size: exported.length, text: async () => exported }]; file.fire('change'); await settle();
-  assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 333); assert.equal(f.controller.simulation.config.units[0].hp, 45);
+  assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 333);
+  assert.equal(sim.config.customization.sides.left.units[0].hp, 333);
   f.find('[data-preset-name]').value = '导入'; f.button('save-preset').click(); await settle();
   f.button('reset').click(); await settle(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 45);
+  assert.equal(sim.config.customization.sides.left.units[0].hp, 45);
+  assert.equal(sim.leftMoney, 9876); assert.equal(sim.frame, frame);
   assert.equal(f.custom.getState().presets.length, 1); f.button('undo').click(); await settle();
-  assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 333); f.panel.destroy();
+  assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 333);
+  assert.equal(sim.config.customization.sides.left.units[0].hp, 333); f.panel.destroy();
 });
 
 test('sandbox spawn, clear and remaining resources are explicit real controller operations', async () => {
@@ -212,20 +218,24 @@ test('sandbox spawn, clear and remaining resources are explicit real controller 
   assert.equal(sim.redBoss.nowHP, defaults.rules.baseHp); assert.equal(f.confirms.length, 0); f.panel.destroy();
 });
 
-test('clearing needs no confirmation while cancelled draft reset still preserves edits', async () => {
+test('clearing needs no confirmation while cancelled settings reset still preserves edits', async () => {
   const f = fixture({ accept: false }); f.custom.spawn({ side: 'left', unitId: 0, count: 1 }); f.custom.updateDraft('config.sides.left.units.0.hp', 111);
   f.panel.open(); f.button('clear-all').click(); await settle(); assert.equal(f.controller.simulation.friendList.filter(unit => unit.kind === 'unit').length, 0);
   assert.equal(f.confirms.length, 0);
   f.button('reset').click(); await settle(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 111); f.panel.destroy();
 });
 
-test('menu settings can start a new custom battle and return to original without losing draft', async () => {
+test('return to main menu ends the battle without silently restoring original rules', async () => {
   const f = fixture({ battle: false }); f.panel.open(); assert.equal(f.button('spawn-left').disabled, true);
-  f.custom.updateDraft('config.sides.left.units.0.cost', 7); f.tab('starting'); f.button('start-battle').click(); await settle();
+  f.tab('units'); f.edit('config.sides.left.units.0.cost', 7); await settle();
+  f.tab('starting'); f.button('start-battle').click(); await settle();
   assert.equal(f.controller.phase, 'game'); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7);
   f.tab('sandbox'); assert.equal(f.button('spawn-left').disabled, false);
+  assert.match(f.button('return-original').textContent, /返回主菜单.*结束本局/);
   f.button('return-original').click(); await settle(); assert.equal(f.controller.phase, 'title');
-  assert.equal(f.custom.getState().draft.config.sides.left.units[0].cost, 7); assert.equal(f.controller.config.units[0].cost, 20); f.panel.destroy();
+  assert.equal(f.custom.getState().draft.config.sides.left.units[0].cost, 7);
+  assert.equal(f.custom.getState().next.config.sides.left.units[0].cost, 7);
+  f.controller.startMatch(true, 1); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7); f.panel.destroy();
 });
 
 test('editor observes pause status without a duplicated header control or changing the host pause state', () => {
@@ -258,4 +268,25 @@ test('destroy releases all listeners and styles without accepting stale UI actio
   assert.equal(f.controller.simulation.friendList.filter(unit => unit.kind === 'unit').length, 0);
   assert.equal(f.panel.element.parentNode, null); assert.equal(f.document.head.querySelector('[data-settings-panel-style]'), null);
   f.panel.open(); assert.equal(f.panel.isOpen, false); f.panel.update();
+});
+
+
+test('automatic confirmation applies immediately but reports saving until durable storage completes', async () => {
+  let complete; const f = fixture({ flush: () => new Promise(resolve => { complete = resolve; }) });
+  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.range', 999);
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].range, 999);
+  assert.equal(f.find('[data-settings-save-status]').getAttribute('data-save-state'), 'saving');
+  assert.doesNotMatch(f.find('[data-settings-save-status]').textContent, /已保存到本机/);
+  complete(true); await settle();
+  assert.equal(f.find('[data-settings-save-status]').getAttribute('data-save-state'), 'saved');
+  assert.match(f.find('[data-settings-save-status]').textContent, /已保存到本机/); f.panel.destroy();
+});
+
+test('automatic save failure does not undo usable live settings or falsely promise persistence', async () => {
+  const f = fixture({ flush: async () => false }); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.range', 987); await settle();
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].range, 987);
+  assert.equal(f.find('[data-settings-save-status]').getAttribute('data-save-state'), 'failed');
+  assert.match(f.find('[data-settings-save-status]').textContent, /保存失败/);
+  assert.match(f.find('[data-settings-message]').textContent, /未能确认写入本机存储/);
+  assert.doesNotMatch(f.find('[data-settings-message]').textContent, /已保存到本机/); f.panel.destroy();
 });

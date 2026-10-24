@@ -1,10 +1,10 @@
 const SPEEDS = Object.freeze([1, 2, 4, 8]);
-const MAX_SPEED = 20;
+export const MAX_GAME_SPEED = 100;
 const RENDER_EPSILON_MS = 1e-7;
 
 function validateSpeed(value) {
-  if (!Number.isFinite(value) || value < 0 || value > MAX_SPEED) {
-    throw new RangeError('speed must be a finite number in [0,20]');
+  if (!Number.isFinite(value) || value < 0 || value > MAX_GAME_SPEED) {
+    throw new RangeError(`speed must be a finite number in [0,${MAX_GAME_SPEED}]`);
   }
 }
 
@@ -32,7 +32,7 @@ export class GameClock {
     maxWorkMs = Infinity, maxStepsPerAdvance = Infinity, workNow = () => performance.now() } = {}) {
     if (!Number.isFinite(stepHz) || stepHz <= 0 || !Number.isFinite(renderHz)
       || renderHz <= 0 || renderHz > 240 || !Number.isFinite(now)
-      || !Number.isFinite(maxDeltaMs) || maxDeltaMs <= 0 || !Number.isFinite(maxDeltaMs * MAX_SPEED)
+      || !Number.isFinite(maxDeltaMs) || maxDeltaMs <= 0 || !Number.isFinite(maxDeltaMs * MAX_GAME_SPEED)
       || !Number.isFinite(1000 / stepHz) || !Number.isFinite(1000 / renderHz)
       || typeof step !== 'function') {
       throw new TypeError('Expected positive finite stepHz, renderHz in (0,240], finite now/maxDeltaMs and a step callback');

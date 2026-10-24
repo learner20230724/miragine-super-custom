@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { GameClock, GAME_SPEEDS } from '../src/runtime/game-clock.mjs';
+import { GameClock, GAME_SPEEDS, MAX_GAME_SPEED } from '../src/runtime/game-clock.mjs';
 import { FixedStepFrameClock } from '../src/platform/frame-clock.mjs';
 import { MiragineSimulation, seededRandom } from '../src/core/index.mjs';
 import { OriginalKeyboard } from '../src/app/input.mjs';
@@ -39,7 +39,7 @@ test('1x preserves old suspension/hidden/backward-first-RAF accumulator operatio
 });
 
 test('speed only scales accepted future wall time, and the 250ms cap is applied before speed', () => {
-  for (const speed of [0, 0.1, 0.5, ...GAME_SPEEDS, 12.3, 20]) {
+  for (const speed of [0, 0.1, 0.5, ...GAME_SPEEDS, 12.3, 20, 50, 100]) {
     let count = 0;
     const clock = new GameClock({ now: 0, speed, step: () => count++ });
     const result = clock.advance(1000);
@@ -65,7 +65,7 @@ test('switching speed keeps existing fractional game time instead of rescaling i
 });
 
 test('fractional rates accumulate complete original fixed steps with no scaled step size', () => {
-  for (const speed of [0.1, 0.5, 1.3, 7.9, 19.9, 20]) {
+  for (const speed of [0.1, 0.5, 1.3, 7.9, 19.9, 20, 49.9, 50, 99.9, 100]) {
     let calls = 0;
     const clock = new GameClock({ now: 0, speed, step: () => calls++ });
     for (let frame = 1; frame <= 600; frame++) clock.advance(frame * 10);
@@ -113,7 +113,7 @@ test('timestamped speed changes settle the old rate and reject invalid changes a
   clock.setSpeed(20, 30);
   assert.equal(clock.accumulatorMs, 30);
   const before = clock.stats;
-  for (const [speed, now] of [[21, 100], [NaN, 100], [1, Infinity], [1, '100']]) {
+  for (const [speed, now] of [[101, 100], [NaN, 100], [1, Infinity], [1, '100']]) {
     assert.throws(() => clock.setSpeed(speed, now));
     assert.deepEqual(clock.stats, before);
   }
@@ -200,6 +200,71 @@ test('timestamped pause and resume settle with the same accelerated work bounds 
   assert.equal(clock.accumulatorMs, remainder);
   assert.equal(clock.advance(100000).steps, 0);
   assert.ok(clock.advance(100001).steps <= 1);
+});
+
+test('50x and 100x retain bounded complete steps, discard overload and cannot replay pause or hidden time', () => {
+  assert.equal(MAX_GAME_SPEED, 100);
+  for (const speed of [50, 100]) {
+    let calls = 0;
+    const clock = new GameClock({ now: 0, speed, maxStepsPerAdvance: 24, step: () => calls++ });
+    const stalled = clock.advance(100000);
+    assert.equal(stalled.steps, 24);
+    assert.equal(calls, 24);
+    assert.equal(stalled.workLimited, true);
+    close(stalled.gameTimeMs + stalled.accumulatorMs + stalled.droppedGameTimeMs, 250 * speed, 1e-6);
+    assert.ok(clock.accumulatorMs >= 0 && clock.accumulatorMs < clock.stepMs);
+    assert.equal(clock.advance(100000).steps, 0);
+    clock.setSpeed(0, 100000);
+    const retained = clock.accumulatorMs;
+    clock.setSpeed(speed, 200000);
+    assert.equal(clock.accumulatorMs, retained);
+    assert.equal(clock.advance(200000).steps, 0);
+    assert.equal(clock.advance(300000, { hidden: true }).steps, 0);
+    assert.equal(clock.accumulatorMs, retained);
+    const next = clock.advance(300001);
+    assert.ok(next.steps <= Math.ceil(speed / clock.stepMs));
+    assert.equal(calls, clock.totalSteps);
+    assert.equal(clock.stepMs, 1000 / 30);
+    assert.equal(clock.renderHz, 240);
+  }
+});
+
+test('100x rejects arithmetic overflow atomically before advancing the clock or callback', () => {
+  let calls = 0;
+  assert.throws(() => new GameClock({ now: 0, maxDeltaMs: Number.MAX_VALUE / 50, step: () => calls++ }), TypeError);
+  const clock = new GameClock({ now: 0, speed: 100, step: () => calls++ });
+  const before = clock.stats;
+  assert.throws(() => clock.advance(Number.MAX_VALUE), RangeError);
+  assert.deepEqual(clock.stats, before);
+  assert.equal(calls, 0);
+  assert.ok(clock.advance(1).steps <= 3);
+});
+
+test('work-limited 50x and 100x preserve recovered state, event order and RNG for every executed tick', () => {
+  const config = JSON.parse(readFileSync(new URL('../config/defaults.generated.json', import.meta.url), 'utf8'));
+  for (const speed of [50, 100]) {
+    let baselineDraws = 0, timedDraws = 0, work = 0;
+    const baselineRng = seededRandom(123), timedRng = seededRandom(123);
+    const baseline = new MiragineSimulation({ config, autoStart: false, rng: () => { baselineDraws++; return baselineRng(); } });
+    const timed = new MiragineSimulation({ config, autoStart: false, rng: () => { timedDraws++; return timedRng(); } });
+    const clock = new GameClock({ now: 0, speed, maxWorkMs: 8, maxStepsPerAdvance: 24,
+      workNow: () => work, step: () => { timed.step(); work += 3; } });
+    let sawAttack = false;
+    for (let frame = 1; frame <= 600; frame++) {
+      const result = clock.advance(frame * 1000 / 60);
+      assert.equal(result.steps, 3);
+      assert.equal(result.workLimited, true);
+      assert.ok(clock.accumulatorMs >= 0 && clock.accumulatorMs < clock.stepMs);
+      baseline.step(result.steps);
+      assert.deepEqual(timed.snapshot(), baseline.snapshot());
+      const events = timed.drainEvents();
+      assert.deepEqual(events, baseline.drainEvents());
+      sawAttack ||= events.some(event => event.type === 'attack');
+      assert.equal(timedDraws, baselineDraws);
+    }
+    assert.ok(sawAttack);
+    assert.equal(timed.frame, clock.totalSteps);
+  }
 });
 
 test('invalid optional work bounds and invalid injected clock results fail before a game step', () => {
@@ -310,11 +375,11 @@ test('changing render target resets only presentation cadence, with no debt burs
 test('stats are read-only and invalid/non-finite settings fail before callback execution', () => {
   let calls = 0;
   for (const options of [{ stepHz: 0 }, { stepHz: NaN }, { renderHz: 241 }, { renderHz: Infinity },
-    { now: NaN }, { maxDeltaMs: Infinity }, { speed: 20.1 }, { stepHz: Number.MIN_VALUE }]) {
+    { now: NaN }, { maxDeltaMs: Infinity }, { speed: 100.1 }, { stepHz: Number.MIN_VALUE }]) {
     assert.throws(() => new GameClock({ now: 0, step: () => calls++, ...options }));
   }
   const clock = new GameClock({ now: 0, step: () => calls++ });
-  for (const value of [-1, 20.1, '2', NaN, Infinity]) assert.throws(() => clock.setSpeed(value));
+  for (const value of [-1, 100.1, '2', NaN, Infinity]) assert.throws(() => clock.setSpeed(value));
   for (const value of [NaN, Infinity, '10']) assert.throws(() => clock.advance(value));
   for (const value of [0, -1, 241, NaN, Infinity, '120', Number.MIN_VALUE]) assert.throws(() => clock.setRenderHz(value));
   assert.throws(() => { clock.speed = 8; }, TypeError);

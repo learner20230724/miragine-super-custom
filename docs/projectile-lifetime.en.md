@@ -39,7 +39,7 @@ Keep other settings in `config/custom.json` and configure this field inside `ove
 - `mapWidths` must be positive and finite; `unitIds` is a list of distinct unit IDs from 0 to 15.
 - Optional `baseLifeFrames` must be a positive safe integer. Omitting it preserves original crystal lifetime. It is a total budget, not extra steps.
 - Restart the source application after editing the file. Only newly fired shots use the policy; existing remaining life is not reset. Applying other F2 settings preserves it; no lifetime panel fields were added.
-- Removing `casterProjectileLifetime` restores original startup lifetime but does not disable independent `combatHitRules`. Remove both overrides to restore original combat, or use F2 “Return to original” for subsequent matches. The panel does not rewrite disk settings; restarting reads the disk overrides again.
+- Removing startup override `casterProjectileLifetime` and restarting restores original lifetime without disabling independent `combatHitRules`. Remove both overrides to withdraw both improvements; other personal parameters require their own reset. In the v0.7.0-preview.1 candidate, F2 Restore original defaults retains these improvements, and Return to main menu (end this match) keeps settings rather than restoring original rules. The panel never rewrites the startup file; saved panel fields override matching startup values. See [settings and backups](custom-settings.en.md#presets-migration-and-backups).
 
 ## Development entry points
 

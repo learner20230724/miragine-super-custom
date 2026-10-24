@@ -3,6 +3,8 @@ import { clone, freeze, checkedJSON, parseJSON, validateProfile, profileFromConf
 import { installCustomRuntime, hasCustomRuntime, customSideConfiguration } from './runtime.mjs';
 import { clampInteger, clampFinite } from './numeric.mjs';
 import { releaseSpatialIndexes } from '../performance/simulation-spatial.mjs';
+import { installCombatHitRules } from '../extensions/combat-hits.mjs';
+import { installCasterProjectileLifetime } from '../extensions/projectile-lifetime.mjs';
 
 export { DRAFT_KEY, PRESETS_KEY, MAX_SANDBOX_UNITS, validateProfile, profileFromConfiguration,
   configurationFromProfile } from './schema.mjs';
@@ -28,14 +30,16 @@ function refresh(sim) {
 }
 /**
  * Explicit, opt-in editor adapter. No recovered module/prototype is patched.
- * Loading/importing/saving a draft never applies it to a battle or next match.
+ * Legacy draft methods remain staging-only. Confirmed settings apply and save
+ * together; autoRestore opts into loading those settings at the next launch.
  * Runtime options are supplied only through actual recovered fields.
  */
 export function createCustomization({ controller, defaults, initialConfig = controller?.config,
-  storage = null, onChange = () => {}, schedule = callback => setTimeout(callback, 0), cancelSchedule = handle => clearTimeout(handle),
+  storage = null, autoRestore = false, onChange = () => {}, schedule = callback => setTimeout(callback, 0), cancelSchedule = handle => clearTimeout(handle),
   workNow = () => performance.now(), spawnBatchSize = 32, spawnWorkMs = 4 } = {}) {
   if (!controller || typeof controller.createSimulation !== 'function') throw new TypeError('A GameController is required');
   if (typeof onChange !== 'function') throw new TypeError('onChange must be a function');
+  if (typeof autoRestore !== 'boolean') throw new TypeError('autoRestore must be boolean');
   if (typeof schedule !== 'function' || typeof cancelSchedule !== 'function' || typeof workNow !== 'function') throw new TypeError('Spawn scheduling functions required');
   if (!Number.isSafeInteger(spawnBatchSize) || spawnBatchSize < 1 || spawnBatchSize > 256 || !Number.isFinite(spawnWorkMs) || spawnWorkMs <= 0) throw new RangeError('Invalid spawn batch budget');
   const original = profileFromConfiguration(defaults), initial = profileFromConfiguration(initialConfig);
@@ -46,6 +50,8 @@ export function createCustomization({ controller, defaults, initialConfig = cont
   let draftBaseline = clone(initial), undo = [], presets = [], warnings = [], nextIsCustom = false;
   let currentMode = same(defaults, initialConfig) ? 'original' : 'custom', nextMode = currentMode, lastReport = null;
   let presetSequence = 0, lastWriteSucceeded = Boolean(storage);
+  let writeRevision = 0, flushRevision = 0;
+  let automaticSettings = autoRestore, templateSource = 'startup', settingsUndo = [], restoredSettings = false;
   const behaviorBySimulation = new WeakMap(), aiWrapperBySimulation = new WeakMap(), battleIds = new WeakMap();
   let battleSequence = 0;
   let spawnJob = null, spawnTimer = null, spawnSequence = 0;
@@ -59,11 +65,13 @@ export function createCustomization({ controller, defaults, initialConfig = cont
     try { return storage.getItem(key); } catch { warn('本机存储不可读；当前设置仍可使用或导出。'); return null; }
   }
   function write(key, document) {
+    writeRevision++;
     if (!storage) { lastWriteSucceeded = false; warn('本机存储不可用；修改仅保留在本次窗口，请导出 JSON。'); return false; }
     try { storage.setItem(key, JSON.stringify(document)); lastWriteSucceeded = true; return true; }
     catch { lastWriteSucceeded = false; warn('本机存储写入失败；修改仅保留在本次窗口，请导出 JSON。'); return false; }
   }
-  function persistDraft() { return write(DRAFT_KEY, { schemaVersion: 1, profile: draft }); }
+  function persistSettings() { return write(DRAFT_KEY, { schemaVersion: 2, template: templateSource, profile: next }); }
+  function persistDraft() { return automaticSettings ? persistSettings() : write(DRAFT_KEY, { schemaVersion: 1, profile: draft }); }
   function validateLibrary(document) {
     const value = checkedJSON(document, MAX_LIBRARY_BYTES);
     strictKeys(value, ['schemaVersion', 'presets'], 'preset library');
@@ -78,9 +86,26 @@ export function createCustomization({ controller, defaults, initialConfig = cont
   }
   const draftText = read(DRAFT_KEY), presetsText = read(PRESETS_KEY);
   if (draftText !== null) try {
-    const saved = parseJSON(draftText); strictKeys(saved, ['schemaVersion', 'profile'], 'draft');
-    if (saved.schemaVersion !== 1) throw new TypeError('Invalid draft schema');
-    draft = validateProfile(saved.profile, { configuration: initialConfig }); draftBaseline = clone(draft);
+    const saved = parseJSON(draftText);
+    if (saved.schemaVersion === 1) strictKeys(saved, ['schemaVersion', 'profile'], 'draft');
+    else {
+      strictKeys(saved, ['schemaVersion', 'template', 'profile'], 'settings');
+      if (saved.schemaVersion !== 2 || !['startup', 'original'].includes(saved.template)) throw new TypeError('Invalid settings schema');
+    }
+    const valid = validateProfile(saved.profile, { configuration: initialConfig });
+    if (autoRestore) {
+      const source = saved.template ?? 'startup';
+      const template = source === 'original' ? freeze(clone(baseline)) : initialConfig;
+      const custom = !(same(valid, original) && same(template, baseline));
+      const configuration = custom ? configurationFromProfile(template, valid) : template;
+      templateSource = source; configurationTemplate = template; faithfulConfig = template;
+      next = clone(valid); applied = clone(valid);
+      nextIsCustom = custom;
+      currentMode = nextMode = nextIsCustom ? 'custom' : 'original';
+      controller.config = configuration;
+      restoredSettings = true;
+    }
+    draft = valid; draftBaseline = clone(draft);
   } catch { warn('本机草稿损坏，未载入或应用；原记录未覆盖。'); }
   if (presetsText !== null) try { presets = validateLibrary(parseJSON(presetsText, MAX_LIBRARY_BYTES)); }
   catch { warn('本机预设库损坏，未载入或应用；原记录未覆盖。'); }
@@ -207,13 +232,77 @@ export function createCustomization({ controller, defaults, initialConfig = cont
     const report = { applied: edits.map(([path]) => path), deferred: [], health };
     notify('apply-live-field', report); return report;
   }
+  function keepOpeningValues(profile) {
+    // These fields describe a new match, never the balances/counters of a live one.
+    for (const key of ['initialMoney', 'startingIncome', 'leftStartingPopulation', 'initialRoundFrames']) profile.config.rules[key] = applied.config.rules[key];
+    for (const side of ['left', 'right']) profile.config.sides[side].initial = clone(applied.config.sides[side].initial);
+    for (let i = 0; i < 4; i++) for (const key of ['rightStartingIncome', 'rightStartingPopulation']) profile.config.difficulties[i][key] = applied.config.difficulties[i][key];
+    return profile;
+  }
+  function applyConfirmed(input, { source = templateSource, behavior = null, remember = true, consumeUndo = false, kind = 'settings-committed' } = {}) {
+    // Fully validate both next-match and live configurations before touching a
+    // battle, undo history, storage, or the active configuration template.
+    if (!['startup', 'original'].includes(source)) throw new TypeError('Invalid configuration template');
+    const template = source === 'original' ? freeze(clone(baseline)) : initialConfig;
+    const valid = validateProfile(input, { configuration: template });
+    const originalRules = same(valid, original) && same(template, baseline);
+    const futureConfiguration = originalRules ? template : configurationFromProfile(template, valid);
+    const live = isBattle(), sim = live ? controller.simulation : null;
+    const priorBehavior = live ? currentBehavior(sim) : clone(applied.rules);
+    const overrides = behavior ?? valid.rules;
+    for (const [key, value] of Object.entries(overrides)) {
+      if (!Object.hasOwn(original.rules, key) || typeof value !== 'boolean') throw new TypeError('Invalid behavior setting');
+    }
+    const current = live ? keepOpeningValues(clone(valid)) : clone(valid);
+    if (live) current.rules = { ...priorBehavior, ...overrides };
+    const currentConfiguration = live ? configurationFromProfile(template, current) : futureConfiguration;
+    const changes = changedFields(applied, valid), behaviorKeys = Object.keys(overrides);
+    const changed = !same(next, valid) || source !== templateSource || behaviorKeys.some(key => priorBehavior[key] !== overrides[key]);
+    const record = { profile: clone(next), source: templateSource,
+      behavior: Object.fromEntries(behaviorKeys.map(key => [key, priorBehavior[key]])) };
+    const report = {
+      applied: live ? changes.filter(field => field.apply !== '下局' || behaviorKeys.includes(field.path.replace(/^rules\./, ''))).map(field => field.path) : [],
+      deferred: live ? changes.filter(field => field.apply === '下局' && !behaviorKeys.includes(field.path.replace(/^rules\./, ''))).map(field => field.path) : changes.map(field => field.path),
+      health: 'ratio', template: source,
+      note: '确认后自动应用并保存；开局参数下局生效。当前资源、倒计时和已发出的攻击保持；生命按比例更新。',
+    };
+    if (live) {
+      // An attack already in flight is a committed action, not a fresh shot.
+      // Keep its trajectory/hit mode and elapsed delay/life when templates
+      // change, rather than turning a swept projectile into a locked-target hit.
+      const committed = sim.scene.children.filter(entity => entity.kind === 'attack').map(attack => ({ attack, step: attack.step, life: attack.life, delay: attack.delay }));
+      applyRuntime(sim, currentConfiguration, current.rules, 'ratio');
+      installCombatHitRules(installCasterProjectileLifetime(sim));
+      for (const entry of committed) {
+        Object.defineProperty(entry.attack, 'step', { value: entry.step, configurable: true, writable: true });
+        entry.attack.life = entry.life; entry.attack.delay = entry.delay;
+      }
+      controller.revision++;
+    }
+    if (remember && changed) { settingsUndo.push(record); if (settingsUndo.length > 30) settingsUndo.shift(); }
+    templateSource = source; configurationTemplate = template; faithfulConfig = template;
+    draft = clone(valid); next = clone(valid); applied = current; nextIsCustom = !originalRules;
+    nextMode = originalRules ? 'original' : 'custom'; currentMode = live ? 'custom' : nextMode;
+    controller.config = currentConfiguration; automaticSettings = true; draftBaseline = clone(draft);
+    if (consumeUndo) settingsUndo.pop();
+    report.queued = persistSettings(); notify(kind, report); return report;
+  }
   const api = {
     getMode() { return { current: currentMode, next: nextMode }; },
     getBattleState() { return isBattle() ? currentResources(controller.simulation) : null; },
     async flush() {
       if (!lastWriteSucceeded) return false;
-      try { return typeof storage?.flush === 'function' ? await storage.flush() : Boolean(storage); }
-      catch { warn('本机存储写入失败；请导出 JSON 保存修改。'); return false; }
+      const request = ++flushRevision, revision = writeRevision;
+      try {
+        const succeeded = typeof storage?.flush === 'function' ? Boolean(await storage.flush()) : Boolean(storage);
+        if (request === flushRevision && revision === writeRevision) lastWriteSucceeded = succeeded;
+        return succeeded;
+      } catch {
+        if (request === flushRevision && revision === writeRevision) {
+          lastWriteSucceeded = false; warn('本机存储写入失败；请导出 JSON 保存修改。');
+        }
+        return false;
+      }
     },
     getMetadata() { return clone(metadata(baseline)); },
     getState() {
@@ -221,6 +310,10 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       return { draft: clone(draft), applied: clone(applied), next: clone(next), defaults: clone(original),
         dirty: !same(draft, draftBaseline), differsFromCurrent: !same(draft, applied), differsFromNext: !same(draft, next),
         canUndo: undo.length > 0, presets: presets.map(({ id, name }) => ({ id, name })),
+        canUndoSettings: settingsUndo.length > 0,
+        settingsSaved: automaticSettings && lastWriteSucceeded && same(draft, next) && !storage?.warning && !['error', 'pending', 'saving'].includes(storage?.status),
+        restoredSettings, template: templateSource,
+        pendingNext: isBattle() ? changedFields(applied, next).filter(field => field.apply === '下局').map(field => field.path) : [],
         warnings: [...warnings, ...(storageWarning ? [storageWarning] : [])],
         storageStatus: storage?.status ?? (storage ? 'ready' : 'memory'),
         isBattle: Boolean(isBattle()), battle: isBattle() ? currentResources(controller.simulation) : null,
@@ -230,6 +323,26 @@ export function createCustomization({ controller, defaults, initialConfig = cont
         unsupported: ['建筑建造', '主动技能', '固定波次 / 关卡增援'] };
     },
     setDraft(profile) { return replaceDraft(profile); },
+    commitSetting(path, value) {
+      const valid = setProfileField(draft, path, value, baseline);
+      const behavior = path.startsWith('rules.') ? { [path.slice(6)]: at(valid, path) } : {};
+      return applyConfirmed(valid, { behavior });
+    },
+    applySettings() { return applyConfirmed(draft); },
+    resetSettings({ originalRules = false } = {}) {
+      if (typeof originalRules !== 'boolean') throw new TypeError('originalRules must be boolean');
+      return applyConfirmed(original, { source: originalRules ? 'original' : 'startup', kind: 'settings-reset' });
+    },
+    undoSettings() {
+      if (!settingsUndo.length) return false;
+      const record = settingsUndo.at(-1);
+      return applyConfirmed(record.profile, { source: record.source, behavior: record.behavior, remember: false, consumeUndo: true, kind: 'settings-undone' });
+    },
+    returnToMenu() {
+      cancelSpawn('return-menu'); controller.home();
+      controller.config = nextIsCustom ? configurationFromProfile(configurationTemplate, next) : faithfulConfig;
+      notify('return-menu'); return api.getState();
+    },
     updateDraft(path, value) { return replaceDraft(setProfileField(draft, path, value, baseline)); },
     resetDraft() { return replaceDraft(original); },
     undoDraft() {

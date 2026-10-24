@@ -71,7 +71,7 @@ test('v4 time section contains speed and full-width pause; camera section follow
 });
 
 test('v4 speed normalization clamps numeric limits and rounds decimals without a range rejection', () => {
-  for (const [input, expected] of [['20.1', 20], ['999999999999999999999999999999', 20], ['1e9999', 20], ['-1e9999', 0], ['-0.1', 0], ['0.15', 0.2], [' 3.7 ', 3.7], ['.5', 0.5], ['2.', 2], ['1e1', 10], ['20.000', 20]]) assert.equal(normalizeSpeedInput(input), expected, input);
+  for (const [input, expected] of [['20.1', 20.1], ['100.1', 100], ['999999999999999999999999999999', 100], ['1e9999', 100], ['-1e9999', 0], ['-0.1', 0], ['0.15', 0.2], [' 3.7 ', 3.7], ['.5', 0.5], ['2.', 2], ['1e1', 10], ['20.000', 20], ['50', 50], ['99.95', 100]]) assert.equal(normalizeSpeedInput(input), expected, input);
   for (const invalid of ['', ' ', 'NaN', 'Infinity', '-Infinity', 'n/a', '--1', '1e', '+', '.']) assert.equal(normalizeSpeedInput(invalid), null, invalid);
 });
 
@@ -80,7 +80,7 @@ test('speed input applies valid typing immediately while preserving intermediate
   f.controls.update({ enabled: true });
   const input = f.find('[data-action="speed-number"]'); input.focus();
   assert.equal(input.type, 'text'); assert.equal(input.inputMode, 'decimal');
-  for (const [raw, displayed, request] of [['1e9999', '20', 20], ['-1e9999', '0', 0], ['19.99', '19.99', 20], ['0.15', '0.15', 0.2]]) {
+  for (const [raw, displayed, request] of [['1e9999', '100', 100], ['-1e9999', '0', 0], ['19.99', '19.99', 20], ['0.15', '0.15', 0.2], ['50', '50', 50], ['99.99', '99.99', 100]]) {
     const previous = requests.length; input.value = raw; input.fire('input');
     assert.equal(input.value, displayed); assert.equal(requests.length, previous + 1); assert.equal(requests.at(-1), request);
     input.fire('change'); assert.equal(requests.at(-1), request); assert.equal(input.value, String(request));
@@ -99,7 +99,7 @@ test('v4 empty or nonnumeric speed restores the active value with quiet help, ne
     assert.match(f.find('[data-speed-help]').textContent, /请输入数字/);
   }
   assert.deepEqual(requests, []);
-  input.value = '21'; input.fire('change'); assert.deepEqual(requests, [20]);
+  input.value = '101'; input.fire('change'); assert.deepEqual(requests, [100]);
   assert.equal(input.value, '4'); // The caller, not the control, owns accepted state.
   assert.doesNotMatch(f.find('[data-speed-help]').textContent, /请输入数字/);
   f.controls.destroy();
@@ -146,6 +146,29 @@ test('v4 all speed presets remain exact; measurements never replace target or cl
   for (const speed of CUSTOM_SPEEDS) f.find(`[data-speed="${speed}"]`).fire('click');
   assert.deepEqual(requests, [...CUSTOM_SPEEDS]);
   assert.equal(f.find('[data-custom-status]').textContent, '目标 20× · 实际模拟 168.0 步/秒（5.60×） · 实际显示 59.9 帧/秒');
+  f.controls.destroy();
+});
+
+test('50x and 100x shortcuts, slider and numeric entry share the same cap and distinguish achieved speed', () => {
+  const requests = []; const f = setup({ onSpeed(speed) { requests.push(speed); f.controls.update({ speed }); } });
+  f.controls.update({ enabled: true, actualSimulationHz: 600, actualDisplayHz: 59.9 });
+  const range = f.find('[data-action="speed-range"]'), input = f.find('[data-action="speed-number"]');
+  assert.equal(range.max, '100'); assert.equal(input.max, '100');
+  assert.equal(range.step, '0.1'); assert.equal(input.step, '0.1');
+  assert.equal(input.getAttribute('aria-label'), '游戏倍速数值，0 到 100');
+  for (const speed of [50, 100]) {
+    const button = f.find(`[data-speed="${speed}"]`);
+    button.fire('click');
+    assert.equal(requests.at(-1), speed);
+    assert.equal(button.getAttribute('aria-pressed'), 'true');
+    assert.equal(range.value, String(speed)); assert.equal(input.value, String(speed));
+    assert.equal(f.find('[data-custom-status]').textContent, `目标 ${speed}× · 实际模拟 600.0 步/秒（20.00×） · 实际显示 59.9 帧/秒`);
+    range.value = String(speed - 0.1); range.fire('input');
+    assert.equal(requests.at(-1), speed - 0.1);
+    input.value = String(speed); input.fire('keydown', { code: 'Enter' });
+    assert.equal(requests.at(-1), speed);
+  }
+  assert.match(f.find('[data-speed-help]').textContent, /高倍速受机器性能限制/);
   f.controls.destroy();
 });
 

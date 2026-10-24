@@ -62,7 +62,7 @@ The current startup configuration is below. Edit `config/custom.json` and restar
 
 The extensions are independent: crystal life is fixed at 253 steps, vampire/mage life budgets for 1.1 map widths, and nun projectile life remains 100. Delay also consumes projectile life, and collisions may end flight early. See the [lifetime table](projectile-lifetime.en.md) for travel distances and rounding.
 
-No new F2 fields were added for these hit parameters. Removing `combatHitRules` restores original hit resolution but retains the separate lifetime extension. Remove both overrides, or use F2 “Return to original” for subsequent matches, to restore original combat rules. The panel does not rewrite disk settings; restarting loads the disk configuration again.
+No new F2 fields were added for these hit parameters. Removing startup override `combatHitRules` and restarting restores original hit resolution while retaining the separate lifetime extension. Remove both overrides to withdraw both improvements; other personal parameters require their own reset. In the v0.7.0-preview.1 candidate, F2 Restore original defaults resets panel parameters while retaining these improvements. Return to main menu (end this match) keeps settings and is no longer an extension-reset control. The panel does not rewrite disk configuration; saved panel values take precedence over overlapping startup fields. See [settings and backups](custom-settings.en.md#presets-migration-and-backups).
 
 ## Development and focused checks
 

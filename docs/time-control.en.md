@@ -2,7 +2,7 @@
 
 [中文](time-control.zh-CN.md) · [Settings guide](custom-settings.en.md)
 
-These controls target Super Miragine War itself, not a universal external accelerator. No system-clock changes, process injection, Cheat Engine or SWF player are used: complete logic steps are scheduled directly in this game's source.
+This guide describes the v0.7.0-preview.1 release candidate with new 50×/100× quick buttons; final verification is pending. These controls target Super Miragine War itself, not a universal external accelerator. No system-clock changes, process injection, Cheat Engine or SWF player are used: complete logic steps are scheduled directly in this game's source.
 
 ## Controls
 
@@ -10,7 +10,7 @@ Press **F2** to open settings; there is no permanent settings button over the ga
 
 The first section contains **speed and pause/resume together**. The section beneath it contains **free observation, follow, overview, fullscreen and display targets**. Clear clickable pause/resume text also appears above help/quit at the lower left of the game, so pausing does not require the dock. F11 remains the fullscreen shortcut.
 
-The slider/numeric input accepts **0–20× in 0.1 increments**. Zero pauses, 1 is normal, and 0.1–0.9 is slow motion. Excess numeric input clamps to 20 instead of showing a range-rejection dialog. One game second always contains **30 original logic steps**; the rule frequency is not changed to 240 or 600 Hz.
+The slider/numeric input accepts **0–100× in 0.1 increments**. Existing quick choices remain, with new **50× and 100×** buttons. Zero pauses, 1 is normal, and 0.1–0.9 is slow motion. Excess numeric input clamps to 100 instead of showing a range-rejection dialog. One game second always contains **30 original logic steps**; the rule frequency is not changed to 240, 600 or 3,000 Hz.
 
 | Selected speed | Target logic steps per real second | Target game time per real second |
 |---|---:|---:|
@@ -22,8 +22,10 @@ The slider/numeric input accepts **0–20× in 0.1 increments**. Zero pauses, 1 
 | 8 | 240 | 8 seconds |
 | 12 | 360 | 12 seconds |
 | 20 | 600 | 20 seconds |
+| 50 | 1,500 | 50 seconds |
+| 100 | 3,000 | 100 seconds |
 
-These are **throughput targets, not guarantees**. The dock separately reports requested speed, actual battle steps/real second and actual presentations/real second. Large armies, CPU load and window scheduling may prevent reaching 20×; selecting it is not evidence of measured 600-step/s performance.
+These are **throughput targets, not guarantees**. The dock separately reports requested speed, actual battle steps/real second and actual presentations/real second. Large armies, CPU load, window scheduling and per-batch work limits may prevent reaching 50×/100×; selecting 100× is not evidence of measured 3,000-step/s performance.
 
 ## Clock mechanism and pause
 

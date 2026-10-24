@@ -66,10 +66,10 @@ function fixture({ battle = true, accept = true, spawnImplementation = null, cus
   const custom = createCustomization({ controller, defaults, storage, ...customOptions }); if (battle) controller.startMatch(true, 1);
   const document = makeDocument(), root = document.createElement('div'), focus = document.createElement('button');
   document.body.appendChild(focus); document.body.appendChild(root); focus.focus();
-  const events = [], confirms = [], resourceCalls = [], liveCalls = [], spawnCalls = [], clearCalls = [], applyCalls = [], nextCalls = [];
+  const events = [], confirms = [], resourceCalls = [], commitCalls = [], spawnCalls = [], clearCalls = [], applyCalls = [], nextCalls = [];
   const adapter = { ...custom,
     setResources(...args) { resourceCalls.push(args); return custom.setResources(...args); },
-    applyLiveField(...args) { liveCalls.push(args); return custom.applyLiveField(...args); },
+    commitSetting(...args) { commitCalls.push(args); return custom.commitSetting(...args); },
     startSpawn(...args) { spawnCalls.push(args); return (spawnImplementation ?? custom.startSpawn)(...args); },
     clearTroops(...args) { clearCalls.push(args); return custom.clearTroops(...args); },
     applyCurrent(...args) { applyCalls.push(args); return custom.applyCurrent(...args); },
@@ -85,7 +85,7 @@ function fixture({ battle = true, accept = true, spawnImplementation = null, cus
     const input = find(`[data-field-path="${path}"]`); assert.ok(input, `Missing field ${path}`);
     input.value = String(value); input.fire('change'); return input;
   };
-  return { panel, custom, controller, document, root, focus, events, confirms, resourceCalls, liveCalls, spawnCalls, clearCalls, applyCalls, nextCalls, find, button, tab, edit };
+  return { panel, custom, controller, document, root, focus, events, confirms, resourceCalls, commitCalls, spawnCalls, clearCalls, applyCalls, nextCalls, find, button, tab, edit };
 }
 
 test('v4 numeric inputs clamp rather than reject values above or below their field limits', () => {
@@ -146,7 +146,7 @@ test('v4 live input refresh discards old-match edits before detaching their list
   const f = fixture(); f.panel.open();
   const old = f.find('[data-live-field-path="config.sides.left.base.hp"]'); old.focus(); old.value = '98765'; old.fire('input');
   f.controller.startMatch(true, 2); f.panel.update(); old.fire('blur'); await settle();
-  assert.equal(f.liveCalls.length, 0); assert.equal(f.controller.simulation.redBoss.spawnHP, defaults.rules.baseHp);
+  assert.equal(f.commitCalls.length, 0); assert.equal(f.controller.simulation.redBoss.spawnHP, defaults.rules.baseHp);
   assert.ok(f.find('[data-live-field-path="config.difficulties.2.blueBaseDamage.0"]')); f.panel.destroy();
 });
 
@@ -232,24 +232,26 @@ test('v4 current resource overflow is visibly clamped and applied without an out
   assert.notEqual(f.find('[data-settings-message]').getAttribute('data-error'), 'true'); f.panel.destroy();
 });
 
-test('v4 live fundamental rule change applies only that field and leaves unrelated drafts unapplied', async () => {
-  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 999);
+test('live fundamental and other-page unit rules both automatically commit without a separate apply step', async () => {
+  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 999); await settle();
   f.tab('sandbox'); const income = f.find('[data-live-field-path="config.rules.incomeLimit"]'); assert.ok(income);
   income.focus(); income.value = '12345'; income.fire('input'); income.fire('keydown', { code: 'Enter', key: 'Enter' }); await settle();
-  assert.equal(f.liveCalls.length, 1); assert.equal(f.liveCalls[0][0], 'config.rules.incomeLimit'); assert.equal(f.liveCalls[0][1], 12345);
+  assert.deepEqual(f.commitCalls.map(args => args.slice(0, 2)), [
+    ['config.sides.left.units.0.hp', 999], ['config.rules.incomeLimit', 12345],
+  ]);
   assert.equal(f.controller.simulation.incomeLimit, 12345);
   assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 999);
-  assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, defaults.units[0].hp);
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, 999);
   f.panel.destroy();
 });
 
-test('v4 unit editor displays independent red and blue columns and preserves focused draft text', () => {
+test('v4 unit editor displays independent red and blue columns and preserves focused input text', async () => {
   const f = fixture(); f.panel.open(); f.tab('units');
   for (const side of ['left', 'right']) assert.ok(f.find(`[data-unit-side="${side}"]`));
-  f.edit('config.sides.left.units.0.hp', 99);
+  f.edit('config.sides.left.units.0.hp', 99); await settle();
   assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 99);
   assert.equal(f.custom.getState().draft.config.sides.right.units[0].hp, defaults.units[0].hp);
-  f.edit('config.sides.right.units.0.hp', 222);
+  f.edit('config.sides.right.units.0.hp', 222); await settle();
   assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 99);
   assert.equal(f.custom.getState().draft.config.sides.right.units[0].hp, 222);
   const left = f.find('[data-field-path="config.sides.left.units.0.hp"]'); left.focus(); left.value = '123.';
@@ -258,12 +260,13 @@ test('v4 unit editor displays independent red and blue columns and preserves foc
   f.panel.destroy();
 });
 
-test('v4 unit input clamps extreme cost to a safe integer without blocking apply', () => {
+test('unit input clamps extreme cost to a safe integer and automatically applies it', async () => {
   const f = fixture(); f.panel.open(); f.tab('units');
-  const cost = f.edit('config.sides.left.units.0.cost', '99999999999999999999999999');
+  const cost = f.edit('config.sides.left.units.0.cost', '99999999999999999999999999'); await settle();
   assert.equal(cost.value, String(Number.MAX_SAFE_INTEGER)); assert.notEqual(cost.getAttribute('aria-invalid'), 'true');
   assert.equal(f.custom.getState().draft.config.sides.left.units[0].cost, Number.MAX_SAFE_INTEGER);
-  assert.equal(f.button('apply-current').disabled, false); f.panel.destroy();
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].cost, Number.MAX_SAFE_INTEGER);
+  assert.equal(f.button('apply-current'), null); f.panel.destroy();
 });
 
 test('AI uses difficulty/category/candidate menus while starting difficulty buttons remain direct', () => {
@@ -305,7 +308,7 @@ test('v4 next-match-only values live on the starting page, not the current battl
   assert.equal(f.find('[data-live-resource="right.money"]'), null); f.panel.destroy();
 });
 
-test('v4 AI thresholds, toggles, and candidate sets are editable separately for every difficulty', () => {
+test('v4 AI thresholds, toggles, and candidate sets automatically apply separately for every difficulty', async () => {
   const f = fixture(); f.panel.open(); f.tab('difficulties');
   f.edit('config.difficulties.1.counterSelectionProbability', '2');
   const category=f.find('[data-ai-category]');category.value='thresholds';category.fire('change');
@@ -318,7 +321,7 @@ test('v4 AI thresholds, toggles, and candidate sets are editable separately for 
   const elite = f.find('[data-field-path="config.difficulties.1.ai.eliteUnitIds"]'); assert.ok(elite);
   assert.equal(elite.querySelectorAll('[data-candidate-unit]').length, 16);
   const recruit = elite.querySelector('[data-candidate-unit="0"]'); recruit.checked = true; recruit.fire('change');
-  const draft = f.custom.getState().draft;
+  await settle(); const draft = f.custom.getState().draft;
   assert.equal(draft.config.difficulties[1].ai.forceOverlordMoneyThreshold, Number.MAX_SAFE_INTEGER);
   assert.equal(draft.config.difficulties[1].ai.forceOverlordEliteCountThreshold, 37);
   assert.equal(draft.config.difficulties[1].ai.forceMoneyEnabled, false);
@@ -326,6 +329,7 @@ test('v4 AI thresholds, toggles, and candidate sets are editable separately for 
   assert.deepEqual(draft.config.difficulties[1].ai.eliteUnitIds, [0, 14, 15]);
   assert.equal(draft.config.difficulties[0].ai.forceOverlordMoneyThreshold, 15030);
   assert.equal(draft.config.difficulties[0].ai.forceOverlordEliteCountThreshold, 2);
+  assert.deepEqual(f.custom.getState().applied.config.difficulties[1], draft.config.difficulties[1]);
   f.panel.destroy();
 });
 
@@ -352,11 +356,11 @@ test('v4 clear controls map directly to red, blue, and both without a side selec
   assert.equal(f.controller.simulation.blueBoss.nowHP, defaults.rules.baseHp); f.panel.destroy();
 });
 
-test('v4 typing the leading zero of a positive fraction is not prematurely clamped to the minimum', () => {
+test('v4 typing the leading zero of a positive fraction is not prematurely clamped to the minimum', async () => {
   const f = fixture(); f.panel.open(); f.tab('units');
   const hp = f.find('[data-field-path="config.sides.left.units.0.hp"]'); hp.focus(); hp.value = '0'; hp.fire('input');
   assert.equal(hp.value, '0'); hp.value = '0.'; hp.fire('input'); assert.equal(hp.value, '0.');
-  hp.value = '0.5'; hp.fire('input'); hp.fire('change'); assert.equal(hp.value, '0.5');
+  hp.value = '0.5'; hp.fire('input'); hp.fire('change'); await settle(); assert.equal(hp.value, '0.5');
   assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 0.5); f.panel.destroy();
 });
 
@@ -373,7 +377,7 @@ test('v4 homepage exposes each crystal independently including current-difficult
   const originalRed = f.controller.simulation.redBoss.maxHP;
   hp.focus(); hp.value = '777'; hp.fire('input'); hp.fire('keydown', { code: 'Enter', key: 'Enter' }); await settle();
   assert.equal(f.controller.simulation.blueBoss.maxHP, 777); assert.equal(f.controller.simulation.redBoss.maxHP, originalRed);
-  assert.equal(f.liveCalls.length, 1); assert.equal(f.liveCalls[0][0], 'config.sides.right.base.hp'); f.panel.destroy();
+  assert.equal(f.commitCalls.length, 1); assert.equal(f.commitCalls[0][0], 'config.sides.right.base.hp'); f.panel.destroy();
 });
 
 test('v4 starting difficulty and mode are direct buttons whose selection survives tab changes', async () => {
@@ -405,65 +409,63 @@ test('v4 running spawn job keeps cancellation available and cancellation preserv
   assert.equal(f.button('cancel-spawn').disabled, true); assert.equal(f.button('spawn-left').disabled, false); f.panel.destroy();
 });
 
-test('v4 compact footer has one action row, no health-policy selector, and moves draft status to the header', () => {
+test('automatic settings footer has only undo/reset and save status appears in the header', () => {
   const f = fixture(); f.panel.open(); const footer = f.find('footer'), header = f.find('header');
-  const undo = f.button('undo'), reset = f.button('reset'), apply = f.button('apply-current');
-  assert.equal(undo.parentNode, reset.parentNode); assert.equal(reset.parentNode, apply.parentNode);
-  assert.equal(apply.parentNode.parentNode, footer, 'All three footer actions occupy one shared direct row');
-  assert.equal(f.find('[data-settings-footer-actions]'), apply.parentNode);
-  assert.equal(footer.querySelectorAll('button').length, 3);
-  assert.equal(f.button('apply-next'), null); assert.equal(f.find('[data-health-policy]'), null);
-  assert.ok(header.querySelector('[data-draft-dirty]')); assert.equal(footer.querySelector('[data-draft-dirty]'), null);
-  f.panel.destroy();
+  const undo = f.button('undo'), reset = f.button('reset');
+  assert.equal(undo.parentNode, reset.parentNode);
+  assert.equal(undo.parentNode.parentNode, footer, 'The two footer actions occupy one shared direct row');
+  assert.equal(f.find('[data-settings-footer-actions]'), undo.parentNode);
+  assert.equal(footer.querySelectorAll('button').length, 2);
+  assert.equal(f.button('apply-current'), null); assert.equal(f.button('apply-next'), null); assert.equal(f.find('[data-health-policy]'), null);
+  assert.ok(header.querySelector('[data-settings-save-status]')); assert.equal(footer.querySelector('[data-settings-save-status]'), null);
+  assert.match(undo.textContent, /撤销上次设置/); assert.match(reset.textContent, /恢复原版默认/);
+  assert.doesNotMatch(header.textContent, /草稿未保存/); f.panel.destroy();
 });
 
-test('v4 apply guidance is accessible without occupying another footer layout row', () => {
+test('automatic-save guidance remains accessible without occupying another footer layout row', () => {
   const f = fixture(); f.panel.open();
-  const apply = f.button('apply-current'), help = f.find('[data-settings-apply-help]');
-  assert.equal(apply.getAttribute('aria-describedby'), help.id);
+  const help = f.find('[data-settings-apply-help]'); assert.ok(help);
   const css = SETTINGS_PANEL_CSS.match(/\.ms-apply-help\s*\{([^}]+)\}/)?.[1]; assert.ok(css);
   assert.match(css, /position:absolute/); assert.match(css, /width:1px/); assert.match(css, /height:1px/);
   assert.match(css, /clip-path:inset\(50%\)/); assert.match(css, /overflow:hidden/);
   assert.doesNotMatch(css, /display:none|visibility:hidden/);
   assert.equal(help.hidden, false, 'Guidance remains available to aria-describedby');
-  assert.equal(apply.getAttribute('title'), help.textContent);
+  assert.match(help.textContent, /自动/); assert.match(help.textContent, /下局/);
   f.panel.destroy();
 });
 
-test('v4 one unified apply action remains visible on every page with contextual guidance', () => {
-  const f = fixture(); f.panel.open(); const apply = f.button('apply-current');
+test('every settings page explains automatic confirmation and never asks for a second apply click', () => {
+  const f = fixture(); f.panel.open(); const undo = f.button('undo'), reset = f.button('reset');
   for (const id of ['sandbox', 'units', 'starting', 'difficulties', 'presets']) {
-    f.tab(id); assert.equal(f.button('apply-current'), apply);
-    assert.equal(f.panel.element.querySelectorAll('[data-settings-action="apply-current"]').length, 1);
-    assert.equal(apply.textContent, '应用设置'); assert.equal(apply.disabled, false);
-    assert.equal(apply.getAttribute('title'), f.find('[data-settings-apply-help]').textContent);
-    for (let node = apply; node; node = node.parentNode) assert.notEqual(node.hidden, true, `Apply must be visible on ${id}`);
-    assert.equal(f.button('apply-next'), null); assert.equal(f.find('[data-health-policy]'), null);
+    f.tab(id); assert.equal(f.button('undo'), undo); assert.equal(f.button('reset'), reset);
+    assert.equal(f.button('apply-current'), null); assert.equal(f.button('apply-next'), null);
+    assert.equal(f.find('[data-health-policy]'), null);
+    assert.match(f.find('[data-settings-apply-help]').textContent, /自动/);
+    assert.doesNotMatch(f.find('[data-settings-save-status]').textContent, /草稿/);
+    for (let node = reset; node; node = node.parentNode) assert.notEqual(node.hidden, true, `Reset must remain visible on ${id}`);
   }
-  f.tab('sandbox'); assert.match(f.find('[data-settings-apply-help]').textContent, /本页.*即时.*(?:其余|其他)草稿/);
-  f.tab('units'); assert.match(f.find('footer').textContent, /本局.*开局.*下局/);
-  f.tab('starting'); assert.match(f.find('footer').textContent, /其他页.*草稿/); f.panel.destroy();
+  f.tab('presets'); assert.doesNotMatch(f.panel.element.textContent, /载入草稿/); f.panel.destroy();
 });
 
-test('v4 unified menu apply prepares the next match without starting or applying current-battle state', async () => {
-  const f = fixture({ battle: false }); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 123);
-  const apply = f.button('apply-current'); assert.equal(apply.textContent, '应用下局设置'); assert.equal(apply.disabled, false);
-    assert.match(apply.getAttribute('title'), /尚未开始战局.*下局/);
-  apply.click(); await settle(); assert.equal(f.nextCalls.length, 1); assert.equal(f.applyCalls.length, 0);
+test('menu edits automatically prepare the next match without starting it', async () => {
+  const f = fixture({ battle: false }); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 123); await settle();
+  assert.equal(f.button('apply-current'), null); assert.equal(f.commitCalls.length, 1);
   assert.equal(f.controller.phase, 'title'); assert.equal(f.custom.getState().isBattle, false);
   assert.equal(f.custom.getState().next.config.sides.left.units[0].hp, 123);
-  assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, defaults.units[0].hp);
-  f.controller.startMatch(true, 1); f.panel.update(); assert.equal(apply.textContent, '应用设置');
+  assert.match(f.find('[data-settings-message]').textContent, /下局/);
+  f.controller.startMatch(true, 1); f.panel.update();
   assert.equal(f.controller.simulation.config.customization.sides.left.units[0].hp, 123); f.panel.destroy();
 });
 
-test('v4 unified battle apply uses fixed ratio and applies other-page live drafts while deferring initial resources', async () => {
+test('battle edits use fixed health ratio while confirmed initial resources defer automatically', async () => {
   const f = fixture(); f.custom.spawn({ side: 'left', unitId: 0, count: 1 }); const sim = f.controller.simulation;
   const unit = sim.friendList.find(entity => entity.kind === 'unit'); unit.nowHP = unit.spawnHP / 2;
   const before = { money: sim.leftMoney, income: sim.leftIncome, population: sim.leftPopulation, frame: sim.frame, round: sim.round };
-  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 90);
-  f.tab('starting'); f.edit('config.sides.left.initial.money', 98765); f.button('apply-current').click(); await settle();
-  assert.deepEqual(f.applyCalls, [[{ health: 'ratio' }]]); assert.equal(f.nextCalls.length, 0);
+  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 90); await settle();
+  f.tab('starting'); f.edit('config.sides.left.initial.money', 98765); await settle();
+  assert.deepEqual(f.commitCalls.map(args => args.slice(0, 2)), [
+    ['config.sides.left.units.0.hp', 90], ['config.sides.left.initial.money', 98765],
+  ]);
   assert.equal(unit.spawnHP, 90); assert.equal(unit.nowHP, 45);
   assert.deepEqual({ money: sim.leftMoney, income: sim.leftIncome, population: sim.leftPopulation, frame: sim.frame, round: sim.round }, before);
   assert.equal(f.custom.getState().next.config.sides.left.initial.money, 98765);
@@ -475,15 +477,48 @@ test('v4 live crystal maximum edits always preserve health ratio without exposin
   f.panel.open(); const hp = f.find('[data-live-field-path="config.sides.left.base.hp"]');
   hp.focus(); hp.value = '400'; hp.fire('input'); hp.fire('keydown', { code: 'Enter', key: 'Enter' }); await settle();
   assert.equal(f.find('[data-health-policy]'), null);
-  assert.deepEqual(f.liveCalls, [['config.sides.left.base.hp', 400, { health: 'ratio' }]]);
+  assert.deepEqual(f.commitCalls.map(args => args.slice(0, 2)), [['config.sides.left.base.hp', 400]]);
   assert.equal(sim.redBoss.maxHP, 400); assert.equal(sim.redBoss.nowHP, 100); f.panel.destroy();
 });
 
-test('v4 invalid draft disables the sole apply button in menu as well as battle', async () => {
+test('invalid input never commits in menu or battle, and correction applies without a second button', async () => {
   for (const battle of [false, true]) {
-    const f = fixture({ battle }); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.cost', 'not a number');
-    const apply = f.button('apply-current'); assert.equal(apply.disabled, true); apply.click(); await settle();
-    assert.equal(f.applyCalls.length, 0); assert.equal(f.nextCalls.length, 0);
-    f.edit('config.sides.left.units.0.cost', 7); assert.equal(apply.disabled, false); f.panel.destroy();
+    const f = fixture({ battle }); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.cost', 'not a number'); await settle();
+    assert.equal(f.button('apply-current'), null); assert.equal(f.commitCalls.length, 0);
+    assert.match(f.find('[data-settings-save-status]').textContent, /输入无效/);
+    f.edit('config.sides.left.units.0.cost', 7); await settle(); assert.equal(f.commitCalls.length, 1);
+    assert.equal(f.custom.getState().next.config.sides.left.units[0].cost, 7);
+    if (battle) assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7);
+    f.panel.destroy();
   }
+});
+
+
+test('rule text fields confirm on Enter or blur exactly once, with no premature apply while typing', async () => {
+  const f = fixture(); f.panel.open(); f.tab('units');
+  const hp = f.find('[data-field-path="config.sides.left.units.0.hp"]'); hp.focus(); hp.value = '180'; hp.fire('input');
+  assert.equal(f.commitCalls.length, 0); assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, 45);
+  hp.fire('keydown', { code: 'Enter', key: 'Enter' }); await settle();
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, 180); assert.equal(f.commitCalls.length, 1);
+  hp.fire('change'); hp.fire('blur'); await settle(); assert.equal(f.commitCalls.length, 1, 'Native change/blur after Enter must not commit again');
+  const cost = f.find('[data-field-path="config.sides.left.units.0.cost"]'); cost.focus(); cost.value = '99'; cost.fire('input'); cost.fire('blur'); await settle();
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].cost, 99); assert.equal(f.commitCalls.length, 2); f.panel.destroy();
+});
+
+test('rapid rule edits across fields are not dropped while automatic storage flush is pending', async () => {
+  const f = fixture(); f.panel.open(); f.tab('units');
+  f.edit('config.sides.left.units.0.hp', 90); f.edit('config.sides.right.units.0.hp', 180); f.edit('config.sides.left.units.0.cost', 11); await settle();
+  assert.equal(f.commitCalls.length, 3);
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, 90);
+  assert.equal(f.custom.getState().applied.config.sides.right.units[0].hp, 180);
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].cost, 11); f.panel.destroy();
+});
+
+test('current battle places spawn/clear below its summary and universal rules before current side status', () => {
+  const f = fixture(); f.panel.open(); const text = f.find('[role="tabpanel"]').textContent;
+  const summary = f.find('[data-battle-summary]').textContent;
+  const spawn = f.button('spawn-left').textContent, clear = f.button('clear-all').textContent;
+  const universal = text.indexOf('通用基础规则'), red = text.indexOf('红方当前状态'), blue = text.indexOf('蓝方当前状态');
+  assert.ok(text.indexOf(summary) < text.indexOf(spawn)); assert.ok(text.indexOf(clear) < universal);
+  assert.ok(universal >= 0 && universal < red && universal < blue); f.panel.destroy();
 });

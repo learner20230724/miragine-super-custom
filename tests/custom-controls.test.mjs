@@ -84,10 +84,10 @@ test('game stage has only an empty hidden compatibility node; all controls belon
   assert.equal(f.controls.element.querySelectorAll('button').length, 0);
   assert.equal(f.find('[data-action="settings"]'), null);
   assert.equal(f.controls.element.querySelector('[data-speed]'), null);
-  assert.deepEqual(f.controls.playbackElement.querySelectorAll('[data-speed]').map(button => button.getAttribute('data-speed')), ['0', '1', '2', '4', '8', '12', '20']);
+  assert.deepEqual(f.controls.playbackElement.querySelectorAll('[data-speed]').map(button => button.getAttribute('data-speed')), ['0', '1', '2', '4', '8', '12', '20', '50', '100']);
   assert.equal(f.find('[data-action="render-rate"]').value, '240');
   assert.equal(f.find('[data-action="speed-range"]').min, '0');
-  assert.equal(f.find('[data-action="speed-range"]').max, '20');
+  assert.equal(f.find('[data-action="speed-range"]').max, '100');
   assert.equal(f.find('[data-action="speed-range"]').step, '0.1');
   assert.equal(f.find('[data-custom-status]').textContent.match(/测量中/g).length, 2);
   f.controls.destroy();
@@ -135,12 +135,12 @@ test('all speed presets request exact multipliers without optimistic state or ga
     assert.equal(button.fire('click').propagationStopped, true);
     assert.equal(f.document.activeElement, button);
   }
-  assert.deepEqual(speeds, [0, 1, 2, 4, 8, 12, 20]);
+  assert.deepEqual(speeds, [0, 1, 2, 4, 8, 12, 20, 50, 100]);
   assert.equal(f.find('[data-speed="1"]').getAttribute('aria-pressed'), 'true');
   f.controls.destroy();
 });
 
-test('slider and numeric speed clamp to 0..20 by tenths and restore unacknowledged requests', () => {
+test('slider and numeric speed clamp to 0..100 by tenths and restore unacknowledged requests', () => {
   const requests = []; let acknowledge = false;
   const f = fixture({ onSpeed: value => { requests.push(value); if (acknowledge) f.controls.update({ speed: value }); } });
   f.controls.update({ enabled: true });
@@ -148,11 +148,11 @@ test('slider and numeric speed clamp to 0..20 by tenths and restore unacknowledg
   range.value = '3.7'; range.fire('input'); assert.equal(range.value, '1');
   acknowledge = true; number.value = '17.9'; number.fire('change'); assert.equal(range.value, '17.9'); assert.equal(number.value, '17.9');
   number.value = '0'; number.fire('change'); assert.equal(number.value, '0');
-  for (const input of ['', '20.1', '-1', '0.15', 'NaN', 'Infinity']) { number.value = input; number.fire('change'); }
-  assert.deepEqual(requests, [3.7, 17.9, 0, 20, 0, 0.2]); assert.equal(number.value, '0.2');
+  for (const input of ['', '20.1', '50', '100.1', '-1', '0.15', 'NaN', 'Infinity']) { number.value = input; number.fire('change'); }
+  assert.deepEqual(requests, [3.7, 17.9, 0, 20.1, 50, 100, 0, 0.2]); assert.equal(number.value, '0.2');
   number.focus(); number.value = '1.'; f.controls.update({ actualDisplayHz: 45 }); assert.equal(number.value, '1.');
-  for (const value of [0, 0.1, 1, 19.9, 20]) assert.equal(validSpeed(value), true);
-  for (const value of [-1, 20.1, .01, NaN, Infinity, '1']) assert.equal(validSpeed(value), false);
+  for (const value of [0, 0.1, 1, 19.9, 20, 20.1, 50, 99.9, 100]) assert.equal(validSpeed(value), true);
+  for (const value of [-1, 100.1, .01, NaN, Infinity, '1']) assert.equal(validSpeed(value), false);
   f.controls.destroy();
 });
 
@@ -212,6 +212,6 @@ test('destroy removes launcher playback handlers and reference-counted style exa
 
 test('invalid state is rejected without silently mutating controls', () => {
   assert.throws(() => createCustomControls(), /DOM root/); const f = fixture();
-  for (const patch of [{ speed: 20.1 }, { speed: 1.23 }, { renderHz: 144 }, { mode: 'unknown' }, { enabled: 'yes' }, { paused: 1 }, { baseSimulationHz: 0 }]) assert.throws(() => f.controls.update(patch));
+  for (const patch of [{ speed: 100.1 }, { speed: 1.23 }, { renderHz: 144 }, { mode: 'unknown' }, { enabled: 'yes' }, { paused: 1 }, { baseSimulationHz: 0 }]) assert.throws(() => f.controls.update(patch));
   assert.equal(f.find('[data-speed="1"]').getAttribute('aria-pressed'), 'true'); f.controls.destroy();
 });

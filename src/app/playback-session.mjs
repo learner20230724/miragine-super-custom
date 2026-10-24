@@ -1,4 +1,4 @@
-import { GameClock } from '../runtime/game-clock.mjs';
+import { GameClock, MAX_GAME_SPEED } from '../runtime/game-clock.mjs';
 import { RenderInterpolationBuffer } from '../runtime/render-interpolation.mjs';
 
 const EMPTY_SNAPSHOT = Object.freeze([]);
@@ -76,8 +76,8 @@ export class MiraginePlayback {
   setSpeed(speed, now) {
     // Validate before settling the old rate: an invalid slider value must not
     // change either the world or the selected speed.
-    if (!Number.isFinite(speed) || speed < 0 || speed > 20) {
-      throw new RangeError('speed must be a finite number in [0,20]');
+    if (!Number.isFinite(speed) || speed < 0 || speed > MAX_GAME_SPEED) {
+      throw new RangeError(`speed must be a finite number in [0,${MAX_GAME_SPEED}]`);
     }
     this.syncClockRate();
     this.clock.setSpeed(speed, now);

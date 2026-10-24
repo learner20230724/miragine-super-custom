@@ -1,4 +1,6 @@
-export const CUSTOM_SPEEDS = Object.freeze([0, 1, 2, 4, 8, 12, 20]);
+import { MAX_GAME_SPEED } from '../runtime/game-clock.mjs';
+
+export const CUSTOM_SPEEDS = Object.freeze([0, 1, 2, 4, 8, 12, 20, 50, MAX_GAME_SPEED]);
 export const CUSTOM_RENDER_RATES = Object.freeze([30, 60, 120, 240]);
 
 export const CUSTOM_CONTROLS_CSS = `
@@ -38,7 +40,7 @@ function acquireStyle(document) {
 }
 function isRate(value) { return typeof value === 'number' && Number.isFinite(value) && value >= 0; }
 export function validSpeed(value) {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 20
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= MAX_GAME_SPEED
     && Math.abs(value * 10 - Math.round(value * 10)) < 1e-8;
 }
 // Accept ordinary decimal/scientific numeric input, including finite-looking text
@@ -48,7 +50,7 @@ export function normalizeSpeedInput(value) {
   const text = String(value).trim();
   if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(text)) return null;
   const number = Number(text);
-  return Math.round(Math.max(0, Math.min(20, number)) * 10) / 10;
+  return Math.round(Math.max(0, Math.min(MAX_GAME_SPEED, number)) * 10) / 10;
 }
 /** Target multiplier is never substituted for measured work or display frequency. */
 export function formatCustomStatus({ speed = 1, paused = false, actualSimulationHz = null, actualDisplayHz = null,
@@ -98,12 +100,12 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
   const timeSection = section('time', '时间控制');
   const caption = node('div', '游戏倍速 · 逻辑步长保持 30 Hz'); caption.className = 'custom-controls-caption'; timeSection.appendChild(caption);
   const speedRow = node('div'); speedRow.className = 'custom-controls-speed-row'; timeSection.appendChild(speedRow);
-  const range = node('input'); range.type = 'range'; range.min = '0'; range.max = '20'; range.step = '0.1';
+  const range = node('input'); range.type = 'range'; range.min = '0'; range.max = String(MAX_GAME_SPEED); range.step = '0.1';
   range.setAttribute('aria-label', '游戏倍速滑块，0 为暂停'); range.setAttribute('data-action', 'speed-range'); speedRow.appendChild(range);
   // Text + decimal inputMode keeps very large pasted numeric text intact until
   // we clamp it. Native number inputs can sanitize overflow to an empty value.
-  const numeric = node('input'); numeric.type = 'text'; numeric.min = '0'; numeric.max = '20'; numeric.step = '0.1'; numeric.inputMode = 'decimal';
-  numeric.setAttribute('aria-label', '游戏倍速数值，0 到 20'); numeric.setAttribute('data-action', 'speed-number'); speedRow.appendChild(numeric);
+  const numeric = node('input'); numeric.type = 'text'; numeric.min = '0'; numeric.max = String(MAX_GAME_SPEED); numeric.step = '0.1'; numeric.inputMode = 'decimal';
+  numeric.setAttribute('aria-label', `游戏倍速数值，0 到 ${MAX_GAME_SPEED}`); numeric.setAttribute('data-action', 'speed-number'); speedRow.appendChild(numeric);
   function changeSpeed(control) {
     if (!state.enabled || destroyed) return;
     const number = normalizeSpeedInput(control.value);
@@ -123,7 +125,7 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
     numeric.setCustomValidity?.('');
     // Keep partial edits and ordinary decimals intact until committed, while a
     // genuinely excessive number is visibly clamped as soon as it is entered.
-    if (value !== null && (Number(raw) < 0 || Number(raw) > 20)) numeric.value = String(value);
+    if (value !== null && (Number(raw) < 0 || Number(raw) > MAX_GAME_SPEED)) numeric.value = String(value);
     // A valid typed value behaves like the slider immediately. Do not replace
     // the editing text/caret: partial decimals and exponents remain editable.
     if (value !== null && value !== state.speed) onSpeed(value);
@@ -172,7 +174,7 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
     const next = { ...state, ...patch };
     if (patch.available === undefined && patch.enabled !== undefined) next.available = patch.enabled;
     for (const flag of ['enabled', 'available', 'paused', 'settingsOpen', 'fullscreen']) if (typeof next[flag] !== 'boolean') throw new TypeError(`${flag} must be a boolean`);
-    if (!validSpeed(next.speed)) throw new RangeError('Simulation speed must be 0 to 20 in 0.1 increments');
+    if (!validSpeed(next.speed)) throw new RangeError(`Simulation speed must be 0 to ${MAX_GAME_SPEED} in 0.1 increments`);
     if (!CUSTOM_RENDER_RATES.includes(next.renderHz)) throw new RangeError('Unsupported display limit');
     if (!['follow', 'overview', 'manual', 'free'].includes(next.mode)) throw new RangeError('Unsupported camera mode');
     if (typeof next.baseSimulationHz !== 'number' || !Number.isFinite(next.baseSimulationHz) || next.baseSimulationHz <= 0) throw new RangeError('baseSimulationHz must be positive');

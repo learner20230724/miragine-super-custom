@@ -2,19 +2,19 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes published v0.6.2-preview.1, retaining existing settings/dragging controls and adding animated troop clearing. See the [delivery record](releases/v0.6.2-preview.1.json) for assets and packaged verification. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes the v0.7.0-preview.1 release candidate, with automatic settings application and 50×/100× quick choices. New-version verification and publication are not complete. The [v0.6.2 delivery record](releases/v0.6.2-preview.1.json) remains historical evidence, not validation of this candidate. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 
 - **F2 opens settings.** There is no permanent settings launcher over the battlefield. F2, Esc or the close control collapses the dock. Opening or closing it **does not pause or resume** the game.
 - The dock reserves space alongside the game in wide windows, or below it in narrow windows. Its contents scroll; the game keeps its aspect ratio.
-- **Time control comes first:** 0–20× speed in 0.1 increments, quick presets, a wide pause/resume button, and measured simulation/display rates.
+- **Time control comes first:** 0–100× speed in 0.1 increments, including new 50×/100× quick choices, a wide pause/resume button, and measured simulation/display rates.
 - **View/display comes below time:** free observation, follow, compact overview, fullscreen and 30/60/120/240 FPS targets. Fullscreen also uses F11; overview is camera framing, not window fullscreen.
 - The lower-left game controls are clear clickable text: **pause/resume, help, quit**. They are not the original blurry button bitmaps. Pause works without opening settings.
 
-Left/right/middle dragging pans the main battlefield into free observation. Left dragging starts after 5 CSS pixels; simple clicks do not pan. Minimap navigation, wheel zoom and IJKL remain available. Valid numeric speed edits apply while typing; basic rule fields still commit on Enter or blur.
+Left/right/middle dragging pans the main battlefield into free observation. Left dragging starts after 5 CSS pixels; simple clicks do not pan. Minimap navigation, wheel zoom and IJKL remain available. Valid numeric speed edits apply while typing; rule fields commit on Enter or blur, automatically applying and saving valid changes without another Apply button.
 
-The match summary shows actual difficulty separately from original/custom rule status. Selecting a difficulty with unchanged defaults does not mark a new match custom. AI difficulty/category/candidate-table menus only navigate editing content; they preserve pending drafts and never change the current match difficulty.
+The match summary shows actual difficulty separately from original/custom rule status. Selecting a difficulty with unchanged defaults does not mark a new match custom. AI difficulty/category/candidate-table menus only navigate editing content; they never change the current match difficulty.
 
 The three clear-troop buttons act immediately without a confirmation dialog: troops leave combat but retain their original death animation. Crystals remain unharmed; no refund or undo is provided.
 
@@ -22,13 +22,13 @@ The three clear-troop buttons act immediately without a confirmation dialog: tro
 
 | Page | What it controls | When it changes the game |
 |---|---|---|
-| Current match / basics | Red and blue current money, income, remaining manpower, crystal current/max HP, crystal damage/range/cooldown; shared income/manpower limits, round/recruitment timing and multipliers | Numeric fields commit on Enter or leaving the field. Each rule edit applies only that field, not unrelated draft edits. Current-resource changes affect this match only |
-| Units | All 16 units; red and blue values side by side, independently editable | Draft first; click **Apply settings** |
-| Starting settings | Separate red/blue starting money, red starting income/manpower, blue starting income/manpower for each difficulty, initial wait, and starting automation choices | All fields here affect a new match only. Click **Apply settings** to use them next match, or choose difficulty using four visible buttons and start from the draft |
-| Difficulty / AI | Difficulty/category menus for blue crystal attack values, counter-branch probability and detailed AI rules | Draft first; after application, only the current difficulty's profile affects this match. Editing another profile does not switch difficulty |
-| Presets / files | Save, load, overwrite, delete, JSON import/export | Loading/importing changes the draft, not the battle; saving does not apply it |
+| Current match / basics | Match/difficulty summary → spawn/clear → common rules → red/blue current status, including resources, crystals, recruitment and selection AI | Confirm numbers with Enter or leaving the field; switches act immediately. Current resources affect this match only; rule edits also update next-match settings |
+| Units | All 16 units, with independent red/blue columns | Confirmed edits apply automatically; cost/manpower/income edits affect subsequent recruitment without refunds |
+| Starting settings | Starting money, income/manpower, initial wait and the next match's mode/difficulty; a separate Automation (this and later matches) section | Starting resources/manpower/wait take effect next match without resetting current resources/countdown; recruitment/AI switches act immediately and are saved for later matches |
+| Difficulty / AI | Difficulty/category menus for blue crystal attacks, counter probability and detailed AI rules | Confirmed edits apply automatically. Only this match's difficulty affects it; editing another profile never switches difficulty |
+| Presets / files | Named copies and JSON import/export | Loading/importing automatically applies and saves settings; a named preset is an optional reusable copy |
 
-Both sides are visible together on the homepage; no red/blue selector is needed. Recruitment switches, selected recruits and the blue selection-AI switch act immediately there. These live switches do not themselves save starting automation choices into a preset; set those on the starting page. Applying unit/AI drafts preserves the current recruitment and selection-AI switches; starting automation choices wait for a new match.
+Both sides appear together. Current resources and selected recruits are live match operations, not battle saves. **Red/blue recruitment and blue selection-AI switches act immediately and are saved for later matches**; the homepage and Automation (this and later matches) section edit the same switches. Ordinary unit/resource rule edits do not reset these choices; loading a full preset, resetting or undoing restores the corresponding saved choices.
 
 ### Income, money and manpower are different
 
@@ -44,31 +44,35 @@ Both sides are visible together on the homepage; no red/blue selector is needed.
 | Money, income, cost, manpower, counts and integer frame counters | Up to **9,007,199,254,740,991** (`Number.MAX_SAFE_INTEGER`), normally starting at 0 |
 | Positive counts/timers | Same integer maximum, but at least 1 where zero is invalid: spawn count, round lengths, recruitment interval, crystal cooldown and AI majority minimum |
 | HP, armor, damage, movement, range and multipliers | Finite JavaScript numbers up to `Number.MAX_VALUE` (about `1.7976931348623157e308`); nonnegative, with maximum/initial HP strictly positive |
-| Probability / IDs / speed | Semantic bounds remain: probability 0–1, unit ID 0–15, armor type 0 or 1, speed 0–20 |
+| Probability / IDs / speed | Semantic bounds remain: probability 0–1, unit ID 0–15, armor type 0 or 1, speed 0–100 |
 
 Entering or pasting an excessive numeric value **immediately replaces it with that field's maximum**. You do not need to confirm and then dismiss an out-of-range error. Lower-bound normalization and integer truncation happen on commit, allowing partial decimal typing. Empty or nonnumeric text still needs correction. JSON imports remain strict: malformed, non-finite or out-of-range profiles are rejected rather than silently rewritten.
 
 The custom runtime uses safe, saturating integer accounting instead of signed 32-bit wrapping. Adding income above the safe-integer ceiling leaves money at that ceiling; it does not become negative. Floating-point overflow is bounded to finite values, but extreme magnitudes still have ordinary floating-point precision limits and may produce impractical gameplay. A permitted value is not a performance guarantee.
 
-## Apply, save and recover
+## Automatic application, local saving and presets
 
-| Action | Current match | Later behavior |
-|---|---|---|
-| Edit a unit/AI/start field, load a preset or import JSON | No automatic change | Updates the draft and attempts a local draft backup |
-| Edit a homepage rule field | Applies that field immediately | Also updates that field in the draft and next-match rules |
-| Edit current money/income/manpower/current crystal HP | Immediate | Not a starting-value edit or match save |
-| Undo | Does not rewind live edits or combat | Undoes draft edits, up to 30 entries |
-| Restore original defaults | Does not change this battle | Resets exposed draft fields; keeps presets |
-| Apply settings | During a battle, applies current-compatible draft rules without resetting resources/countdown/automation switches; starting fields wait | Selects the draft for later matches in this run. Without an active battle, the same button applies next-match settings without starting combat |
-| Start a new match from draft | Replaces the current battle after confirmation | Uses the selected difficulty and single/local-two-player mode |
-| Save or overwrite a preset | No effect | Stores a named draft for later loading |
-| Return to original menu | Ends the battle and restores the recovered runtime configuration | Keeps draft/presets; does not rewrite `config/custom.json` |
+**Confirm once, not twice.** Press Enter or leave a numeric field; selections and switches commit when changed. Incomplete, empty or invalid input does not replace valid active settings. Current-compatible rules apply now, starting-only fields automatically take effect next match. With no battle active, changes configure the next match without starting one.
 
-Every page has the same compact footer: **Undo**, **Restore original defaults**, and one **Apply settings** action. Without an active battle its label becomes **Apply next-match settings**. Homepage fields remain live; the footer applies any remaining draft changes from other pages. Even when clicked on the starting page, it applies current-compatible drafts from other pages now and defers starting fields until the next match. The apply button's hover hint explains this timing. Restoring the default draft resets exposed fields only: unexposed handwritten `config/custom.json` overrides survive later application. Return-to-original restores the entire running configuration; a restart still reads the external startup file normally.
+The old **unsaved draft** label compared edits against the last loaded/saved editor baseline, not disk-write success. Edits could already have a local backup, and some pages applied live while others did not. The new UI removes that ambiguity: **Saving locally…**, **Saved locally**, or **Local save failed · export a backup** describe persistence; an unfinished input is identified separately from other saved settings.
+
+| Action | Effect |
+|---|---|
+| Confirm unit/common/AI parameters | Automatically applies current-compatible fields, updates later-match rules and saves locally |
+| Confirm starting-only parameters | Saves automatically for the next match; does not restart this one |
+| Undo last settings change | Reapplies the previous settings, up to 30 changes; does not rewind troops, money, RNG or battle progress |
+| Restore original defaults | Resets all exposed parameters and applies them; starting fields wait. Does not clear troops, delete presets or start a match |
+| Start a new match with current settings | After confirmation, replaces this battle using current settings and the selected difficulty/mode |
+| Return to main menu (end this match) | After confirmation, ends this battle but keeps current settings and presets; not a defaults reset |
+| Save as new preset / overwrite preset | Makes a named reusable copy, not a necessary application step |
+| Load and apply / import and apply JSON | Validates, applies and saves automatically; starting fields remain next-match only |
+| Export JSON | Backs up or exchanges current settings; not a battle save |
+
+Restoring original panel parameters retains the previously approved trajectory-hit/lifetime improvements and does not rewrite external `config/custom.json`. Reset also restores current recruitment on both sides and blue selection AI to enabled. It does not refill resources, remove armies, reset the current countdown or restart existing cooldowns. Already flying attacks retain their trajectory and remaining lifetime. Speed, pause and camera controls belong to the current session, not a rules preset.
 
 ### Unit changes, health and time
 
-- A unit edit affects only the chosen side. Existing units receive combat-stat changes when applied; cost/manpower/income changes affect future recruits without refunds. Existing cooldowns are not restarted; new projectiles use the new hit delay.
+- A unit edit affects only the chosen side. Existing units receive combat-stat changes when confirmed; cost/manpower/income changes affect future recruits without refunds. Existing cooldowns are not restarted; new projectiles use the new hit delay.
 - The panel always preserves the health ratio when changing initial/maximum HP: current HP / previous initial HP is mapped to the new initial HP. There is no health-policy dropdown. Dead units are not resurrected, and original overhealing is not automatically truncated. Crystal current HP and its maximum can be edited separately, but a destroyed crystal cannot be revived through the current-HP field.
 - **30 logic frames = 1 game second.** Movement and range use their base values multiplied by the corresponding rule multiplier. Attack cooldown is `Math.trunc(base attack interval × attack-interval multiplier)` frames, bounded to a safe integer in the custom runtime. Targets, actions and hit delays also affect attacks: this is not a universal fixed attacks-per-second value.
 
@@ -109,19 +113,21 @@ Limits remain **25 named presets**, names of 1–80 characters, **256 KiB** per 
 
 | Storage | Contents / caveat |
 |---|---|
-| Desktop `userdata/custom-settings.json` | Drafts and presets through restricted IPC, independent of temporary local HTTP ports |
-| Browser `localStorage` | Origin-specific drafts/presets; changing address/port or clearing site data changes/removes storage |
+| Desktop `userdata/custom-settings.json` | Current settings and named presets through restricted IPC, independent of temporary local HTTP ports; saved settings restore automatically on restart |
+| Browser `localStorage` | Origin-specific settings/presets; changing address/port or clearing site data changes/removes storage |
 | External `config/custom.json` | Startup overrides; the panel never rewrites this file |
-| Exported JSON | Transferable draft for panel import, not a replacement startup file |
+| Exported JSON | Transferable settings for panel import/application, not a replacement startup file or a battle save |
 
-Version-1 profiles migrate to version 2: shared units/crystal values are copied to both sides and missing AI fields receive baseline defaults. Existing storage keys and the outer export/library envelope remain compatible; the inner profile reports `schemaVersion: 2`.
+The current-settings storage envelope now uses `schemaVersion: 2` plus a `template` marker to preserve the chosen configuration template across restarts. Valid legacy v1 local drafts also restore automatically. Version-1 profiles migrate to version 2: shared units/crystal values are copied to both sides and missing AI fields receive baseline defaults. Existing storage keys and the outer export/library envelope remain compatible; the inner profile reports `schemaVersion: 2`.
 
-Restored drafts/presets **never activate automatically after restart**. They are not battle saves: positions, current resources, RNG state and progress are absent. Speed/pause/camera/display targets are session controls, not rules-preset fields; a new session starts at 1×.
+**Precedence:** startup reads `config/custom.json`, then restores locally saved panel settings. Saved values therefore override matching panel fields in the startup file; unexposed fields remain from the startup template. A developer API choice stored as `template: "original"` instead uses recovered baseline configuration. To adopt all startup-file panel values again, close the game, back up local data, then remove only the `miragine-custom-draft-v1` current-settings record. Keep the `miragine-custom-presets-v1` named-preset library; do not delete the entire `userdata/` directory.
 
-Storage errors show warnings and leave the in-memory draft exportable. Desktop saving requires backend acknowledgment. Back up custom files before upgrading and export important profiles separately. Regenerating original assets does not overwrite custom files or presets.
+Successfully saved current settings **restore automatically after restart**; loading a preset also applies it automatically. They are not battle saves: positions, current resources, RNG state and progress are absent. Speed/pause/camera/display targets are session controls, not rules-preset fields; a new session starts at 1×.
+
+Storage errors show warnings and leave the valid in-memory settings exportable. Desktop saving requires backend acknowledgment. Back up custom files before upgrading and save important settings as named presets and export JSON for the simplest backup/switching workflow. Regenerating original assets does not overwrite custom files or presets.
 
 ## Development entry points
 
-`src/customization/schema.mjs` defines editable fields and migration; `index.mjs` handles drafts/live edits/spawn jobs; `numeric.mjs` and `runtime.mjs` contain custom safe arithmetic and per-side runtime behavior. UI lives in `src/app/settings-panel.mjs`, `custom-controls.mjs` and `game-text-controls.mjs`. The recovered core and generated defaults remain separate.
+`src/customization/schema.mjs` defines editable fields and migration; `index.mjs` handles automatic application/persistence, undo, presets and spawn jobs; `numeric.mjs` and `runtime.mjs` contain custom safe arithmetic and per-side runtime behavior. UI lives in `src/app/settings-panel.mjs`, `custom-controls.mjs` and `game-text-controls.mjs`. The recovered core and generated defaults remain separate.
 
-The customization API retains `health: 'absolute'` for developer integrations that intentionally preserve current HP; this is not a panel setting. The single panel action chooses current-match or next-match application automatically.
+The customization API retains `health: 'absolute'` for developer integrations that intentionally preserve current HP; this is not a panel setting. Confirmed edits choose current-match or next-match application automatically; no separate Apply button remains.
