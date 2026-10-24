@@ -8,11 +8,11 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
-**Current source: v0.7.3-preview.1 release candidate, smooth U/O zoom and AI-versus-AI matches.** Hold U/O to zoom continuously using real time: the zoom factor doubles/halves each real second. Release stops zoom, without waiting for operating-system key repeat; holding both keys cancels out. Observation zoom remains available during combat pause, while parameter editing and confirmation dialogs retain keyboard priority. Battlefield-center anchoring, pointer-anchored wheel zoom, 30 Hz logic and unit-selection repeat are unchanged. Packaged verification and publication are not complete; the 0.7.2 record below validates only the preceding version.
+**Current published version: [v0.7.3-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.3-preview.1), smooth U/O zoom and AI-versus-AI matches.** Hold U/O to zoom continuously using real time: the zoom factor doubles/halves each real second. Release stops zoom, without waiting for operating-system key repeat; holding both keys cancels out. Observation zoom remains available during combat pause, while parameter editing and confirmation dialogs retain keyboard priority. Battlefield-center anchoring, pointer-anchored wheel zoom, 30 Hz logic and unit-selection repeat are unchanged. The portable build passed two independent EXE acceptance suites and is published; see this version’s delivery record below.
 
-**Candidate AI-versus-AI mode:** a separate title-menu entry selects one of the four existing AI levels for each side. Both decide after each income settlement; manual selection lasts until the next round, and each side's recruitment can be paused/resumed independently without freezing existing soldiers, the opponent or the game clock. Original single/local-two-player entries remain. See [difficulty-stat coupling and mirrored defaults](docs/custom-settings.en.md#ai-versus-ai-matches).
+**New AI-versus-AI mode:** a separate title-menu entry selects one of the four existing AI levels for each side. Both decide after each income settlement; manual selection lasts until the next round, and each side's recruitment can be paused/resumed independently without freezing existing soldiers, the opponent or the game clock. Original single/local-two-player entries remain. See [difficulty-stat coupling and mirrored defaults](docs/custom-settings.en.md#ai-versus-ai-matches).
 
-**Current published version: [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1), keyboard zoom and controlled selection repeat.** U zooms in and O zooms out around the battlefield center; the wheel retains its pointer anchor. WASD/arrow selection moves immediately on keydown, then repeats every 85 ms after an initial 350 ms hold, independent of game speed. Parameter editing and in-app confirmations retain keyboard priority. The portable build is verified and published; see this version's delivery record below. Parameter rules and approved improvements are unchanged.
+**Previously published: [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1), keyboard zoom and controlled selection repeat.** U zooms in and O zooms out around the battlefield center; the wheel retains its pointer anchor. WASD/arrow selection moves immediately on keydown, then repeats every 85 ms after an initial 350 ms hold, independent of game speed. Parameter editing and in-app confirmations retain keyboard priority. The portable build is verified and published; see this version's delivery record below. Parameter rules and approved improvements are unchanged.
 
 **Retains the preceding in-app confirmation and input-focus fixes**, plus the v0.6.0 large-army optimization: spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Current and historical delivery results are recorded separately below.
 
@@ -21,6 +21,23 @@ An editable JavaScript project based on the **super Flash version**, with recove
 **Clearing troops retains their original death animation.** Clearing red, blue or both sides immediately removes troops from combat and targeting lists, while their original backward-fall animation remains visible instead of vanishing instantly. Crystals take no damage, no refund is given, and associated attacks are cleared. Animation waits during pause/0× and continues on resume; repeated clearing does not restart existing corpses. See [clearing behavior](docs/custom-settings.en.md#spawn-and-clear).
 
 **Retains v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
+
+## v0.7.3-preview.1 delivery
+
+Published **[v0.7.3-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.3-preview.1)** on 2026-10-24, with runtime and both verification tools at `4e759c04f193c14fcfebfcb173b650504312d7f2`.
+
+| Delivery / verification | Result |
+|---|---|
+| Source tests | **978 passed**, zero failures or skips |
+| Portable EXE · settings and smooth zoom | **137 checks across 2 launches passed**, 17 in-app confirmations and 13 reviewed screenshots |
+| Portable EXE · dual AI | **66 checks across 1 launch passed**, 8 reviewed screenshots; both suites had zero runtime errors and all owned QA windows were closed |
+| CI and remote assets | [Windows/Linux passed](https://github.com/learner20230724/miragine-super-custom/actions/runs/40106658066); all **40 assets** match local sizes and API SHA-256 digests; tag identifies the runtime commit. No complete remote redownload |
+| Windows ZIP / extracted | **170,675,075 bytes** (170.68 MB) / **402,509,608 bytes, 105 files** (402.51 MB) |
+| Source privacy-scan coverage | **3,119 files / 66,727,269 bytes**; not total repository/history disk usage |
+| Privacy and assets | **0** unresolved privacy findings; original/generated assets unchanged from 0.7.2 |
+| Separate local upgrade | **340 personal files preserved byte-for-byte and 34 handoff checks passed**; the desktop entry point opened the new dual-AI battlefield, settings closed, muted and paused for the player. These checks are excluded from both public EXE suites above |
+
+The [delivery receipt](docs/releases/v0.7.3-preview.1.json) records the suites separately: 203 is the arithmetic sum of 137 + 66, not a count of distinct scenarios or personal installation/handoff checks. Only aggregate local-upgrade results are public, not personal values, directories or screenshots; settings and presets were preserved, not the preceding match progress. Bundled candidate documents and release assets remain frozen; this receipt does not repackage the game. Historical records cover only their corresponding versions. 50x/100x and 240 FPS remain targets, not sustained-throughput guarantees.
 
 ## v0.7.2-preview.1 delivery
 

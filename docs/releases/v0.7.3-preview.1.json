@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "version": "0.7.3-preview.1",
+  "status": "published-and-verified",
+  "runtimeCommit": "4e759c04f193c14fcfebfcb173b650504312d7f2",
+  "verificationToolCommit": "4e759c04f193c14fcfebfcb173b650504312d7f2",
+  "verificationTools": [
+    {
+      "path": "tools/verify-settings-auto.mjs",
+      "name": "verify-settings-auto.mjs",
+      "sha256": "462412389b537a5a9434fc30adea1256fde65bd5effe778ff7c0eecf39b6aa83"
+    },
+    {
+      "path": "tools/verify-dual-ai.mjs",
+      "name": "verify-dual-ai.mjs",
+      "sha256": "49aad026f02cbd45aa86798ddb55475307eb5e803fd89028f43fea0fd94dcab2"
+    }
+  ],
+  "releaseId": 422816903,
+  "publishedAt": "2026-10-24T15:35:34Z",
+  "releaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.3-preview.1",
+  "sourceTests": {
+    "tests": 978,
+    "suites": 0,
+    "pass": 978,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 66560.5349
+  },
+  "portableAcceptance": {
+    "checks": 203,
+    "totalMeaning": "Arithmetic sum of two separately reported suites, not unique scenarios and not personal handoff checks.",
+    "launches": 3,
+    "suites": [
+      {
+        "suite": "automatic-settings-real-exe",
+        "scope": "Settings, focus, held selection and continuous real-time U/O zoom",
+        "checks": 137,
+        "launches": 2,
+        "reviewedPublicScreenshots": 13
+      },
+      {
+        "suite": "dual-ai-real-exe",
+        "scope": "Independent dual AI, difficulty/stat mapping, income decisions and recruitment",
+        "checks": 66,
+        "launches": 1,
+        "reviewedPublicScreenshots": 8
+      }
+    ],
+    "domConfirmations": 17,
+    "nativeDialogs": 0,
+    "runtimeErrors": 0,
+    "ownedQaApplicationsClosed": true,
+    "reviewedPublicScreenshots": 21,
+    "scope": "Two isolated portable-EXE suites; personal installation/handoff checks are excluded."
+  },
+  "ci": {
+    "databaseId": 40106658066,
+    "headSha": "4e759c04f193c14fcfebfcb173b650504312d7f2",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40106658066",
+    "jobs": [
+      {
+        "name": "Source / ubuntu-latest / Python 3.13",
+        "conclusion": "success"
+      },
+      {
+        "name": "Source / windows-latest / Python 3.14",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "features": [
+    "Held U/O zoom continuously in real time, doubling/halving per second without OS-repeat startup delay; release stops immediately and simultaneous opposite keys cancel.",
+    "Each zoom update accepts at most 50 ms without catch-up. Battlefield-center anchoring, pointer-anchored wheel zoom, original 30 Hz logic and 350 ms/85 ms selection repeat remain unchanged.",
+    "Zoom remains available during combat pause. Editing fields and in-app confirmation retain keyboard priority; stale held inputs do not revive after interruption.",
+    "An explicit dual-AI mode independently selects four original strategies, deciding after income settlement; manual choices last until the next income round.",
+    "Each side can independently pause/start recruitment without freezing existing units, the opponent, game time or later AI decisions.",
+    "Selected difficulty stats are enabled by default. Disabling uses currently configured Normal stats for both sides, not a reset to original defaults. Original single-player and local-two-player modes remain."
+  ],
+  "archive": {
+    "name": "MiragineSuper-Custom-v0.7.3-preview.1-win-x64.zip",
+    "sha256": "cadfab3f7072ae24c55250875bb5740d8d6bd0db6c80feaa9fbf23742eb726de",
+    "bytes": 170675075,
+    "unpackedBytes": 402509608,
+    "files": 105,
+    "inventorySha256": "f698bc773dc9929363bd2fe2880b77c44a7bb46f627125a1400e513656f0d40e"
+  },
+  "sourceScan": {
+    "files": 3119,
+    "bytes": 66727269,
+    "scope": "Public-source privacy scan coverage, not total Git repository disk usage."
+  },
+  "originalAssets": {
+    "baselineCommit": "bfa7d4c7f927ca8b120c54a9f54b2e36367e7067",
+    "sourceCommit": "4e759c04f193c14fcfebfcb173b650504312d7f2",
+    "scopes": [
+      "assets",
+      "generated"
+    ],
+    "gitDiffEmpty": true
+  },
+  "privacy": {
+    "sourceFindings": 0,
+    "sourceWarnings": 0,
+    "sourceSkipped": 0,
+    "runtimeUnresolved": 0,
+    "reviewedUpstreamFindings": 5,
+    "publicTextAttachmentScan": {
+      "scannedFiles": 3158,
+      "scannedBytes": 106372887,
+      "findings": [],
+      "warnings": [],
+      "skipped": []
+    },
+    "scope": "Frozen package runtime audit and public non-ZIP attachments; this later documentation receipt is not part of the frozen package."
+  },
+  "remote": {
+    "assets": 40,
+    "draft": false,
+    "prerelease": true,
+    "allAssetSizesAndApiSha256Match": true,
+    "tag": "v0.7.3-preview.1",
+    "tagCommit": "4e759c04f193c14fcfebfcb173b650504312d7f2",
+    "remoteTagPointsToRuntimeCommit": true,
+    "fullRemoteRedownloadPerformed": false,
+    "checksumsUrl": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.7.3-preview.1/SHA256SUMS",
+    "checksumsSha256": "04239a8f14f43a4ddc254373f78318891b254d31058afabcce3d0bca4cc55f34"
+  },
+  "provenance": {
+    "runtimeAndIncludedVerifiersShareCommit": true,
+    "localReportsAssociatedWithFrozenCommitByCoordinator": true,
+    "rawReportsDoNotIndependentlyAttestExecutingVerifierHashOrSourceLogCommit": true,
+    "independentCommitSpecificCiPassed": true
+  },
+  "limitations": [
+    "50x/100x and 240 FPS remain targets, not sustained-throughput guarantees; no new full-game Flash-parity claim.",
+    "The 203 public EXE checks are the arithmetic sum of 137 settings/smooth-zoom and 66 dual-AI checks, not unique scenarios or personal handoff checks.",
+    "The separate 34 private local handoff checks are not included in either public EXE suite. The local upgrade preserved settings and presets, not previous match progress.",
+    "Published package/notes/evidence retain frozen build-time status; this receipt adds publication evidence without repackaging.",
+    "All 40 remote asset sizes and GitHub API digests were checked; no complete remote ZIP redownload was performed."
+  ],
+  "localUpgradeSummary": {
+    "status": "verified-at-handoff",
+    "version": "0.7.3-preview.1",
+    "sourceCommit": "4e759c04f193c14fcfebfcb173b650504312d7f2",
+    "checksPassed": 34,
+    "runtimeErrors": 0,
+    "configurationChanged": false,
+    "personalFilesPreservedByteForByte": 340,
+    "savedProfileApplied": true,
+    "desktopEntryPointLaunchedVerifiedVersion": true,
+    "matchModeAtHandoff": "ai-vs-ai",
+    "mutedAtHandoff": true,
+    "pausedAtHandoff": true,
+    "settingsPanelClosedAtHandoff": true,
+    "ownedGameLeftOpen": true,
+    "currentMatchRestored": false,
+    "privacy": "Aggregate result only; personal values, file names, directories, process identifiers, raw reports and handoff screenshots are not published.",
+    "notIncludedInPublicPortableCheckCount": true
+  }
+}
