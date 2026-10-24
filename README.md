@@ -8,13 +8,15 @@
 
 **可运行预览版**：战斗逻辑从恢复的 AS3 手工移植到 JavaScript，使用 Canvas / WebGL 渲染，不需要 Flash 或 SWF 播放器。原版插桩对照的一局普通难度共 6,842 帧逻辑状态匹配；这不代表全部 Adobe Flash 场景或逐像素一致。具体交付状态见[验证记录](docs/verification.json)。
 
-**当前开发源码：v0.5.0-preview.1 原生窗口分辨率绘制。** 舞台布局仍用 640×480 逻辑坐标，战斗逻辑保持 30 Hz，画布实际像素改为按游戏视口及屏幕 DPR 绘制，不再先画完整 640×480 位图再放大。原 PNG 与规则不变；[实现与开发入口](docs/native-resolution.zh-CN.md)。本轮发行与性能验收尚须单独记录，下方 v0.4 数字不是本轮验证。
+**当前版本：v0.5.0-preview.1 原生窗口分辨率绘制。** 舞台布局仍用 640×480 逻辑坐标，战斗逻辑保持 30 Hz，画布实际像素按游戏视口及屏幕 DPR 绘制，不再先画完整 640×480 位图再放大。原 PNG 与规则不变；[实现与开发入口](docs/native-resolution.zh-CN.md)。
 
 ## Windows 启动包
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-当前已发布 **[v0.4.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.2)**，对应运行源码 `0a397441`。**606 项源码测试、93 项浏览器交互、94 项独立 EXE 检查通过**，[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40064048990) 通过；本版将底栏简化为一行三按钮，统一应用操作、保持生命比例，并将说明收进悬停提示。实际验证包含新底栏及已有的 F2 不自动暂停、红蓝独立编辑、超量输入钳制、刷兵／取消、全屏和两次启动间预设保留。ZIP 全新解压、源码逐字节比对和隐私审计通过；远端 11 个附件的大小与 SHA-256 均与本地一致，未另做完整远端重下载。详见 [本版交付记录](docs/releases/v0.4.0-preview.2.json) 与 Release 附件。包内 README 保留运行源码提交时的发布状态，后补交付文档不改变或重新打包运行代码。
+当前已发布 **[v0.5.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.1)**，对应运行源码 `c6e8185d`。**663 项源码测试、96 项正式 EXE 交互、41 项原生绘制交互和 9 项原 PNG 独立采样对照通过**，[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40067660803) 通过。便携包实际启动两次，设置、输入、预设保留和原生画布已检查，0 运行异常；ZIP 全新解压、源码逐字节比对和隐私审计通过。远端 21 个附件的 API 大小与 SHA-256 均与本地一致，未另做完整远端重下载。详见 [本版交付记录](docs/releases/v0.5.0-preview.1.json) 与 Release 附件。包内 README 保留运行源码提交时的发布状态；后续验收工具提交 `820c7728` 的 665 项测试单独记录，不改变或重新打包运行代码。
+
+历史 **[v0.4.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.2)** 的单行底栏、统一应用及 606／93／94 项检查保留于 [该版交付记录](docs/releases/v0.4.0-preview.2.json)，不替代新版验收。
 
 历史 **[v0.4.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.1)** 的设置重组及 597／75／76 项检查保留于 [该版交付记录](docs/releases/v0.4.0-preview.1.json)，不替代新版验收。
 
@@ -24,7 +26,7 @@
 
 包外的 `config/custom.json` 可直接编辑，重启生效，设置面板不会改写它。桌面草稿与预设保存在 `userdata/custom-settings.json`，恢复后仍须明确应用；升级前请备份这两个文件。`ui-helper/` 提供可替换绘图源码；`build-info.json` 标明对应源码提交。继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
-已发布 v0.4.0-preview.2 的源码约 **65.88 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.56 MB**，解压 **402.18 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证；该版最大化 EXE 的约 **1.11 秒**、20 倍目标短测实际约 **4.23 倍**，仅是该窗口／机器条件的历史样本，不代表持续满兵性能或 v0.5 的结果。
+v0.5.0-preview.1 运行提交的源码约 **66.09 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.59 MB**，解压 **402.25 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证。
 
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 
@@ -77,6 +79,8 @@ npm run dev
 
 **当前源码按窗口原生像素绘制**：640×480 只是逻辑坐标，实际主画布尺寸按游戏视口的 CSS 大小 × DPR 取整；地面保留 640×400 逻辑投影，但使用对应密度的 WebGL 画布和单项缓存。HUD 使用按实际像素对齐的紧凑缓存，窗口／DPR 改变时释放旧缓冲。鼠标继续由 CSS 坐标转换到逻辑坐标，不再额外乘 DPR；暂停时改变窗口也会重绘，不推进逻辑。
 
+本轮同机、同 Electron 44.4.3、相同 3273×2455 画布与 128 名士兵加两座水晶的五场景短测（各约 4 秒）：旧 v0.4.0-preview.2 约 **4.26～5.30 次画面提交／秒**，本轮冻结源码约 **48.99～49.60 次／秒**，动态 1 倍场景逻辑约 **29.88 步／秒**。这是短时源码对照，不是显示器实测 FPS、正式包持续性能或所有机器保证；随机种子和外部桌面负载未锁定。9 项冻结角色对照与同原图的一次直接采样参考一致，不等于整个 UI／Flash 逐像素一致；[条件与边界](docs/releases/v0.5.0-preview.1.json)完整保留。
+
 原素材没有新增细节，极度放大的角色和背景仍受原 PNG 分辨率限制；这不是 AI 高清化。像素面积增加也会增加绘制和显存成本，不保证 FPS 提升或锁定 240 FPS。缓存只避免重复工作，不代表没有内存开销。验证方法与代码入口见 [原生分辨率说明](docs/native-resolution.zh-CN.md)。
 
 **保留原始素材采样**：角色仍直接从原 PNG 投影，跳过一次 0.9 倍中间画布重采样，但保留原逻辑尺寸、脚点、裁切和动画时序。此前雷球、风暴接入的 25 张 SWF 原有较大位图仍原样保留，共 46,676 字节，风暴最后的透明空帧也保留。本轮只改变绘制目标密度，不重画、AI 放大或覆盖山景、草地、角色帧及人工配置。显示增强不等于 Flash 逐像素一致，渲染器仍保留 `spriteRasterMode: 'legacy'` 对照路径。原素材生成检查用 `python -B tools/build_source_effects.py --check`。
@@ -99,7 +103,7 @@ node tools/profile-desktop.mjs --dir <测试副本目录> --out .local/performan
 
 ## 修改数值
 
-以下说明对应 **v0.4.0-preview.2** 的单一应用按钮。
+当前版本保留 v0.4.0-preview.2 引入的单一应用按钮。
 
 **推荐先用 F2 面板**：
 

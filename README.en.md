@@ -8,25 +8,21 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
-**Current development source: v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md). This version requires its own release/performance verification; the v0.4 results below do not validate it.
+**Released in v0.5.0-preview.1: native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
 
 ## Windows portable build
 
 Download the Windows x64 preview from the **[custom Releases](https://github.com/learner20230724/miragine-super-custom/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. Keep this customization in a separate directory from the baseline game.
 
-The current published build is **[v0.4.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.2)**, from runtime commit `0a39744152543266dffa94f86df53e6d513b0113`. **606 source tests, 93 browser checks and 94 independently extracted EXE checks passed**, as did [Windows/Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40064048990). Checks covered the compact three-button footer and single apply action, non-pausing F2, excessive-input clamping, independent side stats, more than 500 troops and spawn cancellation, fullscreen and presets across two launches. Clean ZIP extraction, byte-for-byte source comparison and privacy review passed. All 11 remote assets match local sizes and SHA-256 digests; a complete remote redownload was not performed. See the [delivery record](docs/releases/v0.4.0-preview.2.json) and Release attachments.
+The current published build is **[v0.5.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.1)**, from runtime commit `c6e8185d4c50f293f0a38ad0d332c1cd3034a82b`. **663 runtime-source tests, 96 portable-package interaction checks across two launches, 41 native-rendering checks and 9 isolated sprite-clarity fixtures passed**, as did [Windows/Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40067660803). Clean ZIP extraction, byte-for-byte source comparison and privacy review passed. All **21 remote assets** match local sizes and SHA-256 digests reported by the GitHub API; a complete remote redownload was not performed. See the [delivery record](docs/releases/v0.5.0-preview.1.json) and Release attachments.
 
-The bundled READMEs retain the publication state at the runtime source commit; later delivery documentation does not change or repackage the built code.
+The bundled READMEs retain the publication state at the runtime source commit. The later verifier-only commit `820c7728` passed 665 tests and is recorded separately; it and delivery-documentation updates do not change or repackage the released game.
 
-Historical **[v0.4.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.1)** used runtime commit `334b25d`; its 597 source tests, 75 browser interactions and 76 EXE checks remain in its [own record](docs/releases/v0.4.0-preview.1.json), not as evidence for the new build.
-
-Historical **[v0.3.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2)** used `c1dcb85`; its original-pixel sampling and older settings checks remain in its [own record](docs/releases/v0.3.0-preview.2.json), not as proof for this version.
-
-Historical **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.1)** used runtime commit `75e4c6f`; its 471 source tests, 97 EXE interactions and 10 additional pause/resume cycles remain in its [own record](docs/releases/v0.3.0-preview.1.json), not as evidence for the new build.
+Historical delivery records remain available for [v0.4.0-preview.2](docs/releases/v0.4.0-preview.2.json), [v0.4.0-preview.1](docs/releases/v0.4.0-preview.1.json), [v0.3.0-preview.2](docs/releases/v0.3.0-preview.2.json) and [v0.3.0-preview.1](docs/releases/v0.3.0-preview.1.json). Their measurements validate only their corresponding versions.
 
 Edit the external `config/custom.json` and restart to apply changes; the panel never rewrites it. Desktop drafts/presets live in `userdata/custom-settings.json`; restoring them still requires explicit application. Back up both files before upgrading. `ui-helper/` contains replaceable drawing code; `build-info.json` identifies the source commit. See inherited [baseline verification](docs/verification.json) and [known issues](docs/known-issues.md).
 
-Published v0.4.0-preview.2 tracked source is approximately **65.88 MB**, including **11.97 MB** of runtime assets; its Windows ZIP is **170.56 MB** and unpacks to **402.18 MB**. Sizes use decimal MB and exclude dependencies, Git history and generated user data. Both 20× and 240 FPS are targets, not guarantees. That release's maximized-EXE 20× sample, lasting approximately **1.1111 seconds**, achieved **4.23×** (126.90 logic steps/second) under that machine/window configuration. This historical sample is neither a sustained full-army benchmark nor a v0.5 result.
+This runtime commit's tracked source occupies **66.09 MB** (66,091,429 bytes), including **11.97 MB** of runtime assets; the Windows ZIP is **170.59 MB** and unpacks to **402.25 MB**. Sizes use decimal MB and exclude development dependencies, Git history and generated user data. Both 20× and 240 FPS remain targets, not guarantees.
 
 Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents. The never-show-help preference persists across restarts in `userdata/preferences.json`; delete that file to restore the initial tutorial.
 
@@ -77,9 +73,11 @@ The menu offers four single-player difficulties and local two-player play. Netwo
 
 ### Performance
 
-**Current source renders into native window pixels:** 640×480 is the logical coordinate system, while the visible backing size is the fitted game viewport's CSS size × DPR, rounded to pixels. Ground retains its 640×400 logical projection but uses a matching-density WebGL surface and one-entry cache. HUD caches are cropped and aligned to device pixels; obsolete buffers are released on size/DPR changes. Input maps CSS coordinates to game coordinates without an extra DPR multiplier. Resizing while paused redraws without advancing simulation.
+**The released build renders into native window pixels:** 640×480 is the logical coordinate system, while the visible backing size is the fitted game viewport's CSS size × DPR, rounded to pixels. Ground retains its 640×400 logical projection but uses a matching-density WebGL surface and one-entry cache. HUD caches are cropped and aligned to device pixels; obsolete buffers are released on size/DPR changes. Input maps CSS coordinates to game coordinates without an extra DPR multiplier. Resizing while paused redraws without advancing simulation.
 
-Original art gains no invented detail: extreme enlargement still exposes finite PNG resolution, not AI remastering. More pixels can increase drawing/GPU-memory cost, so neither improved FPS nor locked 240 FPS is promised. Caching avoids repeated work, not all memory use. See the [native-resolution guide](docs/native-resolution.en.md) for implementation and verification boundaries.
+Original art gains no invented detail: extreme enlargement still exposes finite PNG resolution, not AI remastering. All **9 isolated frozen sprite fixtures** matched an independent one-pass reference using the same original PNG, with no changed reference pixels. This verifies the sampling path, not full-screen/Flash pixel parity or newly created detail. More pixels still cost memory/GPU work. See the [native-resolution guide](docs/native-resolution.en.md) for implementation and verification boundaries.
+
+**Short local comparison:** the previous v0.4.0-preview.2 portable build and frozen v0.5 runtime source both used Electron **44.4.3**, a **3273×2455** final target, 128 soldiers plus two crystals, disabled recruitment, muted audio and a 240 presentation target. Across five scenarios requesting four seconds each, the old path submitted **4.26–5.30 frames/second**, versus **48.99–49.60** for the native source; the live 1× native scene advanced at **29.88 logic steps/second**. These are short source-development measurements, not a sustained final-package benchmark, physical monitor FPS or a 240 FPS guarantee. Random seeds and external desktop load were not controlled; live scenes may diverge. See the Release's measurement records for conditions and limitations.
 
 **Original-pixel sampling is retained:** sprites still project directly from preserved PNGs, skipping the intermediate 0.9-scale rasterization while retaining logical dimensions, foot anchors, clipping and animation timing. The previously retained 25 larger thunderball/storm bitmaps total 46,676 bytes; the final transparent storm frame remains. This change adjusts drawing-target density, not scenery, character images, artificial detail or handwritten configuration. No Flash pixel equivalence is claimed; `spriteRasterMode: 'legacy'` remains available for comparison. Check retained assets with `python -B tools/build_source_effects.py --check`.
 
@@ -87,9 +85,7 @@ Settings start collapsed with no persistent F2 launcher. Press F2 to edit while 
 
 One game second still contains **30 complete original logic steps**. 20× requests **600 steps per real second**, not 600 FPS or guaranteed throughput for every army size/machine. Independent rendering interpolates positions/cameras without adding original animation poses. The panel separates target speed, actual simulation rate and actual presentation rate; 240 FPS is a ceiling. Menus, observation and music use real time. Dense combat sounds are bounded/coalesced, never queued for later playback.
 
-See the [time-control guide](docs/time-control.en.md) for this game's implementation and limits. This release focuses on in-game controls, not an external universal accelerator. The preview.2 measurements below belong only to the original reconstruction baseline.
-
-**preview.2** fixes the sustained slowdown after entering combat. With the same maximized window at DPI 1.5, final canvas submissions improved from **4.77 to 28.74 FPS** in the battlefield and **5.05 to 28.44 FPS** with a unit tooltip. Some late frames remain; this is not a locked-30-FPS guarantee for all hardware. See the [measurement conditions](https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json).
+See the [time-control guide](docs/time-control.en.md) for this game's implementation and limits. This release focuses on in-game controls, not an external universal accelerator. Older reconstruction measurements remain in the [baseline performance record](https://github.com/learner20230724/miragine-super-rebuild/releases/download/v0.1.0-preview.2/performance-comparison.json), not as evidence for this release.
 
 Combat retains the original **30 Hz** simulation. Static button shadows, unchanged health bars and results panels are cached instead of recalculating full-stage filters at every display refresh. Numbers, pointer tooltips, selection pulses and transitions still update; asset resolution is not reduced. Profile an independently extracted test copy with:
 
@@ -101,7 +97,7 @@ The tool enters a real match through the menus and measures both ordinary gamepl
 
 ## Change game parameters
 
-The published **v0.4.0-preview.2** includes the single-apply-button layout described below.
+The current release retains the single-apply-button layout described below.
 
 **Use F2 for interactive editing:**
 

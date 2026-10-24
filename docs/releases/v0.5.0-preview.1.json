@@ -1,0 +1,529 @@
+{
+  "schemaVersion": 1,
+  "version": "0.5.0-preview.1",
+  "sourceCommit": "c6e8185d4c50f293f0a38ad0d332c1cd3034a82b",
+  "sourceTests": {
+    "passed": 663,
+    "failed": 0,
+    "logSha256": "4abf3601c9284a761a77222766d3317b8fb0a4a549056fc74faba3a937349d0a"
+  },
+  "ci": {
+    "status": "passed",
+    "run": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40067660803",
+    "sourceCommit": "c6e8185d4c50f293f0a38ad0d332c1cd3034a82b",
+    "platforms": [
+      "Source / windows-latest / Python 3.14",
+      "Source / ubuntu-latest / Python 3.13"
+    ]
+  },
+  "portable": {
+    "passed": 96,
+    "failed": 0,
+    "actualExeLaunches": 2,
+    "ownedApplicationsClosed": true,
+    "coreUnchanged": true,
+    "externalEditableFilesUnchanged": true,
+    "runtimeErrors": 0,
+    "nativeExport": {
+      "status": "completed",
+      "filename": "miragine-preset-V4-independent-sides.json",
+      "totalBytes": 36627,
+      "receivedBytes": 36627,
+      "mimeType": "application/json"
+    },
+    "executableSha256": "4993fa2f5a5d30d320a90bf89b42c5cbd26cad8c0c450606aae3ac2b20b7786b",
+    "appAsarSha256": "f1a425f60c8584a034ea72213ec1b3e70c8a0fa38e27cd8b948f041485984f68",
+    "report": "verification-portable.json",
+    "finishedAt": "2026-10-24T05:54:03.979Z",
+    "freshLocalZipExtraction": true,
+    "musicOffVerifiedOnEachLaunch": true
+  },
+  "harness": {
+    "provenance": "verification-harness-provenance.json",
+    "patch": "verification-harness.diff",
+    "correctedVerifierSha256": "bdc0ae2c7a2849bd5fd9bc1778c7162d0e8c314914506a345c791efb4d9fce6a",
+    "runtimeRebuilt": false,
+    "firstAttempt": {
+      "report": "verification-first-attempt.json",
+      "status": "failed",
+      "checksCompleted": 18,
+      "failure": {
+        "name": "Error",
+        "message": "V4 verification failed: fresh Space after release still controls original recruitment"
+      },
+      "explanation": "The original keyboard is sampled only on 30 Hz logic ticks. Playwright keyboard.press with no delay can send both down/up between ticks, so the original input correctly ignores that instantaneous press."
+    },
+    "scope": "Only the test runner holds real Space down/up across observed original 30 Hz input-sampling ticks. Original assertions remain; the runtime package is unchanged."
+  },
+  "nativeRendering": {
+    "passed": 41,
+    "failed": 0,
+    "sourceSnapshotGitMatchedFiles": 762,
+    "snapshotMatchesRuntimeCommit": "c6e8185d4c50f293f0a38ad0d332c1cd3034a82b",
+    "report": "verification-native-resolution.json",
+    "logicHz": 30,
+    "comparisons": [
+      {
+        "name": "1920x1227-dpr2-paused-follow",
+        "baselinePresentationCallbacksPerSecond": 4.260395364603292,
+        "nativePresentationCallbacksPerSecond": 48.985966821512214,
+        "nativeSimulationHz": 0,
+        "nativeBacking": [
+          3273,
+          2455
+        ],
+        "nativeElapsedMs": 4225.700000047684,
+        "muted": true
+      },
+      {
+        "name": "1920x1227-dpr2-paused-moving-camera",
+        "baselinePresentationCallbacksPerSecond": 4.886131883023244,
+        "nativePresentationCallbacksPerSecond": 49.16258938597473,
+        "nativeSimulationHz": 0,
+        "nativeBacking": [
+          3273,
+          2455
+        ],
+        "nativeElapsedMs": 4251.200000047684,
+        "muted": true
+      },
+      {
+        "name": "1920x1227-dpr2-paused-overview",
+        "baselinePresentationCallbacksPerSecond": 4.932293067780831,
+        "nativePresentationCallbacksPerSecond": 49.26691774012831,
+        "nativeSimulationHz": 0,
+        "nativeBacking": [
+          3273,
+          2455
+        ],
+        "nativeElapsedMs": 4221.899999856949,
+        "muted": true
+      },
+      {
+        "name": "1920x1227-dpr2-paused-zoom",
+        "baselinePresentationCallbacksPerSecond": 5.295792052065925,
+        "nativePresentationCallbacksPerSecond": 49.60030819836765,
+        "nativeSimulationHz": 0,
+        "nativeBacking": [
+          3273,
+          2455
+        ],
+        "nativeElapsedMs": 4153.199999809265,
+        "muted": true
+      },
+      {
+        "name": "1920x1227-dpr2-live-1x-overview",
+        "baselinePresentationCallbacksPerSecond": 4.862200808842167,
+        "nativePresentationCallbacksPerSecond": 49.478917679682255,
+        "nativeSimulationHz": 29.878573478068994,
+        "nativeBacking": [
+          3273,
+          2455
+        ],
+        "nativeElapsedMs": 4183.599999904633,
+        "muted": true
+      }
+    ],
+    "limits": [
+      "Synchronous animate CPU includes logic/control work and excludes GPU completion.",
+      "Presentation submissions are not physical monitor refresh or pixel-change counts.",
+      "Seed and external desktop load are not controlled. Paused fixtures have equal army counts; live scenes may diverge.",
+      "DPR emulation allocates actual device-pixel buffers; it is not a physical display throughput guarantee.",
+      "Native candidate is a frozen source copy using the same Electron runtime, not the final packaged release. A separate portable smoke verifies that package.",
+      "Four-second scenes are a short local sample, not a sustained thermal, extreme-army, or universal-device guarantee.",
+      "Cursor uses compact native-density caches; this evidence does not claim bit-exact legacy cursor edge compositing.",
+      "CPU profiling, diagnostic reads and OS scheduling can perturb short samples; frame intervals include scheduling delays."
+    ],
+    "scope": "Same Electron version, equivalent mapped UI fixture, five short development-snapshot scenes; not physical monitor FPS or a released-package sustained throughput promise.",
+    "conditions": {
+      "electronVersion": "44.4.3",
+      "baselineVersion": "0.4.0-preview.2",
+      "baselineKind": "portable-release",
+      "nativeKind": "frozen isolated source Electron fixture",
+      "sameElectronVersion": true,
+      "sameExecutableBinaryClaimed": false,
+      "finalBackingPixels": [
+        3273,
+        2455
+      ],
+      "emulatedDevicePixelRatioApproximately": 2,
+      "soldiersPerSide": 64,
+      "totalSoldiers": 128,
+      "additionalCrystals": 2,
+      "recruitmentEnabled": false,
+      "muted": true,
+      "presentationTarget": 240,
+      "requestedSecondsPerScenario": 4,
+      "scenarioCount": 5,
+      "actualSampleDurationRangeMs": [
+        4153.199999809265,
+        4707.200000047684
+      ],
+      "randomSeedsControlled": false,
+      "externalDesktopLoadControlled": false
+    }
+  },
+  "clarity": {
+    "passed": 9,
+    "failed": 0,
+    "finalCanvasReferenceChangedPixels": 0,
+    "report": "verification-native-clarity.json",
+    "example": "A0_idle-overview.png",
+    "exampleSha256": "c0e5545dd78fb438e6e9262ef6c70468c82e3b6e1f46fdd3a682686517e0f06d",
+    "scope": "Frozen isolated renderer fixtures, not live gameplay, FPS, invented detail, or Flash pixel parity",
+    "interpretation": "Native pixels exactly match independent one-pass original-PNG reference; source bitmap detail is finite and no new detail is generated"
+  },
+  "integrity": {
+    "audit": "audit-summary.json",
+    "decodedAsarFiles": 779,
+    "exactGitSourceFiles": 777,
+    "metadataExceptions": [
+      "generated build-info.json",
+      "package.json excludes three development metadata fields"
+    ],
+    "originalEffectCopiesByteIdentical": true,
+    "status": "passed",
+    "sourceDifferencesUnresolved": 0,
+    "externalAuthoredFiles": 28,
+    "productionWhitelistExact": true,
+    "committedSourceInventorySha256": "1894ca6dfcb97049c66f29b2f9fb8e0486d404d56f51ca8bb3f3af883c9aefa8",
+    "sourceCheckoutCleanAndMatchesBuildCommitBeforeAndAfter": true
+  },
+  "privacy": {
+    "publicSourceFindings": 0,
+    "rawFindings": 5,
+    "rawWarnings": 59,
+    "reviewedUpstreamFindings": 5,
+    "vendorFiles": 71,
+    "nonResourcePeSections": 14,
+    "unresolved": 0,
+    "sourceReport": "privacy-source.json",
+    "rawReport": "raw-scan.json",
+    "review": "runtime-proof.json",
+    "policy": "Only exact pinned upstream constants are reviewed. Raw findings remain recorded; secrets and new paths are never exempted.",
+    "peVerificationScope": "Non-resource sections are hash-identical. PE headers, resources and overlay are not claimed byte-identical; path constants and private content are checked independently.",
+    "sourceScan": {
+      "scannedFiles": 3069,
+      "scannedBytes": 66092018,
+      "findings": [],
+      "warnings": [],
+      "skipped": []
+    },
+    "releaseEvidenceScan": {
+      "scannedFiles": 3089,
+      "scannedBytes": 66916080,
+      "findings": [],
+      "warnings": [],
+      "skipped": []
+    }
+  },
+  "archive": {
+    "status": "passed",
+    "filename": "MiragineSuper-Custom-v0.5.0-preview.1-win-x64.zip",
+    "archiveSha256": "456fe1fe3af41b733cfc4c4a7a308f7b6f47375f84d276752fd16291e3d999ae",
+    "sourceCommit": "c6e8185d4c50f293f0a38ad0d332c1cd3034a82b",
+    "filesVerified": 101,
+    "zipBytes": 170587968,
+    "unpackedBytes": 402251340,
+    "zipCrcPassed": true,
+    "allBuildFileHashesVerified": true,
+    "allExtractedFileHashesVerified": true,
+    "inventorySha256": "b33f3aab1f8c8344dee70e54ef192ee8110c5a425a8c20d129045b4bd5ce2a26",
+    "freshNoUserData": true,
+    "scope": "Local clean ZIP extraction and file-integrity checks. Actual executable acceptance is separately recorded under portable. No complete remote redownload."
+  },
+  "storage": {
+    "sourceBytesAtRuntimeCommit": 66091429,
+    "trackedFilesAtRuntimeCommit": 3069,
+    "runtimeAssetBytes": 11974108,
+    "zipBytes": 170587968,
+    "unpackedBytes": 402251340,
+    "excludes": "Development dependencies, Git history and generated user data"
+  },
+  "unchanged": {
+    "schemaVersion": 1,
+    "sourceCommit": "c6e8185d4c50f293f0a38ad0d332c1cd3034a82b",
+    "baselineCommit": "404b61a8a214743eace39dbf30d28f85c25d44d1",
+    "scopes": [
+      {
+        "scope": "src/core/",
+        "files": 7,
+        "bytes": 35485,
+        "commitAndWorkingTreeUnchanged": true,
+        "gitBlobInventorySha256": "ac5d064a757844722ac4e24190f18d4a5141ddaf889ee7d173e04e8b3236302e"
+      },
+      {
+        "scope": "src/config/",
+        "files": 2,
+        "bytes": 7334,
+        "commitAndWorkingTreeUnchanged": true,
+        "gitBlobInventorySha256": "0d3896f043857a0c7faa318bc4d957237ced3f100c0203192f8f0ce5a9050c30"
+      },
+      {
+        "scope": "generated/",
+        "files": 8,
+        "bytes": 2406228,
+        "commitAndWorkingTreeUnchanged": true,
+        "gitBlobInventorySha256": "d9a275fb4785eec6c72f9e1d1fa33d5603d1a8a8a4f517fa60aa33190f0c8112"
+      },
+      {
+        "scope": "assets/",
+        "files": 703,
+        "bytes": 11974108,
+        "commitAndWorkingTreeUnchanged": true,
+        "gitBlobInventorySha256": "984e9dd15becc5b364bda86e18855d5c3b69ce2bfe2fe7b7f18cb42e44da9c97"
+      },
+      {
+        "scope": "config/",
+        "files": 2,
+        "bytes": 39404,
+        "commitAndWorkingTreeUnchanged": true,
+        "gitBlobInventorySha256": "8c8097fbd01864bd174bc91eeb516db7432e818bc2a1c271ddc8101d6bd608cd"
+      }
+    ],
+    "timingAndOriginalAssetInvariants": {
+      "baselineCommit": "816465b2e6d6395fadcfb1f1663f93811cb93ea6",
+      "scopes": [
+        {
+          "scope": "src/runtime/",
+          "files": 4,
+          "bytes": 17589,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "8cf6399990c3ecf317c3b5346f0dff0267b8fa032e4f55209fd884126ea850e3"
+        },
+        {
+          "scope": "src/app/playback-session.mjs",
+          "files": 1,
+          "bytes": 5241,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "3696025687b763ba5e8d463b78185a469aa5b42a67b3e5b6f1f3e2a8757c8a1f"
+        },
+        {
+          "scope": "src/core/",
+          "files": 7,
+          "bytes": 35485,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "ac5d064a757844722ac4e24190f18d4a5141ddaf889ee7d173e04e8b3236302e"
+        },
+        {
+          "scope": "assets/",
+          "files": 703,
+          "bytes": 11974108,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "984e9dd15becc5b364bda86e18855d5c3b69ce2bfe2fe7b7f18cb42e44da9c97"
+        },
+        {
+          "scope": "generated/",
+          "files": 8,
+          "bytes": 2406228,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "d9a275fb4785eec6c72f9e1d1fa33d5603d1a8a8a4f517fa60aa33190f0c8112"
+        },
+        {
+          "scope": "config/",
+          "files": 2,
+          "bytes": 39404,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "8c8097fbd01864bd174bc91eeb516db7432e818bc2a1c271ddc8101d6bd608cd"
+        }
+      ],
+      "policy": "High-resolution renderer changes are permitted; runtime clocks, playback session, core logic, generated evidence, original bitmap assets and configuration remain unchanged."
+    },
+    "originalRepositoryCommit": "8554d89713456368378738744bfeb32ec41c2689",
+    "originalRepositoryClean": true,
+    "scopeLimit": "Local original repository HEAD and worktree only; this audit does not query or change remotes."
+  },
+  "remainingLimits": [
+    "Original bitmap detail remains finite; no generated or AI-remastered artwork.",
+    "Small antialiasing/transparent-edge differences are possible after bounded native-resolution caching; not a universal Flash pixel-parity claim.",
+    "20x and 240 FPS are targets, not performance guarantees. The Windows executable is unsigned.",
+    "Portable functional verification is separate from the short source-snapshot rendering comparison.",
+    "The first portable attempt failed a zero-duration keypress assertion; its full receipt and verifier-only correction are retained.",
+    "Bundle documentation describes the runtime source commit. Later QA/docs revisions do not alter this package.",
+    "ZIP contents were independently extracted and verified locally. All 21 remote API asset sizes/SHA-256 digests match local files; a complete remote redownload was not performed."
+  ],
+  "evidenceBaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.5.0-preview.1/",
+  "remoteRelease": {
+    "url": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.1",
+    "published": true,
+    "publishedAt": "2026-10-24T05:57:23Z",
+    "releaseId": 422547265,
+    "prerelease": true,
+    "targetCommit": "c6e8185d4c50f293f0a38ad0d332c1cd3034a82b",
+    "tagTargetVerified": true,
+    "tagTargetCommit": "c6e8185d4c50f293f0a38ad0d332c1cd3034a82b",
+    "assetCount": 21,
+    "allRemoteAssetSizesAndSha256MatchLocal": true,
+    "verificationMethod": "GitHub API asset size and SHA-256 digest compared with local release files",
+    "fullRemoteRedownloadPerformed": false,
+    "assets": [
+      {
+        "name": "A0_idle-overview.png",
+        "bytes": 22274,
+        "sha256": "c0e5545dd78fb438e6e9262ef6c70468c82e3b6e1f46fdd3a682686517e0f06d",
+        "remoteMatch": true
+      },
+      {
+        "name": "MiragineSuper-Custom-v0.5.0-preview.1-win-x64.zip",
+        "bytes": 170587968,
+        "sha256": "456fe1fe3af41b733cfc4c4a7a308f7b6f47375f84d276752fd16291e3d999ae",
+        "remoteMatch": true
+      },
+      {
+        "name": "MiragineSuper-Custom-v0.5.0-preview.1-win-x64.zip.inventory.json",
+        "bytes": 17678,
+        "sha256": "b33f3aab1f8c8344dee70e54ef192ee8110c5a425a8c20d129045b4bd5ce2a26",
+        "remoteMatch": true
+      },
+      {
+        "name": "SHA256SUMS",
+        "bytes": 1885,
+        "sha256": "65540f599e08fb7ea70cc5e951f79f6e09e4f035b67658f7b414798b3ef2d143",
+        "remoteMatch": true
+      },
+      {
+        "name": "audit-summary.json",
+        "bytes": 904,
+        "sha256": "c0252dab5e8b8861e20c4a3bec161ef515239ade23f645395b863abcd05eb032",
+        "remoteMatch": true
+      },
+      {
+        "name": "invariants.json",
+        "bytes": 3396,
+        "sha256": "5dab3b54c35e5dfa7526dcabe710f259d6c7ee3257d3423bb5358d3dfc41c812",
+        "remoteMatch": true
+      },
+      {
+        "name": "privacy-source.json",
+        "bytes": 108,
+        "sha256": "f9d1a99fda9ce62ee060e06c608c648685beed9a50a09c7879c30d272f62bf16",
+        "remoteMatch": true
+      },
+      {
+        "name": "public-source-scan.json",
+        "bytes": 115,
+        "sha256": "51e2852af1944e8d3dbe36e19341ab35732c973cd416e5dc93cc12f5646177b7",
+        "remoteMatch": true
+      },
+      {
+        "name": "raw-scan.json",
+        "bytes": 13660,
+        "sha256": "b281a71896080d6e68f8ccb510d8d3c82ee9347bb43a16b813cc3e7312f8e851",
+        "remoteMatch": true
+      },
+      {
+        "name": "runtime-proof.json",
+        "bytes": 25787,
+        "sha256": "aa7d807b3c119d1ae206e7ccfc740d5d6094663aca3474202ef10dc7fab782e3",
+        "remoteMatch": true
+      },
+      {
+        "name": "source-proof.json",
+        "bytes": 20574,
+        "sha256": "565ed89db444fb540022236f17f950d7709b1ca183ae24634299de43b33facc3",
+        "remoteMatch": true
+      },
+      {
+        "name": "storage.json",
+        "bytes": 248,
+        "sha256": "cd65a40b6bbc4eb6c5f11614790bdbdd818b944a5f256caa498e13786ebd016f",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-ci.json",
+        "bytes": 5243,
+        "sha256": "fa1f29864bb983de3ef5539269e3e7868cd6f2ced2857048832398a6d9fd79aa",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-first-attempt.json",
+        "bytes": 201316,
+        "sha256": "4897ab7501eeb09e1cc4ed72831f094e785d6dbb4b594293dc73f3242a3177bf",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-harness-provenance.json",
+        "bytes": 3532,
+        "sha256": "15bfb90d362213c9731f9127716a685eb26db246b423d8d3e15907692a839044",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-harness.diff",
+        "bytes": 4272,
+        "sha256": "d2cb5db2802a975603a1f03c8a0270ae0ee0a244b618f26ab529024bcce9a45e",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-local-zip.json",
+        "bytes": 1005,
+        "sha256": "cba06fc4fb9bb5d96e03fde8fb7111d502f11a3ce8aa44c1a40182d87ce4a3fb",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-native-clarity.json",
+        "bytes": 45519,
+        "sha256": "4760811b73209b4c6b2af71e51d3c7a3644c2758ea5f046c2c1103d82a1d2783",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-native-resolution.json",
+        "bytes": 203070,
+        "sha256": "4fcf72d207338700f5b754d2a8a40375663667fcaf54a0968890f20e9a180333",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-portable.json",
+        "bytes": 238078,
+        "sha256": "c0a240dfa2ae058c5591006c5cbb59a6fdd73cb073b7f13d08fefed0e8409221",
+        "remoteMatch": true
+      },
+      {
+        "name": "verification-summary.json",
+        "bytes": 13146,
+        "sha256": "512a22f99190cfea39f71b1da44922e15786b64e916be5ba6d80826313e3e60b",
+        "remoteMatch": true
+      }
+    ]
+  },
+  "toolFollowup": {
+    "sourceCommit": "820c77285980ca50f555b53e12f1fa6e9c098fea",
+    "url": "https://github.com/learner20230724/miragine-super-custom/commit/820c77285980ca50f555b53e12f1fa6e9c098fea",
+    "scope": [
+      "tools/verify-settings-v4.mjs",
+      "tests/settings-v4-verification.test.mjs"
+    ],
+    "purpose": "Commit the verifier-only real-key timing correction and regression tests; retain original input behavior and recruitment assertions.",
+    "sourceTests": {
+      "passed": 665,
+      "failed": 0,
+      "logSha256": "bf378b896d472cee1298276af3301b29b98b21cec23992525ea01b8438cce6f4"
+    },
+    "runtimePackageRebuilt": false,
+    "releaseTagStillTargetsRuntimeCommit": true,
+    "limits": "This follow-up test count is not the 663-test runtime source count. It changes verification tools/tests, not the released game code.",
+    "ci": {
+      "status": "passed",
+      "run": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40068236662",
+      "sourceCommit": "820c77285980ca50f555b53e12f1fa6e9c098fea",
+      "platforms": [
+        "windows-latest",
+        "ubuntu-latest"
+      ]
+    }
+  },
+  "userPreview": {
+    "statusAtRecordedTime": "ready-left-open",
+    "readyAt": "2026-10-24T05:54:46.428Z",
+    "sourceCommit": "c6e8185d4c50f293f0a38ad0d332c1cd3034a82b",
+    "actualSeparateExeLaunch": true,
+    "checksPassed": 7,
+    "runtimeErrors": 0,
+    "phase": "game",
+    "difficulty": 1,
+    "muted": true,
+    "paused": true,
+    "leftOpenForUser": true,
+    "scope": "Point-in-time local handoff of a separate freshly extracted copy, not a claim that a process remains open indefinitely.",
+    "audio": "The owned preview uses --mute-audio as a safety net and its game music control is OFF. Restart normally to restore optional game sound; system volume and other player windows are unchanged."
+  }
+}

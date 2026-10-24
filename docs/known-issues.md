@@ -3,11 +3,14 @@
 This is a runnable **preview**, not a claim of exact Flash parity.
 当前是可运行预览版，不宣称已与 Flash 逐帧、逐像素完全一致。
 
-## Native-resolution source — v0.5.0-preview.1 / 原生分辨率源码
+## Native-resolution release — v0.5.0-preview.1 / 原生分辨率预览版
 
-This section describes implementation, not a completed release or performance
-claim. v0.4 and earlier reports below remain historical evidence for their versions.
-本节描述源码实现，不代表新版已经发布或性能验收通过；下方 v0.4 等旧报告仅证明各自版本。
+The [release record](releases/v0.5.0-preview.1.json) separates 663 runtime-source tests,
+96 portable checks, 41 native-rendering checks and 9 isolated PNG-reference checks.
+Short source-snapshot performance results are not a sustained portable FPS guarantee.
+[本版交付记录](releases/v0.5.0-preview.1.json)分别记录 663 项运行源码测试、96 项便携包检查、
+41 项原生绘制检查与 9 项独立 PNG 对照；短时源码性能不等于正式包持续 FPS 保证。
+下方 v0.4 等旧报告仍仅证明各自版本。
 
 - **Logical versus physical:** stage layout remains 640×480 logically; combat remains 30 Hz.
   Visible backing pixels follow the fitted CSS viewport and DPR. Ground keeps
@@ -44,9 +47,9 @@ claim. v0.4 and earlier reports below remain historical evidence for their versi
   240 FPS 仍是目标，不能把提交频率、RAF 回调或 CPU 耗时当作物理显示帧率。
 
 See [implementation / 开发说明](native-resolution.zh-CN.md) and
-[English](native-resolution.en.md). Final artifacts require their own browser,
-portable, source-integrity, privacy and same-runtime performance evidence.
-最终包需独立的浏览器、便携版、源码一致性、隐私与同运行时性能证据。
+[English](native-resolution.en.md). Portable interaction, source integrity, privacy,
+remote asset verification and source-snapshot performance are separate evidence gates.
+便携包交互、源码一致性、隐私、远端附件核验与源码性能样本分别记录，不相互替代。
 
 ## Settings reorganization — v0.4 source / 设置重组源码
 

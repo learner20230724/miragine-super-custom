@@ -2,7 +2,7 @@
 
 [English](native-resolution.en.md) · [设置](custom-settings.zh-CN.md) · [时钟](time-control.zh-CN.md)
 
-本文描述 v0.5.0-preview.1 的源码实现，不代替该版本的发布、实机验收或性能报告。原游戏规则、参数、30 Hz 逻辑和原始素材不变；只让现有绘图流程直接使用窗口需要的像素数量。
+本文描述 v0.5.0-preview.1 的源码实现；发布、实机验收与短时性能数据见[本版交付记录](releases/v0.5.0-preview.1.json)。原游戏规则、参数、30 Hz 逻辑和原始素材不变；只让现有绘图流程直接使用窗口需要的像素数量。
 
 ## 改了什么
 

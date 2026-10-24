@@ -2,7 +2,7 @@
 
 [中文](native-resolution.zh-CN.md) · [Time control](time-control.en.md) · [Settings](custom-settings.en.md)
 
-This guide describes the native-resolution source work for `0.5.0-preview.1`, not a claim that this version is published or faster. Verification and release status belong to their corresponding records.
+This guide describes the native-resolution implementation in `0.5.0-preview.1`. See the [release record](releases/v0.5.0-preview.1.json) for publication, runtime acceptance and qualified short performance samples.
 
 ## What changes—and what does not
 
