@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "version": "0.5.0-preview.2",
+  "sourceCommit": "2c20cf285ee5575a180388e774ecd9941abc6a20",
+  "status": "published-and-verified",
+  "sourceTests": {
+    "tests": 669,
+    "pass": 669,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "settingsChecks": 96,
+  "usabilityChecks": 33,
+  "ciUrl": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40070327363",
+  "appAsarSha256": "9c6fe0f021b274ac56638d8acf8f2eb088359194d854c7e8f415272e200e3845",
+  "archive": "MiragineSuper-Custom-v0.5.0-preview.2-win-x64.zip",
+  "archiveSha256": "2a6a59f79175bc43cbad34b3e5f88300a715cc4951747f4325ef7d26d388eb16",
+  "archiveBytes": 170591202,
+  "unpackedBytes": 402260033,
+  "fileCount": 101,
+  "sourceBytes": 66134116,
+  "runtimeAssetsBytes": 11974108,
+  "limitations": [
+    "General-rule typing failure was not reproduced; real keyboard Enter and blur both passed. Income/manpower limits retain their documented next-event effect.",
+    "20x speed and 240 FPS are targets, not performance guarantees. No new sustained performance benchmark.",
+    "A rejected initial local build differed from Git only in README/docs CRLF line endings; working copies were normalized and rebuilt under the same commit. Only the corrected build and ZIP are published."
+  ],
+  "remoteVerification": {
+    "status": "passed",
+    "releaseId": 422562936,
+    "releaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.2",
+    "tag": "v0.5.0-preview.2",
+    "targetCommit": "2c20cf285ee5575a180388e774ecd9941abc6a20",
+    "draft": false,
+    "prerelease": true,
+    "assets": 20,
+    "allRemoteAssetSizesAndDigestsMatch": true,
+    "remoteRedownloadPerformed": false,
+    "publishedAt": "2026-10-24T06:37:24Z",
+    "files": [
+      {
+        "name": "audit-summary.json",
+        "size": 904,
+        "sha256": "6f580483240353fe3444fb5ed84ec7939590fba51f13e68e2ab1b0484522e2f4"
+      },
+      {
+        "name": "battlefield-drag.png",
+        "size": 1283044,
+        "sha256": "58e02b986c2bcd63f0cf48d7eee3133c8f8a9afe3e1f17eec5bbb040ad95ce73"
+      },
+      {
+        "name": "delivery-verification.json",
+        "size": 1352,
+        "sha256": "f60b7559a1bf93a2d3d97f7d3d89d2b24c1c2b3fc4778476daea33297657b086"
+      },
+      {
+        "name": "MiragineSuper-Custom-v0.5.0-preview.2-win-x64.zip",
+        "size": 170591202,
+        "sha256": "2a6a59f79175bc43cbad34b3e5f88300a715cc4951747f4325ef7d26d388eb16"
+      },
+      {
+        "name": "MiragineSuper-Custom-v0.5.0-preview.2-win-x64.zip.inventory.json",
+        "size": 17678,
+        "sha256": "9cddff8459b6798c71194a04cc832abc6d55fe70ac85ae477119316d7306bfec"
+      },
+      {
+        "name": "privacy-evidence.json",
+        "size": 115,
+        "sha256": "3ae05b761a1b8fd47d6fb516a6864f56bd0f176f8da4ab4643a082449747ce74"
+      },
+      {
+        "name": "privacy-source.json",
+        "size": 115,
+        "sha256": "e8d8b8351f31e92b7badf32100e5b7a71adbe03ac09f9282b1a12141a4e87945"
+      },
+      {
+        "name": "RELEASE-NOTES.md",
+        "size": 3187,
+        "sha256": "abd132e86e124190ed87785a58a5fd47317f790be4a72cbfcd27caf614519905"
+      },
+      {
+        "name": "runtime-privacy-review.json",
+        "size": 25787,
+        "sha256": "bc762c6a74599846ab8f89278d6a2be685659d6e905962f037f21219847e8374"
+      },
+      {
+        "name": "settings-ai-menu.png",
+        "size": 1044327,
+        "sha256": "572a4eef7734d280e5aca4ddc301628ccff7bd355207271af58599d1e043ba77"
+      },
+      {
+        "name": "settings-basics.png",
+        "size": 1050584,
+        "sha256": "f473196f4eee61c53b27609332055810b07873f8b49ff5d1cb92f1c2e47f01c6"
+      },
+      {
+        "name": "SHA256SUMS",
+        "size": 1759,
+        "sha256": "c98b09c743445e5fe6e5e720fc7ac5b536078b9134c0908ac1cf245349d2bb41"
+      },
+      {
+        "name": "source-proof.json",
+        "size": 20574,
+        "sha256": "444edd690af415cab169ac03e6d8fd13fb419952fca6a1bfc03f63f5321ce3e0"
+      },
+      {
+        "name": "source-tests.json",
+        "size": 247,
+        "sha256": "2ffba2d1b1731cdc815717f5e3c491a4b61b1f93a44dd43a95d212def60e66eb"
+      },
+      {
+        "name": "storage.json",
+        "size": 248,
+        "sha256": "37959235d9ae6358ad98ac7baf99cf45bcb197f26869cc9908ca3e340559f7a3"
+      },
+      {
+        "name": "unchanged-core-renderer.json",
+        "size": 478,
+        "sha256": "9d5f9e92e4a4a89b62894e4c073e18aaa7e3c194994d49eb2554cef336b361f7"
+      },
+      {
+        "name": "verification-ci.json",
+        "size": 5153,
+        "sha256": "96c2c51c3a83fe61747898fe83416a9ecdb99396195f55bff04070fd231ae0b4"
+      },
+      {
+        "name": "verification-settings.json",
+        "size": 236635,
+        "sha256": "782a138a0872d7b1c6ca80ccbb4f180fd83f45a2264addc0d41d3487c17122cb"
+      },
+      {
+        "name": "verification-usability.json",
+        "size": 3708,
+        "sha256": "814089dffd50d91d96567e70b91dcf202693b70e0a41746249b18543daf412bc"
+      },
+      {
+        "name": "verification-zip.json",
+        "size": 999,
+        "sha256": "76b9389b1dff0078df18d547e3cbdc949fed1726acaee0d511c18fd11076a3f2"
+      }
+    ]
+  },
+  "tagCommitVerified": true,
+  "portable": {
+    "settingsChecks": 96,
+    "focusedUsabilityChecks": 33,
+    "actualSettingsLaunches": 2,
+    "errors": 0,
+    "originalCoreUnchanged": true,
+    "independentFreshZipLaunchesVerified": true,
+    "executableSha256": "19ef7f4df1a65e4c599aba191f09fe3992ded5292dd7327984e13ce9f0d46046",
+    "appAsarSha256": "9c6fe0f021b274ac56638d8acf8f2eb088359194d854c7e8f415272e200e3845"
+  },
+  "sourceProvenance": {
+    "decodedFiles": 780,
+    "exactCommittedSourceFiles": 778,
+    "unresolvedDifferences": 0
+  },
+  "notes": "Release package is tied to the runtime commit. Later documentation receipts do not rebuild or alter it. Previous native-resolution measurements remain historical, not new performance claims."
+}

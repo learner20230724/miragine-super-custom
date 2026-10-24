@@ -16,7 +16,9 @@
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-当前已发布 **[v0.5.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.1)**，对应运行源码 `c6e8185d`。**663 项源码测试、96 项正式 EXE 交互、41 项原生绘制交互和 9 项原 PNG 独立采样对照通过**，[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40067660803) 通过。便携包实际启动两次，设置、输入、预设保留和原生画布已检查，0 运行异常；ZIP 全新解压、源码逐字节比对和隐私审计通过。远端 21 个附件的 API 大小与 SHA-256 均与本地一致，未另做完整远端重下载。详见 [本版交付记录](docs/releases/v0.5.0-preview.1.json) 与 Release 附件。包内 README 保留运行源码提交时的发布状态；后续验收工具提交 `820c7728` 的 665 项测试单独记录，不改变或重新打包运行代码。
+当前已发布 **[v0.5.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.5.0-preview.2)**，对应运行源码 `2c20cf285ee5575a180388e774ecd9941abc6a20`。**669 项源码测试、96 项正式 EXE 设置检查（两次启动）及 33 项真实输入专项检查通过**；[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40070327363) 通过。ZIP 全新解压、源码逐字节比对、原素材与时钟不变检查及隐私审计通过。远端 20 个附件的 API 大小与 SHA-256 均与本地一致，未另做完整远端重下载。[本版交付记录](docs/releases/v0.5.0-preview.2.json)。包内 README 保留运行提交时的发布状态；后续交付记录不改变或重新打包运行代码。
+
+历史 **[v0.5.0-preview.1](docs/releases/v0.5.0-preview.1.json)** 的原生分辨率绘制、663／96／41／9 项检查与性能对照仍保留，本次不宣称重新进行了持续性能测试。
 
 历史 **[v0.4.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.2)** 的单行底栏、统一应用及 606／93／94 项检查保留于 [该版交付记录](docs/releases/v0.4.0-preview.2.json)，不替代新版验收。
 
@@ -28,7 +30,7 @@
 
 包外的 `config/custom.json` 可直接编辑，重启生效，设置面板不会改写它。桌面草稿与预设保存在 `userdata/custom-settings.json`，恢复后仍须明确应用；升级前请备份这两个文件。`ui-helper/` 提供可替换绘图源码；`build-info.json` 标明对应源码提交。继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
-v0.5.0-preview.1 运行提交的源码约 **66.09 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.59 MB**，解压 **402.25 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证。
+v0.5.0-preview.2 运行提交的源码约 **66.13 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.59 MB**，解压 **402.26 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证。
 
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 
