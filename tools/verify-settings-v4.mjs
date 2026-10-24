@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
 import { correctFit, rectanglesOverlap } from './verify-custom.mjs';
 import { bounded, redact } from './verify-desktop.mjs';
+import { readSettingsStartup, matchesSettingsStartup, sameEffectiveSettingsStartup } from './settings-startup-profile.mjs';
 import { parseSettingsOptions, summarizeSettingsTiming, reportPath, foregroundOwnedWindow,
   registerNativeExport, completedNativeExport, compactCrystalBounds } from './verify-settings.mjs';
 
@@ -317,8 +318,10 @@ export async function verifySettingsV4(options) {
     }
     await ready();
     const initial = await state();
-    check(initial.phase === 'title' && initial.implementation === 'native-javascript-canvas', 'native original title loads');
-    const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config/defaults.generated.json'), 'utf8'));
+    const { defaults, expected: startupExpected } = await readSettingsStartup(page, directory);
+    report.startupConfiguration = startupExpected.evidence;
+    check(initial.phase === 'title' && initial.implementation === 'native-javascript-canvas'
+      && matchesSettingsStartup(initial, startupExpected), 'native title loads the exact externally configured startup rules', startupExpected.evidence);
     // Keep the dock open across an original-menu launch, not only the custom
     // new-match button. Its current blue-crystal editors must rebind correctly.
     await open(); await act('tab-sandbox').click(); await footer('menu footer');
@@ -561,7 +564,11 @@ export async function verifySettingsV4(options) {
       check(report.runs[0].pid !== report.runs[1].pid && report.runs[0].origin !== report.runs[1].origin,
         'preset durability uses two distinct real EXE processes and loopback origins', report.runs);
     } else { await page.reload({ waitUntil: 'domcontentloaded' }); await ready(); }
-    check((await state()).phase === 'title' && (await state()).customization.rulesMode.current === 'original', 'restart never silently activates saved custom rules');
+    const restarted = await state();
+    check(restarted.phase === 'title' && matchesSettingsStartup(restarted, startupExpected)
+      && sameEffectiveSettingsStartup(initial, restarted)
+      && JSON.stringify(restarted.customization.editor.draft) !== JSON.stringify(restarted.customization.editor.applied),
+      'restart restores initial external rules without activating the saved edited draft');
     await open(); await act('tab-units').click();
     check(await field(sidePath('left', 'hp')).inputValue() === '99' && await field(sidePath('right', 'hp')).inputValue() === '123', 'distinct side drafts survive restart');
     await act('tab-presets').click();

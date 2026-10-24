@@ -1,5 +1,6 @@
 import { loadConfiguration } from '../config/index.mjs';
-import { validateCoreConfiguration, CORE_PARITY_GATES } from '../core/index.mjs';
+import { MiragineSimulation, validateCoreConfiguration, CORE_PARITY_GATES } from '../core/index.mjs';
+import { installCasterProjectileLifetime } from '../extensions/projectile-lifetime.mjs';
 import { fitViewport, clientToGame } from '../platform/viewport.mjs';
 import { MiraginePlayback } from './playback-session.mjs';
 import { ViewCamera } from '../render/view-camera.mjs';
@@ -424,7 +425,8 @@ try {
   await document.fonts.load('12px OriginalYahei');
   const storage = await createPreferenceStorage();
   customStorage = await createCustomStorage();
-  controller = new GameController(config, { storage });
+  controller = new GameController(config, { storage,
+    createSimulation: options => installCasterProjectileLifetime(new MiragineSimulation(options)) });
   customization = createCustomization({ controller, defaults, initialConfig: config, storage: customStorage, onChange: customChanged });
   keyboard = new OriginalKeyboard(controller);
   view = new OriginalGameView(canvas, globalThis.OriginalGraphics, layout, config, { crispTextControls: true });

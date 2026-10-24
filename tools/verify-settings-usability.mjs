@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium, _electron } from 'playwright';
 import { createDevServer } from './dev-server.mjs';
 import { visibleHotspotCenter } from './verify-settings-v4.mjs';
+import { readSettingsStartup, matchesSettingsStartup } from './settings-startup-profile.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dir=process.argv[2] ? path.resolve(process.argv[2]) : null;
 const out=path.resolve(root,process.argv[3]??'.local/settings-usability.json');
@@ -30,9 +31,10 @@ try{
   const p=visibleHotspotCenter(hotspot);await page.mouse.click(fit.clientLeft+fit.left+p.x*fit.scale,fit.clientTop+fit.top+p.y*fit.scale);await wait(150);
  }
  await hit('music');check((await state()).muted,'music switched off by first game interaction');
+ const {expected:startupExpected}=await readSettingsStartup(page,dir);report.startupConfiguration=startupExpected.evidence;
  await hit('single');await hit('difficulty',{value:3});if((await state()).overlay==='tutorial')await hit('tutorial-okay');
  await page.keyboard.press('F2');await wait(250);
- check((await state()).customization.editor.mode==='original','native invincible difficulty retains original rules');
+ check(matchesSettingsStartup(await state(),startupExpected),'native invincible difficulty retains exact externally configured startup rules',startupExpected.evidence);
  check((await act('tab-sandbox').textContent()).length>0 && /不可战胜/.test(await page.locator('[data-battle-summary]').textContent()),'summary explicitly displays actual invincible difficulty');
  async function type(locator,text){await locator.click();await page.keyboard.press('ControlOrMeta+A');await page.keyboard.type(text,{delay:80});await wait(250);check(await locator.inputValue()===text,`real typing remains visible: ${text}`);}
  await type(control('speed-number'),'2.5');check((await state()).customization.speed===2.5,'typed fractional speed applies without Enter or blur');

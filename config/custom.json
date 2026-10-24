@@ -1,6 +1,11 @@
 {
   "schemaVersion": 1,
   "$comment": "User overrides. Extraction and regeneration tools must never modify this file.",
-  "profile": "faithful",
-  "overrides": {}
+  "profile": "extended-caster-projectiles",
+  "overrides": {
+    "casterProjectileLifetime": {
+      "mapWidths": 1.1,
+      "unitIds": [9, 12]
+    }
+  }
 }

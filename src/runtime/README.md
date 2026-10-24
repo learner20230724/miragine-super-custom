@@ -83,6 +83,15 @@ clock.setRenderHz(120);              // Presentation only.
 
 ## Presentation interpolation
 
+`MiraginePlayback.presentation()` uses `RenderInterpolationBuffer`: matching and
+continuity are prepared once per immutable snapshot pair; entity records, the
+output array and camera are reused on later display frames. This is a **borrowed
+result until the next presentation call**. Consume synchronously and copy it
+explicitly to retain history. Steps, refreshes and scene resets invalidate the
+matching caches without overwriting the last presented camera before rendering.
+Removed records are dropped instead of retaining a peak-sized pool. The pure
+functions below retain their allocating, independent-result contract.
+
 `interpolateSnapshots` / `interpolateRenderState` create new presentation records
 for continuous positions and camera coordinates only. Current painter order,
 pose, HP and visibility are preserved. Births, removals and discontinuities snap

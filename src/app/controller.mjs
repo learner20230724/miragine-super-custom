@@ -1,4 +1,5 @@
 import { MiragineSimulation } from '../core/index.mjs';
+import { installSpatialOptimization } from '../performance/simulation-spatial.mjs';
 
 /** Native controller ported from the recovered MainTimeline/homebtns/tutorial/quitgame classes. */
 export class GameController {
@@ -29,7 +30,7 @@ export class GameController {
     this.simulation?.stop();
     this.singlePlay = !!singlePlay;
     this.difficulty = difficulty;
-    this.simulation = this.createSimulation({ config: this.config, singlePlay: this.singlePlay, difficulty });
+    this.simulation = installSpatialOptimization(this.createSimulation({ config: this.config, singlePlay: this.singlePlay, difficulty }));
     this.phase = 'game';
     this.overlay = this.neverTutorial() ? null : 'tutorial';
     this.underOverlay = null;

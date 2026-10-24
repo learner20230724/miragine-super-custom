@@ -1,6 +1,7 @@
 import { MiragineSimulation } from '../core/simulation.mjs';
 import { IsometricEntity, IsometricAttack } from '../core/entity.mjs';
 import { CoreSymbol } from '../core/scene.mjs';
+import { installSpatialOptimization } from '../performance/simulation-spatial.mjs';
 import { MAX_INTEGER, clampInteger, safeAdd, safeSubtract, safeMultiply,
   finiteAdd, finiteSubtract, scaleRatio } from './numeric.mjs';
 
@@ -198,6 +199,7 @@ export class CustomMiragineSimulation extends MiragineSimulation {
   constructor(options = {}) {
     super({ ...options, autoStart: false });
     installCustomRuntime(this, options.config, { initialize: true });
+    if (options.spatialOptimization === false) installSpatialOptimization(this, { enabled: false });
     if (options.autoStart !== false) this.step();
   }
   get timeSeconds() { return Math.trunc(this.round / this.rules.frameRate); }
@@ -322,7 +324,7 @@ export function installCustomRuntime(sim, configuration = sim.config, { initiali
     }
     sim.round = clampInteger(sim.rules.initialRoundFrames); sim.gameOverTime = clampInteger(sim.rules.gameOverDelayFrames ?? 30);
   }
-  sim[installed] = true; refresh(sim); return sim;
+  sim[installed] = true; refresh(sim); installSpatialOptimization(sim); return sim;
 }
 
 export const hasCustomRuntime = sim => Boolean(sim?.[installed]);

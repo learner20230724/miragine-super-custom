@@ -8,11 +8,15 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
-**Current source: v0.5.0-preview.2 usability update.** Left-drag the battlefield, type speed changes immediately, clear troops without confirmation, navigate AI categories through menus, and see difficulty separately from custom-rule status. Publication status is below.
+**Current source: v0.6.0-preview.1 large-army optimization.** Spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Publication status is below.
+
+**Also includes the requested projectile-lifetime configuration:** new vampire/wizard projectiles budget for 1.1 map widths; firing range and speed stay unchanged. Startup is correctly identified as custom rules. Return to original restores subsequent battles without rewriting disk configuration. See [parameters and restoration](docs/projectile-lifetime.en.md).
 
 **Retains v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
 
 ## Windows portable build
+
+**Unpackaged local source change:** `config/custom.json` now explicitly enables extended vampire/mage projectile life, calculated from 1.1 map widths. Only new projectile lifetime changes; firing range, speed, damage and cooldown remain unchanged. The baseline and “Return to original” retain the original lifetime. See [parameters and configuration](docs/projectile-lifetime.en.md). Published builds below do not yet contain this change.
 
 Download the Windows x64 preview from the **[custom Releases](https://github.com/learner20230724/miragine-super-custom/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. Keep this customization in a separate directory from the baseline game.
 
@@ -74,6 +78,10 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 The menu offers four single-player difficulties and local two-player play. Network multiplayer is not implemented.
 
 ### Performance
+
+Short 1000-soldier A/B test (same Electron, 1280×960 CSS / DPR 1.5, approximately three seconds per scene, 500 basic troops per side): the requested 8× overview improved from **54.85 to 129.25 simulation steps/s** and **34.97 to 46.23 presentation submissions/s**. Actual speed is about 4.31×, **not the 240 steps/s required for 8×**. RNG and external desktop load were uncontrolled; troops started at opposite ends, not a sustained worst-case melee. This comparison deliberately isolates performance changes from the concurrent projectile extension; the combined package is verified separately.
+
+Large-army acceleration lives in `src/performance/`, leaving recovered `src/core/` unchanged. It skips impossible comparisons while retaining original-list target ties, strict distances and reverse separation order; exceptional/extreme inputs fall back to the reference algorithm. Off-screen entities still simulate fully; conservative clipping respects partial sprites, effects and mirroring. Completed jobs keep progress metadata, not old battles. These changes do not promise unlimited armies or sustained 20×: dense contact and large-area attacks still cost work.
 
 **The released build renders into native window pixels:** 640×480 is the logical coordinate system, while the visible backing size is the fitted game viewport's CSS size × DPR, rounded to pixels. Ground retains its 640×400 logical projection but uses a matching-density WebGL surface and one-entry cache. HUD caches are cropped and aligned to device pixels; obsolete buffers are released on size/DPR changes. Input maps CSS coordinates to game coordinates without an extra DPR multiplier. Resizing while paused redraws without advancing simulation.
 

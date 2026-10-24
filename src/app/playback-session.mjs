@@ -1,9 +1,12 @@
 import { GameClock } from '../runtime/game-clock.mjs';
-import { interpolateRenderState } from '../runtime/render-interpolation.mjs';
+import { RenderInterpolationBuffer } from '../runtime/render-interpolation.mjs';
+
+const EMPTY_SNAPSHOT = Object.freeze([]);
 
 /** The game-specific adapter; the reusable clock never imports this controller. */
 export class MiraginePlayback {
   #pauseReasons = new Set();
+  #interpolation = new RenderInterpolationBuffer();
 
   constructor(controller, { now, inputStep = () => {}, renderHz = 240,
     maxWorkMs = Infinity, maxStepsPerAdvance = Infinity, workNow = () => performance.now() } = {}) {
@@ -29,6 +32,7 @@ export class MiraginePlayback {
       this.simulation = sim;
       // A new match reuses UIDs; never interpolate an old match into this one.
       this.previous = this.current = sim ? this.capture(sim) : null;
+      this.#interpolation.reset();
     }
   }
 
@@ -36,6 +40,7 @@ export class MiraginePlayback {
   refresh() {
     this.syncSimulation();
     this.previous = this.current = this.simulation ? this.capture(this.simulation) : null;
+    this.#interpolation.reset();
     this.invalidate();
     return this;
   }
@@ -118,10 +123,11 @@ export class MiraginePlayback {
     return result;
   }
 
+  /** Borrowed until the next presentation() call; copy explicitly to keep history. */
   presentation() {
     this.syncSimulation();
-    if (!this.current) return { snapshot: [], camera: null };
-    return interpolateRenderState(this.previous?.snapshot, this.current.snapshot, this.clock.alpha,
+    if (!this.current) return this.#interpolation.interpolate(null, EMPTY_SNAPSHOT, this.clock.alpha, { currentCamera: null });
+    return this.#interpolation.interpolate(this.previous?.snapshot, this.current.snapshot, this.clock.alpha,
       { previousCamera: this.previous?.camera, currentCamera: this.current.camera });
   }
 

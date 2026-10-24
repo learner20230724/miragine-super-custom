@@ -2,6 +2,7 @@ import { clone, freeze, checkedJSON, parseJSON, validateProfile, profileFromConf
   metadata, setProfileField, fieldSpecification, at, DRAFT_KEY, PRESETS_KEY, MAX_LIBRARY_BYTES, MAX_PRESETS, MAX_SANDBOX_UNITS, MAX_INTEGER } from './schema.mjs';
 import { installCustomRuntime, hasCustomRuntime, customSideConfiguration } from './runtime.mjs';
 import { clampInteger, clampFinite } from './numeric.mjs';
+import { releaseSpatialIndexes } from '../performance/simulation-spatial.mjs';
 
 export { DRAFT_KEY, PRESETS_KEY, MAX_SANDBOX_UNITS, validateProfile, profileFromConfiguration,
   configurationFromProfile } from './schema.mjs';
@@ -20,6 +21,8 @@ function integer(value, min, max, name) {
   return value;
 }
 function refresh(sim) {
+  // Explicit edits/paused clear must not retain the previous army until a tick.
+  releaseSpatialIndexes(sim);
   sim.renderSnapshot = sim.scene.children.map(child => child.visualState());
   sim.renderCamera = { ...sim.camera };
 }
@@ -101,8 +104,12 @@ export function createCustomization({ controller, defaults, initialConfig = cont
   }
   function cancelSpawn(reason = 'cancelled') {
     if (spawnTimer !== null) { cancelSchedule(spawnTimer); spawnTimer = null; }
-    if (!spawnJob || spawnJob.status !== 'running') return false;
-    spawnJob.status = 'cancelled'; spawnJob.reason = reason; notify('spawn-cancelled', publicSpawnJob()); return true;
+    if (!spawnJob) return false;
+    if (spawnJob.status !== 'running') { spawnJob.simulation = null; return false; }
+    spawnJob.status = 'cancelled'; spawnJob.reason = reason;
+    // Keep the progress receipt, not an abandoned scene and all of its units.
+    spawnJob.simulation = null;
+    notify('spawn-cancelled', publicSpawnJob()); return true;
   }
   function publicSpawnJob() {
     if (!spawnJob) return null;
@@ -128,10 +135,14 @@ export function createCustomization({ controller, defaults, initialConfig = cont
         job.completed++; batch++;
       }
       refresh(sim);
-      if (job.completed === job.requested) job.status = 'completed';
+      if (job.completed === job.requested) { job.status = 'completed'; job.simulation = null; }
       notify('spawn-progress', publicSpawnJob());
       if (job.status === 'running') spawnTimer = schedule(advanceSpawn);
-    } catch { job.status = 'failed'; job.error = '生成中断；已生成的士兵保留，可减少数量后重试。'; refresh(sim); notify('spawn-failed', publicSpawnJob()); }
+    } catch {
+      job.status = 'failed'; job.simulation = null;
+      job.error = '生成中断；已生成的士兵保留，可减少数量后重试。';
+      refresh(sim); notify('spawn-failed', publicSpawnJob());
+    }
   }
   // Calling the original factory with autoStart:false lets optional behavior be
   // installed before its first frame, preserving the original immediate step.

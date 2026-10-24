@@ -3,6 +3,24 @@
 This is a runnable **preview**, not a claim of exact Flash parity.
 当前是可运行预览版，不宣称已与 Flash 逐帧、逐像素完全一致。
 
+## Large armies — v0.6 source / 大军团优化源码
+
+- Spatial targeting/separation preserve reference comparison order and numeric behavior;
+  unsupported extreme coordinates use the original scans. Dense collisions and
+  area attacks can still be expensive. No new unit cap or resolution reduction.
+  寻敌／推挤索引保留比较顺序与数值规则，极端输入回退原扫描；密集碰撞、群体攻击
+  仍有计算成本。没有新增兵数上限，也不降低原生画质。
+- Off-screen culling skips drawing, not simulation. Display records are reused;
+  consumers retaining presentation history must explicitly copy them. Completed,
+  cancelled and failed spawn jobs release simulation references, retaining receipts.
+  屏外只是不绘制、照常模拟；显示记录复用，历史快照需复制。完成、取消或失败的
+  刷兵任务释放战局引用，仍保留进度记录。
+- Short benchmarks do not reproduce or disprove the reported 32 GB peak. JS heap,
+  summed process memory and GPU allocation are different measurements; no sustained
+  memory ceiling or 8×/20×/240 FPS guarantee is implied.
+  短测不等于复现或否定用户曾见的 32 GB 峰值；JS 堆、各进程内存与 GPU 分配是
+  不同指标，不宣称长期内存上限或锁定 8／20 倍及 240 FPS。
+
 ## Native-resolution release — v0.5.0-preview.1 / 原生分辨率预览版
 
 The [release record](releases/v0.5.0-preview.1.json) separates 663 runtime-source tests,

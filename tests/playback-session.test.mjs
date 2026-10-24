@@ -67,7 +67,7 @@ test('zero speed stops core, scheduled input and interpolation while presentatio
   const playback = new MiraginePlayback(c, { now: 0, inputStep: () => inputs++ });
   playback.advance(45);
   playback.setSpeed(0, 50);
-  const snapshot = c.simulation.snapshot(), presentation = playback.presentation(), count = inputs;
+  const snapshot = c.simulation.snapshot(), presentation = structuredClone(playback.presentation()), count = inputs;
   for (const now of [100, 200, 1000, 5000]) {
     const result = playback.advance(now);
     assert.equal(result.render, true);
@@ -232,4 +232,33 @@ test('playback forwards optional accelerated work budgets but leaves 1x and paus
   assert.equal(menu.workLimited, false);
   assert.equal(playback.speed, 0);
   assert.equal(playback.clock.speed, 1);
+});
+
+test('borrowed presentation is overwritten only by presentation, never advance, refresh or a new match', () => {
+  const c = controller(), playback = new MiraginePlayback(c, { now: 0 });
+  playback.advance(45);
+  const borrowed = playback.presentation(), old = structuredClone(borrowed);
+  playback.advance(95);
+  assert.deepEqual(borrowed, old);
+  const updated = playback.presentation();
+  assert.equal(updated, borrowed);
+  const held = structuredClone(updated);
+  c.simulation.renderSnapshot = c.simulation.renderSnapshot.map(value => ({ ...value, px: value.px + 200 }));
+  c.simulation.renderCamera = { ...c.simulation.renderCamera, x: 800 };
+  playback.refresh();
+  assert.deepEqual(updated, held);
+  assert.deepEqual(playback.presentation().snapshot, c.simulation.renderSnapshot);
+  const refreshed = structuredClone(updated);
+  c.startMatch(true, 2); playback.syncSimulation();
+  assert.deepEqual(updated, refreshed);
+  assert.deepEqual(playback.presentation().snapshot, c.simulation.renderSnapshot);
+});
+
+test('no-simulation presentations clear borrowed entity/camera output without mutating the previous view early', () => {
+  const c = controller(), playback = new MiraginePlayback(c, { now: 0 });
+  const borrowed = playback.presentation(), held = structuredClone(borrowed);
+  c.home(); c.simulation = null; playback.syncSimulation();
+  assert.deepEqual(borrowed, held);
+  assert.deepEqual(playback.presentation(), { snapshot: [], camera: null });
+  assert.equal(playback.presentation(), borrowed);
 });

@@ -4,6 +4,7 @@ import { projectViewGround, projectViewSymbol } from './view-camera.mjs';
 import { overviewGroundGeometry } from './overview-ground.mjs';
 import { spriteRasterPlacement, spriteSourcePlacement } from './sprite-source.mjs';
 import { drawSourceEffect } from './source-effects.mjs';
+import { projectedRectangleOutside, sourceEffectDrawBounds } from './sprite-culling.mjs';
 export { spriteRasterPlacement, spriteSourcePlacement } from './sprite-source.mjs';
 import {
   backgroundLayers,
@@ -157,6 +158,7 @@ export class BattlefieldRenderer {
     this.images = new Map();
     this.surfaces = new Map();
     this.sourcePlacements = new Map();
+    this.spriteDrawBounds = new Map();
     this.loaded = false;
     this.lastRenderStats = null;
     this.fidelity = RENDER_FIDELITY;
@@ -273,6 +275,18 @@ export class BattlefieldRenderer {
     return this.sourcePlacements.get(cacheKey);
   }
 
+  /** Shared asset extents, never a per-unit canvas or a world-position cache. */
+  spriteBounds(selection, sourceEffect) {
+    const cacheKey = `${selection.key}:${selection.index}`;
+    if (!this.spriteDrawBounds.has(cacheKey)) {
+      const raster = selection.sprite.rasterized;
+      this.spriteDrawBounds.set(cacheKey, sourceEffect
+        ? sourceEffectDrawBounds(selection.sprite, sourceEffect, this.images.get(sourceEffect.file))
+        : { x: raster.offX, y: raster.offY, width: raster.width, height: raster.height });
+    }
+    return this.spriteDrawBounds.get(cacheKey);
+  }
+
   drawBackground(layer) {
     const record = this.manifest.images[layer.key];
     if (!record) return;
@@ -356,7 +370,7 @@ export class BattlefieldRenderer {
     return { ...result, stats: this.displayGroundStats };
   }
 
-  render(snapshot, camera, { clear = true, displayView = null } = {}) {
+  render(snapshot, camera, { clear = true, displayView = null, cullOffscreen = true } = {}) {
     if (!this.loaded) throw new Error('Call and await BattlefieldRenderer.load() before rendering');
     if (!Array.isArray(snapshot)) throw new TypeError('renderSnapshot must be an array');
     if (displayView && (displayView.kind !== 'observation-view'
@@ -366,7 +380,14 @@ export class BattlefieldRenderer {
       throw new TypeError('Observation displayView must target the separate 640x400 battlefield');
     }
     const context = this.context;
-    const stats = { spritesDrawn: 0, hidden: 0, emptySymbols: 0,
+    // Production uses unfiltered source-over sprites. Do not extend this
+    // optimization to caller-supplied effects or destination-wide composites
+    // whose output can reach beyond the submitted image rectangle.
+    const canCull = cullOffscreen && (context.globalCompositeOperation ?? 'source-over') === 'source-over'
+      && (context.filter ?? 'none') === 'none' && !(context.shadowBlur > 0)
+      && !(context.shadowOffsetX) && !(context.shadowOffsetY);
+    const stats = { spritesDrawn: 0, hidden: 0, emptySymbols: 0, culledSprites: 0,
+      offscreenCulling: canCull,
       missingSprites: [], zeroScale: 0, unsupportedCoordinates: 0,
       spriteRasterMode: this.spriteRasterMode, sourceSpritesDrawn: 0,
       renderWidth: this.renderWidth, renderHeight: this.renderHeight,
@@ -437,6 +458,18 @@ export class BattlefieldRenderer {
           ? this.sourceFrames?.[selection.key]?.[selection.index] ?? null : null;
         const source = this.spriteRasterMode === 'source' && !sourceEffect ? this.spriteSource(selection) : null;
         if (this.spriteRasterMode === 'source' && !sourceEffect && !source) { stats.emptySymbols += 1; continue; }
+        // The complete projected draw rectangle matters: a foot may be well
+        // outside while its mirrored sprite or giant effect still intersects.
+        // The baseline switch is for pixel/sequence verification, not an LOD.
+        if (canCull) {
+          const bounds = source ?? this.spriteBounds(selection, sourceEffect);
+          if (bounds && projectedRectangleOutside(projected, bounds,
+            BATTLEFIELD_WIDTH, BATTLEFIELD_HEIGHT, 1 / this.renderScaleX, 1 / this.renderScaleY)) {
+            stats.culledSprites += 1;
+            continue;
+          }
+        }
+        // Avoid even allocating a legacy raster for a wholly invisible frame.
         const bitmap = this.spriteRasterMode === 'legacy' ? this.spriteSurface(selection) : null;
         context.save();
         try {
@@ -478,6 +511,7 @@ export class BattlefieldRenderer {
     this.images.clear();
     this.surfaces.clear();
     this.sourcePlacements.clear();
+    this.spriteDrawBounds.clear();
     this.loaded = false;
     this.loadPromise = null;
   }
