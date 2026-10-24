@@ -8,7 +8,9 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
-**Released in v0.5.0-preview.1: native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
+**Current source: v0.5.0-preview.2 usability update.** Left-drag the battlefield, type speed changes immediately, clear troops without confirmation, navigate AI categories through menus, and see difficulty separately from custom-rule status. Publication status is below.
+
+**Retains v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
 
 ## Windows portable build
 
@@ -59,7 +61,7 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 | Drag the minimap | Move the camera |
 | I / J / K / L | World-coordinate pan: approximately four real seconds between default crystals, independent of zoom/speed |
 | Wheel over the battlefield | Pointer-anchored zoom; map boundaries take priority at limits |
-| Right / middle mouse drag | Pan the observation camera without changing combat |
+| Left / right / middle mouse drag | Pan into free observation; left dragging starts after 5 CSS pixels, so simple clicks do not pan |
 | F2 | The only settings entry: opening/closing never changes pause state. Side-by-side in wide windows, stacked in narrow windows |
 | Lower-left pause/resume text | Manual pause/resume; crisp clickable text above matching help/quit controls |
 | Settings speed slider / numeric input | 0–20× in 0.1 increments: 0 pauses, 1 is normal, 0.1–0.9 is slow motion |

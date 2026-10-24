@@ -2,7 +2,7 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes the current v4 source layout. Release availability and packaged verification are recorded separately. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes the v0.5.0-preview.2 source layout. Release availability and packaged verification are recorded separately. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 
@@ -12,6 +12,12 @@ This guide describes the current v4 source layout. Release availability and pack
 - **View/display comes below time:** free observation, follow, compact overview, fullscreen and 30/60/120/240 FPS targets. Fullscreen also uses F11; overview is camera framing, not window fullscreen.
 - The lower-left game controls are clear clickable text: **pause/resume, help, quit**. They are not the original blurry button bitmaps. Pause works without opening settings.
 
+Left/right/middle dragging pans the main battlefield into free observation. Left dragging starts after 5 CSS pixels; simple clicks do not pan. Minimap navigation, wheel zoom and IJKL remain available. Valid numeric speed edits apply while typing; basic rule fields still commit on Enter or blur.
+
+The match summary shows actual difficulty separately from original/custom rule status. Selecting a difficulty with unchanged defaults does not mark a new match custom. AI difficulty/category/candidate-table menus only navigate editing content; they preserve pending drafts and never change the current match difficulty.
+
+The three clear-troop buttons act immediately without a confirmation dialog; crystals remain, no refund or undo is provided.
+
 ## Five pages
 
 | Page | What it controls | When it changes the game |
@@ -19,7 +25,7 @@ This guide describes the current v4 source layout. Release availability and pack
 | Current match / basics | Red and blue current money, income, remaining manpower, crystal current/max HP, crystal damage/range/cooldown; shared income/manpower limits, round/recruitment timing and multipliers | Numeric fields commit on Enter or leaving the field. Each rule edit applies only that field, not unrelated draft edits. Current-resource changes affect this match only |
 | Units | All 16 units; red and blue values side by side, independently editable | Draft first; click **Apply settings** |
 | Starting settings | Separate red/blue starting money, red starting income/manpower, blue starting income/manpower for each difficulty, initial wait, and starting automation choices | All fields here affect a new match only. Click **Apply settings** to use them next match, or choose difficulty using four visible buttons and start from the draft |
-| Difficulty / AI | Four expanded cards, each with blue crystal attack values, counter-branch probability and detailed AI rules | Draft first; after application, only the current difficulty's profile affects this match. Editing another profile does not switch difficulty |
+| Difficulty / AI | Difficulty/category menus for blue crystal attack values, counter-branch probability and detailed AI rules | Draft first; after application, only the current difficulty's profile affects this match. Editing another profile does not switch difficulty |
 | Presets / files | Save, load, overwrite, delete, JSON import/export | Loading/importing changes the draft, not the battle; saving does not apply it |
 
 Both sides are visible together on the homepage; no red/blue selector is needed. Recruitment switches, selected recruits and the blue selection-AI switch act immediately there. These live switches do not themselves save starting automation choices into a preset; set those on the starting page. Applying unit/AI drafts preserves the current recruitment and selection-AI switches; starting automation choices wait for a new match.

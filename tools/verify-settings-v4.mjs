@@ -449,8 +449,10 @@ export async function verifySettingsV4(options) {
     for (const side of ['left', 'right']) await element(`[data-live-recruitment="${side}"]`).uncheck();
     await act('clear-all').click();
     await act('tab-difficulties').click();
-    check(await element('[data-ai-difficulty]').count() === 4 && await element('[data-entry-select="difficulties"]').count() === 0,
-      'all four AI difficulty cards are expanded rather than hidden in a select');
+    check(await element('[data-ai-difficulty]').count() === 1 && await element('[data-entry-select="difficulties"] option').count() === 4,
+      'AI difficulty menu shows one editable difficulty at a time');
+    await element('[data-entry-select="difficulties"]').selectOption('1');
+    await element('[data-ai-category]').selectOption('thresholds');
     const aiFields = await element('[data-ai-difficulty="1"] [data-field-path]').evaluateAll(nodes => nodes.map(node => node.dataset.fieldPath));
     const forcedMoney = aiFields.find(name => name.endsWith('.forceOverlordMoneyThreshold'));
     const forcedCount = aiFields.find(name => name.endsWith('.forceOverlordEliteCountThreshold'));

@@ -8,6 +8,17 @@ import { createCustomization, profileFromConfiguration, validateProfile, configu
 import { parseJSON, MAX_DOCUMENT_BYTES } from '../src/customization/schema.mjs';
 
 const defaults = JSON.parse(readFileSync(new URL('../config/defaults.generated.json', import.meta.url), 'utf8'));
+test('untouched draft starts original rules at every difficulty; actual changes remain custom', () => {
+  const {custom,controller}=setup();
+  for(let difficulty=0;difficulty<4;difficulty++) {
+    custom.startBattle({difficulty,singlePlay:true});
+    assert.equal(custom.getMode().current,'original');assert.equal(controller.simulation.difficulty,difficulty);
+    assert.deepEqual(controller.config,defaults);
+  }
+  custom.updateDraft('config.rules.incomeLimit',54321);custom.startBattle({difficulty:3});
+  assert.equal(custom.getMode().current,'custom');assert.equal(controller.simulation.incomeLimit,54321);
+  custom.resetDraft();custom.startBattle({difficulty:3});assert.equal(custom.getMode().current,'original');
+});
 test('rule profile and sandbox battle identity never advertise modified runs as original', () => {
   const { custom, controller, sim } = start();
   assert.equal(custom.getMode().current, 'original');

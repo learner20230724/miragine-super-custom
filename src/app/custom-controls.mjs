@@ -124,6 +124,9 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
     // Keep partial edits and ordinary decimals intact until committed, while a
     // genuinely excessive number is visibly clamped as soon as it is entered.
     if (value !== null && (Number(raw) < 0 || Number(raw) > 20)) numeric.value = String(value);
+    // A valid typed value behaves like the slider immediately. Do not replace
+    // the editing text/caret: partial decimals and exponents remain editable.
+    if (value !== null && value !== state.speed) onSpeed(value);
   });
   listen(numeric, 'change', event => { event.stopPropagation(); changeSpeed(numeric); });
   listen(numeric, 'keydown', event => {
@@ -154,7 +157,7 @@ export function createCustomControls({ root, onSpeed = () => {}, onOverview = ()
     const rate = Number(rateSelect.value); if (CUSTOM_RENDER_RATES.includes(rate)) onRenderRate(rate);
     rateSelect.value = String(state.renderHz);
   });
-  const help = node('div', '滚轮缩放 · 右 / 中键拖动 · IJKL 移动。显示上限是目标，实际帧率受屏幕刷新率和机器性能限制。');
+  const help = node('div', '滚轮缩放 · 战场左 / 右 / 中键拖动 · IJKL 移动。显示上限受屏幕与机器性能限制。');
   help.className = 'custom-controls-help'; viewSection.appendChild(help);
   for (const host of [element, playbackElement]) {
     for (const type of ['pointerdown', 'pointerup', 'click', 'wheel']) listen(host, type, event => event.stopPropagation());

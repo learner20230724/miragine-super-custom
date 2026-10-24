@@ -245,8 +245,12 @@ export function createCustomization({ controller, defaults, initialConfig = cont
       notify('apply-current', report); return report;
     },
     applyNext() {
-      const valid = validateProfile(draft), configuration = configurationFromProfile(configurationTemplate, valid);
-      next = clone(valid); nextIsCustom = true; nextMode = 'custom';
+      const valid = validateProfile(draft);
+      // Choosing a difficulty with untouched original settings is not a custom
+      // rule set. Non-profile external overrides must still remain identifiable.
+      const originalRules = same(valid, original) && same(configurationTemplate, baseline);
+      const configuration = originalRules ? faithfulConfig : configurationFromProfile(configurationTemplate, valid);
+      next = clone(valid); nextIsCustom = !originalRules; nextMode = originalRules ? 'original' : 'custom';
       if (controller.phase !== 'game') controller.config = configuration;
       notify('apply-next', { applied: [], deferred: changedFields(applied, valid).map(field => field.path) });
       return clone(next);

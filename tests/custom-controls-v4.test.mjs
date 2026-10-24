@@ -66,7 +66,7 @@ test('v4 time section contains speed and full-width pause; camera section follow
   }
   assert.equal(f.find('[data-action="pause"]').className, 'custom-controls-pause');
   assert.match(CUSTOM_CONTROLS_CSS, /custom-controls-pause\s*\{width:100%/);
-  assert.match(sections[1].children.at(-1).textContent, /屏幕刷新率和机器性能/);
+  assert.match(sections[1].children.at(-1).textContent, /战场左 \/ 右 \/ 中键拖动/);
   f.controls.destroy();
 });
 
@@ -75,14 +75,14 @@ test('v4 speed normalization clamps numeric limits and rounds decimals without a
   for (const invalid of ['', ' ', 'NaN', 'Infinity', '-Infinity', 'n/a', '--1', '1e', '+', '.']) assert.equal(normalizeSpeedInput(invalid), null, invalid);
 });
 
-test('v4 speed input clamps immediately while preserving intermediate edits and only requests on commit', () => {
+test('speed input applies valid typing immediately while preserving intermediate edits', () => {
   const requests = []; const f = setup({ onSpeed(speed) { requests.push(speed); f.controls.update({ speed }); } });
   f.controls.update({ enabled: true });
   const input = f.find('[data-action="speed-number"]'); input.focus();
   assert.equal(input.type, 'text'); assert.equal(input.inputMode, 'decimal');
   for (const [raw, displayed, request] of [['1e9999', '20', 20], ['-1e9999', '0', 0], ['19.99', '19.99', 20], ['0.15', '0.15', 0.2]]) {
     const previous = requests.length; input.value = raw; input.fire('input');
-    assert.equal(input.value, displayed); assert.equal(requests.length, previous);
+    assert.equal(input.value, displayed); assert.equal(requests.length, previous + 1); assert.equal(requests.at(-1), request);
     input.fire('change'); assert.equal(requests.at(-1), request); assert.equal(input.value, String(request));
   }
   input.value = '1.'; input.fire('input'); f.controls.update({ actualDisplayHz: 40 }); assert.equal(input.value, '1.');

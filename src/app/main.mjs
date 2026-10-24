@@ -13,6 +13,7 @@ import { GameController } from './controller.mjs';
 import { OriginalGameView } from './view.mjs';
 import { GameAudio } from './audio.mjs';
 import { OriginalKeyboard } from './input.mjs';
+import { beginPointerDrag, advancePointerDrag } from './pointer-drag.mjs';
 import { createPreferenceStorage } from './preferences.mjs';
 
 const canvas = document.querySelector('#game');
@@ -271,11 +272,11 @@ function battlefieldPoint(p) {
 canvas.addEventListener('pointerdown', event => {
   if (!ready) return;
   const p = point(event);
-  if ((event.button === 1 || event.button === 2) && battlefieldPoint(p)) {
+  if ([0, 1, 2].includes(event.button) && battlefieldPoint(p)) {
     event.preventDefault();
     audio.unlock();
     canvas.focus({ preventScroll: true });
-    cameraDrag = { pointerId: event.pointerId, previous: p };
+    cameraDrag = beginPointerDrag(event, p);
     canvas.setPointerCapture(event.pointerId);
     return;
   }
@@ -293,16 +294,16 @@ canvas.addEventListener('pointermove', event => {
   const p = point(event);
   view.pointer = p;
   frameClock?.invalidate();
-  if (cameraDrag?.pointerId === event.pointerId && p) {
-    observer.panBy(p.x - cameraDrag.previous.x, p.y - cameraDrag.previous.y,
-      presentation?.camera ?? controller.simulation.renderCamera, cameraDrag.previous);
-    cameraDrag.previous = p;
+  const drag = advancePointerDrag(cameraDrag, event, p);
+  if (drag) {
+    observer.panBy(drag.x, drag.y,
+      presentation?.camera ?? controller.simulation.renderCamera, drag.pivot);
     updateControls(performance.now(), true);
   }
   if (mapDrag) moveMap(p);
   const h = view.hit(p);
-  canvas.style.cursor = cameraDrag ? 'grabbing' : h && h.action !== 'blocked'
-    && (h.action !== 'unit' || h.side !== 'right' || !controller.singlePlay) ? 'pointer' : 'default';
+  canvas.style.cursor = cameraDrag?.active ? 'grabbing' : h && h.action !== 'blocked'
+    && (h.action !== 'unit' || h.side !== 'right' || !controller.singlePlay) ? 'pointer' : battlefieldPoint(p) ? 'grab' : 'default';
 });
 
 canvas.addEventListener('pointerup', event => {
@@ -329,6 +330,7 @@ canvas.addEventListener('pointerup', event => {
   if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
 });
 canvas.addEventListener('pointercancel', () => { mapDrag = false; pressed = null; cameraDrag = null; });
+canvas.addEventListener('lostpointercapture', () => { mapDrag = false; pressed = null; cameraDrag = null; });
 canvas.addEventListener('pointerleave', () => {
   if (view && !mapDrag) { view.pointer = null; frameClock?.invalidate(); }
 });

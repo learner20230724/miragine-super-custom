@@ -93,8 +93,11 @@ test('metadata supplies real editable sections with defaults and no invented bui
   f.tab('units'); assert.equal(f.find('[data-entry-select="units"]').children.length, 16);
   assert.equal(f.find('[data-field-path="config.sides.left.units.0.weaponSpeed"]').value, '0.83');
   assert.match(f.panel.element.textContent, /原版默认/); assert.match(f.panel.element.textContent, /向零取整/);
-  f.tab('difficulties'); assert.equal(f.find('[data-entry-select="difficulties"]'), null);
-  for (let id = 0; id < 4; id++) assert.ok(f.find(`[data-field-path="config.difficulties.${id}.counterSelectionProbability"]`));
+  f.tab('difficulties'); assert.ok(f.find('[data-entry-select="difficulties"]'));
+  for (let id = 0; id < 4; id++) {
+    const select=f.find('[data-entry-select="difficulties"]');select.value=String(id);select.fire('change');
+    assert.ok(f.find(`[data-field-path="config.difficulties.${id}.counterSelectionProbability"]`));
+  }
   f.panel.destroy();
 });
 
@@ -206,12 +209,13 @@ test('sandbox spawn, clear and remaining resources are explicit real controller 
   assert.equal(sim.leftMoney, 900); assert.equal(sim.leftIncome, 77); assert.equal(sim.leftPopulation, 12);
   assert.equal(sim.populationLimit, defaults.rules.populationLimit); assert.match(f.panel.element.textContent, /本轮剩余人口/);
   f.button('clear-all').click(); await settle(); assert.equal(sim.friendList.filter(unit => unit.kind === 'unit').length, 0);
-  assert.equal(sim.redBoss.nowHP, defaults.rules.baseHp); assert.ok(f.confirms.length); f.panel.destroy();
+  assert.equal(sim.redBoss.nowHP, defaults.rules.baseHp); assert.equal(f.confirms.length, 0); f.panel.destroy();
 });
 
-test('cancelled confirmation prevents destructive clearing and draft reset', async () => {
+test('clearing needs no confirmation while cancelled draft reset still preserves edits', async () => {
   const f = fixture({ accept: false }); f.custom.spawn({ side: 'left', unitId: 0, count: 1 }); f.custom.updateDraft('config.sides.left.units.0.hp', 111);
-  f.panel.open(); f.button('clear-all').click(); await settle(); assert.equal(f.controller.simulation.friendList.filter(unit => unit.kind === 'unit').length, 1);
+  f.panel.open(); f.button('clear-all').click(); await settle(); assert.equal(f.controller.simulation.friendList.filter(unit => unit.kind === 'unit').length, 0);
+  assert.equal(f.confirms.length, 0);
   f.button('reset').click(); await settle(); assert.equal(f.custom.getState().draft.config.sides.left.units[0].hp, 111); f.panel.destroy();
 });
 

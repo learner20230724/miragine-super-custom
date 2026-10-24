@@ -266,13 +266,33 @@ test('v4 unit input clamps extreme cost to a safe integer without blocking apply
   assert.equal(f.button('apply-current').disabled, false); f.panel.destroy();
 });
 
-test('v4 all four difficulties are expanded at once rather than hidden behind a selector', () => {
+test('AI uses difficulty/category/candidate menus while starting difficulty buttons remain direct', () => {
   const f = fixture(); f.panel.open(); f.tab('difficulties');
-  assert.equal(f.find('[data-entry-select="difficulties"]'), null);
-  for (let id = 0; id < 4; id++) assert.ok(f.find(`[data-field-path="config.difficulties.${id}.counterSelectionProbability"]`), `difficulty ${id}`);
+  for (let id = 0; id < 4; id++) {
+    const select = f.find('[data-entry-select="difficulties"]'); select.value=String(id); select.fire('change');
+    assert.equal(f.panel.element.querySelectorAll('[data-ai-difficulty]').length, 1);
+    assert.ok(f.find(`[data-field-path="config.difficulties.${id}.counterSelectionProbability"]`));
+  }
+  const category=f.find('[data-ai-category]'); category.value='candidates'; category.fire('change');
+  assert.equal(f.panel.element.querySelectorAll('[data-candidate-unit]').length,16);
+  const candidate=f.find('[data-ai-candidate-select]');candidate.value='counterChoices.5';candidate.fire('change');
+  assert.ok(f.find('[data-field-path="config.difficulties.3.ai.counterChoices.5"]'));
+  assert.equal(f.controller.difficulty,1,'editing menus never change active difficulty');
   f.tab('starting');
   for (let id = 0; id < 4; id++) assert.ok(f.find(`[data-start-difficulty="${id}"]`), `starting difficulty ${id}`);
   f.panel.destroy();
+});
+
+test('battle summary separates actual difficulty from custom rules and live help is not repeated', async () => {
+  const f=fixture(); f.controller.startMatch(true,3); f.panel.open();
+  assert.match(f.find('[data-battle-summary]').textContent,/不可战胜/);
+  assert.match(f.find('[data-battle-summary]').textContent,/原版规则/);
+  f.custom.spawn({side:'left',unitId:0,count:1}); f.panel.update();
+  assert.match(f.find('[data-battle-summary]').textContent,/不可战胜/);
+  assert.match(f.find('[data-battle-summary]').textContent,/自定义（已修改）/);
+  assert.doesNotMatch(f.find('[data-live-field-path="config.rules.incomeLimit"]').parentNode.textContent,/Enter|离开输入框/);
+  for(const action of ['clear-left','clear-right','clear-all']) {f.button(action).click();await settle();}
+  assert.equal(f.confirms.length,0); f.panel.destroy();
 });
 
 test('v4 next-match-only values live on the starting page, not the current battle homepage', () => {
@@ -287,11 +307,14 @@ test('v4 next-match-only values live on the starting page, not the current battl
 
 test('v4 AI thresholds, toggles, and candidate sets are editable separately for every difficulty', () => {
   const f = fixture(); f.panel.open(); f.tab('difficulties');
+  f.edit('config.difficulties.1.counterSelectionProbability', '2');
+  const category=f.find('[data-ai-category]');category.value='thresholds';category.fire('change');
   f.edit('config.difficulties.1.ai.forceOverlordMoneyThreshold', '999999999999999999999999');
   f.edit('config.difficulties.1.ai.forceOverlordEliteCountThreshold', '37');
-  f.edit('config.difficulties.1.counterSelectionProbability', '2');
   const enabled = f.find('[data-field-path="config.difficulties.1.ai.forceMoneyEnabled"]'); assert.ok(enabled);
   enabled.checked = false; enabled.fire('change');
+  const candidates=f.find('[data-ai-category]');candidates.value='candidates';candidates.fire('change');
+  const menu=f.find('[data-ai-candidate-select]');menu.value='eliteUnitIds';menu.fire('change');
   const elite = f.find('[data-field-path="config.difficulties.1.ai.eliteUnitIds"]'); assert.ok(elite);
   assert.equal(elite.querySelectorAll('[data-candidate-unit]').length, 16);
   const recruit = elite.querySelector('[data-candidate-unit="0"]'); recruit.checked = true; recruit.fire('change');

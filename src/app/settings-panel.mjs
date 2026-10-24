@@ -247,7 +247,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       if (field.type !== 'unit-list') { const id = `miragine-field-${field.path.replace(/[^a-zA-Z0-9_-]/g, '-')}`; input.id = id; name.setAttribute('for', id); }
       wrap.appendChild(name); wrap.appendChild(input);
       const defaultValue = readPath(current.defaults, field.path);
-      wrap.appendChild(node('span', 'ms-field-help', `${field.unit ? `${field.unit} · ` : ''}原版默认：${Array.isArray(defaultValue) ? defaultValue.join(', ') : formatted(defaultValue)} · ${live ? 'Enter / 离开输入框直接生效' : field.apply ?? '应用后生效'}`));
+      const timing = live ? field.apply?.startsWith('下次') ? field.apply : '' : field.apply ?? '应用后生效';
+      wrap.appendChild(node('span', 'ms-field-help', `${field.unit ? `${field.unit} · ` : ''}原版默认：${Array.isArray(defaultValue) ? defaultValue.join(', ') : formatted(defaultValue)}${timing ? ` · ${timing}` : ''}`));
       parent.appendChild(wrap);
     }
   }
@@ -272,10 +273,12 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     if (type === 'unit-list') return candidateInput(field, value);
     const isText = type === 'string' || type === 'text', isBool = type === 'boolean';
     const multiline = isText && field.path.endsWith('description');
-    const input = node(multiline ? 'textarea' : 'input');
+    const unitChoice = !isText && !isBool && field.unit === '兵种 ID';
+    const input = node(unitChoice ? 'select' : multiline ? 'textarea' : 'input');
+    if (unitChoice) for (const unit of group('units')?.entries ?? []) option(input, unit.id, unit.label);
     // Text + numeric inputMode preserves overflowing numeric text so it can be clamped;
     // type=number silently empties values such as 1e999 before input handlers can read them.
-    if (!multiline) input.type = isBool ? 'checkbox' : 'text';
+    if (!multiline && !unitChoice) input.type = isBool ? 'checkbox' : 'text';
     if (isBool) input.checked = Boolean(value); else input.value = String(value ?? '');
     input.setAttribute('data-field-path', field.path); input.setAttribute('aria-label', `${prefix ? `${prefix}：` : ''}${field.label}`);
     if (!isText && !isBool) {
@@ -432,7 +435,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     const clearActions = node('div', 'ms-row'); spawnCard.appendChild(clearActions);
     for (const [side, sideLabel, actionId] of [['left', '红方', 'clear-left'], ['right', '蓝方', 'clear-right'], ['both', '双方', 'clear-all']]) {
       battleButton(clearActions, '清除' + sideLabel + '士兵', actionId, async () => {
-        if (!confirmAction('清除' + sideLabel + '士兵与相关投射物？水晶保留，不能撤销。')) return;
         await customization.clearTroops(side); notice('已清除' + sideLabel + '士兵。');
       }, 'ms-danger');
     }
@@ -466,7 +468,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       if (state().isBattle && !confirmAction('重新开始将结束当前战局。按当前草稿开始新局？')) return;
       const options = { difficulty: startDifficulty, singlePlay: startSinglePlay };
       if (onStartBattle) await onStartBattle(options); else await customization.startBattle(options);
-      notice('已按草稿开始自定义战局；打开设置不会暂停游戏。');
+      notice('已开始新战局。');
     }), 'ms-primary', true);
     const entries = group('starting')?.entries ?? group('start')?.entries ?? [];
     for (const entry of entries) {
@@ -479,13 +481,34 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     }
   }
   function renderDifficulties() {
-    content.appendChild(node('p', 'ms-summary', '四个难度直接展开。只会影响本局对应难度；其他难度留待选用。AI 使用阈值和候选表，不会根据修改后的兵种数值自动学习克制关系。开局金币、收入与人口在“开局设置”。'));
-    for (const entry of group('difficulties')?.entries ?? []) {
-      const section = card(content, entry.label); section.setAttribute('data-ai-difficulty', entry.id);
-      if (entry.description) section.appendChild(node('p', 'ms-muted', entry.description));
-      const fields = (entry.fields ?? []).filter(field => field.apply !== '下局');
-      fieldsInto(section, fields);
-    }
+    const entries = group('difficulties')?.entries ?? [];
+    const selected = selection.get('difficulties') ?? String(state().battle?.difficulty ?? 1);
+    const entry = entries.find(item => String(item.id) === selected) ?? entries[0];
+    const selector = selectInput(entries.map(item => [item.id, item.label]), '编辑哪个难度的 AI');
+    selector.setAttribute('data-entry-select', 'difficulties'); selector.value = String(entry?.id ?? '');
+    on(selector, 'change', () => { selection.set('difficulties', selector.value); renderContent(); }, true);
+    label(content, 'AI 难度', selector);
+    const groups = [['general', '概率与水晶战斗参数'], ['thresholds', '选兵阈值与强制选兵'], ['candidates', '随机候选与反制表']];
+    const category = selection.get('ai-category') ?? 'general';
+    const menu = selectInput(groups, 'AI 参数分类'); menu.value = category; menu.setAttribute('data-ai-category', '');
+    on(menu, 'change', () => { selection.set('ai-category', menu.value); renderContent(); }, true);
+    label(content, '参数分类', menu);
+    content.appendChild(node('p', 'ms-live-note', '选择这里只切换编辑内容，不改变本局难度；修改后点击底部应用。'));
+    const section = card(content, entry?.label ?? 'AI'); section.setAttribute('data-ai-difficulty', entry?.id ?? '');
+    const fields = (entry?.fields ?? []).filter(field => field.apply !== '下局');
+    if (category === 'candidates') {
+      const candidates = fields.filter(field => field.type === 'unit-list');
+      const chosen = candidates.find(field => field.path.split('.ai.')[1] === selection.get('ai-candidate')) ?? candidates[0];
+      const choices = selectInput(candidates.map(field => {
+        const key = field.path.split('.ai.')[1], id = /^counterChoices\.(\d+)$/.exec(key)?.[1];
+        const unit = group('units')?.entries?.find(item => String(item.id) === id);
+        return [key, unit ? `对 ${unit.label} 的反制候选` : field.label];
+      }), '选择候选兵种表');
+      choices.setAttribute('data-ai-candidate-select', ''); choices.value = chosen?.path.split('.ai.')[1] ?? '';
+      on(choices, 'change', () => { selection.set('ai-candidate', choices.value); renderContent(); }, true);
+      label(section, '候选表', choices); fieldsInto(section, chosen ? [chosen] : []);
+    } else fieldsInto(section, fields.filter(field => category === 'general' ? !field.path.includes('.ai.')
+      : field.path.includes('.ai.') && field.type !== 'unit-list'));
   }
   let presetSelect = null, presetName = null;
   function renderPresets() {
@@ -605,7 +628,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       else {
         const battle = current.battle;
         const line = (side, name) => `${name}：金币 ${formatted(battle[side]?.money)} · 收入 ${formatted(battle[side]?.income)} · 人口 ${formatted(battle[side]?.population)} · 士兵 ${formatted(battle[side]?.units)} · 水晶 HP ${formatted(battle[side]?.baseHp)}`;
-        setText(summary, `本局：${current.mode === 'original' ? '原版规则' : '自定义战局'}\n${line('left', '红方')}\n${line('right', '蓝方')}`);
+        const difficulty = group('difficulties')?.entries?.find(entry => Number(entry.id) === Number(battle.difficulty));
+        setText(summary, `本局难度：${difficulty?.label ?? battle.difficulty}\n规则：${current.mode === 'original' ? '原版规则' : '自定义（已修改）'}\n${line('left', '红方')}\n${line('right', '蓝方')}`);
       }
     }
     for (const side of ['left', 'right']) {
