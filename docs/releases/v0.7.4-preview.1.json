@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "version": "0.7.4-preview.1",
+  "status": "published-and-verified",
+  "runtimeCommit": "240b66b55e6cbe38664e9db2a301d41fea4cf284",
+  "verificationToolCommit": "240b66b55e6cbe38664e9db2a301d41fea4cf284",
+  "verificationTools": [
+    {
+      "path": "tools/verify-dual-ai.mjs",
+      "name": "verify-dual-ai.mjs",
+      "sha256": "ad93e22b0fa9aa8e0bc1011353eb9544ce482fd119061c0162fb905a73a59cde"
+    },
+    {
+      "path": "tools/verify-settings-auto.mjs",
+      "name": "verify-settings-auto.mjs",
+      "sha256": "661d30f3de10a13a28bb7cea1071aeaec9412793a35d15206c162d1dafe33925"
+    }
+  ],
+  "releaseId": 422878643,
+  "publishedAt": "2026-10-24T17:32:38Z",
+  "releaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.4-preview.1",
+  "sourceTests": {
+    "tests": 1031,
+    "suites": 0,
+    "pass": 1031,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 88708.3557
+  },
+  "portableAcceptance": {
+    "checks": 271,
+    "totalMeaning": "Arithmetic sum of two freshly executed current-version suites, not unique scenarios and not personal handoff checks.",
+    "launches": 3,
+    "suites": [
+      {
+        "suite": "automatic-settings-real-exe",
+        "scope": "Settings/compact sidebar, automatic persistence, focus, held selection and smooth U/O regression",
+        "checks": 169,
+        "launches": 2,
+        "reviewedPublicScreenshots": 17,
+        "domConfirmations": 17
+      },
+      {
+        "suite": "dual-ai-clean-hud-real-exe",
+        "scope": "Original-style three-entry menu, independent difficulty buttons, clean difficulty HUD, recruitment/camera shortcuts and preserved AI behavior",
+        "checks": 102,
+        "launches": 1,
+        "reviewedPublicScreenshots": 9
+      }
+    ],
+    "runtimeErrors": 0,
+    "ownedQaApplicationsClosed": true,
+    "reviewedPublicScreenshots": 26,
+    "scope": "Two freshly executed isolated portable-EXE suites; excludes private installation/handoff checks. Settings confirmation counts belong to the settings suite only."
+  },
+  "ci": {
+    "databaseId": 40114753173,
+    "headSha": "240b66b55e6cbe38664e9db2a301d41fea4cf284",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40114753173",
+    "jobs": [
+      {
+        "name": "Source / windows-latest / Python 3.14",
+        "conclusion": "success"
+      },
+      {
+        "name": "Source / ubuntu-latest / Python 3.13",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "features": [
+    "The title menu retains three original-style buttons, replacing Credits with AI versus AI. Each side uses four original-style difficulty buttons; strategy and default full difficulty-stat differences remain.",
+    "Battlefield overlays retain only the original-style difficulty phrase on each side, without AI prefixes or recruitment buttons.",
+    "Space/Enter independently toggle red/blue recruitment once per physical press, including during global pause without logic advancement. These shortcuts affect only the current match and preserve editing/confirmation priority.",
+    "P selects compact battlefield overview; the physical Semicolon key restores Follow. IJKL, dragging and minimap positioning enter free observation. Original U/O, wheel zoom and 30 Hz logic remain.",
+    "The compact sidebar removes persistent explanatory text while retaining fields, units, actual live values, saving status and action feedback. Three AI categories expose all four random/statistical sets and fifteen counter pools as sixteen-unit grids without a pool dropdown; automatic application, persistence and AI rules remain unchanged."
+  ],
+  "archive": {
+    "name": "MiragineSuper-Custom-v0.7.4-preview.1-win-x64.zip",
+    "sha256": "5e52daf2e6658dabd36c7fed19e855cde2c8764351ab8b3eaa1b7b92c87b46dd",
+    "bytes": 170685457,
+    "unpackedBytes": 402539921,
+    "files": 105,
+    "inventorySha256": "eb69cfe4e2f006ce0ae8feb1b59eea6373467e271c2f8c9e49bcb61d249d2d7d"
+  },
+  "sourceScan": {
+    "files": 3125,
+    "bytes": 66825913,
+    "scope": "Public-source privacy scan coverage, not total Git repository disk usage."
+  },
+  "originalAssets": {
+    "baselineCommit": "4e759c04f193c14fcfebfcb173b650504312d7f2",
+    "sourceCommit": "240b66b55e6cbe38664e9db2a301d41fea4cf284",
+    "scopes": [
+      "assets",
+      "generated"
+    ],
+    "gitDiffEmpty": true
+  },
+  "privacy": {
+    "sourceFindings": 0,
+    "sourceWarnings": 0,
+    "sourceSkipped": 0,
+    "runtimeUnresolved": 0,
+    "reviewedUpstreamFindings": 5,
+    "publicTextAttachmentScan": {
+      "scannedFiles": 3169,
+      "scannedBytes": 122227033,
+      "findings": [],
+      "warnings": [],
+      "skipped": []
+    },
+    "scope": "Frozen package runtime audit and public non-ZIP attachments; this later documentation receipt is not part of the frozen package."
+  },
+  "remote": {
+    "assets": 45,
+    "draft": false,
+    "prerelease": true,
+    "allAssetSizesAndApiSha256Match": true,
+    "tag": "v0.7.4-preview.1",
+    "tagCommit": "240b66b55e6cbe38664e9db2a301d41fea4cf284",
+    "remoteTagPointsToRuntimeCommit": true,
+    "fullRemoteRedownloadPerformed": false,
+    "checksumsUrl": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.7.4-preview.1/SHA256SUMS",
+    "checksumsSha256": "063dbf0d6231f8a37762348ebac60460829b895069524084775401737a1fb31e"
+  },
+  "localUpgradeSummary": {
+    "status": "verified-at-handoff",
+    "version": "0.7.4-preview.1",
+    "sourceCommit": "240b66b55e6cbe38664e9db2a301d41fea4cf284",
+    "checksPassed": 34,
+    "runtimeErrors": 0,
+    "priorInstallationAlreadyClosedBeforeReplacement": true,
+    "configurationChanged": false,
+    "personalFilesPreservedByteForByte": 383,
+    "savedProfileApplied": true,
+    "originalDesktopEntryPointLaunchedVerifiedVersion": true,
+    "desktopEntryPointFileChanged": false,
+    "matchModeAtHandoff": "ai-vs-ai",
+    "mutedAtHandoff": true,
+    "pausedAtHandoff": true,
+    "settingsPanelClosedAtHandoff": true,
+    "ownedGameLeftOpen": true,
+    "currentMatchRestored": false,
+    "privacy": "Aggregate result only; personal values, file names, directories, process identifiers, raw reports, personal file hashes and handoff screenshots are not published.",
+    "notIncludedInPublicPortableCheckCount": true
+  },
+  "provenance": {
+    "runtimeAndIncludedVerifiersShareCommit": true,
+    "localReportsAssociatedWithFrozenCommitByCoordinator": true,
+    "rawReportsDoNotIndependentlyAttestExecutingVerifierHashOrSourceLogCommit": true,
+    "independentCommitSpecificCiPassed": true
+  },
+  "limitations": [
+    "50x/100x and 240 FPS remain targets, not sustained-throughput guarantees; no new full-game Flash-parity claim.",
+    "The 271 public EXE checks are 169 current settings/compact/smooth checks plus 102 current dual-AI/HUD/shortcut checks. They do not reuse the previous version's 137/66 results.",
+    "The separate 34 private handoff checks are excluded from both public EXE suites. The local upgrade preserved settings and presets, not previous match progress. The prior installation was already closed; no successful automated closing of an old window is claimed.",
+    "Semicolon behavior has source tests for English/Chinese key values and actual EXE verification of the physical key; no full operating-system input-method switching validation is claimed.",
+    "Published package, notes and evidence retain their frozen build-time documentation. This receipt adds publication evidence without repackaging.",
+    "All 45 remote asset sizes and GitHub API digests were checked; no complete remote ZIP redownload was performed."
+  ]
+}
