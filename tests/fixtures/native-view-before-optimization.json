@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "file": "native-view-before-optimization.mjs",
+  "sha256": "78c4150a0de304a62cd14e771aa2ef9edc5ffc96fc5d1eb338444bdd32c4afcd",
+  "role": "Read-only UI pixel oracle: initial native-resolution implementation before component and cursor raster optimization.",
+  "limits": "This is a test fixture, not original Flash source, not proof of original-game pixel parity, and never a production import.",
+  "reproduce": "node tools/verify-native-ui.mjs --reference tests/fixtures/native-view-before-optimization.mjs --report .local/native-ui-fresh.json --output output/playwright/native-ui-fresh"
+}

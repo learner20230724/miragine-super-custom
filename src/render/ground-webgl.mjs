@@ -46,6 +46,14 @@ function supportedNumber(value) {
   return Number.isFinite(value) && Number.isFinite(Math.fround(value));
 }
 
+/** Round up fractional pixel coverage, but not floating-point integer noise. */
+export function groundBackingDimension(logical, scale) {
+  const pixels = logical * scale;
+  const rounded = Math.round(pixels);
+  return Math.abs(pixels - rounded) <= Number.EPSILON * Math.max(1, Math.abs(pixels)) * 4
+    ? rounded : Math.ceil(pixels);
+}
+
 /**
  * Pack four-vertex, six-index projectGround results without changing order.
  * Indices are offset per accepted tile. Non-drawable and unsupported tiles are
@@ -197,8 +205,10 @@ function imageSize(image) {
 }
 
 /**
- * Owns one transparent logical ground canvas. Composite its returned canvas at
- * (0, 0), before the original background strips and display-list children.
+ * Owns one transparent ground canvas. Projection coordinates stay logical;
+ * setRenderScale changes only its backing pixels and the WebGL viewport.
+ * Composite the returned canvas into the logical width/height, before the
+ * original background strips and display-list children.
  * canvasFactory(width, height) is injectable for browser / unit-test adapters.
  */
 export class GroundWebGLRenderer {
@@ -215,6 +225,8 @@ export class GroundWebGLRenderer {
     }
     this.width = width;
     this.height = height;
+    this.renderWidth = width;
+    this.renderHeight = height;
     this.repeat = Boolean(repeat);
     this.smoothing = Boolean(smoothing);
     this.canvas = canvasFactory(width, height);
@@ -254,6 +266,35 @@ export class GroundWebGLRenderer {
     this.imageWidth = 0;
     this.imageHeight = 0;
     this.disposed = false;
+  }
+
+  /**
+   * Keep one GPU surface/program/texture across window and DPR changes. Canvas
+   * resize changes the drawing buffer, not the logical projection or UVs.
+   * Never silently lower resolution to accommodate a backend limitation.
+   */
+  setRenderScale(scaleX = 1, scaleY = scaleX) {
+    if (this.disposed) throw new Error('The ground renderer has been disposed.');
+    if (![scaleX, scaleY].every(value => Number.isFinite(value) && value > 0)) {
+      throw new RangeError('Ground render scales must be finite positive numbers.');
+    }
+    const width = groundBackingDimension(this.width, scaleX);
+    const height = groundBackingDimension(this.height, scaleY);
+    if (![width, height].every(value => Number.isSafeInteger(value) && value > 0 && value <= 0xffffffff)) {
+      throw new RangeError('Ground render dimensions exceed the Canvas dimension range.');
+    }
+    if (width === this.renderWidth && height === this.renderHeight) return false;
+    if (this.canvas.width !== width) this.canvas.width = width;
+    if (this.canvas.height !== height) this.canvas.height = height;
+    const gl = this.gl;
+    if (this.canvas.width !== width || this.canvas.height !== height
+        || (Number.isInteger(gl.drawingBufferWidth) && gl.drawingBufferWidth !== width)
+        || (Number.isInteger(gl.drawingBufferHeight) && gl.drawingBufferHeight !== height)) {
+      throw new RangeError(`Native ground surface ${width}×${height} is unavailable on this GPU; no lower-resolution fallback was applied.`);
+    }
+    this.renderWidth = width;
+    this.renderHeight = height;
+    return true;
   }
 
   /** Call after mutating an already-uploaded canvas / video image in place. */
@@ -296,8 +337,12 @@ export class GroundWebGLRenderer {
       skippedTileCount: batch.skippedTileCount,
       unsupportedTileIndices: [...batch.unsupportedTileIndices],
       triangleCount: batch.indices.length / 3,
+      renderWidth: this.renderWidth,
+      renderHeight: this.renderHeight,
+      renderTarget: { logicalWidth: this.width, logicalHeight: this.height,
+        backingWidth: this.renderWidth, backingHeight: this.renderHeight },
     };
-    gl.viewport(0, 0, this.width, this.height);
+    gl.viewport(0, 0, this.renderWidth, this.renderHeight);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     if (batch.indices.length === 0) return this.canvas;
@@ -339,6 +384,10 @@ export class GroundWebGLRenderer {
     this.indexBuffer = null;
     this.texture = null;
     this.program = null;
+    if (this.canvas) {
+      this.canvas.width = 0;
+      this.canvas.height = 0;
+    }
     this.disposed = true;
   }
 }

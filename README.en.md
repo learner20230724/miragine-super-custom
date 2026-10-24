@@ -8,6 +8,8 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
+**Current development source: v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md). This version requires its own release/performance verification; the v0.4 results below do not validate it.
+
 ## Windows portable build
 
 Download the Windows x64 preview from the **[custom Releases](https://github.com/learner20230724/miragine-super-custom/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. Keep this customization in a separate directory from the baseline game.
@@ -24,7 +26,7 @@ Historical **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-supe
 
 Edit the external `config/custom.json` and restart to apply changes; the panel never rewrites it. Desktop drafts/presets live in `userdata/custom-settings.json`; restoring them still requires explicit application. Back up both files before upgrading. `ui-helper/` contains replaceable drawing code; `build-info.json` identifies the source commit. See inherited [baseline verification](docs/verification.json) and [known issues](docs/known-issues.md).
 
-This build's tracked source is approximately **65.88 MB**, including **11.97 MB** of runtime assets; its Windows ZIP is **170.56 MB** and unpacks to **402.18 MB**. Sizes use decimal MB and exclude dependencies, Git history and generated user data. Both 20× and 240 FPS are targets, not guarantees. The final maximized-EXE 20× sample, lasting approximately **1.1111 seconds**, achieved **4.23×** (126.90 logic steps/second) under that machine/window configuration. This is neither a sustained full-army benchmark nor a controlled comparison with the previous release.
+Published v0.4.0-preview.2 tracked source is approximately **65.88 MB**, including **11.97 MB** of runtime assets; its Windows ZIP is **170.56 MB** and unpacks to **402.18 MB**. Sizes use decimal MB and exclude dependencies, Git history and generated user data. Both 20× and 240 FPS are targets, not guarantees. That release's maximized-EXE 20× sample, lasting approximately **1.1111 seconds**, achieved **4.23×** (126.90 logic steps/second) under that machine/window configuration. This historical sample is neither a sustained full-army benchmark nor a v0.5 result.
 
 Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents. The never-show-help preference persists across restarts in `userdata/preferences.json`; delete that file to restore the initial tutorial.
 
@@ -75,9 +77,11 @@ The menu offers four single-player difficulties and local two-player play. Netwo
 
 ### Performance
 
-**Lightweight original-pixel sampling:** sprites project directly from the preserved PNGs, skipping the intermediate 0.9-scale rasterization while retaining logical dimensions, foot anchors, clipping and animation timing. Thunderball and storm reuse larger bitmaps already embedded in the SWF: 25 byte-identical image copies total 46,676 bytes, with the final transparent storm frame preserved. No AI, real-time super-resolution, new engine or larger stage/ground buffers are introduced. Scenery, existing character frames and custom configuration are not overwritten. This is not a complete art remaster or a claim of Flash pixel parity; the renderer retains `spriteRasterMode: 'legacy'` for comparison. Regenerate/check with `python -B tools/build_source_effects.py` / `--check`; run the independent browser comparison with `node tools/verify-source-rendering.mjs`.
+**Current source renders into native window pixels:** 640×480 is the logical coordinate system, while the visible backing size is the fitted game viewport's CSS size × DPR, rounded to pixels. Ground retains its 640×400 logical projection but uses a matching-density WebGL surface and one-entry cache. HUD caches are cropped and aligned to device pixels; obsolete buffers are released on size/DPR changes. Input maps CSS coordinates to game coordinates without an extra DPR multiplier. Resizing while paused redraws without advancing simulation.
 
-The internal **640 × 480** game canvas is scaled to fit the window; direct original-PNG sampling does not mean native-window-resolution rendering. This patch changes no rendering quality, renderer or assets.
+Original art gains no invented detail: extreme enlargement still exposes finite PNG resolution, not AI remastering. More pixels can increase drawing/GPU-memory cost, so neither improved FPS nor locked 240 FPS is promised. Caching avoids repeated work, not all memory use. See the [native-resolution guide](docs/native-resolution.en.md) for implementation and verification boundaries.
+
+**Original-pixel sampling is retained:** sprites still project directly from preserved PNGs, skipping the intermediate 0.9-scale rasterization while retaining logical dimensions, foot anchors, clipping and animation timing. The previously retained 25 larger thunderball/storm bitmaps total 46,676 bytes; the final transparent storm frame remains. This change adjusts drawing-target density, not scenery, character images, artificial detail or handwritten configuration. No Flash pixel equivalence is claimed; `spriteRasterMode: 'legacy'` remains available for comparison. Check retained assets with `python -B tools/build_source_effects.py --check`.
 
 Settings start collapsed with no persistent F2 launcher. Press F2 to edit while the battle runs; opening/closing never pauses or resumes it. Pause is explicitly controlled by the player. Overview frames the full red/blue crystal sprites near the viewport edges, reducing empty outer scenery without promising all map corners. Wheel zoom still allows a wider view.
 
@@ -142,7 +146,7 @@ Unit keys are menu IDs `"0"`–`"15"`, not animation indices (`ss`). Objects mer
 | `src/runtime/` | Fixed-step clock, presentation scheduling and interpolation; this game's pause/speed adapter is `src/app/playback-session.mjs` |
 | `src/customization/` | Fields/drafts/presets; `runtime.mjs` is the separate custom adapter, `numeric.mjs` handles safe integers and finite arithmetic without editing recovered core |
 | `src/app/settings-panel.mjs`, `custom-storage.mjs`, `game-text-controls.mjs` | Settings UI, persistence and native crisp-text controls |
-| `src/render/` | Battlefield, perspective projection, ground, and character rendering |
+| `src/render/` | Battlefield, perspective projection, native-pixel ground and one-entry cache; logical projection does not change with DPR |
 | `src/platform/`, `desktop/` | Viewport/input-coordinate transforms and Electron integration |
 | `src/config/` | Configuration loading, validation, and override merging |
 | `config/defaults.generated.json` | Generated defaults extracted from recovered code |

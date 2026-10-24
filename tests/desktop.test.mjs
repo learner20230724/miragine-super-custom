@@ -217,6 +217,7 @@ test('packaging whitelist excludes originals, references, private files and runt
     'generated/ui/NOTICE.md', 'config/custom.json', 'config/defaults.generated.json',
     'desktop/entry.cjs', 'desktop/main.cjs', 'desktop/static-server.cjs', 'desktop/preload.cjs', 'desktop/preferences.cjs',
     'docs/licenses/GPL-3.0.txt', 'docs/parameters.zh-CN.md', 'docs/known-issues.md', 'docs/verification.json',
+    'docs/native-resolution.zh-CN.md', 'docs/native-resolution.en.md',
   ]) assert.equal(isProductionPath(file), true, file);
   for (const file of [
     '.local/token.json', 'recovered/unit-sprites/frame.png', 'reference/super.swf', 'assets/game.swf',

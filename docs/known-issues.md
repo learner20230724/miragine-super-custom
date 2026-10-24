@@ -3,6 +3,51 @@
 This is a runnable **preview**, not a claim of exact Flash parity.
 当前是可运行预览版，不宣称已与 Flash 逐帧、逐像素完全一致。
 
+## Native-resolution source — v0.5.0-preview.1 / 原生分辨率源码
+
+This section describes implementation, not a completed release or performance
+claim. v0.4 and earlier reports below remain historical evidence for their versions.
+本节描述源码实现，不代表新版已经发布或性能验收通过；下方 v0.4 等旧报告仅证明各自版本。
+
+- **Logical versus physical:** stage layout remains 640×480 logically; combat remains 30 Hz.
+  Visible backing pixels follow the fitted CSS viewport and DPR. Ground keeps
+  its original 640×400 logical projection but rasterizes at the matching density;
+  the complete low-resolution stage is no longer enlarged as a final bitmap.
+  **逻辑与实际像素分离：**舞台 640×480 坐标、战斗 30 Hz 不变，实际绘图尺寸随视口与 DPR；
+  地面逻辑投影仍是 640×400，但以对应密度绘制，不再放大完整低分辨率舞台位图。
+- **Finite source detail:** original PNGs, animation poses, scenery and rules
+  are unchanged. Native rasterization avoids an intermediate resolution ceiling,
+  not the original artwork's finite detail; it is neither AI upscaling nor proof
+  of exact Flash pixels. Large sprite magnification can still look pixelated.
+  **原素材细节有限：**PNG、动画姿势、背景与规则不改；移除中间画布分辨率瓶颈
+  不等于恢复原图没有的细节，不是 AI 放大或 Flash 像素一致。角色极度放大仍可能模糊／像素化。
+- **Native-path edge differences:** local transparent cursor layers and Canvas
+  sampling can differ slightly in edge antialiasing from the unoptimized native
+  trial. Static icons/cards can also show small raster differences; this is not
+  changed source art or proof of numeric-text deformation. That trial is not a
+  Flash oracle, and exact per-pixel identity is not claimed.
+  **原生路径边缘差异：**局部透明光标层与 Canvas 采样可能相对未优化原生试验版
+  产生细微抗锯齿差异，静态图标／卡片也可能有少量栅格差；不是原素材更换，不能
+  据此称数字变形。试验版不是 Flash 对照，不宣称逐像素完全一致。
+- **Work and memory:** native targets cost more pixels. Ground uses one cached
+  revision, not an accumulating camera cache; cropped HUD caches release obsolete
+  pixel buffers on resize/screen transitions. These bounds do not guarantee lower
+  process memory or faster FPS. GPU/browser maximum surface sizes remain limits;
+  unsupported native ground allocation fails instead of silently lowering quality.
+  **成本与边界：**原生目标像素更多；地面只缓存一个版本，HUD 用紧凑区域并在尺寸／
+  页面变化时释放旧像素缓冲，不保证进程总内存下降或 FPS 增加。仍受 GPU／浏览器
+  画布尺寸限制；无法分配原生地面时明确失败，不偷偷降分辨率。
+- **Input and timing:** mouse hit testing remains CSS-to-logical, without an
+  extra DPR factor. Resize invalidates presentation even during pause, never
+  changing rules or advancing a paused simulation. 240 FPS remains a target.
+  **输入与计时：**鼠标按 CSS→逻辑转换，不再乘 DPR；暂停时 resize 只重绘不推进逻辑。
+  240 FPS 仍是目标，不能把提交频率、RAF 回调或 CPU 耗时当作物理显示帧率。
+
+See [implementation / 开发说明](native-resolution.zh-CN.md) and
+[English](native-resolution.en.md). Final artifacts require their own browser,
+portable, source-integrity, privacy and same-runtime performance evidence.
+最终包需独立的浏览器、便携版、源码一致性、隐私与同运行时性能证据。
+
 ## Settings reorganization — v0.4 source / 设置重组源码
 
 - **No automatic editor pause:** F2 is the only settings entry; opening/closing
@@ -40,17 +85,17 @@ This is a runnable **preview**, not a claim of exact Flash parity.
   **兼容与证据：**旧 v1 预设迁移为 v2 双方配置但不自动启用，原核心／证据分离；
   下方旧报告仅证明各自版本，不替代本源码及新包验证。
 
-## Original-pixel sampling — v0.3.0-preview.2 / 原始素材轻量采样
+## Historical original-pixel sampling — v0.3.0-preview.2 / 历史原始素材轻量采样
 
 - One-pass sprite sampling and the original larger effect bitmaps improve how
   retained pixels are used, not their original artistic detail. Sampling differs
   from the legacy intermediate-raster path; no Flash pixel equivalence is claimed.
   单次角色采样及原始较大特效位图只改善已有像素的利用，不恢复不存在的美术细节；
   与原中间栅格路径采样不同，不宣称 Flash 逐像素一致。
-- Stage/ground buffers remain 640×480 / 640×400. Mountains, trees and grass are
+- In that release, stage/ground buffers remained 640×480 / 640×400. Mountains, trees and grass are
   unchanged; their source resolution and fullscreen scaling remain limitations.
   No AI, new renderer, model runtime or 2×/4× texture pack is introduced.
-  舞台／地面缓冲仍为 640×480／640×400，山、树、草地未更换；原图分辨率及全屏
+  该历史版本舞台／地面缓冲为 640×480／640×400，山、树、草地未更换；原图分辨率及全屏
   拉伸仍有限制。未引入 AI、新引擎、模型运行时或 2×／4×贴图包。
 - Twenty-five byte-identical source images add 46,676 compressed bytes and
   about 2.37 MiB for one decoded RGBA copy, excluding browser/GPU duplication.

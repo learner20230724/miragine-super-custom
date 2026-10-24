@@ -84,7 +84,7 @@ test('static game buttons rasterize once at original coordinates and composite a
   assert.equal(h.view.hotspots.filter(hotspot => hotspot.action === 'unit').length, 32);
   assert.equal(h.view.hotspots.filter(hotspot => hotspot.action === 'tutorial').length, 1);
   assert.equal(h.view.hotspots.filter(hotspot => hotspot.action === 'quit').length, 1);
-  for (const target of h.canvases) assert.deepEqual([target.width, target.height], [640, 480]);
+  for (const target of h.canvases) assert.ok(target.width <= 640 && target.height <= 96, 'HUD caches are cropped instead of stage-sized');
 });
 
 test('health bars use two bounded canvases and redraw only when the displayed ratio changes', () => {
@@ -110,7 +110,7 @@ test('health bars use two bounded canvases and redraw only when the displayed ra
   for (let hp = 1; hp <= 200; hp++) { h.controller.simulation.redBoss.nowHP = hp; h.paint(); }
   assert.equal(h.canvases.length, initialCanvasCount);
   assert.deepEqual(Object.keys(h.view.barLayers).sort(), ['leftBar', 'rightBar']);
-  assert.deepEqual([...h.view.cache.keys()].sort(), ['game-controls', 'hud']);
+  assert.deepEqual([...h.view.cache.keys()].sort(), ['game-controls', 'hud-bottom', 'hud-top']);
   assert.throws(() => h.view.barLayer('another-bar', 1, () => {}), /Unknown health-bar/);
 });
 
@@ -125,7 +125,7 @@ test('crisp text mode omits only the original help and quit sprites and their ca
   for (const action of ['minimap', 'music']) assert.equal(h.view.hotspots.filter(hotspot => hotspot.action === action).length, 1);
   assert.ok(h.count(call => call.type === 'symbol' && call.symbol === 'sprite25') > 0);
   assert.equal(h.view.tooltipLayouts.size, 0);
-  assert.ok(h.canvases.every(canvas => canvas.width === 640 && canvas.height === 480), 'crisp controls must not enlarge bitmap render targets');
+  assert.ok(h.canvases.every(canvas => canvas.width <= 640 && canvas.height <= 96), 'crisp controls preserve tightly cropped native-density HUD targets');
 });
 
 test('custom health displays stay finite and bounded at extreme values without changing underlying HP', () => {
@@ -189,7 +189,7 @@ test('seven numeric HUD slots reuse unchanged glyphs and apply changed values wi
   for (let value = 1000; value < 1200; value++) { h.controller.simulation.leftMoney = value; h.paint(); }
   assert.equal(h.canvases.length, count);
   assert.deepEqual(Object.keys(h.view.numberLayers), names);
-  assert.deepEqual([...h.view.cache.keys()].sort(), ['game-controls', 'hud']);
+  assert.deepEqual([...h.view.cache.keys()].sort(), ['game-controls', 'hud-bottom', 'hud-top']);
   assert.throws(() => h.view.numeric('unknown', 1, 11, 'left'), /Unknown numeric HUD field/);
   assert.throws(() => h.view.numberLayer('unknown', '1', () => {}), /Unknown numeric HUD field/);
 });
@@ -247,7 +247,7 @@ test('maximum safe integer HUD values fit each recovered field using finite hori
     assert.equal(number.options.y, field.localMatrix[5] + field.text.exportedBaseline);
     assert.equal(number.options.font, field.text.font);
     assert.equal(number.options.size, field.text.fontSize);
-    assert.deepEqual([h.view.numberLayers[name].canvas.width, h.view.numberLayers[name].canvas.height], [640, 480]);
+    assert.ok(h.view.numberLayers[name].canvas.width <= 140 && h.view.numberLayers[name].canvas.height <= 46, 'counter cache is cropped with shadow padding');
   }
   const renders = h.count(call => call.type === 'number');
   h.view.numeric('leftMoney', Number.MAX_SAFE_INTEGER, 11, 'left');
@@ -265,12 +265,15 @@ test('numeric cached layers composite at the original position between health ba
   const numbers = Object.values(h.view.numberLayers).map(slot => slot.canvas.id);
   const mainNumbers = h.calls.filter(call => call.type === 'composite' && call.canvas === 'main' && numbers.includes(call.source));
   assert.deepEqual(mainNumbers.map(call => call.source), numbers);
-  assert.ok(mainNumbers.every(call => call.args.length === 2 && call.args[0] === 0 && call.args[1] === 0));
+  for (const [index, slot] of Object.values(h.view.numberLayers).entries()) {
+    const { left, top } = h.view.layerInfo.get(slot.canvas);
+    assert.deepEqual(mainNumbers[index].args, [left, top, slot.canvas.width, slot.canvas.height]);
+  }
   const bar = h.calls.findIndex(call => call.type === 'composite' && call.source === h.view.barLayers.rightBar.canvas.id);
   const first = h.calls.indexOf(mainNumbers[0]), last = h.calls.indexOf(mainNumbers.at(-1));
   const cursor = h.calls.findIndex(call => call.type === 'symbol' && call.symbol === 'sprite209');
   assert.ok(bar < first && last < cursor);
-  for (const slot of Object.values(h.view.numberLayers)) assert.deepEqual([slot.canvas.width, slot.canvas.height], [640, 480]);
+  for (const slot of Object.values(h.view.numberLayers)) assert.ok(slot.canvas.width <= 140 && slot.canvas.height <= 46);
 });
 
 test('tutorial/quit overlays keep original direct-context stacking and pointer interception', () => {
@@ -315,7 +318,7 @@ test('credits stay direct-context while both result layouts have finite caches a
     ['sprite247', 159 * 20], ['sprite253', 484 * 20],
     ['sprite247', 484 * 20], ['sprite253', 159 * 20],
   ]);
-  assert.equal(h.view.cache.size, 4); // background, sliding strip, two results.
+  assert.equal(h.view.cache.size, 9); // Background, three title components, three visible buttons, two results.
 });
 
 test('tooltip layout is reused while pointer placement stays live and config edits invalidate the same slot', () => {

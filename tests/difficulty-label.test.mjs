@@ -12,7 +12,7 @@ function harness(sourceLayout = layout) {
   Object.assign(view, {
     layout: sourceLayout,
     ctx: { globalAlpha: 1, save() {}, restore() {}, drawImage() {} },
-    cached() {}, barLayer() { return {}; }, numeric() {}, draw() {},
+    cursorLayer() { return {}; }, compositeLayer() {}, cached() {}, barLayer() { return {}; }, numeric() {}, draw() {},
     minimap() {}, hotspot() {}, drawInstance() {}, tooltip() {},
     label(...args) { labels.push(args); },
   });

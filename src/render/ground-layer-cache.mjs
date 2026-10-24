@@ -21,24 +21,47 @@ export class GroundLayerCache {
   #valid = false;
   #painting = false;
   #disposed = false;
+  #width;
+  #height;
 
   constructor({ width = 640, height = 400, canvasFactory = browserCanvas } = {}) {
-    if (![width, height].every(value => Number.isInteger(value) && value > 0)) {
+    if (![width, height].every(value => Number.isSafeInteger(value) && value > 0 && value <= 0xffffffff)) {
       throw new RangeError('Ground cache dimensions must be positive integers.');
     }
     if (typeof canvasFactory !== 'function') throw new TypeError('canvasFactory must be a function.');
-    Object.defineProperties(this, {
-      width: { value: width, enumerable: true },
-      height: { value: height, enumerable: true },
-    });
+    this.#width = width;
+    this.#height = height;
     this.#surface = canvasFactory(width, height);
     if (!this.#surface || typeof this.#surface.getContext !== 'function') {
       throw new TypeError('canvasFactory must return a Canvas2D-capable surface.');
     }
     this.#surface.width = width;
     this.#surface.height = height;
-    this.#context = this.#surface.getContext('2d');
+    // No CPU pixel inspection is needed: leave the cache GPU-accelerable.
+    this.#context = this.#surface.getContext('2d', { willReadFrequently: false });
     if (!this.#context) throw new Error('Could not create the ground cache Canvas2D context.');
+  }
+
+  get width() { return this.#width; }
+  get height() { return this.#height; }
+
+  /** Resize the existing single entry, only when physical dimensions change. */
+  resize(width, height) {
+    if (this.#disposed) throw new Error('GroundLayerCache has been disposed.');
+    if (this.#painting) throw new Error('Cannot resize the ground cache during painting.');
+    if (![width, height].every(value => Number.isSafeInteger(value) && value > 0 && value <= 0xffffffff)) {
+      throw new RangeError('Ground cache dimensions must be positive integers in the Canvas dimension range.');
+    }
+    if (width === this.#width && height === this.#height) return false;
+    this.invalidate();
+    if (this.#surface.width !== width) this.#surface.width = width;
+    if (this.#surface.height !== height) this.#surface.height = height;
+    if (this.#surface.width !== width || this.#surface.height !== height) {
+      throw new RangeError('Native ground cache dimensions could not be allocated; no resampling was applied.');
+    }
+    this.#width = width;
+    this.#height = height;
+    return true;
   }
 
   /**

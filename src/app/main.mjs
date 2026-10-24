@@ -20,9 +20,8 @@ const stage = document.querySelector('#game-stage');
 const shell = document.querySelector('#app-shell');
 const settingsRoot = document.querySelector('#settings-root');
 const display = canvas.getContext('2d', { alpha: false });
-const logical = document.createElement('canvas');
-logical.width = 640;
-logical.height = 480;
+// Logical game coordinates stay 640×480. The visible canvas itself is the
+// native-resolution render target; never enlarge a finished low-res stage.
 let fit = null;
 let controller = null;
 let view = null;
@@ -43,6 +42,10 @@ let customization = null;
 let customStorage = null;
 let cameraDrag = null;
 let presented = 0;
+let renderCpuTotalMs = 0;
+let renderCpuLastMs = 0;
+let renderCpuMaxMs = 0;
+let loadingMessage = null;
 let observedSimulation = null;
 let presentation = null;
 let controlsUpdatedAt = -Infinity;
@@ -142,7 +145,7 @@ function customChanged({ kind } = {}) {
   }
   if (view && controller) {
     view.config = controller.config;
-    view.cache.clear(); view.tooltipLayouts.clear();
+    view.releaseRasterCaches(); view.tooltipLayouts.clear();
   }
   frameClock?.refresh();
   clearGameInput();
@@ -167,6 +170,13 @@ Object.defineProperty(globalThis, '__MIRAGINE__', {
       implementation: 'native-javascript-canvas',
       ...controller?.snapshot(), viewport: fit,
       rendering: view?.lastStats ?? null,
+      presentationStats: {
+        mode: 'native-resolution', logicalWidth: 640, logicalHeight: 480,
+        backingWidth: canvas.width, backingHeight: canvas.height,
+        renderScaleX: canvas.width / 640, renderScaleY: canvas.height / 480,
+        framesPresented: presented, renderCpuTotalMs, renderCpuLastMs, renderCpuMaxMs,
+        ui: view?.getRenderStats?.() ?? null,
+      },
       config: controller ? {
         profile: controller.config.profile,
         firstUnitCost: controller.config.units[0].cost,
@@ -206,30 +216,30 @@ function resize() {
   canvas.style.height = `${fit.height}px`;
   if (canvas.width !== fit.backingWidth) canvas.width = fit.backingWidth;
   if (canvas.height !== fit.backingHeight) canvas.height = fit.backingHeight;
-  present();
+  view?.setRenderSize(fit.backingWidth, fit.backingHeight);
+  renderer?.setRenderScale(fit.pixelScaleX, fit.pixelScaleY);
+  // Resizing clears the backing store even when the simulation is paused.
+  // Invalidate presentation only; do not step or unpause the 30 Hz clock.
+  frameClock?.invalidate();
+  if (!ready && loadingMessage) drawMessage();
   updateControls(performance.now(), true);
 }
 
-function present() {
-  if (!fit) return;
-  display.setTransform(1, 0, 0, 1, 0, 0);
-  display.imageSmoothingEnabled = true;
-  // Replace, do not source-over old physical pixels through transparent areas
-  // introduced by a changed observation frustum.
-  display.globalCompositeOperation = 'copy';
-  try { display.drawImage(logical, 0, 0, canvas.width, canvas.height); }
-  finally { display.globalCompositeOperation = 'source-over'; }
-  presented++;
+function message(title, detail = '') {
+  loadingMessage = { title, detail };
+  drawMessage();
 }
 
-function message(title, detail = '') {
-  const ctx = logical.getContext('2d');
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+function drawMessage() {
+  if (!fit || !loadingMessage) return;
+  const { title, detail } = loadingMessage;
+  const ctx = display;
+  ctx.setTransform(fit.pixelScaleX, 0, 0, fit.pixelScaleY, 0, 0);
+  ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
   ctx.fillStyle = '#0e0e0e'; ctx.fillRect(0, 0, 640, 480);
   ctx.textAlign = 'center'; ctx.font = '20px sans-serif'; ctx.fillStyle = '#fff';
   ctx.fillText(title, 320, 226);
   if (detail) { ctx.font = '12px sans-serif'; ctx.fillText(detail.slice(0, 85), 320, 253); }
-  present();
 }
 
 async function json(url) {
@@ -415,12 +425,14 @@ try {
   controller = new GameController(config, { storage });
   customization = createCustomization({ controller, defaults, initialConfig: config, storage: customStorage, onChange: customChanged });
   keyboard = new OriginalKeyboard(controller);
-  view = new OriginalGameView(logical, globalThis.OriginalGraphics, layout, config, { crispTextControls: true });
-  // Reuse original bitmap pixels directly; no AI, enlarged textures or larger
-  // stage buffers. Fixed source-era sprite rectangles and input stay unchanged.
+  view = new OriginalGameView(canvas, globalThis.OriginalGraphics, layout, config, { crispTextControls: true });
+  view.setRenderSize(fit.backingWidth, fit.backingHeight);
+  // Sample unchanged original PNGs directly into native window pixels.
+  // Projection, sprite rectangles, input coordinates and 30 Hz logic stay fixed.
   renderer = new BattlefieldRenderer(view.ctx, manifest, {
     spriteRasterMode: 'source', sourceFrames: sourceEffects.sprites,
   });
+  renderer.setRenderScale(fit.pixelScaleX, fit.pixelScaleY);
   await renderer.load();
   audio = new GameAudio(manifest);
   observer = new ViewCamera({ mapWidth: config.rules.mapWidth, mapHeight: config.rules.mapHeight,
@@ -447,18 +459,21 @@ try {
   }
   audio.playMusic('mainLoop');
   ready = true;
+  loadingMessage = null;
   canvas.focus({ preventScroll: true });
   const presentationRenderer = { render() {
     return renderer.render(presentation.snapshot, presentation.camera, { displayView: observer.getView(presentation.camera) });
   } };
   function animate(now) {
     try {
+    // Moving between monitors can change DPR without changing CSS dimensions.
+    if (fit?.devicePixelRatio !== (window.devicePixelRatio || 1)) resize();
     const wallDelta = previousWallNow === null || document.hidden ? 0 : Math.max(0, Math.min(250, now - previousWallNow));
     previousWallNow = now;
     if (observedSimulation !== controller.simulation) {
       observedSimulation = controller.simulation;
       view.config = controller.config;
-      view.cache.clear(); view.tooltipLayouts.clear();
+      view.releaseRasterCaches(); view.tooltipLayouts.clear();
       const rules = controller.config.rules;
       if (observer.mapWidth !== rules.mapWidth || observer.mapHeight !== rules.mapHeight || observer.baseSpawnInset !== rules.baseSpawnInset) {
         observer = new ViewCamera({ mapWidth: rules.mapWidth, mapHeight: rules.mapHeight, baseSpawnInset: rules.baseSpawnInset,
@@ -477,10 +492,14 @@ try {
         presentation?.camera ?? controller.simulation.renderCamera);
     }
     if (render) {
+      const renderStarted = performance.now();
       presentation = frameClock.presentation();
       view.observation = presentation.camera ? observer.snapshot(presentation.camera) : null;
       view.render(controller, presentationRenderer);
-      present();
+      renderCpuLastMs = performance.now() - renderStarted;
+      renderCpuTotalMs += renderCpuLastMs;
+      renderCpuMaxMs = Math.max(renderCpuMaxMs, renderCpuLastMs);
+      presented++;
     }
     updateMeasurements(now);
     updateControls(now);

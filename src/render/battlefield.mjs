@@ -1,4 +1,4 @@
-import { GroundWebGLRenderer } from './ground-webgl.mjs';
+import { GroundWebGLRenderer, groundBackingDimension } from './ground-webgl.mjs';
 import { GroundLayerCache } from './ground-layer-cache.mjs';
 import { projectViewGround, projectViewSymbol } from './view-camera.mjs';
 import { overviewGroundGeometry } from './overview-ground.mjs';
@@ -85,6 +85,36 @@ export function resolveSpriteFrame(entity, manifest) {
 }
 
 /**
+ * Only the original background's visible repeat cells, in translated-local
+ * coordinates. This is the same infinite integer bitmap grid as CanvasPattern,
+ * not a stretched image or a rasterized background cache.
+ */
+export function backgroundTileOrigins({ rect, matrix }, width, height) {
+  if (![width, height].every(value => Number.isInteger(value) && value > 0)) {
+    throw new RangeError('Background bitmap dimensions must be positive integers.');
+  }
+  if (![rect?.x, rect?.y, rect?.width, rect?.height, matrix?.tx, matrix?.ty].every(Number.isFinite)
+      || rect.width <= 0 || rect.height <= 0) {
+    throw new RangeError('Background rectangle and translation must be finite and non-empty.');
+  }
+  const left = rect.x - matrix.tx, top = rect.y - matrix.ty;
+  const x = Math.floor(left / width) * width, y = Math.floor(top / height) * height;
+  const columns = Math.ceil((left + rect.width - x) / width);
+  const rows = Math.ceil((top + rect.height - y) / height);
+  // Reject unsupported arithmetic instead of an unbounded loop or changing
+  // the camera. Normal source layers require at most three horizontal cells.
+  if (![x, y, columns, rows].every(Number.isFinite)
+      || columns < 1 || rows < 1
+      || columns > Math.ceil(rect.width / width) + 1 || rows > Math.ceil(rect.height / height) + 1) {
+    throw new RangeError('Background repeat coordinates exceed supported finite coverage.');
+  }
+  return Array.from({ length: rows * columns }, (_, index) => ({
+    x: x + (index % columns) * width,
+    y: y + Math.floor(index / columns) * height,
+  }));
+}
+
+/**
  * Native battlefield renderer. The caller owns the HUD, menus and viewport.
  * Draw in a logical 640x400 area inside the original 640x480 stage; preserve
  * the caller's Canvas2D transform. No SWF player or replacement art is used.
@@ -127,7 +157,6 @@ export class BattlefieldRenderer {
     this.images = new Map();
     this.surfaces = new Map();
     this.sourcePlacements = new Map();
-    this.patterns = new Map();
     this.loaded = false;
     this.lastRenderStats = null;
     this.fidelity = RENDER_FIDELITY;
@@ -135,6 +164,39 @@ export class BattlefieldRenderer {
     this.displayGroundStats = null;
     this.displayImageIds = new WeakMap();
     this.nextDisplayImageId = 1;
+    this.renderScaleX = 1;
+    this.renderScaleY = 1;
+    this.renderWidth = BATTLEFIELD_WIDTH;
+    this.renderHeight = BATTLEFIELD_HEIGHT;
+  }
+
+  /**
+   * The caller scales its destination context; projection stays 640×400.
+   * Increase ground backing pixels to match that destination, not a logical
+   * bitmap that would later be magnified. Source sprites need no raster cache.
+   */
+  setRenderScale(scaleX = 1, scaleY = scaleX) {
+    if (![scaleX, scaleY].every(value => Number.isFinite(value) && value > 0)) {
+      throw new RangeError('Battlefield render scales must be finite positive numbers.');
+    }
+    const width = groundBackingDimension(BATTLEFIELD_WIDTH, scaleX);
+    const height = groundBackingDimension(BATTLEFIELD_HEIGHT, scaleY);
+    if (![width, height].every(value => Number.isSafeInteger(value) && value > 0 && value <= 0xffffffff)) {
+      throw new RangeError('Battlefield render dimensions exceed the Canvas dimension range.');
+    }
+    const changed = width !== this.renderWidth || height !== this.renderHeight;
+    if (this.groundRenderer) {
+      if (typeof this.groundRenderer.setRenderScale === 'function') this.groundRenderer.setRenderScale(scaleX, scaleY);
+      else if (width !== BATTLEFIELD_WIDTH || height !== BATTLEFIELD_HEIGHT) {
+        throw new Error('The ground backend must support setRenderScale for native-resolution rendering.');
+      }
+    }
+    if (changed) this.displayGroundCache?.resize(width, height);
+    this.renderScaleX = scaleX;
+    this.renderScaleY = scaleY;
+    this.renderWidth = width;
+    this.renderHeight = height;
+    return changed;
   }
 
   async load() {
@@ -178,6 +240,7 @@ export class BattlefieldRenderer {
         canvasFactory: this.canvasFactory,
       });
     }
+    this.setRenderScale(this.renderScaleX, this.renderScaleY);
     this.loaded = true;
     return this;
   }
@@ -214,11 +277,11 @@ export class BattlefieldRenderer {
     const record = this.manifest.images[layer.key];
     if (!record) return;
     const context = this.context;
-    if (!this.patterns.has(layer.key)) {
-      const pattern = context.createPattern(this.images.get(record.file), 'repeat');
-      if (!pattern) throw new Error(`Could not create original ${layer.key} bitmap fill`);
-      this.patterns.set(layer.key, pattern);
-    }
+    const image = this.images.get(record.file);
+    if (!image) throw new Error(`Could not load original ${layer.key} bitmap fill`);
+    const width = image.naturalWidth ?? image.width ?? record.width;
+    const height = image.naturalHeight ?? image.height ?? record.height;
+    const tiles = backgroundTileOrigins(layer, width, height);
     const { rect, matrix } = layer;
     context.save();
     try {
@@ -227,8 +290,10 @@ export class BattlefieldRenderer {
       context.clip();
       context.translate(matrix.tx, matrix.ty);
       context.imageSmoothingEnabled = false; // beginBitmapFill smooth defaults false.
-      context.fillStyle = this.patterns.get(layer.key);
-      context.fillRect(rect.x - matrix.tx, rect.y - matrix.ty, rect.width, rect.height);
+      // Large transformed CanvasPatterns can fall onto a costly native bitmap
+      // fill path. Submit only the 1–3 original image tiles intersecting the
+      // unchanged clip; preserve repeat phase, transparency and nearest sample.
+      for (const tile of tiles) context.drawImage(image, tile.x, tile.y);
     } finally {
       context.restore();
     }
@@ -242,7 +307,7 @@ export class BattlefieldRenderer {
 
   displayGround(terrain, view) {
     if (!this.displayGroundCache) this.displayGroundCache = new GroundLayerCache({
-      width: BATTLEFIELD_WIDTH, height: BATTLEFIELD_HEIGHT, canvasFactory: this.canvasFactory,
+      width: this.renderWidth, height: this.renderHeight, canvasFactory: this.canvasFactory,
     });
     if (!this.displayImageIds.has(terrain)) this.displayImageIds.set(terrain, this.nextDisplayImageId++);
     // Exact single-revision cache: no pixel quantization or unbounded per-camera
@@ -254,7 +319,8 @@ export class BattlefieldRenderer {
       { top: this.manifest.images.bg1 ? 79 : 0 }) : null;
     const geometry = coverage ? [coverage.vectors, coverage.uvScale]
       : this.groundTiles.map(tile => tile.map(point => [point.x, point.y]));
-    const key = JSON.stringify([this.displayImageIds.get(terrain), terrain.width, terrain.height,
+    const key = JSON.stringify(['observation', this.renderWidth, this.renderHeight,
+      this.displayImageIds.get(terrain), terrain.width, terrain.height,
       view.centerX, view.centerY, view.zoom, view.width, view.height, view.offsetX, view.offsetY, view.nearPlane,
       geometry]);
     const result = this.displayGroundCache.get(key, () => {
@@ -271,6 +337,25 @@ export class BattlefieldRenderer {
     } : null };
   }
 
+  /** Native follow uses the same one-entry cache, never a per-camera map. */
+  followGround(terrain, camera) {
+    if (!this.displayGroundCache) this.displayGroundCache = new GroundLayerCache({
+      width: this.renderWidth, height: this.renderHeight, canvasFactory: this.canvasFactory,
+    });
+    if (!this.displayImageIds.has(terrain)) this.displayImageIds.set(terrain, this.nextDisplayImageId++);
+    const key = JSON.stringify(['follow', this.renderWidth, this.renderHeight,
+      this.displayImageIds.get(terrain), terrain.width, terrain.height,
+      camera.x, camera.y, camera.width, camera.height,
+      this.groundTiles.map(tile => tile.map(point => [point.x, point.y]))]);
+    const result = this.displayGroundCache.get(key, () => {
+      const grounds = groundPainterOrder(this.groundTiles).map(vectors => projectGround(vectors, camera));
+      const surface = this.groundRenderer.draw(terrain, grounds);
+      this.displayGroundStats = this.groundRenderer.lastDrawStats ?? null;
+      return surface;
+    });
+    return { ...result, stats: this.displayGroundStats };
+  }
+
   render(snapshot, camera, { clear = true, displayView = null } = {}) {
     if (!this.loaded) throw new Error('Call and await BattlefieldRenderer.load() before rendering');
     if (!Array.isArray(snapshot)) throw new TypeError('renderSnapshot must be an array');
@@ -284,6 +369,9 @@ export class BattlefieldRenderer {
     const stats = { spritesDrawn: 0, hidden: 0, emptySymbols: 0,
       missingSprites: [], zeroScale: 0, unsupportedCoordinates: 0,
       spriteRasterMode: this.spriteRasterMode, sourceSpritesDrawn: 0,
+      renderWidth: this.renderWidth, renderHeight: this.renderHeight,
+      renderTarget: { logicalWidth: BATTLEFIELD_WIDTH, logicalHeight: BATTLEFIELD_HEIGHT,
+        backingWidth: this.renderWidth, backingHeight: this.renderHeight },
       sourceEffectsDrawn: 0, emptySourceEffects: 0 };
     context.save();
     try {
@@ -310,15 +398,23 @@ export class BattlefieldRenderer {
       const terrain = this.images.get(this.manifest.images.terrain.file);
       if (displayView) {
         const ground = this.displayGround(terrain, displayView);
-        context.drawImage(ground.surface, 0, 0);
+        context.drawImage(ground.surface, 0, 0, BATTLEFIELD_WIDTH, BATTLEFIELD_HEIGHT);
         stats.groundCacheHit = ground.hit;
         stats.ground = ground.stats;
         stats.groundCoverage = ground.coverage;
         stats.displayView = { mode: displayView.mode, zoom: displayView.zoom };
+      } else if (this.renderWidth !== BATTLEFIELD_WIDTH || this.renderHeight !== BATTLEFIELD_HEIGHT) {
+        // Native pixels make repeated WebGL-to-2D transfers expensive. Cache
+        // an exact stationary follow view too, with no camera quantization.
+        const ground = this.followGround(terrain, camera);
+        context.drawImage(ground.surface, 0, 0, BATTLEFIELD_WIDTH, BATTLEFIELD_HEIGHT);
+        stats.groundCacheHit = ground.hit;
+        stats.ground = ground.stats;
       } else {
         // No display override means the exact legacy projection/draw sequence.
         const grounds = groundPainterOrder(this.groundTiles).map(vectors => projectGround(vectors, camera));
-        context.drawImage(this.groundRenderer.draw(terrain, grounds), 0, 0);
+        context.drawImage(this.groundRenderer.draw(terrain, grounds), 0, 0,
+          BATTLEFIELD_WIDTH, BATTLEFIELD_HEIGHT);
         stats.ground = this.groundRenderer.lastDrawStats ?? null;
       }
       const backgroundCamera = displayView ? { x: displayView.centerX } : camera;
@@ -382,7 +478,6 @@ export class BattlefieldRenderer {
     this.images.clear();
     this.surfaces.clear();
     this.sourcePlacements.clear();
-    this.patterns.clear();
     this.loaded = false;
     this.loadPromise = null;
   }

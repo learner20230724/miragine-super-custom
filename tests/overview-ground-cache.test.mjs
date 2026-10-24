@@ -180,3 +180,41 @@ test('constructor validates dimensions and canvas support before use', () => {
   assert.throws(() => new GroundLayerCache({ canvasFactory: () => null }), /Canvas2D-capable/);
   assert.throws(() => new GroundLayerCache({ canvasFactory: () => ({ getContext: () => null }) }), /Canvas2D context/);
 });
+
+test('native-resolution cache resizes one surface and invalidates even the same camera key', () => {
+  const state = fixture();
+  const cache = new GroundLayerCache({ canvasFactory: state.canvasFactory });
+  const first = cache.get('stationary', () => source());
+  assert.equal(cache.resize(3180, 1988), true);
+  assert.equal(cache.width, 3180);
+  assert.equal(cache.height, 1988);
+  assert.equal(state.surfaces.length, 1);
+  assert.throws(() => cache.get('stationary', () => source()), /exactly 3180×1988/);
+  let paints = 0;
+  const paint = () => { paints++; return source(3180, 1988); };
+  const native = cache.get('stationary', paint);
+  assert.equal(native.surface, first.surface);
+  assert.equal(native.hit, false);
+  for (let frame = 0; frame < 240; frame++) {
+    assert.equal(cache.resize(3180, 1988), false);
+    assert.equal(cache.get('stationary', paint).hit, true);
+  }
+  assert.equal(paints, 1);
+  assert.equal(state.calls.filter(call => call[0] === 'drawImage').length, 2);
+  assert.equal(state.surfaces.length, 1);
+  assert.equal(cache.resize(640, 400), true);
+  assert.equal(cache.get('stationary', () => source()).hit, false);
+});
+
+test('native cache resizing rejects reentrancy, invalid sizes and disposed state', () => {
+  const state = fixture();
+  const cache = new GroundLayerCache({ canvasFactory: state.canvasFactory });
+  for (const size of [0, -1, 1.5, NaN, Infinity, Number.MAX_SAFE_INTEGER]) {
+    assert.throws(() => cache.resize(size, 400), /positive integers/);
+  }
+  assert.throws(() => cache.get('x', () => { cache.resize(1280, 800); return source(); }), /during painting/);
+  assert.equal(cache.width, 640);
+  assert.equal(cache.get('x', () => source()).hit, false);
+  cache.dispose();
+  assert.throws(() => cache.resize(640, 400), /disposed/);
+});

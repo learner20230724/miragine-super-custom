@@ -23,6 +23,7 @@
 - Never stage `.local`, caches, complete chat exports, local absolute paths, usernames, tokens, or credentials. Scan public artifacts before publishing.
 - User confirmed on 2026-10-23 that original assets and recovered code may be publicly redistributed. Record attribution and distinguish that permission statement from an original-author open-source release.
 - Tests and claims must be supported by actual outputs. Packaging, full-match parity, custom config, resizing, and release installation are distinct acceptance gates.
+- Every assistant-opened test or preview window must click the in-game music control off immediately after startup (and again after restart), and verify it is muted before other interactions. Do not change system volume or another user's running window.
 
 ## Coordination
 

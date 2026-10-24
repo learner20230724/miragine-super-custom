@@ -8,6 +8,8 @@
 
 **可运行预览版**：战斗逻辑从恢复的 AS3 手工移植到 JavaScript，使用 Canvas / WebGL 渲染，不需要 Flash 或 SWF 播放器。原版插桩对照的一局普通难度共 6,842 帧逻辑状态匹配；这不代表全部 Adobe Flash 场景或逐像素一致。具体交付状态见[验证记录](docs/verification.json)。
 
+**当前开发源码：v0.5.0-preview.1 原生窗口分辨率绘制。** 舞台布局仍用 640×480 逻辑坐标，战斗逻辑保持 30 Hz，画布实际像素改为按游戏视口及屏幕 DPR 绘制，不再先画完整 640×480 位图再放大。原 PNG 与规则不变；[实现与开发入口](docs/native-resolution.zh-CN.md)。本轮发行与性能验收尚须单独记录，下方 v0.4 数字不是本轮验证。
+
 ## Windows 启动包
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
@@ -22,7 +24,7 @@
 
 包外的 `config/custom.json` 可直接编辑，重启生效，设置面板不会改写它。桌面草稿与预设保存在 `userdata/custom-settings.json`，恢复后仍须明确应用；升级前请备份这两个文件。`ui-helper/` 提供可替换绘图源码；`build-info.json` 标明对应源码提交。继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
-本版源码约 **65.88 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.56 MB**，解压 **402.18 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证；本次最大化 EXE 的约 **1.11 秒**、20 倍目标短测实际约 **4.23 倍**，仅是该窗口／机器条件的样本，不代表持续满兵性能，也不能据此断言相对旧样本发生性能退化。
+已发布 v0.4.0-preview.2 的源码约 **65.88 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.56 MB**，解压 **402.18 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证；该版最大化 EXE 的约 **1.11 秒**、20 倍目标短测实际约 **4.23 倍**，仅是该窗口／机器条件的历史样本，不代表持续满兵性能或 v0.5 的结果。
 
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 
@@ -73,9 +75,11 @@ npm run dev
 
 ### 性能
 
-**本次只改设置底栏，没有升级画质或更换素材／渲染。** 内部 **640×480** 画布仍整体拉伸到大窗口，是大屏模糊的限制之一；原 PNG 直接采样并不等于按窗口原生分辨率渲染。
+**当前源码按窗口原生像素绘制**：640×480 只是逻辑坐标，实际主画布尺寸按游戏视口的 CSS 大小 × DPR 取整；地面保留 640×400 逻辑投影，但使用对应密度的 WebGL 画布和单项缓存。HUD 使用按实际像素对齐的紧凑缓存，窗口／DPR 改变时释放旧缓冲。鼠标继续由 CSS 坐标转换到逻辑坐标，不再额外乘 DPR；暂停时改变窗口也会重绘，不推进逻辑。
 
-**原始素材轻量采样**：角色直接从原 PNG 投影，跳过一次 0.9 倍中间画布重采样，但保留原逻辑尺寸、脚点、裁切和动画时序。雷球、风暴使用 SWF 内已有的较高分辨率位图；新增 25 张原样复制的图片共 46,676 字节，风暴最后的透明空帧仍保留。不使用 AI、实时超分或新引擎，不扩大现有舞台／地面缓冲，也不覆盖山景、草地、原角色帧或人工配置；这不是整套美术高清重制。显示增强不等于 Flash 逐像素一致，渲染器仍保留 `spriteRasterMode: 'legacy'` 对照路径。重新生成及检查用 `python -B tools/build_source_effects.py`／`--check`；实际浏览器对照用 `node tools/verify-source-rendering.mjs`。
+原素材没有新增细节，极度放大的角色和背景仍受原 PNG 分辨率限制；这不是 AI 高清化。像素面积增加也会增加绘制和显存成本，不保证 FPS 提升或锁定 240 FPS。缓存只避免重复工作，不代表没有内存开销。验证方法与代码入口见 [原生分辨率说明](docs/native-resolution.zh-CN.md)。
+
+**保留原始素材采样**：角色仍直接从原 PNG 投影，跳过一次 0.9 倍中间画布重采样，但保留原逻辑尺寸、脚点、裁切和动画时序。此前雷球、风暴接入的 25 张 SWF 原有较大位图仍原样保留，共 46,676 字节，风暴最后的透明空帧也保留。本轮只改变绘制目标密度，不重画、AI 放大或覆盖山景、草地、角色帧及人工配置。显示增强不等于 Flash 逐像素一致，渲染器仍保留 `spriteRasterMode: 'legacy'` 对照路径。原素材生成检查用 `python -B tools/build_source_effects.py --check`。
 
 设置默认收起，没有常驻的「设置 F2」按钮。F2 展开后可边打边调，开关面板都不会暂停／继续战斗；暂停完全由玩家操作。「全图」让完整红蓝水晶图片靠近画面两侧，减少外围空地，不保证所有地图角点可见；仍可滚轮继续缩小。
 
@@ -140,7 +144,7 @@ node tools/profile-desktop.mjs --dir <测试副本目录> --out .local/performan
 | `src/runtime/` | 固定步长时钟、显示调度与呈现插值；本游戏暂停／倍速适配在 `src/app/playback-session.mjs` |
 | `src/customization/` | 字段／草稿／预设；`runtime.mjs` 为独立改版运行适配，`numeric.mjs` 为安全整数与有限数运算，不改恢复核心 |
 | `src/app/settings-panel.mjs`、`custom-storage.mjs`、`game-text-controls.mjs` | 设置面板、持久化、原生清晰文字按钮 |
-| `src/render/` | 战场、透视投影、地面与人物渲染 |
+| `src/render/` | 战场、透视投影、原生像素地面和单项缓存；逻辑投影不随 DPR 改变 |
 | `src/platform/`、`desktop/` | 缩放与坐标转换、Electron 桌面适配 |
 | `src/config/` | 配置加载、校验与覆盖合并 |
 | `config/defaults.generated.json` | 从恢复代码提取的默认参数；自动生成 |

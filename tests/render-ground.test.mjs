@@ -256,3 +256,63 @@ test('context loss and disposal never silently return a stale terrain frame', ()
   assert.equal(fixture.calls.filter(call => call[0] === 'deleteBuffer').length, 2);
   assert.equal(fixture.calls.filter(call => call[0] === 'deleteTexture').length, 1);
 });
+
+test('native ground viewport grows while projection and UVT buffers remain logical', () => {
+  const fixture = contextStub();
+  const renderer = new GroundWebGLRenderer({ canvasFactory: fixture.canvasFactory });
+  const image = { width: 8000, height: 300 };
+  const geometry = ground();
+  renderer.draw(image, [geometry]);
+  const originalVertices = fixture.calls.find(call => call[0] === 'bufferData')[2];
+  const resources = fixture.calls.filter(call => call[0].startsWith('create')).length;
+  assert.equal(renderer.setRenderScale(4.96875, 4.96875), true);
+  assert.equal(fixture.canvas.width, 3180);
+  assert.equal(fixture.canvas.height, 1988);
+  renderer.draw(image, [geometry]);
+  assert.deepEqual(fixture.calls.filter(call => call[0] === 'viewport').at(-1), ['viewport', 0, 0, 3180, 1988]);
+  assert.deepEqual(fixture.calls.filter(call => call[0] === 'uniform2f').at(-1), ['uniform2f', 'u_resolution', 640, 400]);
+  assert.deepEqual(fixture.calls.filter(call => call[0] === 'bufferData' && call[1] === fixture.gl.ARRAY_BUFFER).at(-1)[2], originalVertices);
+  assert.equal(fixture.calls.filter(call => call[0].startsWith('create')).length, resources);
+  assert.equal(fixture.calls.filter(call => call[0] === 'texImage2D').length, 1);
+  assert.equal(renderer.lastDrawStats.renderWidth, 3180);
+  assert.equal(renderer.lastDrawStats.renderHeight, 1988);
+});
+
+test('native ground resizing is idempotent and preserves independent fractional DPR scales', () => {
+  const fixture = contextStub();
+  const renderer = new GroundWebGLRenderer({ canvasFactory: fixture.canvasFactory });
+  let writes = 0;
+  let width = fixture.canvas.width;
+  let height = fixture.canvas.height;
+  Object.defineProperties(fixture.canvas, {
+    width: { get: () => width, set: value => { width = value; writes++; } },
+    height: { get: () => height, set: value => { height = value; writes++; } },
+  });
+  assert.equal(renderer.setRenderScale(1001 / 640, 751 / 480), true);
+  assert.equal(width, 1001);
+  assert.equal(height, 626);
+  assert.equal(writes, 2);
+  for (let frame = 0; frame < 240; frame++) assert.equal(renderer.setRenderScale(1001 / 640, 751 / 480), false);
+  assert.equal(writes, 2);
+  assert.equal(renderer.setRenderScale(1), true);
+  assert.equal(width, 640);
+  assert.equal(height, 400);
+  assert.equal(renderer.setRenderScale(3.0000000000000004), true);
+  assert.equal(width, 1920); // No accidental extra pixel from IEEE-754 multiplication.
+  assert.equal(height, 1200);
+});
+
+test('unsupported native backing dimensions fail explicitly rather than lowering quality', () => {
+  const fixture = contextStub();
+  const renderer = new GroundWebGLRenderer({ canvasFactory: fixture.canvasFactory });
+  for (const scale of [0, -1, NaN, Infinity, Number.MAX_VALUE]) {
+    assert.throws(() => renderer.setRenderScale(scale), /scale|dimension/i);
+  }
+  fixture.gl.drawingBufferWidth = 640;
+  fixture.gl.drawingBufferHeight = 400;
+  assert.throws(() => renderer.setRenderScale(2), /1280×800.*no lower-resolution fallback/);
+  renderer.dispose();
+  assert.equal(fixture.canvas.width, 0);
+  assert.equal(fixture.canvas.height, 0);
+  assert.throws(() => renderer.setRenderScale(2), /disposed/);
+});

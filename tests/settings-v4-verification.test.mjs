@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { parseV4Options, exactSafeResource, cancelledSpawn, legacyFixture, SAFE_INTEGER_TEXT,
-  compactFooterLayout, compactFooterRegion, preservedCrystalFractions } from '../tools/verify-settings-v4.mjs';
+  compactFooterLayout, compactFooterRegion, preservedCrystalFractions, visibleHotspotCenter } from '../tools/verify-settings-v4.mjs';
 
 test('v4 verifier has separate proof names and retains validated options', () => {
   const value = parseV4Options(['--url', 'http://127.0.0.1:43210/']);
@@ -38,6 +38,35 @@ test('cancelled spawn proof must be a genuine partial cancellation', () => {
     assert.equal(cancelledSpawn(invalid), false);
   }
   assert.deepEqual(job, { status: 'cancelled', requested: Number.MAX_SAFE_INTEGER, completed: 32 });
+});
+
+test('mapped hotspot clicks use the visible logical-canvas intersection, including clipped music', () => {
+  const music = { left: 616, right: 679, top: 440, bottom: 465, action: 'music' };
+  const before = structuredClone(music);
+  assert.deepEqual(visibleHotspotCenter(music), { x: 628, y: 452.5 });
+  assert.deepEqual(visibleHotspotCenter({ left: 10, right: 30, top: 50, bottom: 80 }), { x: 20, y: 65 });
+  assert.deepEqual(visibleHotspotCenter({ left: -40, right: 20, top: -10, bottom: 30 }), { x: 10, y: 15 });
+  assert.deepEqual(visibleHotspotCenter({ left: 610, right: 700, top: 470, bottom: 500 }), { x: 625, y: 475 });
+  assert.deepEqual(visibleHotspotCenter({ left: -100, right: 1000, top: -100, bottom: 1000 }), { x: 320, y: 240 });
+  assert.deepEqual(music, before);
+});
+
+test('mapped hotspot clicks reject invisible, edge-only, inverted and invalid rectangles', () => {
+  for (const rectangle of [
+    { left: 640, right: 679, top: 10, bottom: 30 },
+    { left: 700, right: 740, top: 10, bottom: 30 },
+    { left: -10, right: 0, top: 10, bottom: 30 },
+    { left: 10, right: 30, top: 480, bottom: 500 },
+    { left: 10, right: 30, top: -20, bottom: 0 },
+  ]) assert.throws(() => visibleHotspotCenter(rectangle), /no visible intersection/);
+  for (const rectangle of [null, undefined, {},
+    { left: 10, right: 10, top: 10, bottom: 30 },
+    { left: 30, right: 10, top: 10, bottom: 30 },
+    { left: 10, right: 30, top: 30, bottom: 10 },
+    { left: '10', right: 30, top: 10, bottom: 30 },
+    { left: NaN, right: 30, top: 10, bottom: 30 },
+    { left: -Infinity, right: Infinity, top: 10, bottom: 30 },
+  ]) assert.throws(() => visibleHotspotCenter(rectangle), /Invalid hotspot/);
 });
 
 test('legacy fixture removes v2-only fields without mutating actual export', () => {

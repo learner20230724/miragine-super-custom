@@ -10,6 +10,15 @@ export function stageTintProgress(elapsedMs) {
   return (1 - Math.cos(ratio * Math.PI)) / 2;
 }
 
+const STAGE_BOUNDS = Object.freeze({ xMin: 0, yMin: 0, xMax: 640, yMax: 480 });
+const HUD_REGIONS = Object.freeze([
+  { key: 'hud-top', bounds: { xMin: 0, yMin: 0, xMax: 640, yMax: 96 } },
+  { key: 'hud-bottom', bounds: { xMin: 0, yMin: 400, xMax: 640, yMax: 480 } },
+]);
+
+const HUD_DYNAMIC_SYMBOLS = new Set(['sprite209', 'sprite134', 'sprite135',
+  ...Array.from({ length: 7 }, (_, index) => `text${187 + index}`)]);
+
 const NUMBER_FIELDS = Object.freeze(['time', 'leftMoney', 'leftIncome', 'leftPopulation',
   'rightMoney', 'rightIncome', 'rightPopulation']);
 
@@ -23,9 +32,15 @@ export class OriginalGameView {
     this.crispTextControls = crispTextControls;
     this.ctx = graphics.attach(canvas);
     this.cache = new Map();
+    this.layerInfo = new WeakMap();
+    this.renderWidth = 640;
+    this.renderHeight = 480;
+    this.scaleX = 1;
+    this.scaleY = 1;
     this.canvasFactory = canvasFactory;
     this.barLayers = Object.create(null);
     this.numberLayers = Object.create(null);
+    this.cursorLayers = Object.create(null);
     this.tooltipLayouts = new Map();
     this.hotspots = [];
     this.hovered = null;
@@ -36,6 +51,7 @@ export class OriginalGameView {
     this.menuFrom = 212;
     this.menuTarget = 212;
     this.menuStarted = 0;
+    this.setRenderSize(canvas.width || 640, canvas.height || 480);
   }
 
   sprite(id) { return this.layout.sprites[String(id)]; }
@@ -52,67 +68,162 @@ export class OriginalGameView {
     this.draw(instance.symbol, { x, y, ...options }, ctx);
   }
 
-  cached(key, draw) {
-    this.ctx.drawImage(this.cachedLayer(key, draw), 0, 0);
+  /** Coordinates stay 640x480; every raster target uses the window's pixels. */
+  setRenderSize(width, height) {
+    if (![width, height].every(value => Number.isSafeInteger(value) && value > 0)) {
+      throw new RangeError('Render dimensions must be positive safe integers');
+    }
+    const changed = width !== this.renderWidth || height !== this.renderHeight;
+    if (this.canvas.width !== width) this.canvas.width = width;
+    if (this.canvas.height !== height) this.canvas.height = height;
+    if (changed) {
+      this.releaseRasterCaches();
+      this.renderWidth = width; this.renderHeight = height;
+      this.scaleX = width / 640; this.scaleY = height / 480;
+    }
+    this.ctx.setTransform(this.scaleX, 0, 0, this.scaleY, 0, 0);
+    return changed;
   }
 
-  cachedLayer(key, draw) {
+  releaseRasterCaches() {
+    const layers = [...this.cache.values(), ...Object.values(this.barLayers).map(slot => slot.canvas),
+      ...Object.values(this.numberLayers).map(slot => slot.canvas), ...Object.values(this.cursorLayers).map(slot => slot.canvas)];
+    // Release GPU/CPU pixel buffers immediately when leaving a screen or
+    // resizing. Retaining old 4K menu/results canvases wastes tens of MB each.
+    for (const canvas of layers) { canvas.width = 0; canvas.height = 0; }
+    this.cache.clear();
+    this.barLayers = Object.create(null); this.numberLayers = Object.create(null); this.cursorLayers = Object.create(null);
+    this.layerInfo = new WeakMap();
+  }
+
+  getRenderStats() {
+    const layers = [...this.cache.values(), ...Object.values(this.barLayers).map(slot => slot.canvas),
+      ...Object.values(this.numberLayers).map(slot => slot.canvas), ...Object.values(this.cursorLayers).map(slot => slot.canvas)];
+    return { width: this.renderWidth, height: this.renderHeight, scaleX: this.scaleX, scaleY: this.scaleY,
+      cachedPixels: layers.reduce((total, canvas) => total + canvas.width * canvas.height, 0), cacheCount: layers.length };
+  }
+
+  cached(key, draw, bounds = STAGE_BOUNDS) {
+    this.compositeLayer(this.cachedLayer(key, draw, bounds));
+  }
+
+  cachedLayer(key, draw, bounds = STAGE_BOUNDS) {
     if (!this.cache.has(key)) {
-      const canvas = this.createLayer();
-      const ctx = this.graphics.attach(canvas);
+      const canvas = this.createLayer(bounds);
+      const ctx = this.prepareLayer(canvas);
       draw(ctx);
       this.cache.set(key, canvas);
     }
     return this.cache.get(key);
   }
 
-  createLayer() {
+  createLayer(bounds = STAGE_BOUNDS, padding = 0) {
     const canvas = this.canvasFactory();
-    canvas.width = 640;
-    canvas.height = 480;
+    this.sizeLayer(canvas, bounds, padding);
     return canvas;
   }
 
-  /** Two fixed revision slots; changing health never creates another cache key. */
+  sizeLayer(canvas, bounds, padding = 0) {
+    // Align to actual device pixels, not whole logical pixels. Composite with
+    // the inverse density so cached pixels map 1:1 onto the visible target.
+    const left = Math.floor((bounds.xMin - padding) * this.scaleX);
+    const top = Math.floor((bounds.yMin - padding) * this.scaleY);
+    const right = Math.ceil((bounds.xMax + padding) * this.scaleX);
+    const bottom = Math.ceil((bounds.yMax + padding) * this.scaleY);
+    const width = Math.max(1, right - left), height = Math.max(1, bottom - top);
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
+    this.layerInfo.set(canvas, { left, top, scaleX: this.scaleX, scaleY: this.scaleY });
+    return canvas;
+  }
+
+  prepareLayer(canvas, ctx = this.graphics.attach(canvas)) {
+    const { left, top, scaleX, scaleY } = this.layerInfo.get(canvas);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(scaleX, 0, 0, scaleY, -left, -top);
+    return ctx;
+  }
+
+  compositeLayer(canvas, offsetX = 0, offsetY = 0) {
+    const { left, top, scaleX, scaleY } = this.layerInfo.get(canvas);
+    this.ctx.drawImage(canvas, offsetX + left / scaleX, offsetY + top / scaleY,
+      canvas.width / scaleX, canvas.height / scaleY);
+  }
+
+  /** Two fixed revision slots, cropped to bar height, including overheal. */
   barLayer(name, ratio, draw) {
     if (name !== 'leftBar' && name !== 'rightBar') throw new RangeError('Unknown health-bar layer');
     let slot = this.barLayers[name];
     if (!slot) {
-      const canvas = this.createLayer();
+      const b = this.instance(210, name).bounds;
+      // The non-custom original permits overheal beyond the bar's width.
+      // Preserve every visible stage pixel, but never allocate a stage-height
+      // canvas just for an 18px-high bar.
+      const canvas = this.createLayer({ xMin: 0, yMin: Math.max(0, b.yMin - 4), xMax: 640, yMax: b.yMax + 4 });
       slot = this.barLayers[name] = { canvas, ctx: this.graphics.attach(canvas), valid: false, ratio: undefined };
     }
     if (!slot.valid || !Object.is(slot.ratio, ratio)) {
       slot.valid = false;
       slot.ctx.save();
-      try {
-        slot.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        slot.ctx.clearRect(0, 0, 640, 480);
-        draw(slot.ctx);
-      } finally { slot.ctx.restore(); }
+      try { this.prepareLayer(slot.canvas, slot.ctx); draw(slot.ctx); }
+      finally { slot.ctx.restore(); }
       slot.ratio = ratio;
       slot.valid = true;
     }
     return slot.canvas;
   }
 
-  /** Seven fixed value/style slots, never a new canvas for each counter value. */
+  /** Seven fixed, tightly bounded value/style slots; no per-value canvases. */
   numberLayer(name, revision, draw) {
     if (!NUMBER_FIELDS.includes(name)) throw new RangeError('Unknown numeric HUD field');
     let slot = this.numberLayers[name];
     if (!slot) {
-      const canvas = this.createLayer();
+      const canvas = this.createLayer(this.instance(210, name).bounds, 5);
       slot = this.numberLayers[name] = { canvas, ctx: this.graphics.attach(canvas), valid: false, revision: undefined };
     }
     if (!slot.valid || slot.revision !== revision) {
       slot.valid = false;
       slot.ctx.save();
-      try {
-        slot.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        slot.ctx.clearRect(0, 0, 640, 480);
-        draw(slot.ctx);
-      } finally { slot.ctx.restore(); }
+      try { this.prepareLayer(slot.canvas, slot.ctx); draw(slot.ctx); }
+      finally { slot.ctx.restore(); }
       slot.revision = revision;
       slot.valid = true;
+    }
+    return slot.canvas;
+  }
+
+  /** Two bounded slots for the original selection cursor. Native-size drawing
+   * avoids repeatedly executing its huge clipped pattern fill on the stage.
+   */
+  cursorLayer(side, x, y, pulse, time) {
+    if (side !== 'left' && side !== 'right') throw new RangeError('Unknown cursor side');
+    const b = this.sprite(209).localBounds, scale = pulse.scale;
+    const bounds = { xMin: x + Math.min(b.xMin * scale, b.xMax * scale),
+      xMax: x + Math.max(b.xMin * scale, b.xMax * scale),
+      yMin: y + Math.min(b.yMin * scale, b.yMax * scale),
+      yMax: y + Math.max(b.yMin * scale, b.yMax * scale) };
+    const padding = Math.max(2, 2 / Math.min(this.scaleX, this.scaleY));
+    let slot = this.cursorLayers[side];
+    if (!slot) {
+      const canvas = this.createLayer(bounds, padding);
+      slot = this.cursorLayers[side] = { canvas, ctx: this.graphics.attach(canvas), revision: undefined };
+    }
+    // sprite209 is stopped at frame0; only nested sprite205 cycles over its
+    // ten verified morph frames. Keep original time when drawing, reuse the
+    // identical periodic image on unchanged presentation frames.
+    const revision = `${time % 10}:${scale}:${pulse.alpha}:${x}:${y}`;
+    if (revision !== slot.revision) {
+      this.sizeLayer(slot.canvas, bounds, padding);
+      slot.ctx.save();
+      try {
+        this.prepareLayer(slot.canvas, slot.ctx);
+        // Apply alpha to original child draws, not after flattening the whole
+        // cursor: overlapping translucent child pixels must retain their math.
+        slot.ctx.globalAlpha = pulse.alpha;
+        this.draw('sprite209', { x, y, scaleX: scale, scaleY: scale, frame: 0, time }, slot.ctx);
+      } finally { slot.ctx.restore(); }
+      slot.revision = revision;
     }
     return slot.canvas;
   }
@@ -134,16 +245,49 @@ export class OriginalGameView {
     return this.hotspots.findLast(h => point.x >= h.left && point.x < h.right && point.y >= h.top && point.y < h.bottom) ?? null;
   }
 
+  /** Keep original parent filters/color transforms, but on a component-sized
+   * canvas. Filtering a hidden child does not skip its parent's exported
+   * full-canvas filter pass, so never invoke sprite75 on a stage-sized target.
+   */
+  titleComponent(parentId, placement, key, muted = false) {
+    const parent = this.sprite(parentId);
+    // Exported blur kernels and shadow movement operate in device pixels.
+    // 16px covers the chained glow radius 5 + shadow radius 2 + movement <=5
+    // plus antialiasing. Keep that margin even for windows smaller than 640px.
+    const padding = Math.max(16, 16 / Math.min(this.scaleX, this.scaleY));
+    const b = placement.bounds;
+    const bounds = { xMin: b.xMin - padding, yMin: b.yMin - padding,
+      xMax: b.xMax + padding, yMax: b.yMax + padding };
+    if (parentId === 75) {
+      // The original title parent was rasterized inside the stage BEFORE its
+      // filters ran. In particular the music extends beyond x=640: do not let
+      // that off-stage content cast a newly visible shadow back into the stage.
+      bounds.xMin = Math.max(STAGE_BOUNDS.xMin, bounds.xMin);
+      bounds.yMin = Math.max(STAGE_BOUNDS.yMin, bounds.yMin);
+      bounds.xMax = Math.min(STAGE_BOUNDS.xMax, bounds.xMax);
+      bounds.yMax = Math.min(STAGE_BOUNDS.yMax, bounds.yMax);
+    }
+    return this.cachedLayer(key, ctx => {
+      const excluded = new Set(parent.placements.filter(child => child.symbol !== placement.symbol).map(child => child.symbol));
+      this.draw(parent.symbol, { filter: ({ symbol }) => {
+        if (excluded.has(symbol)) return false;
+        if (symbol === 'sprite25') return { frame: muted ? 1 : 0 };
+      } }, ctx);
+    }, bounds);
+  }
+
   title(controller) {
     const difficulty = controller.panel === 'difficulty';
-    const title = this.root('title', 'unit_title');
-    this.cached(`title-background:${controller.muted}`, ctx => {
-      this.draw(title.symbol, { filter: ({ symbol }) => {
-        if (symbol === 'button29') return false; // MainTimeline.frame11 hides bn_loading.
-        if (symbol === 'sprite74' || symbol === 'sprite55') return false;
-        if (symbol === 'sprite25') return { frame: controller.muted ? 1 : 0 };
-      } }, ctx);
-    });
+    const parts = this.sprite(75).placements;
+    // This recovered bitmap background has no parent effect. Drawing the
+    // whole parent would run four expensive screen-sized shadow/glow passes,
+    // including one for the invisible loading button.
+    this.cached('title-background', ctx => this.draw('shape16', {}, ctx));
+    for (const symbol of ['sprite12', 'sprite25', 'text31']) {
+      const placement = parts.find(part => part.symbol === symbol);
+      const key = symbol === 'sprite25' ? `title-component:${symbol}:${controller.muted}` : `title-component:${symbol}`;
+      this.compositeLayer(this.titleComponent(75, placement, key, controller.muted));
+    }
     const buttons = this.instance(75, 'bn_btns');
     const p = this.origin(buttons);
     const now = performance.now(), target = difficulty ? -43 : 212;
@@ -156,12 +300,21 @@ export class OriginalGameView {
     const offsetX = menuSlidePosition(this.menuFrom, this.menuTarget, now - this.menuStarted);
     // The mask geometry comes from shape32, not a guessed button-panel rectangle.
     const clip = this.sprite(75).placements.find(x => x.symbol === 'shape32').bounds;
-    const strip = this.cachedLayer('title-button-strip', ctx => this.draw('sprite55', {}, ctx));
     this.ctx.save();
     this.ctx.beginPath();
     this.ctx.rect(clip.xMin, clip.yMin, clip.xMax - clip.xMin, clip.yMax - clip.yMin);
     this.ctx.clip();
-    this.ctx.drawImage(strip, offsetX, p.y);
+    for (const placement of this.sprite(55).placements) {
+      const b = placement.bounds;
+      const padding = Math.max(16, 16 / Math.min(this.scaleX, this.scaleY));
+      if (b.xMax + padding + offsetX <= clip.xMin || b.xMin - padding + offsetX >= clip.xMax ||
+          b.yMax + padding + p.y <= clip.yMin || b.yMin - padding + p.y >= clip.yMax) continue;
+      // Lazy per-button caches also avoid rasterizing the off-screen difficulty
+      // column while the player is on the first menu. Parent sprite55 retains
+      // its exact grayscale and shadow effects for these original symbols.
+      const layer = this.titleComponent(55, placement, `title-button:${placement.symbol}`);
+      this.compositeLayer(layer, offsetX, p.y);
+    }
     this.ctx.restore();
     if (controller.overlay === 'credits') {
       const credit = this.instance(75, 'credit');
@@ -184,12 +337,22 @@ export class OriginalGameView {
   hud(controller, renderer) {
     const sim = controller.simulation;
     this.lastStats = renderer.render(sim.renderSnapshot, sim.renderCamera);
-    this.cached('hud', ctx => {
-      this.draw('sprite210', { filter: ({ symbol }) => {
-        if (/^text(187|188|189|190|191|192|193)$/.test(symbol)) return false;
-        if (['sprite209', 'sprite134', 'sprite135'].includes(symbol)) return false;
-      } }, ctx);
-    });
+    // All recovered visible static HUD pixels are in these two strips. Do
+    // not blit or retain the transparent 304px-high battlefield gap at 4K.
+    for (const region of HUD_REGIONS) this.cached(region.key, ctx => {
+      // sprite210 still executes seven exported dropShadow passes even when
+      // its numeric children are filtered out. These static placements have
+      // no parent effects/color transforms: draw the same original symbols,
+      // in source order and with the complete recovered placement matrix.
+      for (const placement of this.sprite(210).placements) {
+        if (HUD_DYNAMIC_SYMBOLS.has(placement.symbol)) continue;
+        const b = placement.bounds;
+        if (b && (b.yMax <= region.bounds.yMin || b.yMin >= region.bounds.yMax)) continue;
+        const m = placement.localMatrix;
+        this.graphics.draw(placement.symbol, ctx, { matrix: [.05 * m[0], .05 * m[1], .05 * m[2], .05 * m[3], m[4], m[5]],
+          frame: 0, time: 0 });
+      }
+    }, region.bounds);
     for (const [name, hp] of [['leftBar', sim.redBoss], ['rightBar', sim.blueBoss]]) {
       const instance = this.instance(210, name), m = instance.localMatrix;
       const rawRatio = hp.nowHP / hp.maxHP;
@@ -204,7 +367,7 @@ export class OriginalGameView {
           }
         } }, ctx);
       });
-      this.ctx.drawImage(layer, 0, 0);
+      this.compositeLayer(layer);
     }
     this.numeric('time', sim.timeSeconds, 22, 'center');
     for (const key of ['leftMoney', 'leftIncome', 'leftPopulation', 'rightMoney', 'rightIncome', 'rightPopulation']) {
@@ -215,10 +378,7 @@ export class OriginalGameView {
       const p = this.origin(card);
       // cursor_57.frame1 stops at its first frame; recruitment toggles never change that frame.
       const pulse = controller.cursorPresentation[side];
-      this.ctx.save();
-      this.ctx.globalAlpha *= pulse.alpha;
-      this.draw('sprite209', { x: p.x, y: p.y, scaleX: pulse.scale, scaleY: pulse.scale, frame: 0, time: sim.frame });
-      this.ctx.restore();
+      this.compositeLayer(this.cursorLayer(side, p.x, p.y, pulse, sim.frame));
       for (let id = 0; id < 16; id++) {
         this.hotspot('unit', this.instance(210, prefix + id), { side, id });
       }
@@ -230,7 +390,7 @@ export class OriginalGameView {
     // here (after the minimap) to preserve layer order and filter extents.
     if (!this.crispTextControls) this.cached('game-controls', ctx => {
       for (const name of ['tipopen', 'bnquit']) this.drawInstance(this.root('game', name), {}, ctx);
-    });
+    }, { xMin: 0, yMin: 350, xMax: 68, yMax: 405 });
     for (const name of this.crispTextControls ? [] : ['tipopen', 'bnquit']) {
       const instance = this.root('game', name);
       this.hotspot(name === 'tipopen' ? 'tutorial' : 'quit', instance);
@@ -289,13 +449,14 @@ export class OriginalGameView {
         // Preserve original vector glyphs, individual glyph shadows and the
         // exact fractional stage-space baseline. Do not substitute a font or
         // regroup a whole HUD/overlay into this counter layer.
-        ctx.shadowColor = '#000'; ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1;
+        ctx.shadowColor = '#000'; ctx.shadowBlur = 3 * Math.max(this.scaleX, this.scaleY);
+        ctx.shadowOffsetX = this.scaleX; ctx.shadowOffsetY = this.scaleY;
         if (textScale < 1) { ctx.translate(x, 0); ctx.scale(textScale, 1); ctx.translate(-x, 0); }
         this.graphics.drawText(text, ctx, { font: instance.text.font, size: instance.text.fontSize,
           color: '#fff', x, y, align });
       } finally { ctx.restore(); }
     });
-    this.ctx.drawImage(layer, 0, 0);
+    this.compositeLayer(layer);
   }
 
   label(text, x, y, size = 12, color = '#fff', align = 'left', shadow = false) {
@@ -305,7 +466,10 @@ export class OriginalGameView {
     ctx.textAlign = align;
     ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = color;
-    if (shadow) { ctx.shadowColor = '#000'; ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1; }
+    if (shadow) {
+      ctx.shadowColor = '#000'; ctx.shadowBlur = 3 * Math.max(this.scaleX, this.scaleY);
+      ctx.shadowOffsetX = this.scaleX; ctx.shadowOffsetY = this.scaleY;
+    }
     ctx.fillText(text, x, y);
     ctx.restore();
   }
@@ -437,13 +601,16 @@ export class OriginalGameView {
 
   render(controller, renderer) {
     const now = performance.now();
-    if (controller.phase !== this.previousPhase) this.transitionStarted = now;
+    if (controller.phase !== this.previousPhase) {
+      this.transitionStarted = now;
+      this.releaseRasterCaches();
+    }
     if (controller.phase === 'title' && this.previousPhase !== null && this.previousPhase !== 'title') {
       this.menuFrom = this.menuTarget = 212;
       this.menuStarted = 0;
     }
     this.previousPhase = controller.phase;
-    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.ctx.setTransform(this.scaleX, 0, 0, this.scaleY, 0, 0);
     this.ctx.clearRect(0, 0, 640, 480);
     this.ctx.fillStyle = '#0e0e0e'; this.ctx.fillRect(0, 0, 640, 480);
     this.hotspots = [];

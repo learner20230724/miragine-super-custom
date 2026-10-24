@@ -39,6 +39,16 @@ export function cancelledSpawn(job) {
     && Number.isSafeInteger(job.completed) && job.completed >= 0 && job.completed < job.requested);
 }
 
+/** Original symbols may extend off-stage; only their visible intersection is clickable. */
+export function visibleHotspotCenter(hotspot) {
+  expect(hotspot && [hotspot.left, hotspot.right, hotspot.top, hotspot.bottom].every(Number.isFinite)
+    && hotspot.left < hotspot.right && hotspot.top < hotspot.bottom, 'Invalid hotspot rectangle');
+  const left = Math.max(0, hotspot.left), right = Math.min(640, hotspot.right);
+  const top = Math.max(0, hotspot.top), bottom = Math.min(480, hotspot.bottom);
+  expect(left < right && top < bottom, 'Hotspot has no visible intersection with the 640x480 logical canvas');
+  return { x: (left + right) / 2, y: (top + bottom) / 2 };
+}
+
 /** A v1 document deliberately has no side tables or configurable AI. */
 export function legacyFixture(document) {
   const result = structuredClone(document), profile = result.profile;
@@ -157,7 +167,7 @@ export async function verifySettingsV4(options) {
       if (signature !== previous) { previous = signature; stableSince = Date.now(); return false; }
       return Date.now() - stableSince >= 100 ? candidate : false;
     }, `stable mapped hotspot ${action}`);
-    const h = target.hotspot, p = point(target.fit, (h.left + h.right) / 2, (h.top + h.bottom) / 2);
+    const visible = visibleHotspotCenter(target.hotspot), p = point(target.fit, visible.x, visible.y);
     await page.mouse.click(p.x, p.y); await delay(100);
   }
   async function open() {
@@ -248,7 +258,7 @@ export async function verifySettingsV4(options) {
     const executable = path.join(directory, 'MiragineSuper.exe');
     const env = { ...process.env }; delete env.ELECTRON_RUN_AS_NODE;
     const { _electron } = await import('playwright');
-    app = await _electron.launch({ executablePath: executable, args: [], cwd: directory, env, timeout: 60000,
+    app = await _electron.launch({ executablePath: executable, args: ['--mute-audio'], cwd: directory, env, timeout: 60000,
       artifactsDir: path.join(root, '.local/settings-v4-automation') });
     launcher = app.process();
     const identity = await bounded(app.evaluate(() => ({ executable: process.execPath, pid: process.pid })), 'owned EXE identity');
@@ -272,6 +282,10 @@ export async function verifySettingsV4(options) {
   async function ready() {
     page.setDefaultTimeout(10000);
     await page.waitForFunction(() => window.__MIRAGINE__?.getState().ready, null, { timeout: 60000 });
+    // Every owned test window/restart is silenced using the actual game UI,
+    // never the system volume or another player's running instance.
+    if (!(await state()).muted) await hit('music');
+    check((await state()).muted, 'owned test window muted through the in-game music control');
   }
 
   try {
@@ -284,7 +298,7 @@ export async function verifySettingsV4(options) {
       await launchPortable(1);
     } else {
       const { chromium } = await import('playwright');
-      server = await chromium.launchServer({ headless, ...(browserChannel ? { channel: browserChannel } : {}) }); launcher = server.process();
+      server = await chromium.launchServer({ headless, args: ['--mute-audio'], ...(browserChannel ? { channel: browserChannel } : {}) }); launcher = server.process();
       browser = await chromium.connect(server.wsEndpoint());
       context = await browser.newContext({ viewport: { width: 1280, height: 960 }, acceptDownloads: true });
       page = await context.newPage(); attach(page); await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });

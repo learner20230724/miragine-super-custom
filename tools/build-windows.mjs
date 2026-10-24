@@ -24,7 +24,8 @@ export function isProductionPath(input, { directory = false } = {}) {
     if (directory) return relative === 'docs' || parts[1] === 'licenses';
     return parts[1] === 'licenses' || /^docs\/parameters\.(?:en|zh-CN)\.md$/.test(relative)
       || ['docs/known-issues.md', 'docs/verification.json', 'docs/custom-verification.json',
-        'docs/time-control.zh-CN.md', 'docs/time-control.en.md', 'docs/custom-settings.zh-CN.md', 'docs/custom-settings.en.md'].includes(relative);
+        'docs/time-control.zh-CN.md', 'docs/time-control.en.md', 'docs/custom-settings.zh-CN.md', 'docs/custom-settings.en.md',
+        'docs/native-resolution.zh-CN.md', 'docs/native-resolution.en.md'].includes(relative);
   }
   if (!runtimeDirectories.has(parts[0])) return false;
   if (directory) return true;
@@ -121,7 +122,7 @@ export function writePortableExtras(projectRoot, output, buildInfo) {
     copy(`docs/licenses/${file.name}`);
   }
   for (const name of ['parameters.en.md', 'parameters.zh-CN.md', 'time-control.zh-CN.md', 'time-control.en.md',
-    'custom-settings.zh-CN.md', 'custom-settings.en.md', 'custom-verification.json']) {
+    'custom-settings.zh-CN.md', 'custom-settings.en.md', 'native-resolution.zh-CN.md', 'native-resolution.en.md', 'custom-verification.json']) {
     if (fs.existsSync(path.join(project, 'docs', name))) copy(`docs/${name}`);
   }
   for (const name of ['known-issues.md', 'verification.json']) copy(`docs/${name}`);
