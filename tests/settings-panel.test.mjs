@@ -120,17 +120,21 @@ test('invalid numeric draft is blocked, survives status/tabs and never alters si
   assert.equal(bad.getAttribute('aria-invalid'), 'true'); assert.equal(f.custom.getState().draft.config.sides.left.units[0].cost, 20);
   assert.equal(f.button('apply-current').disabled, true); f.tab('sandbox'); f.tab('units');
   assert.equal(f.find('[data-field-path="config.sides.left.units.0.cost"]').value, 'NaN');
-  f.button('apply-next').click(); await settle(); assert.match(f.find('[data-settings-message]').textContent, /输入无效/);
+  f.button('apply-current').click(); await settle(); assert.match(f.find('[data-draft-dirty]').textContent, /输入无效/);
+  assert.equal(f.controller.simulation.config.units[0].cost, 20, 'The disabled unified apply action cannot mutate a battle');
   f.edit('config.sides.left.units.0.cost', 7); assert.equal(f.button('apply-current').disabled, false); assert.equal(f.controller.simulation.config.units[0].cost, 20);
   f.button('apply-current').click(); await settle(); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].cost, 7); f.panel.destroy();
 });
 
-test('apply-current reports deferred initial values and applies chosen health policy explicitly', async () => {
-  const f = fixture(); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 500);
-  f.tab('starting'); f.edit('config.sides.left.initial.money', 777); f.find('[data-health-policy]').value = 'absolute';
+test('unified apply reports deferred initial values and preserves existing health ratios without an extra selector', async () => {
+  const f = fixture(); f.custom.spawn({ side: 'left', unitId: 0, count: 1 });
+  const unit = f.controller.simulation.friendList.find(entity => entity.kind === 'unit'); unit.nowHP = unit.spawnHP / 4;
+  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 500);
+  f.tab('starting'); f.edit('config.sides.left.initial.money', 777); assert.equal(f.find('[data-health-policy]'), null);
   f.tab('units');
   const frame = f.controller.simulation.frame; f.button('apply-current').click(); await settle();
   assert.equal(f.controller.simulation.frame, frame); assert.equal(f.controller.simulation.config.customization.sides.left.units[0].hp, 500);
+  assert.equal(unit.nowHP, 125); assert.equal(unit.spawnHP, 500);
   assert.notEqual(f.controller.simulation.leftMoney, 777);
   assert.match(f.find('[data-settings-message]').textContent, /1 项下局生效/);
   assert.match(f.find('[data-settings-message]').textContent, /倒计时/); f.panel.destroy();

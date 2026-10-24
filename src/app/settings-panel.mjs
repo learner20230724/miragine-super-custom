@@ -17,6 +17,7 @@ export const SETTINGS_PANEL_CSS = `
 [data-settings-panel] h2 {font-size:17px;color:#f5eacb;font-weight:700}
 [data-settings-panel] h3 {font-size:14px;color:#e0dabd;margin-bottom:8px}
 [data-settings-panel] .ms-header-actions {display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+[data-settings-panel] .ms-title-row {display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 [data-settings-panel] .ms-muted {font-size:11px;color:#acb9aa;line-height:1.6}
 [data-settings-panel] .ms-scroll {min-height:0;overflow:auto;overscroll-behavior:contain;flex:1}
 [data-settings-panel] .ms-tabs {display:flex;gap:4px;flex-wrap:wrap;padding:10px 12px;background:#1a241e;border-block:1px solid #34443b;position:sticky;top:0;z-index:1}
@@ -45,9 +46,10 @@ export const SETTINGS_PANEL_CSS = `
 [data-settings-panel] .ms-message {padding:8px 14px;font-size:12px;min-height:34px;background:#1b271e;border-top:1px solid #3a4b3b;white-space:pre-line;overflow-wrap:anywhere;max-height:110px;overflow:auto;flex-shrink:0}
 [data-settings-panel] .ms-message[data-error=true] {color:#ffb6a8;background:#3b2420}
 [data-settings-panel] .ms-footer {padding:10px 14px;flex-shrink:0;background:#1b251f;border-top:1px solid #3b4b3c}
-[data-settings-panel] .ms-footer .ms-row {margin-bottom:7px}
-[data-settings-panel] .ms-footer .ms-row:last-child {margin-bottom:0}
-[data-settings-panel] .ms-dirty {font-size:11px;color:#e4c97f;margin-left:auto}
+[data-settings-panel] .ms-footer-actions {display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+[data-settings-panel] .ms-footer-actions button {white-space:nowrap;flex:0 1 auto}
+[data-settings-panel] .ms-apply-help {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+[data-settings-panel] .ms-dirty {font-size:11px;color:#e4c97f}
 [data-settings-panel] .ms-check {display:flex;align-items:center;gap:7px;font-size:12px}
 [data-settings-panel] .ms-sides {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;container-type:inline-size}
 [data-settings-panel] .ms-side {min-width:0;border-top:3px solid #b96160}
@@ -122,7 +124,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   const element = node('aside'); element.id = 'miragine-settings-panel'; element.setAttribute('data-settings-panel', '');
   element.setAttribute('aria-label', '自定义规则与沙盒'); element.hidden = true;
   const header = node('header', 'ms-header'), titleBlock = node('div');
-  titleBlock.appendChild(node('h2', '', '自定义规则与沙盒'));
+  const titleRow = node('div', 'ms-title-row'); titleRow.appendChild(node('h2', '', '自定义规则与沙盒'));
+  const dirtyLabel = node('span', 'ms-dirty'); dirtyLabel.setAttribute('data-draft-dirty', ''); titleRow.appendChild(dirtyLabel); titleBlock.appendChild(titleRow);
   const pauseStatus = node('p', 'ms-muted'); pauseStatus.setAttribute('data-editor-pause-status', ''); titleBlock.appendChild(pauseStatus); header.appendChild(titleBlock);
   const headerActions = node('div', 'ms-header-actions'); header.appendChild(headerActions); element.appendChild(header);
   function button(parent, text, action, callback, className = '', transient = false) {
@@ -138,27 +141,29 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   const content = node('div', 'ms-content'); content.setAttribute('role', 'tabpanel'); content.id = 'miragine-settings-content'; scroll.appendChild(content);
   const message = node('p', 'ms-message'); message.setAttribute('role', 'status'); message.setAttribute('aria-live', 'polite');
   message.setAttribute('data-settings-message', ''); element.appendChild(message);
-  const footer = node('footer', 'ms-footer'), footerTools = node('div', 'ms-row'), footerApply = node('div', 'ms-row');
-  const dirtyLabel = node('span', 'ms-dirty'); dirtyLabel.setAttribute('data-draft-dirty', '');
+  const footer = node('footer', 'ms-footer'), footerTools = node('div', 'ms-footer-actions');
+  footerTools.setAttribute('data-settings-footer-actions', '');
   const undo = button(footerTools, '撤销', 'undo', () => action(async () => {
-    customization.undoDraft(); invalid.clear(); renderContent(); notice('已撤销草稿修改，未自动应用到战局。');
+    customization.undoDraft(); invalid.clear(); renderContent(); notice('已撤销草稿修改，不会撤销已经生效的战局变化。');
   }));
-  button(footerTools, '恢复原版默认', 'reset', () => action(async () => {
+  undo.setAttribute('title', '只撤销草稿修改，不撤销已生效的战局变化');
+  const reset = button(footerTools, '恢复原版默认', 'reset', () => action(async () => {
     if (!confirmAction('将编辑草稿恢复为原版默认？已保存预设不删除，当前战局不会自动改变。')) return;
     customization.resetDraft(); invalid.clear(); selectedPreset = ''; renderContent(); notice('草稿已恢复为原版默认，尚未保存或应用。');
   }));
-  footerTools.appendChild(dirtyLabel); footer.appendChild(footerTools);
-  const hpPolicy = node('select'); hpPolicy.setAttribute('aria-label', '已有单位生命值应用策略'); hpPolicy.setAttribute('data-health-policy', '');
-  option(hpPolicy, 'ratio', '存量单位保持生命比例'); option(hpPolicy, 'absolute', '保留当前生命（不截断超额生命）'); hpPolicy.value = 'ratio';
-  footerApply.appendChild(hpPolicy);
-  const apply = button(footerApply, '应用本局', 'apply-current', () => action(async () => {
-    assertValid(); const report = await customization.applyCurrent({ health: hpPolicy.value });
-    notice(reportMessage(report, '已应用本局。') + ' 保存预设是独立操作。');
+  reset.setAttribute('title', '只恢复草稿默认值；点击应用后才改变规则');
+  const apply = button(footerTools, '应用设置', 'apply-current', () => action(async () => {
+    assertValid();
+    if (state().isBattle) {
+      const report = await customization.applyCurrent({ health: 'ratio' });
+      notice(reportMessage(report, '可即时生效的设置已应用本局，开局项从下局生效。') + ' 保存预设是独立操作。');
+    } else {
+      await customization.applyNext(); notice('设置已应用到下局；不会自动开始战斗。保存预设是独立操作。');
+    }
   }), 'ms-primary');
-  button(footerApply, '设为下局规则', 'apply-next', () => action(async () => {
-    assertValid(); await customization.applyNext(); notice('已设为本次运行的下局规则；当前战局未重新开始。请单独保存预设以便以后载入。');
-  }));
-  footer.appendChild(footerApply); element.appendChild(footer); root.appendChild(element);
+  const applyHelp = node('p', 'ms-apply-help'); applyHelp.setAttribute('data-settings-apply-help', ''); applyHelp.id = 'miragine-settings-apply-help';
+  apply.setAttribute('aria-describedby', applyHelp.id);
+  footer.appendChild(footerTools); footer.appendChild(applyHelp); element.appendChild(footer); root.appendChild(element);
   const storageNotice = node('p', 'ms-muted'); storageNotice.setAttribute('data-storage-warning', ''); footer.appendChild(storageNotice);
   function option(select, value, text) { const result = node('option', '', text); result.value = String(value); select.appendChild(result); return result; }
   function label(parent, text, input) {
@@ -220,7 +225,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     else if (activeTab === 'units') renderUnits();
     else if (activeTab === 'starting') renderStarting();
     else if (activeTab === 'difficulties') renderDifficulties();
-    apply.hidden = activeTab === 'starting' || activeTab === 'sandbox'; hpPolicy.hidden = activeTab === 'starting';
     update();
   }
   function group(id) { return metadata().find(item => item.id === id); }
@@ -282,7 +286,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     if (!isText && !isBool) clampOnInput(input, field);
     if (live) {
       input.setAttribute('data-live-field-path', field.path);
-      bindLive(input, field, s => readPath(s.applied, field.path), next => customization.applyLiveField(field.path, next, { health: hpPolicy.value }));
+      bindLive(input, field, s => readPath(s.applied, field.path), next => customization.applyLiveField(field.path, next, { health: 'ratio' }));
       return input;
     }
     on(input, 'change', () => {
@@ -571,7 +575,13 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     setText(pauseStatus, !current.isBattle ? '打开设置不自动开始对局' : zeroSpeed ? '0 倍暂停中 · 使用时间控制继续' : stopped ? '战斗已暂停 · 可编辑与观察' : '战斗进行中 · 打开设置不暂停');
     setText(dirtyLabel, invalid.size ? `${invalid.size} 项输入无效` : current.dirty ? '草稿尚未保存' : '草稿就绪');
     undo.disabled = busy || !current.canUndo;
-    apply.disabled = busy || !current.isBattle || invalid.size > 0;
+    apply.disabled = busy || invalid.size > 0;
+    setText(apply, current.isBattle ? '应用设置' : '应用下局设置');
+    setText(applyHelp, !current.isBattle ? '尚未开始战局：应用后从下局使用。撤销／恢复默认只改草稿。'
+      : activeTab === 'sandbox' ? '本页已即时生效；按钮应用其他草稿，开局项下局生效。'
+        : activeTab === 'starting' ? '开局项下局生效；其他页面可即时生效的草稿同时应用本局。'
+          : '可即时生效的设置应用本局；开局项从下局生效。撤销／恢复默认只改草稿。');
+    apply.setAttribute('title', applyHelp.textContent);
     for (const control of content.querySelectorAll('[data-needs-battle]')) control.disabled = busy || !current.isBattle;
     for (const binding of liveBindings) {
       const { input, field, read } = binding;

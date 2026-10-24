@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createSettingsPanel, parseFieldValue } from '../src/app/settings-panel.mjs';
+import { createSettingsPanel, parseFieldValue, SETTINGS_PANEL_CSS } from '../src/app/settings-panel.mjs';
 import { createCustomization } from '../src/customization/index.mjs';
 import { GameController } from '../src/app/controller.mjs';
 import { MiragineSimulation, seededRandom } from '../src/core/index.mjs';
@@ -66,12 +66,14 @@ function fixture({ battle = true, accept = true, spawnImplementation = null, cus
   const custom = createCustomization({ controller, defaults, storage, ...customOptions }); if (battle) controller.startMatch(true, 1);
   const document = makeDocument(), root = document.createElement('div'), focus = document.createElement('button');
   document.body.appendChild(focus); document.body.appendChild(root); focus.focus();
-  const events = [], confirms = [], resourceCalls = [], liveCalls = [], spawnCalls = [], clearCalls = [];
+  const events = [], confirms = [], resourceCalls = [], liveCalls = [], spawnCalls = [], clearCalls = [], applyCalls = [], nextCalls = [];
   const adapter = { ...custom,
     setResources(...args) { resourceCalls.push(args); return custom.setResources(...args); },
     applyLiveField(...args) { liveCalls.push(args); return custom.applyLiveField(...args); },
     startSpawn(...args) { spawnCalls.push(args); return (spawnImplementation ?? custom.startSpawn)(...args); },
     clearTroops(...args) { clearCalls.push(args); return custom.clearTroops(...args); },
+    applyCurrent(...args) { applyCalls.push(args); return custom.applyCurrent(...args); },
+    applyNext(...args) { nextCalls.push(args); return custom.applyNext(...args); },
   };
   const panel = createSettingsPanel({ root, customization: adapter,
     onOpenChange: value => events.push(['open', value]), onPauseChange: value => events.push(['pause', value]),
@@ -83,7 +85,7 @@ function fixture({ battle = true, accept = true, spawnImplementation = null, cus
     const input = find(`[data-field-path="${path}"]`); assert.ok(input, `Missing field ${path}`);
     input.value = String(value); input.fire('change'); return input;
   };
-  return { panel, custom, controller, document, root, focus, events, confirms, resourceCalls, liveCalls, spawnCalls, clearCalls, find, button, tab, edit };
+  return { panel, custom, controller, document, root, focus, events, confirms, resourceCalls, liveCalls, spawnCalls, clearCalls, applyCalls, nextCalls, find, button, tab, edit };
 }
 
 test('v4 numeric inputs clamp rather than reject values above or below their field limits', () => {
@@ -378,4 +380,87 @@ test('v4 running spawn job keeps cancellation available and cancellation preserv
   assert.equal(f.custom.getSpawnJob().status, 'cancelled'); assert.equal(scheduled.size, 0);
   assert.equal(f.controller.simulation.friendList.filter(unit => unit.kind === 'unit').length, 2);
   assert.equal(f.button('cancel-spawn').disabled, true); assert.equal(f.button('spawn-left').disabled, false); f.panel.destroy();
+});
+
+test('v4 compact footer has one action row, no health-policy selector, and moves draft status to the header', () => {
+  const f = fixture(); f.panel.open(); const footer = f.find('footer'), header = f.find('header');
+  const undo = f.button('undo'), reset = f.button('reset'), apply = f.button('apply-current');
+  assert.equal(undo.parentNode, reset.parentNode); assert.equal(reset.parentNode, apply.parentNode);
+  assert.equal(apply.parentNode.parentNode, footer, 'All three footer actions occupy one shared direct row');
+  assert.equal(f.find('[data-settings-footer-actions]'), apply.parentNode);
+  assert.equal(footer.querySelectorAll('button').length, 3);
+  assert.equal(f.button('apply-next'), null); assert.equal(f.find('[data-health-policy]'), null);
+  assert.ok(header.querySelector('[data-draft-dirty]')); assert.equal(footer.querySelector('[data-draft-dirty]'), null);
+  f.panel.destroy();
+});
+
+test('v4 apply guidance is accessible without occupying another footer layout row', () => {
+  const f = fixture(); f.panel.open();
+  const apply = f.button('apply-current'), help = f.find('[data-settings-apply-help]');
+  assert.equal(apply.getAttribute('aria-describedby'), help.id);
+  const css = SETTINGS_PANEL_CSS.match(/\.ms-apply-help\s*\{([^}]+)\}/)?.[1]; assert.ok(css);
+  assert.match(css, /position:absolute/); assert.match(css, /width:1px/); assert.match(css, /height:1px/);
+  assert.match(css, /clip-path:inset\(50%\)/); assert.match(css, /overflow:hidden/);
+  assert.doesNotMatch(css, /display:none|visibility:hidden/);
+  assert.equal(help.hidden, false, 'Guidance remains available to aria-describedby');
+  assert.equal(apply.getAttribute('title'), help.textContent);
+  f.panel.destroy();
+});
+
+test('v4 one unified apply action remains visible on every page with contextual guidance', () => {
+  const f = fixture(); f.panel.open(); const apply = f.button('apply-current');
+  for (const id of ['sandbox', 'units', 'starting', 'difficulties', 'presets']) {
+    f.tab(id); assert.equal(f.button('apply-current'), apply);
+    assert.equal(f.panel.element.querySelectorAll('[data-settings-action="apply-current"]').length, 1);
+    assert.equal(apply.textContent, '应用设置'); assert.equal(apply.disabled, false);
+    assert.equal(apply.getAttribute('title'), f.find('[data-settings-apply-help]').textContent);
+    for (let node = apply; node; node = node.parentNode) assert.notEqual(node.hidden, true, `Apply must be visible on ${id}`);
+    assert.equal(f.button('apply-next'), null); assert.equal(f.find('[data-health-policy]'), null);
+  }
+  f.tab('sandbox'); assert.match(f.find('[data-settings-apply-help]').textContent, /本页.*即时.*(?:其余|其他)草稿/);
+  f.tab('units'); assert.match(f.find('footer').textContent, /本局.*开局.*下局/);
+  f.tab('starting'); assert.match(f.find('footer').textContent, /其他页.*草稿/); f.panel.destroy();
+});
+
+test('v4 unified menu apply prepares the next match without starting or applying current-battle state', async () => {
+  const f = fixture({ battle: false }); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 123);
+  const apply = f.button('apply-current'); assert.equal(apply.textContent, '应用下局设置'); assert.equal(apply.disabled, false);
+    assert.match(apply.getAttribute('title'), /尚未开始战局.*下局/);
+  apply.click(); await settle(); assert.equal(f.nextCalls.length, 1); assert.equal(f.applyCalls.length, 0);
+  assert.equal(f.controller.phase, 'title'); assert.equal(f.custom.getState().isBattle, false);
+  assert.equal(f.custom.getState().next.config.sides.left.units[0].hp, 123);
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, defaults.units[0].hp);
+  f.controller.startMatch(true, 1); f.panel.update(); assert.equal(apply.textContent, '应用设置');
+  assert.equal(f.controller.simulation.config.customization.sides.left.units[0].hp, 123); f.panel.destroy();
+});
+
+test('v4 unified battle apply uses fixed ratio and applies other-page live drafts while deferring initial resources', async () => {
+  const f = fixture(); f.custom.spawn({ side: 'left', unitId: 0, count: 1 }); const sim = f.controller.simulation;
+  const unit = sim.friendList.find(entity => entity.kind === 'unit'); unit.nowHP = unit.spawnHP / 2;
+  const before = { money: sim.leftMoney, income: sim.leftIncome, population: sim.leftPopulation, frame: sim.frame, round: sim.round };
+  f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 90);
+  f.tab('starting'); f.edit('config.sides.left.initial.money', 98765); f.button('apply-current').click(); await settle();
+  assert.deepEqual(f.applyCalls, [[{ health: 'ratio' }]]); assert.equal(f.nextCalls.length, 0);
+  assert.equal(unit.spawnHP, 90); assert.equal(unit.nowHP, 45);
+  assert.deepEqual({ money: sim.leftMoney, income: sim.leftIncome, population: sim.leftPopulation, frame: sim.frame, round: sim.round }, before);
+  assert.equal(f.custom.getState().next.config.sides.left.initial.money, 98765);
+  assert.match(f.find('[data-settings-message]').textContent, /下局生效/); f.panel.destroy();
+});
+
+test('v4 live crystal maximum edits always preserve health ratio without exposing a policy dropdown', async () => {
+  const f = fixture(); const sim = f.controller.simulation; sim.redBoss.nowHP = sim.redBoss.maxHP / 4;
+  f.panel.open(); const hp = f.find('[data-live-field-path="config.sides.left.base.hp"]');
+  hp.focus(); hp.value = '400'; hp.fire('input'); hp.fire('keydown', { code: 'Enter', key: 'Enter' }); await settle();
+  assert.equal(f.find('[data-health-policy]'), null);
+  assert.deepEqual(f.liveCalls, [['config.sides.left.base.hp', 400, { health: 'ratio' }]]);
+  assert.equal(sim.redBoss.maxHP, 400); assert.equal(sim.redBoss.nowHP, 100); f.panel.destroy();
+});
+
+test('v4 invalid draft disables the sole apply button in menu as well as battle', async () => {
+  for (const battle of [false, true]) {
+    const f = fixture({ battle }); f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.cost', 'not a number');
+    const apply = f.button('apply-current'); assert.equal(apply.disabled, true); apply.click(); await settle();
+    assert.equal(f.applyCalls.length, 0); assert.equal(f.nextCalls.length, 0);
+    f.edit('config.sides.left.units.0.cost', 7); assert.equal(apply.disabled, false); f.panel.destroy();
+  }
 });

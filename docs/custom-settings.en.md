@@ -2,7 +2,7 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes the v4 source layout for `0.4.0-preview.1`. Release availability and packaged verification are recorded separately. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes the current v4 source layout. Release availability and packaged verification are recorded separately. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 
@@ -17,8 +17,8 @@ This guide describes the v4 source layout for `0.4.0-preview.1`. Release availab
 | Page | What it controls | When it changes the game |
 |---|---|---|
 | Current match / basics | Red and blue current money, income, remaining manpower, crystal current/max HP, crystal damage/range/cooldown; shared income/manpower limits, round/recruitment timing and multipliers | Numeric fields commit on Enter or leaving the field. Each rule edit applies only that field, not unrelated draft edits. Current-resource changes affect this match only |
-| Units | All 16 units; red and blue values side by side, independently editable | Draft first; choose **Apply to current match** or **Set next-match rules** |
-| Starting settings | Separate red/blue starting money, red starting income/manpower, blue starting income/manpower for each difficulty, initial wait, and starting automation choices | All fields here affect a new match only. Choose difficulty using four visible buttons, then start from the draft or set next-match rules |
+| Units | All 16 units; red and blue values side by side, independently editable | Draft first; click **Apply settings** |
+| Starting settings | Separate red/blue starting money, red starting income/manpower, blue starting income/manpower for each difficulty, initial wait, and starting automation choices | All fields here affect a new match only. Click **Apply settings** to use them next match, or choose difficulty using four visible buttons and start from the draft |
 | Difficulty / AI | Four expanded cards, each with blue crystal attack values, counter-branch probability and detailed AI rules | Draft first; after application, only the current difficulty's profile affects this match. Editing another profile does not switch difficulty |
 | Presets / files | Save, load, overwrite, delete, JSON import/export | Loading/importing changes the draft, not the battle; saving does not apply it |
 
@@ -53,18 +53,17 @@ The custom runtime uses safe, saturating integer accounting instead of signed 32
 | Edit current money/income/manpower/current crystal HP | Immediate | Not a starting-value edit or match save |
 | Undo | Does not rewind live edits or combat | Undoes draft edits, up to 30 entries |
 | Restore original defaults | Does not change this battle | Resets exposed draft fields; keeps presets |
-| Apply to current match | Applies applicable draft rules; current resources/countdown/automation switches are not reset | Selects the draft for later matches in this run; starting fields wait for a new match |
-| Set next-match rules | Leaves this battle unchanged | Subsequent matches in this run use the draft |
+| Apply settings | During a battle, applies current-compatible draft rules without resetting resources/countdown/automation switches; starting fields wait | Selects the draft for later matches in this run. Without an active battle, the same button applies next-match settings without starting combat |
 | Start a new match from draft | Replaces the current battle after confirmation | Uses the selected difficulty and single/local-two-player mode |
 | Save or overwrite a preset | No effect | Stores a named draft for later loading |
 | Return to original menu | Ends the battle and restores the recovered runtime configuration | Keeps draft/presets; does not rewrite `config/custom.json` |
 
-The homepage applies its fields directly, so it does not show a redundant Apply-to-current button. The starting page also omits that button. Restoring the default draft resets exposed fields only: unexposed handwritten `config/custom.json` overrides survive later application. Return-to-original restores the entire running configuration; a restart still reads the external startup file normally.
+Every page has the same compact footer: **Undo**, **Restore original defaults**, and one **Apply settings** action. Without an active battle its label becomes **Apply next-match settings**. Homepage fields remain live; the footer applies any remaining draft changes from other pages. Even when clicked on the starting page, it applies current-compatible drafts from other pages now and defers starting fields until the next match. The apply button's hover hint explains this timing. Restoring the default draft resets exposed fields only: unexposed handwritten `config/custom.json` overrides survive later application. Return-to-original restores the entire running configuration; a restart still reads the external startup file normally.
 
 ### Unit changes, health and time
 
 - A unit edit affects only the chosen side. Existing units receive combat-stat changes when applied; cost/manpower/income changes affect future recruits without refunds. Existing cooldowns are not restarted; new projectiles use the new hit delay.
-- The ratio health policy maps current HP / previous initial HP to the new initial HP. The absolute policy preserves current HP. Neither resurrects dead units; original overhealing is not automatically truncated. Crystal current HP and its maximum can be edited separately, but a destroyed crystal cannot be revived through the current-HP field.
+- The panel always preserves the health ratio when changing initial/maximum HP: current HP / previous initial HP is mapped to the new initial HP. There is no health-policy dropdown. Dead units are not resurrected, and original overhealing is not automatically truncated. Crystal current HP and its maximum can be edited separately, but a destroyed crystal cannot be revived through the current-HP field.
 - **30 logic frames = 1 game second.** Movement and range use their base values multiplied by the corresponding rule multiplier. Attack cooldown is `Math.trunc(base attack interval × attack-interval multiplier)` frames, bounded to a safe integer in the custom runtime. Targets, actions and hit delays also affect attacks: this is not a universal fixed attacks-per-second value.
 
 ## AI selection and editable parameters
@@ -115,3 +114,5 @@ Storage errors show warnings and leave the in-memory draft exportable. Desktop s
 ## Development entry points
 
 `src/customization/schema.mjs` defines editable fields and migration; `index.mjs` handles drafts/live edits/spawn jobs; `numeric.mjs` and `runtime.mjs` contain custom safe arithmetic and per-side runtime behavior. UI lives in `src/app/settings-panel.mjs`, `custom-controls.mjs` and `game-text-controls.mjs`. The recovered core and generated defaults remain separate.
+
+The customization API retains `health: 'absolute'` for developer integrations that intentionally preserve current HP; this is not a panel setting. The single panel action chooses current-match or next-match application automatically.

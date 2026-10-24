@@ -50,6 +50,32 @@ export function legacyFixture(document) {
   return result;
 }
 
+/** The simplified footer must really be a visible single row, not just three DOM nodes. */
+export function compactFooterLayout(buttons, tolerance = 1) {
+  if (!Array.isArray(buttons) || buttons.length !== 3 || !Number.isFinite(tolerance) || tolerance < 0) return false;
+  if (JSON.stringify(buttons.map(button => button?.action)) !== JSON.stringify(['undo', 'reset', 'apply-current'])) return false;
+  if (buttons.some(button => !button.visible || ![button.left, button.right, button.top, button.bottom].every(Number.isFinite)
+    || button.right <= button.left || button.bottom <= button.top)) return false;
+  return Math.max(...buttons.map(button => button.top)) - Math.min(...buttons.map(button => button.top)) <= tolerance
+    && buttons.slice(1).every((button, index) => button.left >= buttons[index].right - tolerance);
+}
+
+/** A single button row alone does not prove that obsolete help rows stopped taking space. */
+export function compactFooterRegion({ buttons, height } = {}) {
+  return Number.isFinite(height) && height > 0 && height <= 60 && compactFooterLayout(buttons);
+}
+
+/** Compare each crystal's fraction, including damaged crystals rather than only full-health cases. */
+export function preservedCrystalFractions(before, after, tolerance = 1e-12) {
+  if (!before || !after || !Number.isFinite(tolerance) || tolerance < 0) return false;
+  return ['left', 'right'].every(side => {
+    const a = before[side], b = after[side];
+    return a && b && [a.baseHp, a.baseMaxHp, b.baseHp, b.baseMaxHp].every(Number.isFinite)
+      && a.baseMaxHp > 0 && b.baseMaxHp > 0 && a.baseHp > 0 && b.baseHp > 0
+      && Math.abs(a.baseHp / a.baseMaxHp - b.baseHp / b.baseMaxHp) <= tolerance;
+  });
+}
+
 function coreHashes() {
   return Object.fromEntries(fs.readdirSync(path.join(root, 'src/core')).filter(name => name.endsWith('.mjs')).sort()
     .map(name => [name, hash(path.join(root, 'src/core', name))]));
@@ -190,6 +216,25 @@ export async function verifySettingsV4(options) {
     check(geometry.panel?.width > 0 && !rectanglesOverlap(geometry.canvas, geometry.panel), `${name}: dock does not cover battlefield`, geometry);
     check(geometry.scrollWidth <= geometry.width + 1, `${name}: no horizontal document overflow`, geometry);
   }
+  async function footer(name) {
+    const buttons = await element('[data-settings-panel] footer button').evaluateAll(nodes => nodes.map(node => {
+      const r = node.getBoundingClientRect(), style = getComputedStyle(node);
+      return { action: node.dataset.settingsAction, label: node.textContent, left: r.left, right: r.right,
+        top: r.top, bottom: r.bottom, visible: style.display !== 'none' && style.visibility !== 'hidden' && r.width > 0 && r.height > 0 };
+    }));
+    const geometry = await element('[data-settings-panel] footer').evaluate(node => ({
+      height: node.getBoundingClientRect().height, width: node.getBoundingClientRect().width,
+    }));
+    check(compactFooterRegion({ buttons, ...geometry }), `${name}: exactly three visible buttons in one row and footer height at most 60 CSS pixels`, { buttons, ...geometry });
+    check(await element('[data-health-policy]').count() === 0 && await act('apply-next').count() === 0,
+      `${name}: no health-policy selector or separate apply-next button remains`);
+    const help = await act('apply-current').evaluate(node => ({
+      title: node.title, describedBy: node.getAttribute('aria-describedby'),
+      description: document.getElementById(node.getAttribute('aria-describedby'))?.textContent,
+    }));
+    check(Boolean(help.title) && help.title === help.description,
+      `${name}: context-specific application help remains available as tooltip and accessible description`, help);
+  }
   function attach(candidate) {
     candidate.on('pageerror', error => report.errors.push({ type: 'pageerror', message: error.message }));
     candidate.on('console', message => { if (message.type() === 'error') report.errors.push({ type: 'console', message: message.text() }); });
@@ -250,7 +295,7 @@ export async function verifySettingsV4(options) {
     const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config/defaults.generated.json'), 'utf8'));
     // Keep the dock open across an original-menu launch, not only the custom
     // new-match button. Its current blue-crystal editors must rebind correctly.
-    await open(); await act('tab-sandbox').click();
+    await open(); await act('tab-sandbox').click(); await footer('menu footer');
     await hit('single'); await hit('difficulty', { value: 3 });
     if ((await state()).overlay === 'tutorial') await hit('tutorial-never');
     await until(async () => (await state()).phase === 'game' && !(await state()).overlay, 'original battle begins');
@@ -258,6 +303,7 @@ export async function verifySettingsV4(options) {
       'home live blue crystal rules rebind after native difficulty launch');
     check((await state()).difficulty === 3 && (await model()).battle.difficulty === 3,
       'opening settings on the menu then native-starting another difficulty binds live fields to that new battle');
+    await footer('battle footer');
     check(await element('[data-action="settings"]').count() === 0, 'no permanently displayed settings launcher');
     check(await hud('pause').isVisible() && await hud('tutorial').isVisible() && await hud('quit').isVisible(), 'all three clear text game actions are visible');
     check(!await page.evaluate(() => window.__MIRAGINE__.getHotspots().some(h => h.action === 'tutorial' || h.action === 'quit')),
@@ -425,9 +471,37 @@ export async function verifySettingsV4(options) {
     await act('tab-presets').click();
     await element('[data-preset-file]').setInputFiles({ name: 'restore-v4.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(exported)) });
     await until(async () => /校验通过/.test(await element('[data-settings-message]').textContent()), 'restore v4 draft after migration test');
+    const beforeMixedApply = await state(), beforeMixedBattle = (await model()).battle;
+    const mixed = structuredClone(exported);
+    mixed.profile.config.sides.left.base.hp = beforeMixedBattle.left.baseMaxHp * 2;
+    mixed.profile.config.sides.right.base.hp = beforeMixedBattle.right.baseMaxHp * 2;
+    // Startup money and already-live crystal rules now coexist in one draft.
+    // A single explicit apply must route each field by its actual timing.
+    mixed.profile.config.sides.left.initial.money = 12345;
+    await element('[data-preset-file]').setInputFiles({ name: 'mixed-live-and-next.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(mixed)) });
+    await until(async () => (await model()).draft.config.sides.left.base.hp === mixed.profile.config.sides.left.base.hp,
+      'mixed current/next profile imported as draft');
+    check(JSON.stringify((await state()).baseHp) === JSON.stringify(beforeMixedApply.baseHp),
+      'importing a mixed current/next draft does not itself alter damaged crystals');
+    await act('apply-current').click();
+    await until(async () => (await model()).applied.config.sides.left.base.hp === mixed.profile.config.sides.left.base.hp,
+      'one unified apply installs live crystal rules');
+    const afterMixedApply = await state(), afterMixedModel = await model();
+    check(afterMixedModel.battle.left.baseMaxHp === mixed.profile.config.sides.left.base.hp
+      && afterMixedModel.battle.right.baseMaxHp === mixed.profile.config.sides.right.base.hp
+      && preservedCrystalFractions(beforeMixedBattle, afterMixedModel.battle),
+      'unified apply uses fixed proportional health for both already-damaged crystals',
+      { before: beforeMixedBattle, after: afterMixedModel.battle });
+    check(['money', 'income', 'population', 'frame', 'round'].every(key => JSON.stringify(afterMixedApply[key]) === JSON.stringify(beforeMixedApply[key]))
+      && afterMixedModel.next.config.sides.left.initial.money === 12345,
+      'one mixed apply preserves current resources/countdown while routing startup money to next match');
+    await footer('mixed-rule footer'); await screenshot('unified-apply');
     await act('tab-starting').click(); await element('[data-start-difficulty="1"]').click(); await act('start-battle').click();
     await until(async () => (await state()).money.left === 12345, 'custom new match uses edited startup money');
     check((await state()).customization.rulesMode.current === 'custom', 'new custom match remains identified as custom');
+    check((await state()).baseHp.left === mixed.profile.config.sides.left.base.hp
+      && (await state()).baseHp.right === mixed.profile.config.sides.right.base.hp,
+      'new match receives full health under the same unified-applied crystal maximums');
     await frozen('new-match action does not silently release manual pause');
     await playback('overview').click();
     const camera = (await state()).customization.displayCamera;
@@ -466,6 +540,23 @@ export async function verifySettingsV4(options) {
     check((await element('[data-preset-select] option').allTextContents()).includes('V4 independent sides'), 'named preset survives restart');
     await element('[data-preset-select]').selectOption(presetId); await act('load-preset').click();
     await screenshot('restarted-preset');
+    await act('tab-starting').click();
+    await field('rules.leftRecruitment').uncheck(); await field('rules.rightRecruitment').uncheck();
+    const menuBeforeApply = await state(), menuAppliedBefore = (await model()).applied;
+    await act('apply-current').click();
+    await until(async () => (await model()).nextMode === 'custom', 'unified menu apply stages next-match rules');
+    const menuAfterApply = await state(), menuModel = await model();
+    check(menuAfterApply.phase === 'title' && menuAfterApply.frame === menuBeforeApply.frame
+      && JSON.stringify(menuModel.applied) === JSON.stringify(menuAppliedBefore)
+      && menuModel.next.config.sides.left.initial.money === 12345,
+      'unified apply on the menu configures the next match without starting or mutating a live battle');
+    await footer('restarted menu footer'); await screenshot('menu-apply');
+    await close(); await hit('single'); await hit('difficulty', { value: 1 });
+    if ((await state()).overlay === 'tutorial') await hit('tutorial-never');
+    const fromMenu = await state();
+    check(fromMenu.phase === 'game' && fromMenu.money.left === 12345 && fromMenu.customization.rulesMode.current === 'custom'
+      && fromMenu.selection.left[2] === 0 && fromMenu.selection.right[2] === 0,
+      'native menu launch uses rules from unified menu apply, including startup balance and recruitment switches');
     check(report.errors.length === 0 && !(await state()).error, 'no browser or runtime JavaScript errors');
     report.status = 'passed'; report.final = await state();
   } catch (error) {

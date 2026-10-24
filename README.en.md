@@ -91,6 +91,8 @@ The tool enters a real match through the menus and measures both ordinary gamepl
 
 ## Change game parameters
 
+The instructions below include the single-apply-button change in the **v0.4.0-preview.2 source**. Its release status and verification require its own Release record, not the previous version's results.
+
 **Use F2 for interactive editing:**
 
 - **Current match / basics:** red and blue status appear together. Edit money, round income, remaining population, current/max crystal HP, attacks and common limits; Enter or leaving the input applies that field. Clear red, blue or both directly.
@@ -101,7 +103,7 @@ The tool enters a real match through the menus and measures both ordinary gamepl
 
 Integer resources support **9,007,199,254,740,991**, JavaScript's safe-integer maximum. Excess input clamps immediately instead of failing only after confirmation. The **round-income cap** governs income gained through recruitment, not the held-money balance. The old 100-per-action / 500-total spawn caps are removed: generation runs in cancellable batches with progress. This does not mean arbitrary army sizes fit in memory or run smoothly. See the **[custom settings guide](docs/custom-settings.en.md)** for limits and application timing.
 
-Live application can preserve health ratios or absolute health. Existing cooldowns, the current countdown and resources are not reset; starting values affect only a new match. Building construction, active skills, fixed waves and scripted reinforcements are absent from this game, so no invented controls are provided.
+The footer places **Undo**, **Restore original defaults** and one **Apply settings** action in a row. During a match it applies eligible draft rules now and starting fields next match; without an active match it sets next-match rules without starting combat. Homepage fields still apply immediately; the footer can apply other outstanding draft edits. HP-limit edits consistently preserve health ratios, with no health-policy selector. Existing cooldowns, the current countdown and resources are not reset. Building construction, active skills, fixed waves and scripted reinforcements are absent from this game, so no invented controls are provided.
 
 ### Why does the computer choose these troops?
 

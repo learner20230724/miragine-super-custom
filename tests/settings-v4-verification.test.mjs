@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { parseV4Options, exactSafeResource, cancelledSpawn, legacyFixture, SAFE_INTEGER_TEXT } from '../tools/verify-settings-v4.mjs';
+import { parseV4Options, exactSafeResource, cancelledSpawn, legacyFixture, SAFE_INTEGER_TEXT,
+  compactFooterLayout, compactFooterRegion, preservedCrystalFractions } from '../tools/verify-settings-v4.mjs';
 
 test('v4 verifier has separate proof names and retains validated options', () => {
   const value = parseV4Options(['--url', 'http://127.0.0.1:43210/']);
@@ -51,4 +52,36 @@ test('legacy fixture removes v2-only fields without mutating actual export', () 
   assert.equal('ai' in legacy.profile.config.difficulties[0], false); assert.equal(legacy.profile.config.difficulties[0].rightStartingIncome, 50);
   assert.deepEqual(document, before);
   for (const input of [null, {}, { profile: { schemaVersion: 1 } }]) assert.throws(() => legacyFixture(input));
+});
+
+test('unified footer proof requires three visible nonoverlapping buttons on the same row', () => {
+  const buttons = ['undo', 'reset', 'apply-current'].map((action, index) => ({ action, visible: true,
+    left: 10 + 100 * index, right: 100 + 100 * index, top: 500, bottom: 532 }));
+  const before = structuredClone(buttons);
+  assert.equal(compactFooterLayout(buttons), true);
+  assert.equal(compactFooterLayout(buttons.map((button, index) => ({ ...button, top: button.top + .3 * index }))), true);
+  for (const invalid of [null, [], buttons.slice(1), [...buttons, buttons[0]],
+    buttons.map((button, index) => ({ ...button, visible: index !== 2 })),
+    buttons.map((button, index) => ({ ...button, action: index === 2 ? 'apply-next' : button.action })),
+    buttons.map((button, index) => ({ ...button, top: index === 2 ? 540 : button.top, bottom: index === 2 ? 572 : button.bottom })),
+    buttons.map((button, index) => ({ ...button, left: index === 1 ? 90 : button.left })),
+    buttons.map(button => ({ ...button, top: NaN }))]) assert.equal(compactFooterLayout(invalid), false);
+  assert.equal(compactFooterLayout(buttons, -1), false); assert.deepEqual(buttons, before);
+  for (const height of [53, 59.99, 60]) assert.equal(compactFooterRegion({ buttons, height }), true);
+  for (const height of [0, -1, 60.01, 90, Infinity, NaN, '53', undefined]) {
+    assert.equal(compactFooterRegion({ buttons, height }), false);
+  }
+  assert.equal(compactFooterRegion(), false);
+  assert.equal(compactFooterRegion({ buttons: buttons.slice(1), height: 53 }), false);
+});
+
+test('fixed health-policy proof compares each damaged crystal fraction and rejects reset/clamp', () => {
+  const before = { left: { baseHp: 777, baseMaxHp: 2000 }, right: { baseHp: 888, baseMaxHp: 3000 } };
+  const after = { left: { baseHp: 1554, baseMaxHp: 4000 }, right: { baseHp: 1776, baseMaxHp: 6000 } };
+  assert.equal(preservedCrystalFractions(before, after), true);
+  for (const invalid of [null, {}, { ...after, left: { baseHp: 777, baseMaxHp: 4000 } },
+    { ...after, right: { baseHp: 6000, baseMaxHp: 6000 } }, { ...after, left: { baseHp: 0, baseMaxHp: 4000 } },
+    { ...after, right: { baseHp: Infinity, baseMaxHp: Infinity } }]) assert.equal(preservedCrystalFractions(before, invalid), false);
+  assert.equal(preservedCrystalFractions(before, after, NaN), false);
+  assert.deepEqual(before.left, { baseHp: 777, baseMaxHp: 2000 });
 });
