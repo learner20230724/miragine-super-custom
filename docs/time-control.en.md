@@ -2,7 +2,7 @@
 
 [中文](time-control.zh-CN.md) · [Settings guide](custom-settings.en.md)
 
-This guide describes the v0.7.2-preview.1 release candidate with U/O keyboard zoom and real-time selection repeat; packaged verification and publication are not complete. These controls target Super Miragine War itself, not a universal external accelerator. No system-clock changes, process injection, Cheat Engine or SWF player are used: complete logic steps are scheduled directly in this game's source.
+This guide describes published [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1) with U/O keyboard zoom and real-time selection repeat. Its 895 source tests and 105 portable-EXE checks passed; see the [delivery receipt](releases/v0.7.2-preview.1.json). These controls target Super Miragine War itself, not a universal external accelerator. No system-clock changes, process injection, Cheat Engine or SWF player are used: complete logic steps are scheduled directly in this game's source.
 
 ## Controls
 

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "version": "0.7.2-preview.1",
+  "status": "published-and-verified",
+  "runtimeCommit": "bfa7d4c7f927ca8b120c54a9f54b2e36367e7067",
+  "verificationToolCommit": "bfa7d4c7f927ca8b120c54a9f54b2e36367e7067",
+  "verificationToolSha256": "d019473c4d84039c276c31d7faa159916f236460efe89d4ef5bf35c38792c013",
+  "releaseId": 422668979,
+  "publishedAt": "2026-10-24T10:43:13Z",
+  "releaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1",
+  "sourceTests": {
+    "tests": 895,
+    "suites": 0,
+    "pass": 895,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "duration_ms": 90301.1327
+  },
+  "portableAcceptance": {
+    "checks": 105,
+    "launches": 2,
+    "domConfirmations": 16,
+    "nativeDialogs": 0,
+    "runtimeErrors": 0,
+    "ownedQaApplicationsClosed": true,
+    "reviewedPublicScreenshots": 10,
+    "scope": "Isolated portable-EXE settings, focus, keyboard zoom and selection-repeat acceptance; excludes personal installation/handoff checks."
+  },
+  "ci": {
+    "databaseId": 40086427527,
+    "headSha": "bfa7d4c7f927ca8b120c54a9f54b2e36367e7067",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40086427527",
+    "jobs": [
+      {
+        "name": "Source / ubuntu-latest / Python 3.13",
+        "conclusion": "success"
+      },
+      {
+        "name": "Source / windows-latest / Python 3.14",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "features": [
+    "U zooms in and O zooms out around the battlefield center; wheel zoom keeps its pointer anchor.",
+    "Red WASD and local-two-player blue arrow selection moves immediately, then repeats at 85 ms after a 350 ms delay using real time, independent of game speed and OS repeat.",
+    "Release, pause, focus loss, parameter editing and in-app confirmation interrupt held selection; stale held keys do not resume automatically.",
+    "Original 30 Hz logic, 0-100x targets, independent display, in-app confirmations and approved hit/lifetime improvements remain unchanged."
+  ],
+  "archive": {
+    "name": "MiragineSuper-Custom-v0.7.2-preview.1-win-x64.zip",
+    "sha256": "a9f6de5d220b2b45a29ac9e6916f9674dacdd5916f9ecc804eafc551348bc323",
+    "bytes": 170656305,
+    "unpackedBytes": 402444869,
+    "files": 105,
+    "inventorySha256": "19383ff3fe5ccb31774f9bf0efd6b19526ccc93256e709a3d2efbddd8ab1f03d"
+  },
+  "sourceScan": {
+    "files": 3112,
+    "bytes": 66579230,
+    "scope": "Public-source privacy scan coverage, not total Git repository disk usage."
+  },
+  "originalAssets": {
+    "baselineCommit": "97d93717716d284db00a68dfbe99adfe5de13afe",
+    "sourceCommit": "bfa7d4c7f927ca8b120c54a9f54b2e36367e7067",
+    "scopes": [
+      "assets",
+      "generated"
+    ],
+    "gitDiffEmpty": true
+  },
+  "privacy": {
+    "sourceFindings": 0,
+    "sourceWarnings": 0,
+    "sourceSkipped": 0,
+    "runtimeUnresolved": 0,
+    "reviewedUpstreamFindings": 5,
+    "publicTextAttachmentScan": {
+      "scannedFiles": 3138,
+      "scannedBytes": 86039946,
+      "findings": [],
+      "warnings": [],
+      "skipped": []
+    },
+    "scope": "Original package runtime audit and public non-ZIP attachments; this later documentation receipt is not part of the frozen package."
+  },
+  "remote": {
+    "assets": 27,
+    "draft": false,
+    "prerelease": true,
+    "allAssetSizesAndApiSha256Match": true,
+    "tag": "v0.7.2-preview.1",
+    "tagCommit": "bfa7d4c7f927ca8b120c54a9f54b2e36367e7067",
+    "remoteTagPointsToRuntimeCommit": true,
+    "fullRemoteRedownloadPerformed": false,
+    "checksumsUrl": "https://github.com/learner20230724/miragine-super-custom/releases/download/v0.7.2-preview.1/SHA256SUMS",
+    "checksumsSha256": "15077d0237e1ef3badbf52222e8a8b420504066234cfb28761653639983630d7"
+  },
+  "localUpgradeSummary": {
+    "status": "verified-at-handoff",
+    "version": "0.7.2-preview.1",
+    "sourceCommit": "bfa7d4c7f927ca8b120c54a9f54b2e36367e7067",
+    "checksPassed": 25,
+    "configurationChanged": false,
+    "personalFilesPreservedByteForByte": 299,
+    "savedProfileApplied": true,
+    "desktopEntryPointLaunchedVerifiedVersion": true,
+    "mutedAtHandoff": true,
+    "pausedAtHandoff": true,
+    "currentMatchRestored": false,
+    "privacy": "Aggregate result only; personal values, file names, directories, raw reports and handoff screenshots are not published.",
+    "notIncludedInPublicPortableCheckCount": true
+  },
+  "provenance": {
+    "runtimeAndIncludedVerifierShareCommit": true,
+    "localReportsAssociatedWithFrozenCommitByCoordinator": true,
+    "rawReportsDoNotIndependentlyAttestExecutingVerifierHashOrSourceLogCommit": true,
+    "independentCommitSpecificCiPassed": true
+  },
+  "limitations": [
+    "50x/100x and 240 FPS remain targets, not sustained-throughput guarantees; no new full-game Flash-parity claim.",
+    "The 105 public EXE checks and 25 private local handoff checks are separate scopes, not a combined public test total.",
+    "The local upgrade preserved settings, not the previous match progress.",
+    "Published package/notes/evidence retain frozen build-time status; this receipt adds publication evidence without repackaging.",
+    "All 27 remote asset sizes and GitHub API digests were checked; no complete remote ZIP redownload was performed."
+  ]
+}

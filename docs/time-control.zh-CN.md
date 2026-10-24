@@ -2,7 +2,7 @@
 
 [English](time-control.en.md) · [设置操作](custom-settings.zh-CN.md)
 
-本页描述 v0.7.2-preview.1 发布候选，新增 U／O 键盘缩放与真实时间选兵连按；新版正式包验收和发布尚未完成。当前功能针对《超级米拉奇战记》本身，不提供通用外置加速器。不使用系统时间修改、进程注入、Cheat Engine 或 SWF 播放器；直接在本游戏源码中调度完整逻辑步。
+本页描述已发布的 [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1)，新增 U／O 键盘缩放与真实时间选兵连按；本版 895 项源码测试、105 项正式 EXE 检查通过，见[交付收据](releases/v0.7.2-preview.1.json)。当前功能针对《超级米拉奇战记》本身，不提供通用外置加速器。不使用系统时间修改、进程注入、Cheat Engine 或 SWF 播放器；直接在本游戏源码中调度完整逻辑步。
 
 ## 使用与原理
 

@@ -2,7 +2,7 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes the v0.7.2-preview.1 release candidate with U/O keyboard zoom and real-time selection repeat, retaining the in-app confirmation fix. Packaged verification and publication of the combined candidate are not complete. [Published v0.7.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.1-preview.1) passed 863 source tests and 65 portable-EXE checks; the [v0.7.0 delivery record](releases/v0.7.0-preview.1.json) retains the automatic-settings and 50×/100× evidence. These historical results do not validate the current candidate. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes published [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1) with U/O keyboard zoom and real-time selection repeat, retaining the in-app confirmation fix. Its 895 source tests and 105 portable-EXE checks passed; see the [delivery receipt](releases/v0.7.2-preview.1.json). [Published v0.7.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.1-preview.1) passed 863 source tests and 65 portable-EXE checks; the [v0.7.0 delivery record](releases/v0.7.0-preview.1.json) retains the automatic-settings and 50×/100× evidence. These historical results are recorded separately from this version's acceptance. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 
@@ -72,7 +72,7 @@ Restoring original panel parameters retains the previously approved trajectory-h
 
 ### In-app confirmation
 
-In response to inputs becoming uneditable after restoring defaults, settings operations requiring confirmation now use an asynchronous in-app dialog rather than a native blocking confirmation window. **Cancel receives initial focus**; Escape or Cancel dismisses it without performing the action. After explicit confirmation, the intended behavior is to continue clicking inputs, typing and confirming edits without restarting or switching windows. Packaged acceptance of this combined candidate is still pending; this does not establish a unique cause of the previous problem or prove coverage of every environment.
+In response to inputs becoming uneditable after restoring defaults, settings operations requiring confirmation now use an asynchronous in-app dialog rather than a native blocking confirmation window. **Cancel receives initial focus**; Escape or Cancel dismisses it without performing the action. After explicit confirmation, the intended behavior is to continue clicking inputs, typing and confirming edits without restarting or switching windows. This portable EXE has passed actual keyboard editing after confirmation, cancellation, Escape cancellation, fullscreen and consecutive resets; this does not establish a unique cause of the previous problem or prove coverage of every environment.
 
 This changes only confirmation interaction, not parameter meanings, application timing, automatic saving, presets, undo or reset scope. The user-approved trajectory-hit and lifetime improvements remain enabled.
 

@@ -8,15 +8,30 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
-**Current source: v0.7.2-preview.1 release candidate, keyboard zoom and controlled selection repeat.** U zooms in and O zooms out around the battlefield center; the wheel retains its pointer anchor. WASD/arrow selection moves immediately on keydown, then repeats every 85 ms after an initial 350 ms hold, independent of game speed. Parameter editing and in-app confirmations retain keyboard priority. Packaged verification and publication are not complete; historical records below do not validate this candidate. Parameter rules and approved improvements are unchanged.
+**Current published version: [v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1), keyboard zoom and controlled selection repeat.** U zooms in and O zooms out around the battlefield center; the wheel retains its pointer anchor. WASD/arrow selection moves immediately on keydown, then repeats every 85 ms after an initial 350 ms hold, independent of game speed. Parameter editing and in-app confirmations retain keyboard priority. The portable build is verified and published; see this version's delivery record below. Parameter rules and approved improvements are unchanged.
 
-**Current published version: [v0.7.1-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.1-preview.1), in-app confirmation and input-focus fixes.** Its verification and remote-asset checks are complete; the historical delivery record below reports those results, not verification of the current 0.7.2 candidate. Retains the v0.6.0 large-army optimization: spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Current and historical delivery results are recorded separately below.
+**Retains the preceding in-app confirmation and input-focus fixes**, plus the v0.6.0 large-army optimization: spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Current and historical delivery results are recorded separately below.
 
 **Current source also enables the requested custom hit rules:** ranged projectiles follow a straight trajectory and hit the first enemy contacted; ordinary attacks damage their locked target after the original firing delay, supporting long-range melee customization. Red/blue crystal projectile life is fixed at 253 steps; vampire/mage life still budgets for 1.1 map widths. Firing range, damage/armor formulas, cooldowns, speed controls and the 30 Hz simulation rate are unchanged. Startup is marked as custom rules. Restoring panel parameters retains the previously approved trajectory-hit and lifetime improvements and does not rewrite the startup file. See [hit rules](docs/combat-hits.en.md) and [projectile lifetime](docs/projectile-lifetime.en.md).
 
 **Clearing troops retains their original death animation.** Clearing red, blue or both sides immediately removes troops from combat and targeting lists, while their original backward-fall animation remains visible instead of vanishing instantly. Crystals take no damage, no refund is given, and associated attacks are cleared. Animation waits during pause/0× and continues on resume; repeated clearing does not restart existing corpses. See [clearing behavior](docs/custom-settings.en.md#spawn-and-clear).
 
 **Retains v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
+
+## v0.7.2-preview.1 delivery
+
+Published **[v0.7.2-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.2-preview.1)** on 2026-10-24, with runtime and verifier both at `bfa7d4c7f927ca8b120c54a9f54b2e36367e7067`.
+
+| Delivery / verification | Result |
+|---|---|
+| Source and portable EXE | **895 source tests and 105 isolated EXE checks across 2 launches passed**, including 16 in-app confirmations; zero runtime errors |
+| CI and remote assets | [Windows/Linux passed](https://github.com/learner20230724/miragine-super-custom/actions/runs/40086427527); all **27 assets** match local sizes and API SHA-256 digests; tag identifies the runtime commit. No complete remote redownload |
+| Windows ZIP / extracted | **170,656,305 bytes** (170.66 MB) / **402,444,869 bytes, 105 files** (402.44 MB) |
+| Source privacy-scan coverage | **3,112 files / 66,579,230 bytes**; not total repository/history disk usage |
+| Privacy and assets | **0** unresolved privacy findings; original/generated assets unchanged from 0.7.1 |
+| Separate local upgrade | **299 personal files preserved byte-for-byte and 25 handoff checks passed**; the desktop entry point launched this version, muted and paused at handoff. These checks are not included in the 105 public EXE checks above |
+
+The [delivery receipt](docs/releases/v0.7.2-preview.1.json) includes only aggregate local-upgrade results, not personal values, directories or screenshots. Configuration was preserved, not the previous match's progress. Bundled candidate documents and release assets remain frozen; this receipt does not repackage the game. Historical records below describe only their own delivery-time status. 50x/100x and 240 FPS remain targets, not sustained-throughput guarantees.
 
 ## v0.7.1-preview.1 historical delivery
 
