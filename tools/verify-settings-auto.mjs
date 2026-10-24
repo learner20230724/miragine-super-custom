@@ -15,7 +15,7 @@ const hash = file => createHash('sha256').update(fs.readFileSync(file)).digest('
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 export function parseAutoOptions(args) {
-  const options = { out: '.local/settings-auto-qa.json', screenshotPrefix: 'settings-auto' };
+  const options = { out: '.local/keyboard-controls-qa.json', screenshotPrefix: 'settings-auto-keyboard-controls' };
   const keys = { '--dir': 'dir', '--version': 'version', '--commit': 'commit', '--out': 'out', '--screenshot-prefix': 'screenshotPrefix' };
   for (let i = 0; i < args.length; i += 2) {
     const key = keys[args[i]], value = args[i + 1];
@@ -70,6 +70,24 @@ export async function answerSettingsConfirmation({ page, choice = 'accept', expe
   else await page.locator(`[data-settings-confirm-${choice}]`).click();
   await dialog.waitFor({ state: 'hidden', timeout: 10000 });
   return { type: 'dom', choice, message };
+}
+
+/** A single physical keydown per held key, never synthetic repeat or game-state injection. */
+export async function withHeldKeys({ keyboard, keys, during }) {
+  expect(Array.isArray(keys) && keys.length > 0 && keys.every(key => typeof key === 'string' && key.length > 0)
+    && new Set(keys).size === keys.length && typeof during === 'function', 'Expected unique held keys and a during callback');
+  const held = []; let result, failure;
+  try {
+    for (const key of keys) { await keyboard.down(key); held.push(key); }
+    result = await during();
+  } catch (error) { failure = error; }
+  finally {
+    for (const key of held.reverse()) {
+      try { await keyboard.up(key); } catch (error) { failure ??= error; }
+    }
+  }
+  if (failure) throw failure;
+  return result;
 }
 
 export async function verifySettingsAuto(options) {
@@ -214,10 +232,132 @@ export async function verifySettingsAuto(options) {
     check(units?.length === 1 && units[0].spawnHP === hp && units[0].range === range * s.customization.editor.applied.config.rules.rangeMultiplier,
       name, units);
   }
+  async function keyboardAcceptance() {
+    // Run after the complete settings/focus acceptance, in a separate real
+    // two-player match. No test here alters simulation or keyboard internals.
+    await act('tab-starting').click(); await page.locator('[data-start-mode="false"]').click();
+    await confirmAction('start-battle', 'accept', /重新开始/);
+    if ((await state()).overlay === 'tutorial') await hit('tutorial-okay');
+    await until(async () => (await state()).phase === 'game' && !(await state()).overlay, 'two-player tutorial is dismissed before game keyboard input');
+    check((await state()).singlePlay === false, 'keyboard acceptance uses a genuine two-player match');
+    await act('tab-sandbox').click();
+    for (const side of ['left', 'right']) await page.locator(`[data-live-recruitment="${side}"]`).uncheck();
+    await act('clear-all').click(); await pause();
+    const selection = async () => (await state()).selection;
+    const zoom = async () => (await state()).customization.displayCamera.zoom;
+    async function canvasClick() {
+      const f = (await state()).viewport;
+      await page.mouse.click(f.clientLeft + f.left + 320 * f.scale, f.clientTop + f.top + 250 * f.scale);
+      check(await page.locator('#game').evaluate(node => node.ownerDocument.hasFocus() && node.ownerDocument.activeElement === node),
+        'real battlefield click gives the canvas game keyboard focus');
+    }
+    async function selectZero() {
+      await act('tab-sandbox').click();
+      for (const side of ['left', 'right']) await page.locator(`[data-live-selected-unit="${side}"]`).selectOption('0');
+      const s = await selection(); expect(s.left[0] === 0 && s.left[1] === 0 && s.right[0] === 0 && s.right[1] === 0, 'Actual sandbox selection resets both cursors to the first cell');
+    }
+    const held = (keys, during) => withHeldKeys({ keyboard: page.keyboard, keys, during });
+    const unchanged = async (before, milliseconds = 500) => { await delay(milliseconds); return same(await selection(), before); };
+    await canvasClick();
+    const pausedFrame = (await state()).frame, beforeZoom = await zoom();
+    for (let i = 0; i < 3; i++) await page.keyboard.press('u');
+    const zoomed = await zoom(); check(zoomed > beforeZoom, 'three actual U presses zoom in without a mouse wheel');
+    await page.keyboard.press('o'); const zoomedOut = await zoom();
+    check(zoomedOut < zoomed && zoomedOut > 0 && (await state()).frame === pausedFrame,
+      'actual O zooms out while paused without advancing game logic');
+    await screenshot('keyboard-zoom');
+
+    await speed(1); await pause(false);
+    await act('tab-presets').click(); const nameInput = page.locator('[data-preset-name]');
+    const beforeTextSelection = await selection(), beforeTextZoom = await zoom();
+    await typeByMouseAndKeyboard({ page, control: nameInput, value: 'uowasd', commitKey: 'ArrowRight' });
+    await held(['ArrowDown'], async () => { await delay(600); });
+    check(await nameInput.inputValue() === 'uowasd' && same(await selection(), beforeTextSelection) && await zoom() === beforeTextZoom,
+      'U/O/WASD text and held arrows remain input editing, never camera zoom or troop selection');
+
+    await selectZero(); await speed(1); await pause(false); await canvasClick();
+    await held(['d', 'ArrowRight'], async () => {
+      await until(async () => { const s = await selection(); return s.left[0] === 7 && s.right[0] === 7; }, 'held D and Right traverse all eight columns');
+      const edge = await selection(); check(await unchanged(edge), 'holding D/Right at the eighth column does not wrap or leave the grid');
+    });
+    check((await selection()).left[0] === 7 && (await selection()).right[0] === 7, 'both players reach the right boundary from one physical keydown each');
+    await held(['s', 'ArrowDown'], async () => {
+      await until(async () => { const s = await selection(); return s.left[1] === 1 && s.right[1] === 1; }, 'held S and Down reach lower row');
+      const edge = await selection(); check(await unchanged(edge), 'holding S/Down stays on the lower row');
+    });
+    await held(['a', 'ArrowLeft'], async () => {
+      await until(async () => { const s = await selection(); return s.left[0] === 0 && s.right[0] === 0; }, 'held A and Left traverse to first column');
+    });
+    await held(['w', 'ArrowUp'], async () => {
+      await until(async () => { const s = await selection(); return s.left[1] === 0 && s.right[1] === 0; }, 'held W and Up reach upper row');
+      const edge = await selection(); check(await unchanged(edge), 'holding W/Up stays on the upper row');
+    });
+    check(same((await selection()).left.slice(0, 2), [0, 0]) && same((await selection()).right.slice(0, 2), [0, 0]),
+      'all eight directional bindings preserve the original 8-by-2 grid boundaries');
+    let released;
+    await held(['d'], async () => {
+      await until(async () => (await selection()).left[0] >= 2, 'single held D repeats beyond its initial one-cell step');
+    });
+    released = await selection();
+    check(released.left[0] >= 2 && released.left[0] < 7 && await unchanged(released),
+      'releasing D in the middle of the row stops further selection rather than only stopping at a boundary');
+    await screenshot('keyboard-both-players');
+    await selectZero(); await speed(100); await canvasClick();
+    await held(['d', 'ArrowRight'], async () => {
+      await until(async () => { const s = await selection(); return s.left[0] === 7 && s.right[0] === 7; }, 'same physical hold traverses both sides at 100x');
+    });
+    check((await state()).customization.speed === 100 && (await state()).customization.timing.stepHz === 30,
+      'held selection also works at 100x with unchanged 30 Hz logic');
+    await speed(1); await selectZero(); await canvasClick();
+
+    await held(['d'], async () => {
+      await until(async () => (await selection()).left[0] >= 2, 'repeat begins before pause interruption');
+      await pause(); const stopped = await selection();
+      check(stopped.left[0] >= 2 && stopped.left[0] < 7, 'pause interrupts mid-row, not at an already-clamped boundary');
+      check(await unchanged(stopped), 'pausing cancels a pending held selection repeat');
+      await pause(false); await canvasClick();
+      check(await unchanged(stopped), 'resume does not revive a still-physically-held key cleared by pause');
+    });
+    const afterPause = await selection(); await page.keyboard.press('d');
+    check((await selection()).left[0] === Math.min(7, afterPause.left[0] + 1), 'a fresh press after release works following pause cancellation');
+
+    await selectZero(); await act('tab-presets').click(); await canvasClick();
+    await held(['d'], async () => {
+      await until(async () => (await selection()).left[0] >= 2, 'repeat begins before field focus interruption');
+      await nameInput.click(); const stopped = await selection(), z = await zoom();
+      check(stopped.left[0] >= 2 && stopped.left[0] < 7, 'field focus interrupts mid-row, not at an already-clamped boundary');
+      await page.keyboard.type('uo');
+      check(await unchanged(stopped) && await zoom() === z, 'clicking an input cancels pending repeat and typed U/O cannot zoom');
+      await canvasClick();
+      check(await unchanged(stopped), 'returning to canvas does not replay the still-held key cleared by input focus');
+    });
+
+    await selectZero(); await canvasClick();
+    await held(['d'], async () => {
+      await until(async () => (await selection()).left[0] >= 2, 'repeat begins before confirmation interruption');
+      await act('reset').click(); await page.locator('[data-settings-confirm]').waitFor({ state: 'visible' });
+      const stopped = await selection(), z = await zoom();
+      check(stopped.left[0] >= 2 && stopped.left[0] < 7, 'confirmation interrupts mid-row, not at an already-clamped boundary');
+      await page.keyboard.press('u');
+      check(await zoom() === z, 'a visible confirmation owns U instead of zooming the battle');
+      await held(['ArrowRight'], async () => { await delay(500); });
+      check(same(await selection(), stopped), 'confirmation blocks both the previous held key and new held arrow input');
+      const answer = await answerSettingsConfirmation({ page, choice: 'cancel', expectedText: /全部面板参数恢复/ });
+      (report.dialogs ??= []).push({ action: 'reset-held-key-cancel', ...answer });
+      await canvasClick(); check(await unchanged(stopped), 'closing confirmation does not revive stale held selection');
+    });
+    const afterDialog = await selection(); await page.keyboard.press('d');
+    check((await selection()).left[0] === Math.min(7, afterDialog.left[0] + 1), 'fresh game key works again after confirmation closes and the old key is released');
+    await pause(); await canvasClick(); const pausedSelection = await selection();
+    await held(['d', 'ArrowRight'], async () => { await delay(650); });
+    check(same(await selection(), pausedSelection), 'keys newly pressed during pause cannot move either troop cursor');
+    check((await state()).muted && !(await state()).winner, 'keyboard acceptance remains muted and does not end or corrupt the battle');
+    await screenshot('keyboard-interruption-final');
+  }
   try {
     save('package provenance');
     const { extractFile } = await import('@electron/asar');
-    for (const name of ['src/app/main.mjs', 'src/app/settings-panel.mjs', 'src/app/confirmation-dialog.mjs', 'src/customization/index.mjs', 'src/app/custom-controls.mjs', 'src/runtime/game-clock.mjs']) {
+    for (const name of ['src/app/main.mjs', 'src/app/input.mjs', 'src/app/camera-keyboard.mjs', 'src/app/settings-panel.mjs', 'src/app/confirmation-dialog.mjs', 'src/customization/index.mjs', 'src/app/custom-controls.mjs', 'src/runtime/game-clock.mjs']) {
       check(extractFile(path.join(directory, 'resources/app.asar'), name.split('/').join(path.sep)).equals(fs.readFileSync(path.join(root, name))),
         `packaged runtime exactly matches verified checkout: ${name}`);
     }
@@ -399,6 +539,7 @@ export async function verifySettingsAuto(options) {
     await act('tab-units').click(); await screenshot('restored-second-launch');
     check(await act('apply-current').count() === 0 && !/草稿未保存/.test(await page.locator('[data-settings-panel]').textContent()),
       'restarted UI still requires no manual Apply or draft workflow');
+    await keyboardAcceptance();
     for (const file of editable) file.after = hash(path.join(directory, file.name));
     check(editable.every(file => file.before === file.after), 'external editable config and graphics helper were not rewritten', editable);
     check(report.dialogs?.length >= 10 && report.dialogs.every(dialog => dialog.type === 'dom') && !report.errors.some(error => error.type === 'native-dialog'),

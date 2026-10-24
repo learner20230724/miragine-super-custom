@@ -8,15 +8,19 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
-**Current source: v0.7.1-preview.1 release candidate, confirmation-dialog interaction fix.** In response to inputs becoming uneditable after confirming Restore original defaults, this candidate uses an asynchronous in-app confirmation with Cancel focused by default and Escape to cancel; editing by mouse and keyboard should remain available afterward. Reproduction and packaged verification are still in progress, and this candidate is not published. Earlier verification below does not validate this fix. Parameter behavior, automatic saving, reset scope and hit/lifetime improvements are unchanged.
+**Current source: v0.7.2-preview.1 release candidate, keyboard zoom and controlled selection repeat.** U zooms in and O zooms out around the battlefield center; the wheel retains its pointer anchor. WASD/arrow selection moves immediately on keydown, then repeats every 85 ms after an initial 350 ms hold, independent of game speed. Parameter editing and in-app confirmations retain keyboard priority. Packaged verification and publication are not complete; historical records below do not validate this candidate. Parameter rules and approved improvements are unchanged.
 
-**Current published version: v0.7.0-preview.1, automatic settings application and 50×/100× quick choices.** Verification and remote-asset checks are complete; the current delivery record below reports the actual results. Retains the v0.6.0 large-army optimization: spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Current and historical delivery results are recorded separately below.
+**Current published version: [v0.7.1-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.1-preview.1), in-app confirmation and input-focus fixes.** Its verification and remote-asset checks are complete; the historical delivery record below reports those results, not verification of the current 0.7.2 candidate. Retains the v0.6.0 large-army optimization: spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Current and historical delivery results are recorded separately below.
 
 **Current source also enables the requested custom hit rules:** ranged projectiles follow a straight trajectory and hit the first enemy contacted; ordinary attacks damage their locked target after the original firing delay, supporting long-range melee customization. Red/blue crystal projectile life is fixed at 253 steps; vampire/mage life still budgets for 1.1 map widths. Firing range, damage/armor formulas, cooldowns, speed controls and the 30 Hz simulation rate are unchanged. Startup is marked as custom rules. Restoring panel parameters retains the previously approved trajectory-hit and lifetime improvements and does not rewrite the startup file. See [hit rules](docs/combat-hits.en.md) and [projectile lifetime](docs/projectile-lifetime.en.md).
 
 **Clearing troops retains their original death animation.** Clearing red, blue or both sides immediately removes troops from combat and targeting lists, while their original backward-fall animation remains visible instead of vanishing instantly. Crystals take no damage, no refund is given, and associated attacks are cleared. Animation waits during pause/0× and continues on resume; repeated clearing does not restart existing corpses. See [clearing behavior](docs/custom-settings.en.md#spawn-and-clear).
 
 **Retains v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
+
+## v0.7.1-preview.1 historical delivery
+
+Published **[v0.7.1-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.1-preview.1)** on 2026-10-24, with runtime and verification tool both at `97d93717716d284db00a68dfbe99adfe5de13afe`. In-app confirmation and focus fixes passed **863 source tests and 65 portable-EXE checks**, plus [Windows/Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40085424569). All **24 remote assets** match local sizes and API SHA-256 digests; the version tag points to that runtime commit. No complete remote redownload was performed. These results cover only 0.7.1, not the 0.7.2 keyboard-controls candidate. Bundled candidate documents retain frozen build-time status; this record does not repackage the game.
 
 ## v0.7.0-preview.1 delivery
 
@@ -88,11 +92,12 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 | Input | Action |
 |---|---|
 | Click a unit | Select unit |
-| W / A / S / D | Left player's unit selection |
+| W / A / S / D | Left selection cursor: immediate first move, then every 85 ms after holding for 350 ms |
 | Space | Toggle left player's recruitment |
-| Arrow keys, Enter | Right player's selection and recruitment in local two-player mode |
+| Arrow keys, Enter | Right selection in local two-player mode: immediate first move, then every 85 ms after 350 ms; Enter toggles recruitment |
 | Drag the minimap | Move the camera |
 | I / J / K / L | World-coordinate pan: approximately four real seconds between default crystals, independent of zoom/speed |
+| U / O | Zoom in / out around the battlefield center, independently of pointer position |
 | Wheel over the battlefield | Pointer-anchored zoom; map boundaries take priority at limits |
 | Left / right / middle mouse drag | Pan into free observation; left dragging starts after 5 CSS pixels, so simple clicks do not pan |
 | F2 | The only settings entry: opening/closing never changes pause state. Side-by-side in wide windows, stacked in narrow windows |
@@ -103,6 +108,8 @@ Open the address printed in the terminal, normally **http://127.0.0.1:51286/**. 
 | Settings display ceiling | Select 30/60/120/240 FPS targets without changing the game step |
 | Esc | Close the open settings panel first; otherwise show leave-match confirmation |
 | F11 / view-section fullscreen | Toggle fullscreen, distinct from camera overview |
+
+Selection repeat uses **real time**, not 0.1×/1×/100× game time. Releasing the relevant key, losing window focus or pausing stops repeats, preventing stale held selection after resumption. Parameter inputs and in-app confirmations keep keyboard priority; typing there does not select troops or trigger U/O zoom.
 
 The menu offers four single-player difficulties and local two-player play. Network multiplayer is not implemented.
 

@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseAutoOptions, correctAutoOrder, autoTiming, typeByMouseAndKeyboard,
-  answerSettingsConfirmation } from '../tools/verify-settings-auto.mjs';
+  answerSettingsConfirmation, withHeldKeys } from '../tools/verify-settings-auto.mjs';
 
-const args = ['--dir', 'dist/settings-auto-proof/MiragineSuper', '--version', '0.7.1-preview.1', '--commit', 'a'.repeat(40)];
+const args = ['--dir', 'dist/settings-auto-proof/MiragineSuper', '--version', '0.7.2-preview.1', '--commit', 'a'.repeat(40)];
 test('automatic-settings verifier requires explicit provenance and safe local outputs', () => {
-  assert.equal(parseAutoOptions(args).out, '.local/settings-auto-qa.json');
+  assert.equal(parseAutoOptions(args).out, '.local/keyboard-controls-qa.json');
+  assert.equal(parseAutoOptions(args).screenshotPrefix, 'settings-auto-keyboard-controls');
   assert.throws(() => parseAutoOptions(args.slice(0, 4)), /Supply/);
   assert.throws(() => parseAutoOptions([...args, '--unknown', 'x']), /Expected/);
   assert.throws(() => parseAutoOptions([...args, '--out', 'README.json']), /ignored output/);
@@ -135,4 +136,107 @@ test('settings confirmation rejects an unknown choice before interacting with th
   await assert.rejects(answerSettingsConfirmation({ page: fixture.page, choice: 'native-accept' }),
     /Unknown confirmation choice/);
   assert.deepEqual(fixture.calls, []);
+});
+
+function heldKeysFixture({ downFailureKey = null, upFailureKey = null } = {}) {
+  const calls = [], held = new Set();
+  const downError = new Error('keydown failed'), upError = new Error('keyup failed');
+  const keyboard = {
+    async down(key) {
+      calls.push(['down', key]);
+      if (key === downFailureKey) throw downError;
+      assert.equal(held.has(key), false, 'A held key must not receive synthetic repeat keydown events');
+      held.add(key);
+    },
+    async up(key) {
+      calls.push(['up', key]);
+      assert.equal(held.has(key), true, 'Only successfully pressed keys should be released');
+      held.delete(key);
+      if (key === upFailureKey) throw upError;
+    },
+    async press() { throw new Error('Held keys require down/up, not keyboard.press'); },
+    async type() { throw new Error('Held keys require down/up, not keyboard.type'); },
+  };
+  return { keyboard, calls, held, downError, upError };
+}
+
+test('held-key acceptance presses each key once, awaits one observation and releases in reverse order', async () => {
+  const fixture = heldKeysFixture(), keys = ['Shift', 'j', 'l'];
+  let observations = 0;
+  await withHeldKeys({ keyboard: fixture.keyboard, keys, during: async () => {
+    observations++; fixture.calls.push(['during', 'start']);
+    assert.deepEqual([...fixture.held], keys);
+    await Promise.resolve();
+    assert.deepEqual([...fixture.held], keys, 'Keys must stay down until the asynchronous observation finishes');
+    fixture.calls.push(['during', 'end']);
+  } });
+  assert.equal(observations, 1);
+  assert.deepEqual(fixture.calls, [['down', 'Shift'], ['down', 'j'], ['down', 'l'],
+    ['during', 'start'], ['during', 'end'], ['up', 'l'], ['up', 'j'], ['up', 'Shift']]);
+  assert.equal(fixture.held.size, 0);
+  assert.deepEqual(keys, ['Shift', 'j', 'l'], 'Cleanup must not reverse the caller-owned key list in place');
+});
+
+test('held-key acceptance releases all pressed keys when its observation fails', async () => {
+  const fixture = heldKeysFixture(), failure = new Error('observation failed');
+  let observations = 0;
+  await assert.rejects(withHeldKeys({ keyboard: fixture.keyboard, keys: ['j', 'l'], during: async () => {
+    observations++; fixture.calls.push(['during']); throw failure;
+  } }), error => error === failure);
+  assert.equal(observations, 1);
+  assert.deepEqual(fixture.calls, [['down', 'j'], ['down', 'l'], ['during'], ['up', 'l'], ['up', 'j']]);
+  assert.equal(fixture.held.size, 0);
+});
+
+test('held-key acceptance releases prior successful keys if a later keydown fails', async () => {
+  const fixture = heldKeysFixture({ downFailureKey: 'l' });
+  await assert.rejects(withHeldKeys({ keyboard: fixture.keyboard, keys: ['Shift', 'j', 'l', 'i'], during() {
+    fixture.calls.push(['during']);
+  } }), error => error === fixture.downError);
+  assert.deepEqual(fixture.calls, [['down', 'Shift'], ['down', 'j'], ['down', 'l'], ['up', 'j'], ['up', 'Shift']]);
+  assert.equal(fixture.held.size, 0);
+});
+
+test('held-key acceptance does not observe or release unpressed keys if the first keydown fails', async () => {
+  const fixture = heldKeysFixture({ downFailureKey: 'j' });
+  await assert.rejects(withHeldKeys({ keyboard: fixture.keyboard, keys: ['j', 'l'], during() {
+    fixture.calls.push(['during']);
+  } }), error => error === fixture.downError);
+  assert.deepEqual(fixture.calls, [['down', 'j']]);
+  assert.equal(fixture.held.size, 0);
+});
+
+test('held-key acceptance rejects empty, duplicate or non-string key lists before sending input', async () => {
+  for (const keys of [undefined, null, 'j', [], [''], ['j', ''], ['j', 1], [null], ['j', 'j']]) {
+    const fixture = heldKeysFixture();
+    await assert.rejects(withHeldKeys({ keyboard: fixture.keyboard, keys, during() { fixture.calls.push(['during']); } }));
+    assert.deepEqual(fixture.calls, [], `Invalid keys must not cause any input: ${JSON.stringify(keys)}`);
+  }
+});
+
+test('held-key acceptance requires an observation callback before sending input', async () => {
+  for (const during of [undefined, null, 0, 'observe', {}]) {
+    const fixture = heldKeysFixture();
+    await assert.rejects(withHeldKeys({ keyboard: fixture.keyboard, keys: ['j'], during }));
+    assert.deepEqual(fixture.calls, []);
+  }
+});
+
+test('held-key acceptance keeps releasing other keys after a keyup failure', async () => {
+  const fixture = heldKeysFixture({ upFailureKey: 'l' });
+  await assert.rejects(withHeldKeys({ keyboard: fixture.keyboard, keys: ['Shift', 'j', 'l'], during() {
+    fixture.calls.push(['during']);
+  } }), error => error === fixture.upError);
+  assert.deepEqual(fixture.calls, [['down', 'Shift'], ['down', 'j'], ['down', 'l'], ['during'],
+    ['up', 'l'], ['up', 'j'], ['up', 'Shift']]);
+  assert.equal(fixture.held.size, 0);
+});
+
+test('held-key acceptance preserves its observation error even if keyup also fails', async () => {
+  const fixture = heldKeysFixture({ upFailureKey: 'l' }), failure = new Error('original observation failure');
+  await assert.rejects(withHeldKeys({ keyboard: fixture.keyboard, keys: ['j', 'l'], during() {
+    fixture.calls.push(['during']); throw failure;
+  } }), error => error === failure);
+  assert.deepEqual(fixture.calls, [['down', 'j'], ['down', 'l'], ['during'], ['up', 'l'], ['up', 'j']]);
+  assert.equal(fixture.held.size, 0);
 });

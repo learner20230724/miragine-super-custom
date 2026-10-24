@@ -2,7 +2,7 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes the v0.7.1-preview.1 release candidate with in-app confirmation interaction. Reproduction and packaged verification are still in progress; it is not published. The [published v0.7.0 delivery record](releases/v0.7.0-preview.1.json) retains the automatic-settings and 50×/100× evidence, not validation of this fix. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes the v0.7.2-preview.1 release candidate with U/O keyboard zoom and real-time selection repeat, retaining the in-app confirmation fix. Packaged verification and publication of the combined candidate are not complete. [Published v0.7.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.7.1-preview.1) passed 863 source tests and 65 portable-EXE checks; the [v0.7.0 delivery record](releases/v0.7.0-preview.1.json) retains the automatic-settings and 50×/100× evidence. These historical results do not validate the current candidate. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 
@@ -12,7 +12,7 @@ This guide describes the v0.7.1-preview.1 release candidate with in-app confirma
 - **View/display comes below time:** free observation, follow, compact overview, fullscreen and 30/60/120/240 FPS targets. Fullscreen also uses F11; overview is camera framing, not window fullscreen.
 - The lower-left game controls are clear clickable text: **pause/resume, help, quit**. They are not the original blurry button bitmaps. Pause works without opening settings.
 
-Left/right/middle dragging pans the main battlefield into free observation. Left dragging starts after 5 CSS pixels; simple clicks do not pan. Minimap navigation, wheel zoom and IJKL remain available. Valid numeric speed edits apply while typing; rule fields commit on Enter or blur, automatically applying and saving valid changes without another Apply button.
+Left/right/middle dragging pans the main battlefield into free observation. Left dragging starts after 5 CSS pixels; simple clicks do not pan. Minimap navigation, wheel zoom and IJKL remain available. U zooms in and O zooms out around the battlefield center, while the wheel retains its pointer anchor; parameter inputs and confirmation dialogs do not trigger these game shortcuts. Valid numeric speed edits apply while typing; rule fields commit on Enter or blur, automatically applying and saving valid changes without another Apply button.
 
 The match summary shows actual difficulty separately from original/custom rule status. Selecting a difficulty with unchanged defaults does not mark a new match custom. AI difficulty/category/candidate-table menus only navigate editing content; they never change the current match difficulty.
 
@@ -70,9 +70,9 @@ The old **unsaved draft** label compared edits against the last loaded/saved edi
 
 Restoring original panel parameters retains the previously approved trajectory-hit/lifetime improvements and does not rewrite external `config/custom.json`. Reset also restores current recruitment on both sides and blue selection AI to enabled. It does not refill resources, remove armies, reset the current countdown or restart existing cooldowns. Already flying attacks retain their trajectory and remaining lifetime. Speed, pause and camera controls belong to the current session, not a rules preset.
 
-### In-app confirmation (v0.7.1 candidate)
+### In-app confirmation
 
-In response to inputs becoming uneditable after restoring defaults, settings operations requiring confirmation now use an asynchronous in-app dialog rather than a native blocking confirmation window. **Cancel receives initial focus**; Escape or Cancel dismisses it without performing the action. After explicit confirmation, the intended behavior is to continue clicking inputs, typing and confirming edits without restarting or switching windows. Packaged acceptance is still pending; this does not establish the previous problem's cause or prove every case fixed.
+In response to inputs becoming uneditable after restoring defaults, settings operations requiring confirmation now use an asynchronous in-app dialog rather than a native blocking confirmation window. **Cancel receives initial focus**; Escape or Cancel dismisses it without performing the action. After explicit confirmation, the intended behavior is to continue clicking inputs, typing and confirming edits without restarting or switching windows. Packaged acceptance of this combined candidate is still pending; this does not establish a unique cause of the previous problem or prove coverage of every environment.
 
 This changes only confirmation interaction, not parameter meanings, application timing, automatic saving, presets, undo or reset scope. The user-approved trajectory-hit and lifetime improvements remain enabled.
 

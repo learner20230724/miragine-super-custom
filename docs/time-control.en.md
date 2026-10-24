@@ -2,7 +2,7 @@
 
 [中文](time-control.zh-CN.md) · [Settings guide](custom-settings.en.md)
 
-This guide describes the v0.7.0-preview.1 release candidate with new 50×/100× quick buttons; final verification is pending. These controls target Super Miragine War itself, not a universal external accelerator. No system-clock changes, process injection, Cheat Engine or SWF player are used: complete logic steps are scheduled directly in this game's source.
+This guide describes the v0.7.2-preview.1 release candidate with U/O keyboard zoom and real-time selection repeat; packaged verification and publication are not complete. These controls target Super Miragine War itself, not a universal external accelerator. No system-clock changes, process injection, Cheat Engine or SWF player are used: complete logic steps are scheduled directly in this game's source.
 
 ## Controls
 
@@ -40,11 +40,19 @@ The clock accumulates `accepted real time × multiplier`. Each `1000 / 30` game 
 
 Removing sandbox army caps does not remove CPU/memory limits. Creation now yields between small batches, but combat targeting/separation can grow roughly as the square of army size. A large battle may run below the selected speed even at a low display target.
 
+## Keyboard zoom and held selection
+
+- **U zooms in, O zooms out**, anchored at the visible battlefield center rather than the pointer. The wheel remains pointer-anchored. Both preserve the original oblique view and map-boundary constraints.
+- **W/A/S/D moves the red unit-selection cursor; arrows move blue selection in local two-player mode.** This does not move soldiers on the field or replace I/J/K/L observation controls.
+- Keydown moves one cell immediately. Holding for **350 ms** starts repeat, then one move every **85 ms**. This application-controlled cadence uses real time, not operating-system key repeat or game speed; OS scheduling can still delay input delivery.
+- Key release, window blur or pause stops held selection. Paused input time is not replayed on resumption.
+- Parameter inputs and in-app confirmation dialogs have keyboard priority. Editing there does not trigger troop selection or U/O zoom, and game controls do not steal their letters, arrows or confirmation keys.
+
 ## Independent display, camera and sound
 
 - Display targets are **30/60/120/240 FPS**, independent of the 30 Hz game-time step. At most one presentation occurs per `requestAnimationFrame`; missed slots are not repaid with bursts. Monitor refresh, browser scheduling, CPU/GPU and drawing costs limit actual cadence.
 - Position/camera interpolation creates presentation copies only, preserving current draw order, poses, HP and visibility. Birth/removal/action discontinuities snap to current state. It creates no new animation poses and normally adds up to one logic step of visual latency.
-- Use the **wheel to zoom**, **right/middle-button drag to pan**, and **I/J/K/L to move**. Free observation keeps the current framing without automatic follow; Follow restores following; Overview changes framing, not fullscreen state.
+- Use the **wheel or U/O to zoom**, **left/right/middle-button drag to pan**, and **I/J/K/L to move**. Free observation keeps the current framing without automatic follow; Follow restores following; Overview changes framing, not fullscreen state.
 - Keyboard movement uses world coordinates and real time. Default crystal separation is `4200 − 300 = 3900`; a four-second crossing is **975 world units/second**. Diagonal input is normalized. Zoom and game speed do not change this rate; boundaries and severe stalls can still limit displacement.
 - Overview tightly frames the full red/blue crystal sprites near the view edges while retaining the oblique angle and vertical allowance. Exterior decoration or near map corners may fall outside the view; they remain in the simulation. The wheel can zoom out further; the development API `fitMap()` supports complete-map framing.
 - Fullscreen fills the window/screen while preserving game aspect ratio. It does not itself zoom to the crystal overview. The desktop button and F11 use the native window fullscreen state; browser mode uses the browser fullscreen API.

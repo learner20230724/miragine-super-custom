@@ -15,6 +15,7 @@ import { GameController } from './controller.mjs';
 import { OriginalGameView } from './view.mjs';
 import { GameAudio } from './audio.mjs';
 import { OriginalKeyboard } from './input.mjs';
+import { uiOwnsGameKeyboard, wheelZoomFactor, zoomCameraFromKey } from './camera-keyboard.mjs';
 import { beginPointerDrag, advancePointerDrag } from './pointer-drag.mjs';
 import { createPreferenceStorage } from './preferences.mjs';
 
@@ -341,8 +342,7 @@ canvas.addEventListener('wheel', event => {
   const p = point(event);
   if (!ready || !battlefieldPoint(p)) return;
   event.preventDefault();
-  const pixels = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 400 : 1);
-  observer.zoomAt(Math.exp(-Math.max(-500, Math.min(500, pixels)) * .0015), p,
+  observer.zoomAt(wheelZoomFactor(event.deltaY, event.deltaMode), p,
     presentation?.camera ?? controller.simulation.renderCamera);
   frameClock.invalidate();
   updateControls(performance.now(), true);
@@ -374,13 +374,23 @@ window.addEventListener('keydown', event => {
     if (!event.repeat) settings.close();
     return;
   }
-  if (event.target?.closest?.('[data-custom-controls], [data-settings-panel], [data-game-text-controls]')) {
+  if (uiOwnsGameKeyboard(event.target)) {
     toolbarKeys.add(event.code);
     return; // Native select/button keyboard interaction, not game input.
   }
   if (toolbarKeys.has(event.code)) {
     event.preventDefault();
     return; // Focus may return to canvas before this physical key is released.
+  }
+  if (zoomCameraFromKey(event, {
+    enabled: ready && controller.phase === 'game' && !controller.overlay && !controller.simulation?.winner,
+    camera: observer, coreCamera: presentation?.camera ?? controller?.simulation?.renderCamera,
+  })) {
+    event.preventDefault();
+    audio.unlock();
+    frameClock.invalidate();
+    updateControls(performance.now(), true);
+    return;
   }
   if (!ready || !inputCodes.has(event.code)) return;
   event.preventDefault();
@@ -390,7 +400,9 @@ window.addEventListener('keydown', event => {
     return;
   }
   if (event.code === 'Escape') { controller.key(event.code); frameClock?.invalidate(); }
-  else if (controller.phase !== 'game' || !frameClock.paused) keyboard.keyDown(event.code);
+  else if (controller.phase !== 'game' || !frameClock.paused) {
+    if (keyboard.keyDown(event.code, { now: performance.now(), repeat: event.repeat })) frameClock.invalidate();
+  }
 }, { capture: true });
 window.addEventListener('keyup', event => {
   toolbarKeys.delete(event.code); keyboard?.keyUp(event.code); cameraKeys.delete(event.code);
@@ -433,7 +445,7 @@ try {
   controller = new GameController(config, { storage,
     createSimulation: options => installCombatHitRules(installCasterProjectileLifetime(new MiragineSimulation(options))) });
   customization = createCustomization({ controller, defaults, initialConfig: config, storage: customStorage, autoRestore: true, onChange: customChanged });
-  keyboard = new OriginalKeyboard(controller);
+  keyboard = new OriginalKeyboard(controller, { repeatSelection: true });
   view = new OriginalGameView(canvas, globalThis.OriginalGraphics, layout, config, { crispTextControls: true });
   view.setRenderSize(fit.backingWidth, fit.backingHeight);
   // Sample unchanged original PNGs directly into native window pixels.
@@ -481,6 +493,7 @@ try {
     previousWallNow = now;
     if (observedSimulation !== controller.simulation) {
       observedSimulation = controller.simulation;
+      keyboard.clear();
       view.config = controller.config;
       view.releaseRasterCaches(); view.tooltipLayouts.clear();
       const rules = controller.config.rules;
@@ -491,6 +504,10 @@ try {
       observer.follow();
       resetMeasurements(now);
     }
+    // Selection repeat is wall-time input, once per RAF, never one step per
+    // accelerated simulation tick. An open drawer alone does not own keys.
+    if (keyboard.advanceSelection(now, { blocked: document.hidden || frameClock.paused || Boolean(controller.overlay)
+      || Boolean(settings?.isConfirming) || uiOwnsGameKeyboard(document.activeElement) })) frameClock.invalidate();
     const { render } = frameClock.advance(now, { hidden: document.hidden });
     audio.consume(controller.drainEvents());
     // Cross the crystal-to-crystal span in four real seconds at every zoom/speed.

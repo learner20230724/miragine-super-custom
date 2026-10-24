@@ -1,8 +1,19 @@
-/** Native port of dragonforce/utils/KeyManager.as and DragonForce.libraryComplete bindings. */
+export const SELECTION_REPEAT_DELAY_MS = 350;
+export const SELECTION_REPEAT_INTERVAL_MS = 85;
+
+const selectionOpposites = new Map([
+  ['KeyW', 'KeyS'], ['KeyS', 'KeyW'], ['KeyA', 'KeyD'], ['KeyD', 'KeyA'],
+  ['ArrowUp', 'ArrowDown'], ['ArrowDown', 'ArrowUp'], ['ArrowLeft', 'ArrowRight'], ['ArrowRight', 'ArrowLeft'],
+]);
+
+/** Native KeyManager bindings, with opt-in wall-time selection repetition in the custom app. */
 export class OriginalKeyboard {
-  constructor(controller) {
+  constructor(controller, { repeatSelection = false } = {}) {
     this.controller = controller;
     this.down = new Set();
+    this.repeatSelection = repeatSelection;
+    this.selectionHeld = new Map();
+    this.selectionSimulation = controller.simulation;
     const discrete = code => () => controller.key(code);
     const steer = (x, y) => () => controller.simulation.steer(x, y);
     this.bindings = [
@@ -21,15 +32,76 @@ export class OriginalKeyboard {
     if (code === 'NumpadSubtract') return 'Minus';
     return code;
   }
-  keyDown(code) { this.down.add(this.normalize(code)); }
-  keyUp(code) { this.down.delete(this.normalize(code)); }
-  clear() { this.down.clear(); for (const binding of this.bindings) binding.isDown = false; }
+  keyDown(code, { now = performance.now(), repeat = false } = {}) {
+    code = this.normalize(code);
+    // OS key repeat must never stack with our wall-time repeater, including
+    // after a focus/visibility transition cleared the physical-key state.
+    if (repeat) return false;
+    if (this.repeatSelection && this.selectionSimulation !== this.controller.simulation) {
+      this.clear();
+      this.selectionSimulation = this.controller.simulation;
+    }
+    if (this.down.has(code)) return false;
+    if (this.repeatSelection && selectionOpposites.has(code)) {
+      if (!this.selectionAllowed() || !Number.isFinite(now)) return false;
+      this.down.add(code);
+      this.selectionHeld.set(code, now + SELECTION_REPEAT_DELAY_MS);
+      // Opposite directions cancel on their axis; diagonal and two-player
+      // input remain independent. Controller retains the original 8x2 limits.
+      if (this.down.has(selectionOpposites.get(code))) return false;
+      return this.controller.key(code) !== false;
+    }
+    this.down.add(code);
+    return false;
+  }
+
+  keyUp(code) {
+    code = this.normalize(code);
+    this.down.delete(code);
+    this.selectionHeld.delete(code);
+  }
+
+  clear() {
+    this.down.clear();
+    this.selectionHeld.clear();
+    for (const binding of this.bindings) binding.isDown = false;
+  }
+
+  selectionAllowed() {
+    const c = this.controller;
+    return c.phase === 'game' && !c.overlay && c.simulation?.running && !c.simulation.winner;
+  }
+
+  /** Call once per animation frame, not per accelerated simulation tick. */
+  advanceSelection(now, { blocked = false } = {}) {
+    if (!this.repeatSelection) return false;
+    if (blocked || !this.selectionAllowed() || this.selectionSimulation !== this.controller.simulation) {
+      this.clear();
+      this.selectionSimulation = this.controller.simulation;
+      return false;
+    }
+    if (!Number.isFinite(now)) return false;
+    let changed = false;
+    for (const [code, nextAt] of this.selectionHeld) {
+      if (this.down.has(selectionOpposites.get(code))) {
+        this.selectionHeld.set(code, now + SELECTION_REPEAT_DELAY_MS);
+      } else if (now >= nextAt) {
+        changed = this.controller.key(code) !== false || changed;
+        // Skip missed repeats after a stalled frame rather than firing a burst.
+        // Deadlines stay on the wall-time cadence, independent of logic speed.
+        const missed = Math.floor((now - nextAt) / SELECTION_REPEAT_INTERVAL_MS) + 1;
+        this.selectionHeld.set(code, nextAt + missed * SELECTION_REPEAT_INTERVAL_MS);
+      }
+    }
+    return changed;
+  }
 
   step() {
     const c = this.controller;
     if (c.phase !== 'game' || c.simulation.winner || !c.simulation.running) return;
     const active = [];
     for (const binding of this.bindings) {
+      if (this.repeatSelection && selectionOpposites.has(binding.keys[0])) continue;
       binding.isWeak = false;
       if (binding.keys.every(key => this.down.has(key))) active.push(binding);
       else binding.isDown = false;
