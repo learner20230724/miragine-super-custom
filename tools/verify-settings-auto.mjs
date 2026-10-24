@@ -148,7 +148,10 @@ export async function verifySettingsAuto(options) {
     await until(async () => (await state()).customization.speed === value, `${value}x selected`);
   }
   async function edit(name, value, key = 'Enter') {
-    await field(name).fill(String(value)); await field(name).press(key); await saved();
+    const control = field(name);
+    if (await control.evaluate(node => node.tagName === 'SELECT')) await control.selectOption(String(value));
+    else { await control.fill(String(value)); await control.press(key); }
+    await saved();
   }
   async function startNative() {
     await hit('single'); await hit('difficulty', { value: 1 });
