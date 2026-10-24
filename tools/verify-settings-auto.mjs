@@ -329,9 +329,12 @@ export async function verifySettingsAuto(options) {
     await page.keyboard.press('F11');
     await until(() => app.evaluate(({ BrowserWindow }) => !BrowserWindow.getAllWindows()[0].isFullScreen()), 'owned EXE exits fullscreen through F11');
     await confirmAction('reset', 'accept', /全部面板参数恢复/); await saved();
-    await confirmAction('reset', 'accept', /全部面板参数恢复/); await saved();
+    // Do not wait for save acknowledgement here: a late confirmation cleanup
+    // must not steal focus from the user's next immediate edit. Slow-storage
+    // interleavings are tested deterministically in source tests, not injected.
+    await confirmAction('reset', 'accept', /全部面板参数恢复/);
     await edit(unitPath('range'), 1402); await edit(unitPath('hp'), 378, 'Tab');
-    await verifyLeftUnit(378, 1402, 'consecutive confirmed resets do not break mouse/keyboard editing or blur application');
+    await verifyLeftUnit(378, 1402, 'consecutive resets followed immediately by real keyboard edits, without waiting for save, still apply and persist');
     await act('tab-presets').click();
     await page.locator('[data-preset-select]').selectOption(presetId); await act('load-preset').click(); await saved();
     await verifyLeftUnit(350, 1200, 'Load and apply preset changes existing soldiers without a second action');

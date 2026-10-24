@@ -27,22 +27,30 @@ export function createConfirmationDialog({ document: doc, focusRoot = null, host
   };
   function restoreFocus({ forget = false, focus = true } = {}) {
     if (destroyed || pending || !restoration) return;
-    const { origin, identity } = restoration; if (forget) restoration = null;
+    const saved = restoration, { origin, identity } = saved; if (forget) restoration = null;
     if (!focus) return;
+    const current = doc.activeElement;
+    // Applying the confirmed action may await disk I/O after rebuilding fields.
+    // Do not pull focus back from an input the user has selected in that time.
+    // A removed node / body focus still needs recovery through the saved identity.
+    if (forget && current !== saved.lastFocused && current !== doc.body && current !== doc.documentElement
+      && connected(current) && !current.disabled && !current.hidden && !current.inert) return;
     let target = origin;
     if (!connected(target) && identity && focusRoot) {
       target = [...focusRoot.querySelectorAll(`[${identity.attribute}]`)]
         .find(element => element.getAttribute(identity.attribute) === identity.value);
     }
     if (!connected(target) || target.disabled || target.hidden || target.inert) target = fallbackFocus();
-    if (connected(target) && !target.disabled && !target.hidden && !target.inert) target.focus?.({ preventScroll: true });
+    if (connected(target) && !target.disabled && !target.hidden && !target.inert) {
+      saved.lastFocused = target; target.focus?.({ preventScroll: true });
+    }
   }
   function ask(message, { returnFocus = doc.activeElement } = {}) {
     if (destroyed || pending) return Promise.resolve(false);
     const identity = ['data-field-path', 'data-settings-action', 'data-entry-select'].map(attribute => ({
       attribute, value: returnFocus?.getAttribute?.(attribute)
     })).find(item => item.value !== undefined && item.value !== null);
-    restoration = { origin: returnFocus, identity };
+    restoration = { origin: returnFocus, identity, lastFocused: null };
     const make = (tag, attribute, text) => {
       const element = doc.createElement(tag); if (attribute) element.setAttribute(attribute, '');
       if (text !== undefined) element.textContent = String(text); return element;

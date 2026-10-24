@@ -59,8 +59,8 @@ function makeDocument() {
 }
 const settle = async () => { await new Promise(resolve => setImmediate(resolve)); await new Promise(resolve => setImmediate(resolve)); };
 const defaults = JSON.parse(readFileSync(new URL('../config/defaults.generated.json', import.meta.url), 'utf8'));
-function fixture({ confirm } = {}) {
-  const values = new Map(), storage = { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), flush: async () => true };
+function fixture({ confirm, flush = async () => true } = {}) {
+  const values = new Map(), storage = { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), flush };
   const controller = new GameController(defaults, { storage: { getItem: () => 'true' }, createSimulation: options => new MiragineSimulation({ ...options, rng: seededRandom(12) }) });
   const custom = createCustomization({ controller, defaults, storage }); controller.startMatch(true, 1);
   const document = makeDocument(), root = document.createElement('div'), focus = document.createElement('button');
@@ -116,6 +116,22 @@ test('accepting reset applies once, restores focus to a replacement field after 
   assert.equal(f.resets, 1); assert.equal(current.value, '45'); assert.notEqual(current, previous);
   assert.equal(f.document.activeElement, current); assert.equal(current.isConnected, true); assert.equal(f.root.inert, false);
   current.focus(); current.value = '777'; current.fire('input'); current.fire('keydown', { code: 'Enter' }); await settle();
+  assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, 777); f.panel.destroy();
+});
+
+test('delayed reset storage completion never steals focus from a newly edited field', async () => {
+  let block = false, resolve;
+  const f = fixture({ flush: () => block ? new Promise(done => { resolve = done; }) : Promise.resolve(true) });
+  f.tab('units'); f.edit(hp, 90); await settle(); block = true;
+  f.button('reset').focus(); f.button('reset').click(); f.all('[data-settings-confirm-accept]').click(); await settle();
+  const field = f.find(`[data-field-path="${hp}"]`);
+  assert.equal(field.value, '45'); assert.equal(f.resets, 1); assert.equal(typeof resolve, 'function');
+  assert.equal(f.button('reset').disabled, true, 'Reset is still waiting for its durable storage flush');
+  field.focus(); field.value = '777'; field.fire('input');
+  block = false; resolve(true); await settle();
+  assert.equal(f.document.activeElement === field, true, 'Storage completion must respect the user\'s new focused input');
+  assert.equal(field.value, '777'); assert.equal(f.button('reset').disabled, false);
+  field.fire('keydown', { code: 'Enter' }); await settle();
   assert.equal(f.custom.getState().applied.config.sides.left.units[0].hp, 777); f.panel.destroy();
 });
 
