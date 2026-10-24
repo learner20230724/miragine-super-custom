@@ -126,7 +126,7 @@ test('reset clears unconfirmed text and does not let an obsolete save failure un
   f.panel.open(); f.tab('units'); f.edit('config.sides.left.units.0.hp', 90);
   const field = f.find('[data-field-path="config.sides.right.units.0.hp"]');
   field.value = '100.'; field.fire('input');
-  f.button('reset').click(); assert.equal(pending.length, 2);
+  f.button('reset').click(); await settle(); assert.equal(pending.length, 2);
   pending[1](true); await settle(); pending[0](false); await settle();
   assert.equal(f.find('[data-field-path="config.sides.left.units.0.hp"]').value, '45');
   assert.equal(f.find('[data-field-path="config.sides.right.units.0.hp"]').value, '45');

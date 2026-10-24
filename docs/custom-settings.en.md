@@ -2,11 +2,11 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes the v0.7.0-preview.1 release candidate, with automatic settings application and 50×/100× quick choices. New-version verification and publication are not complete. The [v0.6.2 delivery record](releases/v0.6.2-preview.1.json) remains historical evidence, not validation of this candidate. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes the v0.7.1-preview.1 release candidate with in-app confirmation interaction. Reproduction and packaged verification are still in progress; it is not published. The [published v0.7.0 delivery record](releases/v0.7.0-preview.1.json) retains the automatic-settings and 50×/100× evidence, not validation of this fix. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 
-- **F2 opens settings.** There is no permanent settings launcher over the battlefield. F2, Esc or the close control collapses the dock. Opening or closing it **does not pause or resume** the game.
+- **F2 opens settings.** There is no permanent settings launcher over the battlefield. F2, Esc or the close control collapses the dock; while a confirmation is open, Escape first cancels that confirmation. Opening or closing it **does not pause or resume** the game.
 - The dock reserves space alongside the game in wide windows, or below it in narrow windows. Its contents scroll; the game keeps its aspect ratio.
 - **Time control comes first:** 0–100× speed in 0.1 increments, including new 50×/100× quick choices, a wide pause/resume button, and measured simulation/display rates.
 - **View/display comes below time:** free observation, follow, compact overview, fullscreen and 30/60/120/240 FPS targets. Fullscreen also uses F11; overview is camera framing, not window fullscreen.
@@ -69,6 +69,12 @@ The old **unsaved draft** label compared edits against the last loaded/saved edi
 | Export JSON | Backs up or exchanges current settings; not a battle save |
 
 Restoring original panel parameters retains the previously approved trajectory-hit/lifetime improvements and does not rewrite external `config/custom.json`. Reset also restores current recruitment on both sides and blue selection AI to enabled. It does not refill resources, remove armies, reset the current countdown or restart existing cooldowns. Already flying attacks retain their trajectory and remaining lifetime. Speed, pause and camera controls belong to the current session, not a rules preset.
+
+### In-app confirmation (v0.7.1 candidate)
+
+In response to inputs becoming uneditable after restoring defaults, settings operations requiring confirmation now use an asynchronous in-app dialog rather than a native blocking confirmation window. **Cancel receives initial focus**; Escape or Cancel dismisses it without performing the action. After explicit confirmation, the intended behavior is to continue clicking inputs, typing and confirming edits without restarting or switching windows. Packaged acceptance is still pending; this does not establish the previous problem's cause or prove every case fixed.
+
+This changes only confirmation interaction, not parameter meanings, application timing, automatic saving, presets, undo or reset scope. The user-approved trajectory-hit and lifetime improvements remain enabled.
 
 ### Unit changes, health and time
 

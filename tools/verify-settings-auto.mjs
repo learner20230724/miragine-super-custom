@@ -46,6 +46,32 @@ export function autoTiming(first, last, target) {
     logicalHz: 30, advancing: target > 0 && steps > 0, frozen: target === 0 && steps === 0 };
 }
 
+/** No fill(), focus() or locator.press(): these can hide a broken native-dialog focus handoff. */
+export async function typeByMouseAndKeyboard({ page, control, value, commitKey = 'Enter' }) {
+  const probe = node => ({ focused: node.ownerDocument.hasFocus(), active: node.ownerDocument.activeElement === node, value: node.value });
+  await control.click();
+  const before = await control.evaluate(probe);
+  expect(before.focused && before.active, 'A real mouse click did not give the input keyboard focus');
+  await page.keyboard.press('Control+A'); await page.keyboard.type(String(value));
+  const typed = await control.evaluate(probe);
+  expect(typed.focused && typed.active && typed.value === String(value), 'Real keyboard typing did not reach the clicked input');
+  await page.keyboard.press(commitKey);
+  return { before, typed };
+}
+
+/** Confirm through the visible game DOM only, never Electron/DevTools native-dialog acceptance. */
+export async function answerSettingsConfirmation({ page, choice = 'accept', expectedText = null }) {
+  expect(['accept', 'cancel', 'escape'].includes(choice), 'Unknown confirmation choice');
+  const dialog = page.locator('[data-settings-confirm]');
+  await dialog.waitFor({ state: 'visible', timeout: 10000 });
+  const message = await dialog.textContent();
+  expect(expectedText === null || expectedText.test(message), 'Unexpected settings confirmation text');
+  if (choice === 'escape') await page.keyboard.press('Escape');
+  else await page.locator(`[data-settings-confirm-${choice}]`).click();
+  await dialog.waitFor({ state: 'hidden', timeout: 10000 });
+  return { type: 'dom', choice, message };
+}
+
 export async function verifySettingsAuto(options) {
   parseAutoOptions(['--dir', options.dir, '--version', options.version, '--commit', options.commit,
     '--out', options.out, '--screenshot-prefix', options.screenshotPrefix]);
@@ -62,7 +88,7 @@ export async function verifySettingsAuto(options) {
   const editable = ['config/custom.json', 'ui-helper/original-graphics.js'].map(name => ({ name, before: hash(path.join(directory, name)) }));
   const report = { schemaVersion: 1, suite: 'automatic-settings-real-exe', status: 'running', build,
     startedAt: new Date().toISOString(), checks: [], screenshots: [], timing: [], runs: [], errors: [],
-    policy: 'Fresh isolated portable EXE only; genuine mouse, keyboard, form and file input. Read-only game and DOM diagnostics. First game input turns music off. No injected settings, simulation, RNG, clock or storage. No other window or system volume is controlled.',
+    policy: 'Fresh isolated portable EXE only; genuine mouse, keyboard, form and file input. Settings text edits click then use keyboard Control+A/type/Enter, never fill/focus/locator.press. Confirmations use visible DOM buttons; any native JavaScript dialog is a test failure. Read-only game and DOM diagnostics. First game input turns music off. No injected settings, simulation, RNG, clock or storage. No other window or system volume is controlled.',
     limits: ['Requested 50x/100x are targets, not guarantees of measured hardware throughput.',
       'High-rate tests use two crystals and no troops, not an extreme-population performance benchmark.',
       'Detailed damage/armor, original death timeline and full-match parity are separate unit/acceptance gates.'],
@@ -84,7 +110,10 @@ export async function verifySettingsAuto(options) {
     muted: s.muted, speed: s.customization.speed, paused: s.customization.paused });
   async function until(probe, name, timeout = 15000) {
     const deadline = Date.now() + timeout;
-    do { const value = await bounded(Promise.resolve().then(probe), name, 20000); if (value) return value; await delay(50); } while (Date.now() < deadline);
+    do {
+      expect(!report.errors.some(error => error.type === 'native-dialog'), 'Unexpected native JavaScript dialog; focus regression not bypassed');
+      const value = await bounded(Promise.resolve().then(probe), name, 20000); if (value) return value; await delay(50);
+    } while (Date.now() < deadline);
     throw new Error(`Timed out: ${name}`);
   }
   async function saved() { await until(async () => (await model()).settingsSaved && (await model()).storageStatus === 'ready', 'automatic settings durable acknowledgement'); }
@@ -120,9 +149,10 @@ export async function verifySettingsAuto(options) {
     page.on('pageerror', error => report.errors.push({ type: 'pageerror', message: error.message }));
     page.on('console', message => { if (message.type() === 'error') report.errors.push({ type: 'console', message: message.text() }); });
     page.on('dialog', async dialog => {
-      (report.dialogs ??= []).push({ type: dialog.type(), message: dialog.message() });
-      if (dialog.type() === 'confirm') await dialog.accept();
-      else { report.errors.push({ type: 'unexpected-dialog', message: dialog.message() }); await dialog.dismiss(); }
+      report.errors.push({ type: 'native-dialog', kind: dialog.type(), message: dialog.message() }); save('unexpected native dialog: verification failed');
+      // Failure cleanup only. Never accept a native dialog and continue as if
+      // a user had clicked the OS window: CDP can bypass its focus regression.
+      try { await dialog.dismiss(); } catch { /* Owned app cleanup follows. */ }
     });
     await page.waitForURL(/^http:\/\/127\.0\.0\.1:\d+\//, { timeout: 60000 });
     await page.waitForFunction(() => window.__MIRAGINE__?.getState().ready, null, { timeout: 60000 });
@@ -150,8 +180,17 @@ export async function verifySettingsAuto(options) {
   async function edit(name, value, key = 'Enter') {
     const control = field(name);
     if (await control.evaluate(node => node.tagName === 'SELECT')) await control.selectOption(String(value));
-    else { await control.fill(String(value)); await control.press(key); }
+    else await typeByMouseAndKeyboard({ page, control, value, commitKey: key });
     await saved();
+  }
+  async function confirmAction(name, choice = 'accept', expectedText = null) {
+    await act(name).click();
+    if (name === 'reset' && choice === 'accept' && !report.resetDialogCaptured) {
+      await page.locator('[data-settings-confirm]').waitFor({ state: 'visible' });
+      await screenshot('reset-confirmation'); report.resetDialogCaptured = true;
+    }
+    const result = await answerSettingsConfirmation({ page, choice, expectedText });
+    (report.dialogs ??= []).push({ action: name, ...result }); save(`DOM ${name} ${choice}`);
   }
   async function startNative() {
     await hit('single'); await hit('difficulty', { value: 1 });
@@ -178,7 +217,7 @@ export async function verifySettingsAuto(options) {
   try {
     save('package provenance');
     const { extractFile } = await import('@electron/asar');
-    for (const name of ['src/app/main.mjs', 'src/app/settings-panel.mjs', 'src/customization/index.mjs', 'src/app/custom-controls.mjs', 'src/runtime/game-clock.mjs']) {
+    for (const name of ['src/app/main.mjs', 'src/app/settings-panel.mjs', 'src/app/confirmation-dialog.mjs', 'src/customization/index.mjs', 'src/app/custom-controls.mjs', 'src/runtime/game-clock.mjs']) {
       check(extractFile(path.join(directory, 'resources/app.asar'), name.split('/').join(path.sep)).equals(fs.readFileSync(path.join(root, name))),
         `packaged runtime exactly matches verified checkout: ${name}`);
     }
@@ -236,7 +275,9 @@ export async function verifySettingsAuto(options) {
     // Keep subsequent native-menu/restart balance checks deterministic through
     // ordinary saved opening controls, not by rewriting the loaded profile.
     for (const side of ['left', 'right']) { await field(`rules.${side}Recruitment`).uncheck(); await saved(); }
-    await act('tab-presets').click(); await page.locator('[data-preset-name]').fill('Automatic settings acceptance'); await act('save-preset').click();
+    await act('tab-presets').click();
+    await typeByMouseAndKeyboard({ page, control: page.locator('[data-preset-name]'), value: 'Automatic settings acceptance', commitKey: 'Tab' });
+    await act('save-preset').click();
     await until(async () => (await model()).presets.length === 1, 'named preset stored'); await saved();
     const presetId = (await model()).presets[0].id, profile = (await model()).next;
     const exportFile = path.join(root, '.local', `${options.screenshotPrefix}-export.json`);
@@ -247,9 +288,12 @@ export async function verifySettingsAuto(options) {
     const exported = JSON.parse(fs.readFileSync(exportFile, 'utf8'));
     check(same(exported.profile, profile), 'export is a copy of the already applied/queued configuration');
 
+    // Stay on the unit page across reset so the very next field click exercises
+    // the reported broken focus handoff, without another tab/window refocus.
+    await act('tab-units').click();
     const beforeReset = await state(), original = (await model()).defaults;
     const survivingUids = beforeReset.customization.unitDetails.left.map(unit => unit.uid);
-    await act('reset').click(); await saved();
+    await confirmAction('reset', 'accept', /全部面板参数恢复/); await saved();
     const resetState = await state(), reset = resetState.customization.editor;
     await verifyLeftUnit(original.config.sides.left.units[0].hp, original.config.sides.left.units[0].range,
       'Restore original defaults actually restores live soldier HP and range');
@@ -259,10 +303,36 @@ export async function verifySettingsAuto(options) {
       && same(survivingUids, resetState.customization.unitDetails.left.map(unit => unit.uid)) && reset.presets.some(item => item.id === presetId),
       'reset neither restarts combat, deletes soldiers, refunds resources nor deletes named presets');
     check(reset.template === 'startup', 'default reset preserves the explicitly retained hit/lifetime improvement template');
+    await edit(unitPath('range'), 1400);
+    await verifyLeftUnit(original.config.sides.left.units[0].hp, 1400,
+      'immediately after accepting reset, a real click and keyboard edit changes live range and saves');
+    await edit(unitPath('hp'), 377);
+    await verifyLeftUnit(377, 1400, 'real keyboard HP editing also works after reset without programmatic refocusing');
+    await screenshot('keyboard-after-reset');
+    // Remove these two deliberate post-reset edits before testing reset undo.
+    for (let i = 0; i < 2; i++) { await act('undo').click(); await saved(); }
     await act('undo').click(); await saved();
     await verifyLeftUnit(350, 1200, 'Undo last setting immediately restores pre-reset live HP and range');
     check(same((await model()).next, profile), 'undo restores the complete previous future profile as well');
-    await act('reset').click(); await saved();
+    await confirmAction('reset', 'cancel', /全部面板参数恢复/);
+    check(same((await model()).next, profile), 'clicking Cancel in reset leaves the entire profile unchanged');
+    await edit(unitPath('range'), 1201); await verifyLeftUnit(350, 1201, 'real keyboard still edits the same page after reset cancellation');
+    await act('undo').click(); await saved();
+    await confirmAction('reset', 'escape', /全部面板参数恢复/);
+    check(same((await model()).next, profile), 'Escape cancels the DOM reset without changing rules');
+    await page.keyboard.press('F11');
+    await until(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen()), 'owned EXE enters fullscreen through F11');
+    await confirmAction('reset', 'accept', /全部面板参数恢复/); await saved();
+    await edit(unitPath('range'), 1401);
+    await verifyLeftUnit(original.config.sides.left.units[0].hp, 1401, 'fullscreen reset confirmation remains visible, clickable and keyboard-editable afterward');
+    await screenshot('fullscreen-keyboard-after-reset');
+    await page.keyboard.press('F11');
+    await until(() => app.evaluate(({ BrowserWindow }) => !BrowserWindow.getAllWindows()[0].isFullScreen()), 'owned EXE exits fullscreen through F11');
+    await confirmAction('reset', 'accept', /全部面板参数恢复/); await saved();
+    await confirmAction('reset', 'accept', /全部面板参数恢复/); await saved();
+    await edit(unitPath('range'), 1402); await edit(unitPath('hp'), 378, 'Tab');
+    await verifyLeftUnit(378, 1402, 'consecutive confirmed resets do not break mouse/keyboard editing or blur application');
+    await act('tab-presets').click();
     await page.locator('[data-preset-select]').selectOption(presetId); await act('load-preset').click(); await saved();
     await verifyLeftUnit(350, 1200, 'Load and apply preset changes existing soldiers without a second action');
     const imported = structuredClone(exported); imported.name = 'Imported automatic settings';
@@ -271,15 +341,43 @@ export async function verifySettingsAuto(options) {
     await until(async () => (await model()).applied.config.sides.left.units[0].hp === 411, 'import automatically applies'); await saved();
     await verifyLeftUnit(411, 1300, 'JSON import immediately applies live rules');
     check((await model()).presets.length === 1, 'import does not silently add or overwrite a named preset');
-    await page.locator('[data-preset-name]').fill('Imported named copy'); await act('save-preset').click();
+    await typeByMouseAndKeyboard({ page, control: page.locator('[data-preset-name]'), value: 'Imported named copy', commitKey: 'Tab' });
+    await act('save-preset').click();
     await until(async () => (await model()).presets.length === 2, 'explicit named copy saved'); await saved();
-    check((await model()).presets.length === 2, 'Save as new preset creates a separate named copy'); await screenshot('presets');
-    await act('tab-sandbox').click(); await act('return-original').click();
+    check((await model()).presets.length === 2, 'Save as new preset creates a separate named copy');
+    await page.locator('[data-preset-select]').selectOption(presetId);
+    await typeByMouseAndKeyboard({ page, control: page.locator('[data-preset-name]'), value: 'Overwritten settings copy', commitKey: 'Tab' });
+    const oldPresetName = (await model()).presets.find(item => item.id === presetId).name;
+    await confirmAction('overwrite-preset', 'cancel', /覆盖/);
+    check((await model()).presets.find(item => item.id === presetId).name === oldPresetName, 'cancelled preset overwrite leaves the stored record unchanged');
+    await confirmAction('overwrite-preset', 'accept', /覆盖/); await saved();
+    check((await model()).presets.find(item => item.id === presetId).name === 'Overwritten settings copy', 'preset overwrite uses visible DOM confirmation and really saves');
+    await typeByMouseAndKeyboard({ page, control: page.locator('[data-preset-name]'), value: 'Temporary deletion focus check', commitKey: 'Tab' });
+    await act('save-preset').click(); await until(async () => (await model()).presets.length === 3, 'temporary named preset saved'); await saved();
+    await confirmAction('delete-preset', 'cancel', /删除/);
+    check((await model()).presets.length === 3, 'cancelled preset deletion preserves the record');
+    await confirmAction('delete-preset', 'accept', /删除/); await saved();
+    check((await model()).presets.length === 2, 'confirmed preset deletion removes only the selected temporary record');
+    await typeByMouseAndKeyboard({ page, control: page.locator('[data-preset-name]'), value: 'Keyboard still works after deletion', commitKey: 'Tab' });
+    check(await page.locator('[data-preset-name]').inputValue() === 'Keyboard still works after deletion', 'actual keyboard input still works directly after delete confirmation');
+    await screenshot('presets');
+    await act('tab-sandbox').click(); const beforeMenuCancel = compact(await state());
+    await confirmAction('return-original', 'cancel', /结束当前战局/);
+    check(same(compact(await state()), beforeMenuCancel), 'cancelled return to menu keeps the current paused battle intact');
+    const currentMoney = (await state()).money.left + 1;
+    await typeByMouseAndKeyboard({ page, control: page.locator('[data-live-resource="left.money"]'), value: currentMoney });
+    check((await state()).money.left === currentMoney, 'current-resource keyboard editing works immediately after menu cancellation');
+    await confirmAction('return-original', 'accept', /结束当前战局/);
     await until(async () => (await state()).phase === 'title', 'return to title ends only the match');
     check((await model()).next.config.sides.left.units[0].hp === 411 && (await model()).presets.length === 2,
       'Return to main menu is clearly not a defaults reset and preserves all saved settings');
     await startNative();
     check((await state()).money.left === 4321, 'next native-menu match uses automatically queued opening money');
+    await act('tab-starting').click(); const battleId = (await model()).battle.battleId;
+    await confirmAction('start-battle', 'cancel', /重新开始/);
+    check((await model()).battle.battleId === battleId, 'cancelled new-match confirmation preserves this match');
+    await confirmAction('start-battle', 'accept', /重新开始/);
+    check((await model()).battle.battleId !== battleId && (await state()).money.left === 4321, 'confirmed new match uses the same DOM path and queued opening values');
     await saved(); const durableProfile = (await model()).next;
     const storageFile = path.join(directory, 'userdata/custom-settings.json');
     const storage = JSON.parse(fs.readFileSync(storageFile, 'utf8'));
@@ -300,6 +398,8 @@ export async function verifySettingsAuto(options) {
       'restarted UI still requires no manual Apply or draft workflow');
     for (const file of editable) file.after = hash(path.join(directory, file.name));
     check(editable.every(file => file.before === file.after), 'external editable config and graphics helper were not rewritten', editable);
+    check(report.dialogs?.length >= 10 && report.dialogs.every(dialog => dialog.type === 'dom') && !report.errors.some(error => error.type === 'native-dialog'),
+      'all reset, menu, new-match, overwrite and delete confirmations were real DOM input; no native JavaScript dialog occurred');
     check(report.errors.length === 0 && !(await state()).error && (await state()).muted, 'both real-input launches remain muted with no renderer/runtime errors');
     report.final = compact(await state()); report.status = 'passed';
   } catch (error) {

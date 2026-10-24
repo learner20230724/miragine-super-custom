@@ -1,6 +1,6 @@
 {
   "name": "miragine-super-custom",
-  "version": "0.7.0-preview.1",
+  "version": "0.7.1-preview.1",
   "private": true,
   "type": "module",
   "main": "desktop/entry.cjs",

@@ -351,6 +351,10 @@ canvas.addEventListener('wheel', event => {
 const inputCodes = new Set(['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
   'Space', 'Enter', 'Escape', 'KeyI', 'KeyJ', 'KeyK', 'KeyL', 'Equal', 'Minus', 'NumpadAdd', 'NumpadSubtract']);
 window.addEventListener('keydown', event => {
+  // The in-page confirmation owns editing keys before this window-level
+  // capture handler sees them. Its document handler handles Escape/Tab;
+  // do not close the dock, move the camera, or consume button Enter here.
+  if (settings?.isConfirming && event.code !== 'F11') return;
   if (event.code === 'F2' && ready) {
     event.preventDefault();
     event.stopPropagation();

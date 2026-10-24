@@ -1,4 +1,5 @@
 import { clampInteger } from '../customization/numeric.mjs';
+import { createConfirmationDialog } from './confirmation-dialog.mjs';
 
 /** Rules editor: confirmed fields are automatically applied and saved locally. */
 export const SETTINGS_PANEL_CSS = `
@@ -105,7 +106,6 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   const doc = root?.ownerDocument, win = suppliedWindow ?? doc?.defaultView ?? globalThis;
   if (!doc?.createElement || !root?.appendChild) throw new TypeError('A settings dock DOM root is required');
   if (!customization?.getState || !customization?.getMetadata) throw new TypeError('A customization controller is required');
-  const confirmAction = confirm ?? (message => typeof win.confirm === 'function' ? win.confirm(message) : false);
   const node = (tag, className = '', text) => {
     const result = doc.createElement(tag); if (className) result.className = className;
     if (text !== undefined) result.textContent = String(text); return result;
@@ -116,9 +116,14 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   let presentation = { paused: false, speed: 1 }, beforeFocus = null, presetNameDraft = '';
   let currentTabCleanup = [], liveBindings = [], metadataCache = null, sandboxContext = null, startDifficulty = 1, startSinglePlay = true;
   let saving = 0, saveFailed = false, saveRevision = 0;
+  let awaitingConfirmation = null, actionFocus = null;
   function on(element, type, listener, transient = false) {
-    element.addEventListener(type, listener);
-    (transient ? currentTabCleanup : cleanups).push(() => element.removeEventListener(type, listener)); return element;
+    const guarded = event => {
+      if (awaitingConfirmation) { event.preventDefault(); event.stopPropagation(); return; }
+      listener(event);
+    };
+    element.addEventListener(type, guarded);
+    (transient ? currentTabCleanup : cleanups).push(() => element.removeEventListener(type, guarded)); return element;
   }
   const style = node('style'); style.setAttribute('data-settings-panel-style', ''); style.textContent = SETTINGS_PANEL_CSS;
   (doc.head ?? doc.documentElement).appendChild(style);
@@ -136,6 +141,23 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     parent.appendChild(control); return control;
   }
   const closeButton = button(headerActions, '收起 ×', 'close', () => close()); closeButton.setAttribute('aria-label', '收起设置（F2 或 Escape）');
+  const confirmation = createConfirmationDialog({ document: doc, focusRoot: element,
+    host: root.closest?.('#app-shell') ?? null, fallbackFocus: () => opened ? closeButton : beforeFocus });
+  async function confirmAction(text) {
+    if (destroyed || !opened || awaitingConfirmation) return false;
+    let cancel;
+    const cancelled = new Promise(resolve => { cancel = () => resolve(false); });
+    const ticket = { cancel }; awaitingConfirmation = ticket;
+    try {
+      const response = confirm ? confirm(text) : confirmation.ask(text, { returnFocus: actionFocus });
+      const accepted = await Promise.race([Promise.resolve(response), cancelled]);
+      return Boolean(accepted) && awaitingConfirmation === ticket && opened && !destroyed;
+    } finally { if (awaitingConfirmation === ticket) awaitingConfirmation = null; }
+  }
+  function cancelConfirmation() {
+    const ticket = awaitingConfirmation; awaitingConfirmation = null;
+    confirmation.cancel(); ticket?.cancel();
+  }
   const scroll = node('div', 'ms-scroll'); element.appendChild(scroll);
   if (playbackElement) scroll.appendChild(playbackElement);
   const nav = node('nav', 'ms-tabs'); nav.setAttribute('role', 'tablist'); nav.setAttribute('aria-label', '自定义设置分类'); scroll.appendChild(nav);
@@ -150,7 +172,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   }));
   undo.setAttribute('title', '撤销上一次规则修改并立即应用；不会倒退战斗、撤销刷兵或恢复过去的金币');
   const reset = button(footerTools, '恢复原版默认', 'reset', () => action(async () => {
-    if (!confirmAction('将全部面板参数恢复为原版默认并自动保存？兵种、射程、水晶、难度 / AI 等立即恢复，开局资源等从下局生效；保留已改进的弹道命中和子弹延寿。不会删除已存预设、清兵或重开本局，不会重置当前金币、人口、倒计时；生命上限变化保留当前生命比例。')) return;
+    if (!await confirmAction('将全部面板参数恢复为原版默认并自动保存？兵种、射程、水晶、难度 / AI 等立即恢复，开局资源等从下局生效；保留已改进的弹道命中和子弹延寿。不会删除已存预设、清兵或重开本局，不会重置当前金币、人口、倒计时；生命上限变化保留当前生命比例。')) return;
     const report = customization.resetSettings(); invalid.clear(); unconfirmed.clear(); selectedPreset = ''; renderContent();
     await persist(); notice('全部面板参数已恢复原版默认并保存；弹道命中和延寿改进保留。' + reportMessage(report, '当前可改项已生效；开局项从下局生效。'));
   }));
@@ -163,7 +185,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   function label(parent, text, input) {
     const result = node('label', 'ms-field'); result.appendChild(node('span', '', text)); result.appendChild(input); parent.appendChild(result); return input;
   }
-  function notice(text, error = false) { setText(message, String(text)); message.setAttribute('data-error', String(error)); }
+  function notice(text, error = false) { if (destroyed) return; setText(message, String(text)); message.setAttribute('data-error', String(error)); }
   function assertValid() { if (invalid.size) throw new Error(`有 ${invalid.size} 项输入无效，请修正红框字段或撤销 / 恢复默认。`); }
   function reportMessage(report, fallback) {
     if (typeof report === 'string') return report;
@@ -174,9 +196,9 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       + (notes.length ? ` ${notes.join('；')}` : '');
   }
   async function action(callback) {
-    if (busy || destroyed) return; busy = true; update();
+    if (busy || destroyed) return; actionFocus = doc.activeElement; busy = true; update();
     try { await callback(); } catch (error) { notice(error?.message ?? error, true); }
-    finally { busy = false; if (!destroyed) update(); }
+    finally { busy = false; if (!destroyed) { update(); confirmation.restoreFocus({ forget: true, focus: opened }); } actionFocus = null; }
   }
   async function persist() {
     const revision = ++saveRevision; saving++; update();
@@ -496,7 +518,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     const navigation = card(content, '新局与主菜单');
     button(navigation, '调整开局参数 / 开始新局', 'goto-starting', () => { activeTab = 'starting'; renderContent(); }, '', true);
     if (typeof customization.returnToMenu === 'function') button(navigation, '返回主菜单（结束本局）', 'return-original', () => action(async () => {
-      if (state().isBattle && !confirmAction('结束当前战局并返回主菜单？当前设置和已保存预设保留；不会恢复原版默认。')) return;
+      if (state().isBattle && !await confirmAction('结束当前战局并返回主菜单？当前设置和已保存预设保留；不会恢复原版默认。')) return;
       await customization.returnToMenu(); notice('已结束本局并返回主菜单；当前设置和预设保留，下局继续使用。');
     }), '', true);
   }
@@ -519,7 +541,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     inlineChoices(startCard, [[true, '单人对战电脑'], [false, '双人对战']], startSinglePlay, 'data-start-mode', value => { startSinglePlay = value; });
     button(startCard, '按当前设置开始新战局', 'start-battle', () => action(async () => {
       assertValid();
-      if (state().isBattle && !confirmAction('重新开始将结束当前战局。按当前设置开始新局？')) return;
+      if (state().isBattle && !await confirmAction('重新开始将结束当前战局。按当前设置开始新局？')) return;
       const options = { difficulty: startDifficulty, singlePlay: startSinglePlay };
       if (onStartBattle) await onStartBattle(options); else await customization.startBattle(options);
       notice('已开始新战局。');
@@ -575,7 +597,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     const buttons = node('div', 'ms-row');
     button(buttons, '载入并应用', 'load-preset', () => action(async () => {
       if (!presetSelect.value) throw new Error('请先选择一个已保存的预设。');
-      if (!discardEdits('载入预设')) return;
+      if (!await discardEdits('载入预设')) return;
       await customization.loadPreset(presetSelect.value); selectedPreset = presetSelect.value; invalid.clear(); unconfirmed.clear();
       const report = customization.applySettings(); await persist();
       presetName.value = state().presets.find(item => item.id === selectedPreset)?.name ?? '';
@@ -585,7 +607,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     button(buttons, '覆盖所选预设', 'overwrite-preset', () => savePreset(true), '', true);
     button(buttons, '删除所选', 'delete-preset', () => action(async () => {
       if (!presetSelect.value) throw new Error('请先选择预设。');
-      if (!confirmAction('删除所选的本机预设？当前设置与战局不改变。')) return;
+      if (!await confirmAction('删除所选的本机预设？当前设置与战局不改变。')) return;
       await customization.deletePreset(presetSelect.value); await persist(); selectedPreset = ''; refreshPresets(true); notice('已删除所选预设，当前设置与战局保留。');
     }), 'ms-danger', true);
     card.appendChild(buttons); content.appendChild(card); refreshPresets(true);
@@ -595,7 +617,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
       try {
         const chosen = file.files?.[0]; if (!chosen) return;
         if (chosen.size > 256 * 1024) throw new Error('单个预设 JSON 不得超过 256 KB。');
-        if (!discardEdits('导入文件')) return;
+        if (!await discardEdits('导入文件')) return;
         await customization.importJSON(await chosen.text()); invalid.clear(); unconfirmed.clear(); selectedPreset = ''; refreshPresets(true);
         const report = customization.applySettings(); await persist();
         notice('文件校验通过，已导入、应用并保存。' + reportMessage(report, '开局项从下局生效。') + ' 如需命名副本，可另存为预设。');
@@ -618,13 +640,13 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     }), '', true);
     transfer.appendChild(fileActions); transfer.appendChild(node('p', 'ms-muted', '预设只包含白名单规则，不包含脚本。倍速、视角与显示上限是本次运行设置，不随预设保存。恢复原版默认不会删除已保存预设。')); content.appendChild(transfer);
   }
-  function discardEdits(actionName) { return !(unconfirmed.size || invalid.size) || confirmAction(`${actionName}将替换尚未确认的输入，继续？`); }
+  async function discardEdits(actionName) { return !(unconfirmed.size || invalid.size) || await confirmAction(`${actionName}将替换尚未确认的输入，继续？`); }
   async function savePreset(overwrite) {
     await action(async () => {
       assertValid(); const name = presetName.value.trim(); if (!name) throw new Error('请填写预设名称。');
       const id = overwrite ? presetSelect.value : undefined;
       if (overwrite && !id) throw new Error('请先选择要覆盖的预设。');
-      if (overwrite && !confirmAction('覆盖所选预设？其他预设和当前战局不改变。')) return;
+      if (overwrite && !await confirmAction('覆盖所选预设？其他预设和当前战局不改变。')) return;
       const saved = await customization.savePreset(name, id); await persist();
       selectedPreset = saved?.id ?? id ?? ''; refreshPresets(true); notice('预设副本已保存到本机；当前设置本来就已自动保存，无需重复应用。');
     });
@@ -709,7 +731,7 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
     notice('打开设置不自动暂停。参数按 Enter 或离开输入框后自动保存：可即时生效项应用本局，开局项从下局生效。预设只是命名副本，JSON 用于备份 / 交换。');
   }
   function close() {
-    if (destroyed || !opened) return; opened = false; element.hidden = true; onOpenChange(false);
+    if (destroyed || !opened) return; opened = false; cancelConfirmation(); element.hidden = true; onOpenChange(false);
     beforeFocus?.focus?.({ preventScroll: true });
   }
   for (const type of ['pointerdown', 'pointerup', 'click', 'wheel']) on(element, type, event => event.stopPropagation());
@@ -721,8 +743,8 @@ export function createSettingsPanel({ root, customization, playbackElement = nul
   on(element, 'keyup', event => event.stopPropagation());
   renderContent(); notice('参数确认后自动保存并生效，无需额外点击应用。');
   return Object.freeze({ element, open, close, toggle() { if (opened) close(); else open(); },
-    get isOpen() { return opened; }, update, destroy() {
-      if (destroyed) return; close(); destroyed = true;
+    get isOpen() { return opened; }, get isConfirming() { return Boolean(awaitingConfirmation); }, update, destroy() {
+      if (destroyed) return; close(); destroyed = true; confirmation.destroy();
       for (const remove of [...currentTabCleanup, ...cleanups]) remove(); element.remove(); style.remove();
     } });
 }
