@@ -271,8 +271,10 @@ export async function verifySettingsAuto(options) {
     await act('tab-presets').click(); const nameInput = page.locator('[data-preset-name]');
     const beforeTextSelection = await selection(), beforeTextZoom = await zoom();
     await typeByMouseAndKeyboard({ page, control: nameInput, value: 'uowasd', commitKey: 'ArrowRight' });
+    await page.keyboard.type('u'); check(await zoom() === beforeTextZoom, 'typed U alone cannot zoom while an input owns keyboard focus');
+    await page.keyboard.type('o'); check(await zoom() === beforeTextZoom, 'typed O alone cannot zoom; opposite keys are not allowed to hide each other');
     await held(['ArrowDown'], async () => { await delay(600); });
-    check(await nameInput.inputValue() === 'uowasd' && same(await selection(), beforeTextSelection) && await zoom() === beforeTextZoom,
+    check(await nameInput.inputValue() === 'uowasduo' && same(await selection(), beforeTextSelection) && await zoom() === beforeTextZoom,
       'U/O/WASD text and held arrows remain input editing, never camera zoom or troop selection');
 
     await selectZero(); await speed(1); await pause(false); await canvasClick();
@@ -326,7 +328,8 @@ export async function verifySettingsAuto(options) {
       await until(async () => (await selection()).left[0] >= 2, 'repeat begins before field focus interruption');
       await nameInput.click(); const stopped = await selection(), z = await zoom();
       check(stopped.left[0] >= 2 && stopped.left[0] < 7, 'field focus interrupts mid-row, not at an already-clamped boundary');
-      await page.keyboard.type('uo');
+      await page.keyboard.type('u'); check(await zoom() === z, 'U remains text after focus interrupted an active held troop-selection key');
+      await page.keyboard.type('o');
       check(await unchanged(stopped) && await zoom() === z, 'clicking an input cancels pending repeat and typed U/O cannot zoom');
       await canvasClick();
       check(await unchanged(stopped), 'returning to canvas does not replay the still-held key cleared by input focus');
