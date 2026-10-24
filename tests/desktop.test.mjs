@@ -218,6 +218,7 @@ test('packaging whitelist excludes originals, references, private files and runt
     'desktop/entry.cjs', 'desktop/main.cjs', 'desktop/static-server.cjs', 'desktop/preload.cjs', 'desktop/preferences.cjs',
     'docs/licenses/GPL-3.0.txt', 'docs/parameters.zh-CN.md', 'docs/known-issues.md', 'docs/verification.json',
     'docs/native-resolution.zh-CN.md', 'docs/native-resolution.en.md',
+    'docs/combat-hits.zh-CN.md', 'docs/combat-hits.en.md',
   ]) assert.equal(isProductionPath(file), true, file);
   for (const file of [
     '.local/token.json', 'recovered/unit-sprites/frame.png', 'reference/super.swf', 'assets/game.swf',
@@ -271,6 +272,8 @@ test('portable extras include licenses, replacement source/instructions and matc
     'generated/ui/LGPL-3.0.txt', 'generated/ui/GPL-3.0.txt', 'tools/build_ui.py', 'recovered/game-canvas/canvas.js',
   ];
   for (const file of required) put(project, file);
+  const combatDocs = ['docs/combat-hits.zh-CN.md', 'docs/combat-hits.en.md'];
+  for (const file of combatDocs) put(project, file, `Packaged combat rules: ${file}`);
   const info = { version: '0.1.0-preview.1', sourceCommit: 'a'.repeat(40), platform: 'win32', arch: 'x64', electronVersion: '44.4.3' };
   writePortableExtras(project, output, info);
   for (const file of ['LICENSE', 'LICENSE.project.txt', 'NOTICE.txt', 'README.md', 'README.en.md', 'docs/licenses/LGPL.txt', 'docs/licenses/GPL.txt',
@@ -279,13 +282,16 @@ test('portable extras include licenses, replacement source/instructions and matc
     assert.ok(fs.statSync(path.join(output, file)).isFile(), file);
   }
   assert.match(fs.readFileSync(path.join(output, 'ui-helper/README.md'), 'utf8'), /actually loads/);
+  for (const file of combatDocs) assert.equal(fs.readFileSync(path.join(output, file), 'utf8'), `Packaged combat rules: ${file}`);
   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(output, 'build-info.json'))), info);
   assert.ok(!fs.readFileSync(path.join(output, 'build-info.json'), 'utf8').includes(directory));
   assert.match(fs.readFileSync(path.join(output, 'Start-Game.cmd'), 'utf8'), /%~dp0MiragineSuper\.exe/);
   put(output, 'config/custom.json', '{"userEdited":true}');
   put(output, 'ui-helper/original-graphics.js', 'customHelper();');
+  for (const file of combatDocs) put(output, file, `Local annotations: ${file}`);
   writePortableExtras(project, output, info);
   assert.equal(fs.readFileSync(path.join(output, 'config/custom.json'), 'utf8'), '{"userEdited":true}');
   assert.equal(fs.readFileSync(path.join(output, 'ui-helper/original-graphics.js'), 'utf8'), 'customHelper();');
+  for (const file of combatDocs) assert.equal(fs.readFileSync(path.join(output, file), 'utf8'), `Local annotations: ${file}`);
   assert.throws(() => writePortableExtras(project, output, { ...info, sourceCommit: 'b'.repeat(40) }), /different source version/);
 });

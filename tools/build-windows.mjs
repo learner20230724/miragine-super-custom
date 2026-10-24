@@ -26,7 +26,8 @@ export function isProductionPath(input, { directory = false } = {}) {
       || ['docs/known-issues.md', 'docs/verification.json', 'docs/custom-verification.json',
         'docs/time-control.zh-CN.md', 'docs/time-control.en.md', 'docs/custom-settings.zh-CN.md', 'docs/custom-settings.en.md',
         'docs/native-resolution.zh-CN.md', 'docs/native-resolution.en.md',
-        'docs/projectile-lifetime.zh-CN.md', 'docs/projectile-lifetime.en.md'].includes(relative);
+        'docs/projectile-lifetime.zh-CN.md', 'docs/projectile-lifetime.en.md',
+        'docs/combat-hits.zh-CN.md', 'docs/combat-hits.en.md'].includes(relative);
   }
   if (!runtimeDirectories.has(parts[0])) return false;
   if (directory) return true;
@@ -124,7 +125,8 @@ export function writePortableExtras(projectRoot, output, buildInfo) {
   }
   for (const name of ['parameters.en.md', 'parameters.zh-CN.md', 'time-control.zh-CN.md', 'time-control.en.md',
     'custom-settings.zh-CN.md', 'custom-settings.en.md', 'native-resolution.zh-CN.md', 'native-resolution.en.md',
-    'projectile-lifetime.zh-CN.md', 'projectile-lifetime.en.md', 'custom-verification.json']) {
+    'projectile-lifetime.zh-CN.md', 'projectile-lifetime.en.md',
+    'combat-hits.zh-CN.md', 'combat-hits.en.md', 'custom-verification.json']) {
     if (fs.existsSync(path.join(project, 'docs', name))) copy(`docs/${name}`);
   }
   for (const name of ['known-issues.md', 'verification.json']) copy(`docs/${name}`);

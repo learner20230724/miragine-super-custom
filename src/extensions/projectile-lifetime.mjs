@@ -12,6 +12,10 @@ function policyFor(simulation) {
       || policy.unitIds.some(id => !Number.isInteger(id) || id < 0 || id > 15)) {
     throw new TypeError('casterProjectileLifetime requires positive mapWidths and distinct unitIds (0–15)');
   }
+  if (policy.baseLifeFrames !== undefined
+      && (!Number.isSafeInteger(policy.baseLifeFrames) || policy.baseLifeFrames <= 0)) {
+    throw new TypeError('casterProjectileLifetime.baseLifeFrames must be a positive safe integer');
+  }
   if (!Number.isFinite(simulation.mapWidth) || simulation.mapWidth <= 0
       || !Number.isFinite(simulation.rules.projectileSpeed) || simulation.rules.projectileSpeed === 0) {
     throw new RangeError('Caster projectile lifetime requires positive mapWidth and finite nonzero projectileSpeed');
@@ -45,6 +49,10 @@ export function installCasterProjectileLifetime(simulation) {
       // Both original/custom attack factories call this after assigning vx.
       // Read the current configuration so live edits retain their own delay.
       attack.life = casterProjectileLifeFrames(this.mapWidth, policy.mapWidths, attack.vx, attack.delay);
+    } else if (policy && entity.kind === 'base' && policy.baseLifeFrames !== undefined) {
+      // Crystal lifetime is an explicit total step budget, independent of the
+      // caster distance policy. It does not alter range, speed, or firing delay.
+      attack.life = policy.baseLifeFrames;
     }
     return original.call(this, entity, attack, ...args);
   };

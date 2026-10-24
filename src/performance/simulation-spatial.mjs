@@ -105,6 +105,31 @@ function separatePair(entity, other, radius) {
 
 export const hasSpatialOptimization = simulation => Boolean(simulation?.[installed]?.enabled);
 
+/** Broad-phase candidates for a projectile fired by side (left/right).
+ * Existing per-frame indexes are reused only while they are current. The caller
+ * resolves exact swept contact and filters dead/removed entities; visitors must
+ * not mutate the battle. Ordering is deliberately unspecified. Returns whether
+ * an index was used. Invalid bounds conservatively visit the whole enemy list.
+ */
+export function visitProjectileCandidates(simulation, side, bounds, visit) {
+  if (side !== 'left' && side !== 'right') throw new TypeError('Projectile side must be left or right');
+  if (typeof visit !== 'function') throw new TypeError('Projectile candidate visitor must be a function');
+  const list = side === 'left' ? simulation.enemyList : simulation.friendList;
+  const state = simulation[installed], index = side === 'left' ? state?.right : state?.left;
+  if (state?.enabled && state.active && list.length >= MIN_INDEXED_UNITS
+    && index.visitRectangle(bounds, visit)) return true;
+  // Comparisons, not squared distances/subtraction, keep this fallback valid for
+  // finite coordinates beyond the BVH's safe range and infinite outer bounds.
+  const ordered = bounds && typeof bounds.minX === 'number' && typeof bounds.minY === 'number'
+    && typeof bounds.maxX === 'number' && typeof bounds.maxY === 'number'
+    && bounds.minX <= bounds.maxX && bounds.minY <= bounds.maxY;
+  for (const entity of list) {
+    if (!ordered || (entity.px >= bounds.minX && entity.px <= bounds.maxX
+      && entity.py >= bounds.minY && entity.py <= bounds.maxY)) visit(entity);
+  }
+  return false;
+}
+
 /** Clear paused-battle caches after external mutations, without reinstalling methods. */
 export function releaseSpatialIndexes(simulation) {
   const state = simulation?.[installed];

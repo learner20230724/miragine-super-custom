@@ -2,6 +2,7 @@ import { MiragineSimulation } from '../core/simulation.mjs';
 import { IsometricEntity, IsometricAttack } from '../core/entity.mjs';
 import { CoreSymbol } from '../core/scene.mjs';
 import { installSpatialOptimization } from '../performance/simulation-spatial.mjs';
+import { refreshCombatAttackSteps } from '../extensions/combat-hits.mjs';
 import { MAX_INTEGER, clampInteger, safeAdd, safeSubtract, safeMultiply,
   finiteAdd, finiteSubtract, scaleRatio } from './numeric.mjs';
 
@@ -324,7 +325,7 @@ export function installCustomRuntime(sim, configuration = sim.config, { initiali
     }
     sim.round = clampInteger(sim.rules.initialRoundFrames); sim.gameOverTime = clampInteger(sim.rules.gameOverDelayFrames ?? 30);
   }
-  sim[installed] = true; refresh(sim); installSpatialOptimization(sim); return sim;
+  sim[installed] = true; refresh(sim); installSpatialOptimization(sim); refreshCombatAttackSteps(sim); return sim;
 }
 
 export const hasCustomRuntime = sim => Boolean(sim?.[installed]);

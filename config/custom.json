@@ -1,11 +1,19 @@
 {
   "schemaVersion": 1,
   "$comment": "User overrides. Extraction and regeneration tools must never modify this file.",
-  "profile": "extended-caster-projectiles",
+  "profile": "custom-combat-hits",
   "overrides": {
     "casterProjectileLifetime": {
       "mapWidths": 1.1,
-      "unitIds": [9, 12]
+      "unitIds": [9, 12],
+      "baseLifeFrames": 253
+    },
+    "combatHitRules": {
+      "projectiles": "swept-first-enemy",
+      "ordinaryAttacks": "delayed-target",
+      "unitRadius": 20,
+      "baseRadius": 40,
+      "projectileRadius": 6
     }
   }
 }

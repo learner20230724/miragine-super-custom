@@ -8,15 +8,15 @@
 
 **可运行预览版**：战斗逻辑从恢复的 AS3 手工移植到 JavaScript，使用 Canvas / WebGL 渲染，不需要 Flash 或 SWF 播放器。原版插桩对照的一局普通难度共 6,842 帧逻辑状态匹配；这不代表全部 Adobe Flash 场景或逐像素一致。具体交付状态见[验证记录](docs/verification.json)。
 
-**当前源码：v0.6.0-preview.1 大军团优化。** 寻敌与同阵营推挤使用空间索引，复用显示插值缓冲，跳过完全屏外角色绘制，并释放结束刷兵任务的战局引用。30 Hz 逻辑、原素材与原生窗口画质不变，不增加兵数限制。发布状态见下方。
+**当前源码／本地构建版本：v0.6.1-preview.1，命中修复。** 保留 v0.6.0 的大军团优化： 寻敌与同阵营推挤使用空间索引，复用显示插值缓冲，跳过完全屏外角色绘制，并释放结束刷兵任务的战局引用。30 Hz 逻辑、原素材与原生窗口画质不变，不增加兵数限制。发布状态见下方。
 
-**本次合并用户指定的弹丸寿命配置：**吸血鬼、魔法师新弹丸寿命覆盖地图宽的 1.1 倍目标距离，开火射程和弹速不变。启动时标记为自定义规则；「回到原版」恢复后续对局原规则，磁盘配置不被改写。[参数与恢复方式](docs/projectile-lifetime.zh-CN.md)。
+**当前源码另启用用户指定的命中玩法：**远程弹丸沿直线弹道命中第一个碰到的敌人；普通攻击在原发射延迟后伤害锁定目标，支持大射程隔空攻击。红蓝水晶弹丸寿命固定为 253 步，吸血鬼、魔法师仍按地图宽 1.1 倍目标距离换算。不改开火射程、伤害／护甲公式、冷却、倍速或 30 Hz 逻辑频率。启动时标记为自定义规则；F2「回到原版」为后续对局恢复原规则，不改写磁盘。[命中规则](docs/combat-hits.zh-CN.md) · [弹丸寿命](docs/projectile-lifetime.zh-CN.md)。
 
 **保留 v0.5.0-preview.1 的原生窗口分辨率绘制。** 舞台布局仍用 640×480 逻辑坐标，战斗逻辑保持 30 Hz，画布实际像素按游戏视口及屏幕 DPR 绘制，不再先画完整 640×480 位图再放大。原 PNG 与规则不变；[实现与开发入口](docs/native-resolution.zh-CN.md)。
 
 ## Windows 启动包
 
-**尚未打包的本地源码改动**：`config/custom.json` 现显式启用魔法师与吸血鬼的弹丸延寿，按地图宽 1.1 倍换算，只改新弹丸寿命，不改开火范围、弹速、伤害或冷却。原版配置与「回到原版」仍保留原寿命；[参数及配置方法](docs/projectile-lifetime.zh-CN.md)。以下已发布包尚不包含这项改动。
+**源码与发布包的区别**：下方已发布的 v0.6.0-preview.1 **已包含吸血鬼／魔法师延寿**。本轮 v0.6.1-preview.1 本地构建包含弹道碰撞、普通攻击延迟直达结算及红蓝水晶 253 步寿命，**未发布到 GitHub Release**；旧 EXE 不会自动获得这些改动。升级外置配置时须合并新扩展字段，保留个人设置。配置位于 `config/custom.json`，暂无新增面板项；[命中参数与开发入口](docs/combat-hits.zh-CN.md)。
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
@@ -167,6 +167,8 @@ node tools/profile-desktop.mjs --dir <测试副本目录> --out .local/performan
 | `src/config/` | 配置加载、校验与覆盖合并 |
 | `config/defaults.generated.json` | 从恢复代码提取的默认参数；自动生成 |
 | `config/custom.json` | 自定义覆盖；重新生成不会覆盖此文件 |
+| `src/extensions/combat-hits.mjs` | 可选弹道扫掠碰撞与普通攻击延迟结算；参数见 [命中规则](docs/combat-hits.zh-CN.md) |
+| `src/extensions/projectile-lifetime.mjs` | 可选魔法师／吸血鬼距离预算及水晶固定寿命；参数见 [弹丸寿命](docs/projectile-lifetime.zh-CN.md) |
 | `src/extensions/custom.mjs` | 保留的自定义扩展入口；目前为空，尚无自动挂接的插件系统 |
 | `assets/generated/`、`generated/` | 运行素材、素材清单、UI 与配置来源映射；自动生成 |
 | `recovered/`、`reference/` | 反编译 AS3、导出资料及校验过的原版 SWF；用于追溯与对照 |

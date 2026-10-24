@@ -24,11 +24,13 @@ function fire(sim, id = 12, side = 'left', distance = 100000) {
   return { unit, target, attack: sim.projectiles.at(-1) };
 }
 
-test('shipped customization changes only the explicit caster-lifetime policy, not original numeric rules', () => {
-  assert.deepEqual(effective, { ...defaults, casterProjectileLifetime: { mapWidths: 1.1, unitIds: [9, 12] } });
+test('shipped lifetime policy leaves original numeric rules and unit data unchanged', () => {
+  assert.deepEqual(effective.rules, defaults.rules);
+  assert.deepEqual(effective.units, defaults.units);
+  assert.deepEqual(effective.casterProjectileLifetime, { mapWidths: 1.1, unitIds: [9, 12], baseLifeFrames: 253 });
   assert.equal(defaults.rules.projectileLifeFrames, 100);
   const main = readFileSync(new URL('../src/app/main.mjs', import.meta.url), 'utf8');
-  assert.ok(main.includes('installCasterProjectileLifetime(new MiragineSimulation(options))'), 'wire the extension into the app factory');
+  assert.match(main, /installCasterProjectileLifetime\(/, 'wire the extension into the app factory');
 });
 
 for (const id of [9, 12]) for (const side of ['left', 'right']) {
@@ -65,16 +67,45 @@ for (const id of [9, 12]) for (const side of ['left', 'right']) {
   });
 }
 
-test('all other units and both crystals retain their original projectile lifetime', () => {
+test('all other units retain their original projectile lifetime', () => {
   for (let id = 0; id < 16; id++) if (![9, 12].includes(id)) {
     for (const side of ['left', 'right']) assert.equal(fire(create(), id, side).attack.life, 100, `${side} ${id}`);
   }
-  for (const side of ['left', 'right']) {
+});
+
+for (const side of ['left', 'right']) {
+  test(`${side} crystal: explicit life 253 without changing range/delay/speed/cooldown/damage`, () => {
     const sim = create(), base = side === 'left' ? sim.redBoss : sim.blueBoss;
     base.target = side === 'left' ? sim.blueBoss : sim.redBoss;
-    base.attack(); assert.equal(sim.projectiles.at(-1).life, 100);
-  }
-});
+    const before = { range: base.range, delay: base.delayAttack, speed: base.weaponSpeed, damage: [...base.damage] };
+    base.attack(); const attack = sim.projectiles.at(-1);
+    assert.equal(attack.life, 253);
+    assert.equal(attack.delay, before.delay);
+    assert.equal(attack.vx, sim.rules.projectileSpeed * base.direction);
+    assert.equal(base.range, before.range); assert.equal(base.delayAttack, before.delay);
+    assert.equal(base.t, before.speed); assert.deepEqual(base.damage, before.damage);
+  });
+
+  test(`${side} crystal: legacy policy or disabled extension retains original life 100`, () => {
+    const legacy = structuredClone(effective); delete legacy.casterProjectileLifetime.baseLifeFrames;
+    const absent = structuredClone(effective); delete absent.casterProjectileLifetime;
+    for (const sim of [create(legacy), create(absent), create(effective, false)]) {
+      const base = side === 'left' ? sim.redBoss : sim.blueBoss;
+      base.target = side === 'left' ? sim.blueBoss : sim.redBoss;
+      base.attack(); assert.equal(sim.projectiles.at(-1).life, 100);
+    }
+  });
+
+  test(`${side} crystal: explicit lifetime is not recomputed from map width or firing delay`, () => {
+    const cfg = structuredClone(effective); cfg.rules.mapWidth = 6000; cfg.rules.projectileSpeed = 30;
+    const sim = create(cfg), base = side === 'left' ? sim.redBoss : sim.blueBoss;
+    base.target = side === 'left' ? sim.blueBoss : sim.redBoss; base.delayAttack = 17;
+    base.attack(); const attack = sim.projectiles.at(-1);
+    assert.equal(attack.life, 253); assert.equal(attack.delay, 17);
+    assert.equal(attack.vx, 30 * base.direction);
+    attack.step(); assert.equal(attack.life, 252); assert.equal(attack.delay, 16);
+  });
+}
 
 test('normal early hit and vertical miss still remove the projectile immediately', () => {
   for (const dy of [0, 31]) {
@@ -108,6 +139,10 @@ test('invalid travel settings fail explicitly instead of creating infinite or ze
   for (const policy of [null, {}, [], { mapWidths: 0, unitIds: [9] }, { mapWidths: 1.1, unitIds: [9, 9] }, { mapWidths: 1.1, unitIds: [16] }]) {
     const cfg = structuredClone(effective); cfg.casterProjectileLifetime = policy;
     assert.throws(() => installCasterProjectileLifetime(create(cfg, false)), TypeError);
+  }
+  for (const baseLifeFrames of [0, -1, 253.5, '253', null, true, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+    const cfg = structuredClone(effective); cfg.casterProjectileLifetime.baseLifeFrames = baseLifeFrames;
+    assert.throws(() => installCasterProjectileLifetime(create(cfg, false)), /baseLifeFrames must be a positive safe integer/);
   }
   const cfg = structuredClone(effective); cfg.rules.projectileSpeed = 0;
   assert.throws(() => installCasterProjectileLifetime(create(cfg, false)), RangeError);

@@ -89,6 +89,29 @@ export class SpatialIndex {
     entry.x = entity.px; entry.y = entity.py;
     for (let node = entry.leaf; node; node = node.parent) this.refit(node);
   }
+  /** Visit centers in a closed rectangle without allocating a candidate array.
+   * Returns false without visiting anything when a linear fallback is needed.
+   * The visitor must not move or remove entities while traversal is in progress.
+   */
+  visitRectangle(bounds, visit) {
+    if (!this.valid || !bounds || !coordinate(bounds.minX) || !coordinate(bounds.minY)
+      || !coordinate(bounds.maxX) || !coordinate(bounds.maxY)
+      || bounds.minX > bounds.maxX || bounds.minY > bounds.maxY) return false;
+    if (this.root) this.visitRectangleNode(this.root, bounds, visit);
+    return true;
+  }
+  visitRectangleNode(node, bounds, visit) {
+    if (node.maxX < bounds.minX || node.minX > bounds.maxX
+      || node.maxY < bounds.minY || node.minY > bounds.maxY) return;
+    if (node.left) {
+      this.visitRectangleNode(node.left, bounds, visit);
+      this.visitRectangleNode(node.right, bounds, visit);
+    } else for (let i = node.start; i < node.end; i++) {
+      const entry = this.entries[i];
+      if (entry.x >= bounds.minX && entry.x <= bounds.maxX
+        && entry.y >= bounds.minY && entry.y <= bounds.maxY) visit(entry.entity);
+    }
+  }
   lowerBound(node) {
     const dx = this.x < node.minX ? node.minX - this.x : this.x > node.maxX ? this.x - node.maxX : 0;
     const dy = this.y < node.minY ? node.minY - this.y : this.y > node.maxY ? this.y - node.maxY : 0;

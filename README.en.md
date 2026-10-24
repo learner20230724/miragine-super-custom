@@ -8,15 +8,15 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 **Runnable preview:** combat logic is manually ported from recovered AS3 to JavaScript and rendered with Canvas / WebGL, without Flash or a SWF player. One instrumented original normal-difficulty match matches all 6,842 logic-state frames; this does not establish all Adobe Flash behavior or pixel-perfect parity. See the [verification record](docs/verification.json) for delivery status.
 
-**Current source: v0.6.0-preview.1 large-army optimization.** Spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Publication status is below.
+**Current source / local build version: v0.6.1-preview.1 combat hit fixes.** Retains the v0.6.0 large-army optimization: Spatial indexes accelerate targeting and same-side separation, presentation buffers are reused, fully off-screen sprites are culled, and finished spawn jobs release their battle reference. Original 30 Hz logic, assets and native-window rendering remain; no troop cap is added. Publication status is below.
 
-**Also includes the requested projectile-lifetime configuration:** new vampire/wizard projectiles budget for 1.1 map widths; firing range and speed stay unchanged. Startup is correctly identified as custom rules. Return to original restores subsequent battles without rewriting disk configuration. See [parameters and restoration](docs/projectile-lifetime.en.md).
+**Current source also enables the requested custom hit rules:** ranged projectiles follow a straight trajectory and hit the first enemy contacted; ordinary attacks damage their locked target after the original firing delay, supporting long-range melee customization. Red/blue crystal projectile life is fixed at 253 steps; vampire/mage life still budgets for 1.1 map widths. Firing range, damage/armor formulas, cooldowns, speed controls and the 30 Hz simulation rate are unchanged. Startup is marked as custom rules; F2 “Return to original” restores subsequent matches without rewriting disk settings. See [hit rules](docs/combat-hits.en.md) and [projectile lifetime](docs/projectile-lifetime.en.md).
 
 **Retains v0.5.0-preview.1 native-window-resolution rendering.** Stage layout retains 640×480 logical coordinates and combat simulation remains 30 Hz; backing pixels now follow the fitted game viewport and display DPR instead of enlarging a completed 640×480 bitmap. Original PNGs and rules are unchanged. See the [implementation guide](docs/native-resolution.en.md).
 
 ## Windows portable build
 
-**Unpackaged local source change:** `config/custom.json` now explicitly enables extended vampire/mage projectile life, calculated from 1.1 map widths. Only new projectile lifetime changes; firing range, speed, damage and cooldown remain unchanged. The baseline and “Return to original” retain the original lifetime. See [parameters and configuration](docs/projectile-lifetime.en.md). Published builds below do not yet contain this change.
+**Source versus portable build:** published v0.6.0-preview.1 below **already includes vampire/mage lifetime extension**. The v0.6.1-preview.1 local build includes trajectory collisions, delayed direct ordinary hits and the 253-step crystal lifetime; it is **not published to GitHub Releases**. An old EXE does not acquire them automatically. Merge the new extension fields into external configuration while preserving personal settings. Configure them in `config/custom.json`; no new panel fields were added. See [hit parameters and development entry points](docs/combat-hits.en.md).
 
 Download the Windows x64 preview from the **[custom Releases](https://github.com/learner20230724/miragine-super-custom/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. Keep this customization in a separate directory from the baseline game.
 
@@ -159,6 +159,8 @@ Unit keys are menu IDs `"0"`–`"15"`, not animation indices (`ss`). Objects mer
 | `src/config/` | Configuration loading, validation, and override merging |
 | `config/defaults.generated.json` | Generated defaults extracted from recovered code |
 | `config/custom.json` | User overrides, preserved during regeneration |
+| `src/extensions/combat-hits.mjs` | Optional swept projectile collisions and delayed ordinary hits; see [hit rules](docs/combat-hits.en.md) |
+| `src/extensions/projectile-lifetime.mjs` | Optional mage/vampire distance budget and fixed crystal lifetime; see [projectile lifetime](docs/projectile-lifetime.en.md) |
 | `src/extensions/custom.mjs` | Reserved custom extension entry; currently empty, not an automatically wired plugin system |
 | `assets/generated/`, `generated/` | Generated runtime media, asset manifest, UI, and configuration provenance |
 | `recovered/`, `reference/` | Decompiled AS3, exports, and verified original SWFs for provenance and comparison |
