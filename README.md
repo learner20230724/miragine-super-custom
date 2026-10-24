@@ -12,7 +12,9 @@
 
 在 **[改版 Releases](https://github.com/learner20230724/miragine-super-custom/releases)** 下载 Windows x64 预览包，完整解压后双击 `Start-Game.cmd` 或 `MiragineSuper.exe`。启动包自带运行环境，不需要安装 Node.js、Python 或 Flash；请勿将改版覆盖到原版目录。
 
-当前已发布 **[v0.4.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.1)**，对应运行源码 `334b25d`。**597 项源码测试、75 项浏览器交互、76 项独立 EXE 检查通过**，Windows／Linux CI 通过；实际验证了 F2 不自动暂停、超量输入钳制、红蓝独立数值、超过 500 个士兵与取消生成、全屏和预设跨两次启动保留。ZIP 全新解压、源码逐字节比对和隐私审计通过；远端 11 个附件的大小与 SHA-256 均与本地一致，未另做完整远端重下载。详见 [本版交付记录](docs/releases/v0.4.0-preview.1.json) 与 Release 附件。
+当前已发布 **[v0.4.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.2)**，对应运行源码 `0a397441`。**606 项源码测试、93 项浏览器交互、94 项独立 EXE 检查通过**，[Windows／Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40064048990) 通过；本版将底栏简化为一行三按钮，统一应用操作、保持生命比例，并将说明收进悬停提示。实际验证包含新底栏及已有的 F2 不自动暂停、红蓝独立编辑、超量输入钳制、刷兵／取消、全屏和两次启动间预设保留。ZIP 全新解压、源码逐字节比对和隐私审计通过；远端 11 个附件的大小与 SHA-256 均与本地一致，未另做完整远端重下载。详见 [本版交付记录](docs/releases/v0.4.0-preview.2.json) 与 Release 附件。包内 README 保留运行源码提交时的发布状态，后补交付文档不改变或重新打包运行代码。
+
+历史 **[v0.4.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.1)** 的设置重组及 597／75／76 项检查保留于 [该版交付记录](docs/releases/v0.4.0-preview.1.json)，不替代新版验收。
 
 历史 **[v0.3.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2)** 对应 `c1dcb85`，原始图片采样及旧设置交互验证保留在 [该版交付记录](docs/releases/v0.3.0-preview.2.json)，不替代新版验证。
 
@@ -20,7 +22,7 @@
 
 包外的 `config/custom.json` 可直接编辑，重启生效，设置面板不会改写它。桌面草稿与预设保存在 `userdata/custom-settings.json`，恢复后仍须明确应用；升级前请备份这两个文件。`ui-helper/` 提供可替换绘图源码；`build-info.json` 标明对应源码提交。继承的原版保真结果见 [基线验证](docs/verification.json)，尚存差异见 [已知问题](docs/known-issues.md)。
 
-本版源码约 **65.85 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.56 MB**，解压 **402.17 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证；本次最大化 EXE 的约 1 秒、20 倍目标短测实际约 **7.51 倍**，仅是该窗口／机器条件的样本，不代表持续满兵性能。
+本版源码约 **65.88 MB**（含 **11.97 MB** 运行素材），Windows ZIP **170.56 MB**，解压 **402.18 MB**；按十进制 MB 计，不含开发依赖、Git 历史和运行后用户数据。20 倍与 240 FPS 都是目标，不是性能保证；本次最大化 EXE 的约 **1.11 秒**、20 倍目标短测实际约 **4.23 倍**，仅是该窗口／机器条件的样本，不代表持续满兵性能，也不能据此断言相对旧样本发生性能退化。
 
 建议解压到较短的目录；过深的 Windows 路径可能使 Chromium 的本地运行数据初始化失败。运行后产生的 `userdata/` 和 `.tmp/` 是本机数据，不属于发布内容。“从此不再显示帮助”保存在 `userdata/preferences.json`，跨重启保留；删除此文件即可恢复初始帮助。
 
@@ -71,6 +73,8 @@ npm run dev
 
 ### 性能
 
+**本次只改设置底栏，没有升级画质或更换素材／渲染。** 内部 **640×480** 画布仍整体拉伸到大窗口，是大屏模糊的限制之一；原 PNG 直接采样并不等于按窗口原生分辨率渲染。
+
 **原始素材轻量采样**：角色直接从原 PNG 投影，跳过一次 0.9 倍中间画布重采样，但保留原逻辑尺寸、脚点、裁切和动画时序。雷球、风暴使用 SWF 内已有的较高分辨率位图；新增 25 张原样复制的图片共 46,676 字节，风暴最后的透明空帧仍保留。不使用 AI、实时超分或新引擎，不扩大现有舞台／地面缓冲，也不覆盖山景、草地、原角色帧或人工配置；这不是整套美术高清重制。显示增强不等于 Flash 逐像素一致，渲染器仍保留 `spriteRasterMode: 'legacy'` 对照路径。重新生成及检查用 `python -B tools/build_source_effects.py`／`--check`；实际浏览器对照用 `node tools/verify-source-rendering.mjs`。
 
 设置默认收起，没有常驻的「设置 F2」按钮。F2 展开后可边打边调，开关面板都不会暂停／继续战斗；暂停完全由玩家操作。「全图」让完整红蓝水晶图片靠近画面两侧，减少外围空地，不保证所有地图角点可见；仍可滚轮继续缩小。
@@ -91,7 +95,7 @@ node tools/profile-desktop.mjs --dir <测试副本目录> --out .local/performan
 
 ## 修改数值
 
-以下说明包含 **v0.4.0-preview.2 源码**中的单一应用按钮；该补丁的发布状态以对应 Release 为准，不沿用上一版验收结论。
+以下说明对应 **v0.4.0-preview.2** 的单一应用按钮。
 
 **推荐先用 F2 面板**：
 

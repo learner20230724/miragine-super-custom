@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "version": "0.4.0-preview.2",
+  "sourceCommit": "0a39744152543266dffa94f86df53e6d513b0113",
+  "sourceTests": {
+    "passed": 606,
+    "failed": 0
+  },
+  "ci": {
+    "status": "passed",
+    "run": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40064048990",
+    "platforms": [
+      "ubuntu-latest / Python 3.13",
+      "windows-latest / Python 3.14"
+    ]
+  },
+  "sourceBrowser": {
+    "passed": 93,
+    "failed": 0,
+    "coreUnchanged": true,
+    "finishedAt": "2026-10-24T04:51:36.376Z"
+  },
+  "portable": {
+    "passed": 94,
+    "failed": 0,
+    "finishedAt": "2026-10-24T04:59:10.125Z",
+    "actualExeLaunches": 2,
+    "closed": true,
+    "runtimeErrors": 0,
+    "persistentPresetAcrossDifferentOrigins": true,
+    "editableFilesUnchanged": true,
+    "nativeExport": {
+      "status": "completed",
+      "filename": "miragine-preset-V4-independent-sides.json",
+      "totalBytes": 36627,
+      "receivedBytes": 36627,
+      "mimeType": "application/json"
+    },
+    "executableSha256": "ddd90ec353944c012d984cc290c73c6a56fa2230bc312921113c886b0bd8a37e",
+    "appAsarSha256": "e49c9e23d5cebd4ddf9f86e12e456be2d68e969c0e59e57ce56f4d0c1ef2cc31"
+  },
+  "featuresVerified": [
+    "One-row footer with exactly Undo, Restore original defaults and one contextual Apply action; checked height at most 60 CSS pixels.",
+    "No health-policy selector or separate next-match button; contextual guidance is a hover tooltip and layout-free accessible description.",
+    "Unified battle apply preserves current resources/countdown and defers starting-only values; unified menu apply configures without starting a match.",
+    "Proportional health updates verified on both damaged crystals; a new match uses full health under the same applied maximums.",
+    "Regression coverage includes non-pausing F2, independent side stats/paid recruitment, safe-integer clamping, finite 501-troop spawning/cancellation, fullscreen and preset persistence across two launches."
+  ],
+  "numericPolicy": {
+    "integerMaximum": 9007199254740991,
+    "overflowingInput": "clamps immediately to the field maximum",
+    "integerArithmetic": "safe saturated accounting in the opt-in custom runtime",
+    "imports": "strict validation",
+    "semanticBoundariesRetained": true,
+    "incomeCapIsBalanceCap": false,
+    "manualSpawnGameplayCap": null,
+    "totalTroopGameplayCap": null
+  },
+  "speedSample": {
+    "environment": "Actual foreground maximized Windows portable EXE; short functional sample, not a sustained full-army performance benchmark",
+    "requestedSpeed": 20,
+    "logicalHz": 30,
+    "requestedSimulationHz": 600,
+    "simulationHz": 126.90126902358226,
+    "actualSpeed": 4.230042300786075,
+    "elapsedMs": 1111.0999999046326,
+    "frameDelta": 141,
+    "sampleCount": 7,
+    "limits": "Machine, army size, window size and scheduling affect throughput; neither 20x nor 240 FPS is guaranteed. This is not a controlled comparison with prior release samples and does not establish a performance regression."
+  },
+  "integrity": {
+    "status": "passed",
+    "decodedAsarFiles": 777,
+    "exactGitSourceFiles": 775,
+    "externalAuthoredFiles": 26,
+    "sourceDifferencesUnresolved": 0,
+    "productionWhitelistExact": true,
+    "committedSourceInventorySha256": "e1d73fdbdcd6b26cf53e7e98dc7bc1839b3ae769596f5b3e511557742754e4d1",
+    "sourceCheckoutCleanAndMatchesBuildCommitBeforeAndAfter": true,
+    "metadataExceptions": [
+      "generated build-info.json",
+      "package.json with devDependencies, private and scripts removed"
+    ],
+    "originalEffectCopiesByteIdentical": true
+  },
+  "privacy": {
+    "sourceFilesScanned": 3056,
+    "sourceFindings": 0,
+    "runtimeRawFindings": 5,
+    "reviewedUpstreamFindings": 5,
+    "rawArchiveWarnings": 59,
+    "unresolved": 0,
+    "matchedVendorFiles": 71,
+    "matchedNonResourcePeSections": 14,
+    "releaseEvidenceScan": {
+      "scannedFiles": 3064,
+      "scannedBytes": 70941096,
+      "findings": [],
+      "warnings": [],
+      "skipped": []
+    },
+    "limits": "Exact pinned upstream findings were reviewed, not suppressed. PE headers, resource section and overlay are not claimed byte-identical."
+  },
+  "archive": {
+    "status": "passed",
+    "filename": "MiragineSuper-Custom-v0.4.0-preview.2-win-x64.zip",
+    "archiveSha256": "b08cf6df8fa25bac610762e35d29fe544f4f43cab3b3df70c4c5cb8c705b4d39",
+    "sourceCommit": "0a39744152543266dffa94f86df53e6d513b0113",
+    "filesVerified": 99,
+    "zipBytes": 170563596,
+    "unpackedBytes": 402181212,
+    "zipCrcPassed": true,
+    "buildAndExtractedHashesPassed": true,
+    "freshNoUserData": true,
+    "scope": "Local clean final ZIP extraction; runtime checks are recorded separately under portable. No complete remote redownload performed."
+  },
+  "storage": {
+    "sourceBytesAtRuntimeCommit": 65878360,
+    "sourceFiles": 3056,
+    "runtimeAssetBytes": 11974108,
+    "zipBytes": 170563596,
+    "unpackedBytes": 402181212,
+    "excludes": "Development dependencies, Git history and generated user data"
+  },
+  "unchanged": {
+    "baselineCommit": "404b61a8a214743eace39dbf30d28f85c25d44d1",
+    "scopes": [
+      "src/core/",
+      "src/config/",
+      "generated/",
+      "assets/",
+      "config/"
+    ],
+    "allScopesUnchanged": true,
+    "renderPipeline": {
+      "baselineCommit": "5efa60a0d275ab2235795a7bda9d16f13c12723c",
+      "scopes": [
+        {
+          "scope": "src/render/",
+          "files": 8,
+          "bytes": 69465,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "d64224e85681ccf91c16fa9d690b227900a274cb33ecd41f8a547f66459bedcd"
+        },
+        {
+          "scope": "src/platform/",
+          "files": 2,
+          "bytes": 7993,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "c912235db064dc17386da77d5795fb64304da6301b93cfc944284d5d5c739ed3"
+        },
+        {
+          "scope": "src/app/main.mjs",
+          "files": 1,
+          "bytes": 22297,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "a4398934f8f6821f22892d848f9c48766bac8dfb0c421fee50d4d7e0ea76a61e"
+        },
+        {
+          "scope": "src/app/view.mjs",
+          "files": 1,
+          "bytes": 22056,
+          "commitAndWorkingTreeUnchanged": true,
+          "gitBlobInventorySha256": "d2a3412b87c9c254e5e074e3cae13f565f60dc91651e0df746ef21640039be8d"
+        }
+      ],
+      "policy": "UI-footer-only release: renderer, platform, main and view remain unchanged; graphics diagnosis was read-only."
+    },
+    "originalRepositoryCommit": "8554d89713456368378738744bfeb32ec41c2689",
+    "originalRepositoryClean": true,
+    "scopeLimit": "Local original repository HEAD and worktree only; this audit does not query or change remotes."
+  },
+  "remainingLimits": [
+    "20x and 240 FPS are targets, not guaranteed simulation or display throughput.",
+    "No artificial 100/500 spawn cap does not imply unlimited performance: quadratic combat scans and finite memory remain. Verification generated finite troops and cancelled a huge request, not MAX_SAFE_INTEGER live troops.",
+    "Extreme finite floating-point fields retain ordinary precision limits; values are not guaranteed useful gameplay.",
+    "This patch makes no rendering, image-quality or asset changes. The internal 640x480 canvas still scales to the window; direct original-PNG sampling is not native-window-resolution rendering.",
+    "No full HD art remaster or full Flash pixel parity is claimed. Windows executable is unsigned.",
+    "Bundle READMEs describe release state at the runtime source commit; later delivery documentation does not change or repackage the built code.",
+    "Archive was independently extracted locally; no full remote redownload has been performed."
+  ],
+  "remoteRelease": {
+    "url": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.2",
+    "published": true,
+    "publishedAt": "2026-10-24T05:00:58Z",
+    "releaseId": 422524980,
+    "targetCommit": "0a39744152543266dffa94f86df53e6d513b0113",
+    "assetCount": 11,
+    "allRemoteAssetSizesAndSha256MatchLocal": true,
+    "fullRemoteRedownloadPerformed": false
+  }
+}

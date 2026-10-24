@@ -12,7 +12,11 @@ An editable JavaScript project based on the **super Flash version**, with recove
 
 Download the Windows x64 preview from the **[custom Releases](https://github.com/learner20230724/miragine-super-custom/releases)**, extract the entire archive, then double-click `Start-Game.cmd` or `MiragineSuper.exe`. The runtime is bundled; Node.js, Python and Flash are not required. Keep this customization in a separate directory from the baseline game.
 
-The current published build is **[v0.4.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.1)**, from runtime commit `334b25d`. **597 source tests, 75 browser interactions and 76 independently extracted EXE checks passed**, as did Windows/Linux CI. Actual checks covered non-pausing F2, excessive-input clamping, independent side stats, more than 500 troops and spawn cancellation, fullscreen and presets across two launches. Clean ZIP extraction, byte-for-byte source comparison and privacy review passed. All 11 remote assets match local sizes and SHA-256 digests; a complete remote redownload was not performed. See the [delivery record](docs/releases/v0.4.0-preview.1.json) and Release attachments.
+The current published build is **[v0.4.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.2)**, from runtime commit `0a39744152543266dffa94f86df53e6d513b0113`. **606 source tests, 93 browser checks and 94 independently extracted EXE checks passed**, as did [Windows/Linux CI](https://github.com/learner20230724/miragine-super-custom/actions/runs/40064048990). Checks covered the compact three-button footer and single apply action, non-pausing F2, excessive-input clamping, independent side stats, more than 500 troops and spawn cancellation, fullscreen and presets across two launches. Clean ZIP extraction, byte-for-byte source comparison and privacy review passed. All 11 remote assets match local sizes and SHA-256 digests; a complete remote redownload was not performed. See the [delivery record](docs/releases/v0.4.0-preview.2.json) and Release attachments.
+
+The bundled READMEs retain the publication state at the runtime source commit; later delivery documentation does not change or repackage the built code.
+
+Historical **[v0.4.0-preview.1](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.4.0-preview.1)** used runtime commit `334b25d`; its 597 source tests, 75 browser interactions and 76 EXE checks remain in its [own record](docs/releases/v0.4.0-preview.1.json), not as evidence for the new build.
 
 Historical **[v0.3.0-preview.2](https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.3.0-preview.2)** used `c1dcb85`; its original-pixel sampling and older settings checks remain in its [own record](docs/releases/v0.3.0-preview.2.json), not as proof for this version.
 
@@ -20,7 +24,7 @@ Historical **[v0.3.0-preview.1](https://github.com/learner20230724/miragine-supe
 
 Edit the external `config/custom.json` and restart to apply changes; the panel never rewrites it. Desktop drafts/presets live in `userdata/custom-settings.json`; restoring them still requires explicit application. Back up both files before upgrading. `ui-helper/` contains replaceable drawing code; `build-info.json` identifies the source commit. See inherited [baseline verification](docs/verification.json) and [known issues](docs/known-issues.md).
 
-This build's tracked source is approximately **65.85 MB**, including **11.97 MB** of runtime assets; its Windows ZIP is **170.56 MB** and unpacks to **402.17 MB**. Sizes use decimal MB and exclude dependencies, Git history and generated user data. Both 20× and 240 FPS are targets, not guarantees. This run's roughly one-second, maximized-EXE 20× sample achieved approximately **7.51×** under that machine/window configuration, not a sustained full-army benchmark.
+This build's tracked source is approximately **65.88 MB**, including **11.97 MB** of runtime assets; its Windows ZIP is **170.56 MB** and unpacks to **402.18 MB**. Sizes use decimal MB and exclude dependencies, Git history and generated user data. Both 20× and 240 FPS are targets, not guarantees. The final maximized-EXE 20× sample, lasting approximately **1.1111 seconds**, achieved **4.23×** (126.90 logic steps/second) under that machine/window configuration. This is neither a sustained full-army benchmark nor a controlled comparison with the previous release.
 
 Extract to a reasonably short directory path: deeply nested Windows paths can prevent Chromium from initializing local runtime data. The generated `userdata/` and `.tmp/` directories are local data, not release contents. The never-show-help preference persists across restarts in `userdata/preferences.json`; delete that file to restore the initial tutorial.
 
@@ -73,6 +77,8 @@ The menu offers four single-player difficulties and local two-player play. Netwo
 
 **Lightweight original-pixel sampling:** sprites project directly from the preserved PNGs, skipping the intermediate 0.9-scale rasterization while retaining logical dimensions, foot anchors, clipping and animation timing. Thunderball and storm reuse larger bitmaps already embedded in the SWF: 25 byte-identical image copies total 46,676 bytes, with the final transparent storm frame preserved. No AI, real-time super-resolution, new engine or larger stage/ground buffers are introduced. Scenery, existing character frames and custom configuration are not overwritten. This is not a complete art remaster or a claim of Flash pixel parity; the renderer retains `spriteRasterMode: 'legacy'` for comparison. Regenerate/check with `python -B tools/build_source_effects.py` / `--check`; run the independent browser comparison with `node tools/verify-source-rendering.mjs`.
 
+The internal **640 × 480** game canvas is scaled to fit the window; direct original-PNG sampling does not mean native-window-resolution rendering. This patch changes no rendering quality, renderer or assets.
+
 Settings start collapsed with no persistent F2 launcher. Press F2 to edit while the battle runs; opening/closing never pauses or resumes it. Pause is explicitly controlled by the player. Overview frames the full red/blue crystal sprites near the viewport edges, reducing empty outer scenery without promising all map corners. Wheel zoom still allows a wider view.
 
 One game second still contains **30 complete original logic steps**. 20× requests **600 steps per real second**, not 600 FPS or guaranteed throughput for every army size/machine. Independent rendering interpolates positions/cameras without adding original animation poses. The panel separates target speed, actual simulation rate and actual presentation rate; 240 FPS is a ceiling. Menus, observation and music use real time. Dense combat sounds are bounded/coalesced, never queued for later playback.
@@ -91,7 +97,7 @@ The tool enters a real match through the menus and measures both ordinary gamepl
 
 ## Change game parameters
 
-The instructions below include the single-apply-button change in the **v0.4.0-preview.2 source**. Its release status and verification require its own Release record, not the previous version's results.
+The published **v0.4.0-preview.2** includes the single-apply-button layout described below.
 
 **Use F2 for interactive editing:**
 
