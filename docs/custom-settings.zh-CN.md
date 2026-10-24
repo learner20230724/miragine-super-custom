@@ -2,7 +2,7 @@
 
 [English](custom-settings.en.md) · [默认参数表](parameters.zh-CN.md) · [时钟说明](time-control.zh-CN.md)
 
-本页描述保留原设置与拖动交互的 v0.6.2-preview.1 发布候选源码，新增清场死亡动画；发行包和验证以对应 Release 为准，不代表候选已经发布或完成验收。默认数值仍来自超级版，自定义适配在 `src/customization/`，不改恢复核心与原始证据。
+本页描述已发布的 v0.6.2-preview.1，保留原设置与拖动交互并新增清场死亡动画；发行包与验证结果见[本版交付记录](releases/v0.6.2-preview.1.json)。默认数值仍来自超级版，自定义适配在 `src/customization/`，不改恢复核心与原始证据。
 
 ## 打开、暂停与视角
 

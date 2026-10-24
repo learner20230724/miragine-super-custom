@@ -2,7 +2,7 @@
 
 [中文](custom-settings.zh-CN.md) · [Default parameter tables](parameters.en.md) · [Game clock](time-control.en.md)
 
-This guide describes the v0.6.2-preview.1 release candidate, retaining existing settings/dragging controls and adding animated troop clearing. Release availability and packaged verification are recorded separately; candidate source does not establish either. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
+This guide describes published v0.6.2-preview.1, retaining existing settings/dragging controls and adding animated troop clearing. See the [delivery record](releases/v0.6.2-preview.1.json) for assets and packaged verification. Defaults still come from the super version; optional edits are custom rules, not recovered original behavior.
 
 ## Open and navigate
 

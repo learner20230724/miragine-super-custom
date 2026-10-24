@@ -2,7 +2,7 @@
 
 [中文](combat-hits.zh-CN.md)
 
-This is **new gameplay** for physical projectile interception and long-range ordinary attacks, not recovered original behavior. Introduced in v0.6.1-preview.1, this extension is included in the v0.6.2-preview.1 release candidate; the old v0.6.0-preview.1 EXE lacks it. Refer to the corresponding Release delivery receipt for actual publication and verification status. Recovered core, generated unit defaults, assets, firing range, attack intervals, damage/armor formulas, speed controls and the 30 Hz simulation rate remain unchanged.
+This is **new gameplay** for physical projectile interception and long-range ordinary attacks, not recovered original behavior. Introduced in v0.6.1-preview.1, this extension is included in published v0.6.2-preview.1; the old v0.6.0-preview.1 EXE lacks it. See the [delivery record](releases/v0.6.2-preview.1.json) for publication and verification results. Recovered core, generated unit defaults, assets, firing range, attack intervals, damage/armor formulas, speed controls and the 30 Hz simulation rate remain unchanged.
 
 ## Why could an apparently attacked unit keep its HP?
 

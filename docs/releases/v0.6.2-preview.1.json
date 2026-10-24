@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "version": "0.6.2-preview.1",
+  "sourceCommit": "3e2860a2f75dd129d68b9d79d0f56a4be89f7a61",
+  "status": "published-and-verified",
+  "publishedAt": "2026-10-24T08:16:19Z",
+  "releaseId": 422602248,
+  "releaseUrl": "https://github.com/learner20230724/miragine-super-custom/releases/tag/v0.6.2-preview.1",
+  "sourceTests": {
+    "tests": 804,
+    "pass": 804,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "portableClearChecks": 24,
+  "portableRuntimeErrors": 0,
+  "ci": {
+    "url": "https://github.com/learner20230724/miragine-super-custom/actions/runs/40076916041",
+    "conclusion": "success",
+    "platforms": [
+      "windows-latest",
+      "ubuntu-latest"
+    ]
+  },
+  "features": [
+    "Clear left/right/both troops through original death/knockback/animation lifecycle, removing their combat participation immediately.",
+    "Paused/0x holds corpses; resuming continues original death. Repeated clears do not restart existing corpses.",
+    "Associated attacks and stale target references are cleaned; crystals/resources remain unchanged and matching spawn jobs are cancelled.",
+    "Includes previously local v0.6.1 swept first-enemy projectile hits, delayed direct ordinary hits and 253-step crystal projectile lifetime; original damage-minus-armor behavior is retained."
+  ],
+  "archive": "MiragineSuper-Custom-v0.6.2-preview.1-win-x64.zip",
+  "archiveSha256": "04afbbd072226d31315068dfc974d75a6b120efc510b0845738d24f56eeab5d7",
+  "inventorySha256": "12085ca3c3eb3d17472a5ec863942a6dc1bf159192968f87fd5b41be108e9857",
+  "appAsarSha256": "7a67d46b8f7958dfd28e90cb37318e991ee6fae5b5cd7999dde717b1b2309537",
+  "executableSha256": "8eabd10dd8f2783f2b2210801aaa092df9db8f6d9b188468b93db21f6a2ce9b6",
+  "sourceBytes": 66378141,
+  "runtimeAssetsBytes": 11974108,
+  "archiveBytes": 170631735,
+  "unpackedBytes": 402368863,
+  "archiveFiles": 105,
+  "sourceInvariants": [
+    "src/core",
+    "src/runtime/game-clock.mjs",
+    "src/extensions/combat-hits.mjs",
+    "src/extensions/projectile-lifetime.mjs",
+    "config",
+    "assets",
+    "generated"
+  ],
+  "newSourceCoverage": "All 16 troop types on both sides, original death countdown/knockback, repeated clear, pending hits, manual pause, zero speed, and 1024 troops.",
+  "portableExtraction": {
+    "crc": "passed",
+    "individualFileHashes": "all 105 matched inventory",
+    "cleanIndependentExtractions": 2,
+    "finalAcceptance": "second isolated extraction; first QA script incorrectly toggled resume after choosing 0x, then corrected without changing product code"
+  },
+  "privacy": {
+    "source": {
+      "findings": 0,
+      "warnings": 0,
+      "skipped": 0
+    },
+    "publicEvidence": {
+      "findings": 0,
+      "warnings": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "rawFindings": 5,
+      "reviewedUpstreamFindings": 5,
+      "rawWarnings": 59,
+      "remainingUnresolved": 0,
+      "findingExplanation": "All 5 raw absolute-user-path findings are existing constants matched exactly to pinned Electron upstream bytes; no newly introduced private path or credential finding remains unresolved.",
+      "warningExplanation": "58 PAK archives match pinned upstream bytes exactly; the application ASAR is fully decoded, every extracted file hash is checked, and the decoded privacy scan is clean."
+    },
+    "runtimeVerification": {
+      "pinnedElectronZipSha256": "790a355b684d5c7cc8dc3cdd8c4cca7c4b2d054685427c7554a956879a82e70b",
+      "vendorFilesByteIdentical": 71,
+      "nonResourcePeSectionsIdentical": 14,
+      "upstreamPakArchivesByteIdentical": 58,
+      "decodedAsarFiles": 790,
+      "decodedAsarBytes": 15113945,
+      "innerOuterBuildInfoMatches": true
+    }
+  },
+  "remote": {
+    "status": "passed",
+    "draft": false,
+    "prerelease": true,
+    "tag": "v0.6.2-preview.1",
+    "targetCommit": "3e2860a2f75dd129d68b9d79d0f56a4be89f7a61",
+    "allRemoteAssetSizesAndDigestsMatch": true,
+    "remoteRedownloadPerformed": false,
+    "assets": 14,
+    "files": [
+      {
+        "name": "MiragineSuper-Custom-v0.6.2-preview.1-win-x64.zip",
+        "size": 170631735,
+        "sha256": "04afbbd072226d31315068dfc974d75a6b120efc510b0845738d24f56eeab5d7"
+      },
+      {
+        "name": "MiragineSuper-Custom-v0.6.2-preview.1-win-x64.zip.inventory.json",
+        "size": 18384,
+        "sha256": "12085ca3c3eb3d17472a5ec863942a6dc1bf159192968f87fd5b41be108e9857"
+      },
+      {
+        "name": "clear-death-after-death.png",
+        "size": 3702375,
+        "sha256": "3c7d32231bc05f4671c0f5bd30024257cbd10cf0d8a1daddc594e965132103b0"
+      },
+      {
+        "name": "clear-death-first-death-closeup.png",
+        "size": 2365801,
+        "sha256": "7572533bb7acdd605060bffd64548f452def6240ffaf23fdd614cd0e7a6e17bf"
+      },
+      {
+        "name": "clear-death-mid-death-closeup.png",
+        "size": 2365969,
+        "sha256": "2b44ef206ba5539b7accdbdaa9dfe14f9ca80f7172b4a166e60f920089a046bc"
+      },
+      {
+        "name": "portable-clear-verification.json",
+        "size": 48068,
+        "sha256": "0060d96116f989bf54646458865081abf8d027fb09e3133a5c3cbfd362889190"
+      },
+      {
+        "name": "portable-extraction.json",
+        "size": 430,
+        "sha256": "086e8898fd99f743c83adf1a91a079860a5ca0db8eb336ed3a59ba61d6506a48"
+      },
+      {
+        "name": "privacy-evidence.json",
+        "size": 115,
+        "sha256": "d3f8d09f1498ba43523fad2ca982087c6abdd0bff5c8d20ed3f13a568fbfaccb"
+      },
+      {
+        "name": "privacy-source.json",
+        "size": 115,
+        "sha256": "3a38d22988e76a736ac5279148293138a0ce331fc671d059da48f478e6006362"
+      },
+      {
+        "name": "release-notes.md",
+        "size": 3648,
+        "sha256": "005c06700ddad6bbaab43c6de64fd9dec8ce393214aeddac0f6ad419c2270f67"
+      },
+      {
+        "name": "runtime-privacy-summary.json",
+        "size": 1741,
+        "sha256": "ae8120647db37f6859023a5a10bd9d089673db7b1bfdf71cd3fa4064c052ec8e"
+      },
+      {
+        "name": "source-verification.json",
+        "size": 1198,
+        "sha256": "3de407858d20d005b7175cb9f41ebd34a47f543011d099a5943939bf1626409e"
+      },
+      {
+        "name": "storage.json",
+        "size": 414,
+        "sha256": "f84349fe363a69c6235829eb546ba06fe5f0994140636b5c98a1f749279a0db4"
+      },
+      {
+        "name": "SHA256SUMS",
+        "size": 1268,
+        "sha256": "e9a2b82b395815ac50f1216ce4483a8415a484ba00aaea820788b0b8ce979aec"
+      }
+    ]
+  },
+  "localInstallation": "Only fresh QA copies were launched and then closed; the existing player installation/window and personal settings were not replaced or interrupted in this task.",
+  "limitations": [
+    "Original death animation retains the recovered lifecycle; this does not extend it to show every source artwork frame.",
+    "Clear follows normal original death events/sound RNG once per newly killed troop.",
+    "QA validates the final Windows package through real inputs and read-only diagnostics, not a new all-difficulty full-match parity or sustained performance test.",
+    "This release preserves 30 Hz logic and unchanged armor subtraction; zero damage and healing from negative damage remain possible by user request.",
+    "Published asset sizes and API SHA-256 match local files; no full remote redownload was performed.",
+    "Bundled README preserves build-time candidate wording; this post-publication receipt does not change or rebuild the runtime package."
+  ]
+}
